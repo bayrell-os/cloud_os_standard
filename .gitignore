@@ -1,0 +1,8 @@
+/compiler
+/compiler.new
+/node_modules
+/src/app/[^\\]*/es6
+/src/app/[^\\]*/nodejs
+/src/app/[^\\]*/php
+/src/web/assets
+/src/web/prg.bay
