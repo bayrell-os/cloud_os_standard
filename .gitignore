@@ -5,4 +5,3 @@
 /src/app/[^\\]*/nodejs
 /src/app/[^\\]*/php
 /src/web/assets
-/src/web/prg.bay

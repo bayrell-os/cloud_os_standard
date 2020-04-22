@@ -1,0 +1,6 @@
+[submodule "src/lib/Runtime"]
+	path = src/lib/Runtime
+	url = https://github.com/bayrell/Runtime
+[submodule "src/lib/Runtime.Web"]
+	path = src/lib/Runtime.Web
+	url = https://github.com/bayrell/Runtime.Web
