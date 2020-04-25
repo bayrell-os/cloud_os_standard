@@ -1,4 +1,4 @@
-FROM bayrell/alpine_php:latest
+FROM bayrell/alpine_php_fpm:latest
 
 RUN apk add dnsmasq && rm -rf /var/cache/apk/*
 

@@ -24,7 +24,7 @@ function array_equal($arr1, $arr2)
 
 function update_service($services, $service_name)
 {
-	$ips = nslookup("cloud_web_panel");
+	$ips = nslookup($service_name);
 	if (!isset($services[$service_name])) $services[$service_name] = [];
 	if (array_equal($services[$service_name], $ips)) return $services;
 	$services[$service_name] = $ips;
