@@ -138,48 +138,10 @@ class ModuleDescription implements
 		{
 			"App.User.AuthToken":
 			{
-				"EXPIRE": 4 * 60 * 60,
-				"COOKIE_NAME": "jwt_token",
-				"AUTH_PUBLIC_KEY":
-					"-----BEGIN PUBLIC KEY-----\n" ~
-					"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzXKCewcQVSvxZJQ6ptuD\n" ~
-					"+QDNN+rEgE9EKBIkDza435k7DevVYhm5t+N87ENzJUyQhv2AeP3QZqsj/uJZl49l\n" ~
-					"8oMPwfDF29SRrz8SBu4rqM6uEfdq278FMzjtDxpYTUekTmXHmkxUk+PQigQRIQ69\n" ~
-					"uEGJ5iyyy2kLv/u7v2N6HVIetJYqTkYBIpyw1u2oSvQra4BXqjEEjJjIICitYL6c\n" ~
-					"IMBQw/o4QL66ce5TVAgg2Aamegx1Fihu4VZU+hcPSPmJ0rXvBmP7ubQDnGsbSvmD\n" ~
-					"ART/mS3nsQbQ3AdlP4sRNDmS2zo+oHOSMoOwhe3c8J7SrPPU4WLVSLIOJF4rL3uB\n" ~
-					"NwIDAQAB\n" ~
-					"-----END PUBLIC KEY-----"
-				,
-				"AUTH_PRIVATE_KEY": 
-					"-----BEGIN RSA PRIVATE KEY-----\n" ~
-					"MIIEogIBAAKCAQEAzXKCewcQVSvxZJQ6ptuD+QDNN+rEgE9EKBIkDza435k7DevV\n" ~
-					"Yhm5t+N87ENzJUyQhv2AeP3QZqsj/uJZl49l8oMPwfDF29SRrz8SBu4rqM6uEfdq\n" ~
-					"278FMzjtDxpYTUekTmXHmkxUk+PQigQRIQ69uEGJ5iyyy2kLv/u7v2N6HVIetJYq\n" ~
-					"TkYBIpyw1u2oSvQra4BXqjEEjJjIICitYL6cIMBQw/o4QL66ce5TVAgg2Aamegx1\n" ~
-					"Fihu4VZU+hcPSPmJ0rXvBmP7ubQDnGsbSvmDART/mS3nsQbQ3AdlP4sRNDmS2zo+\n" ~
-					"oHOSMoOwhe3c8J7SrPPU4WLVSLIOJF4rL3uBNwIDAQABAoIBAGO01Tpb/UM4pliH\n" ~
-					"z8c29d+c0fv3RhJ3Zb6Ev1da2XI67XweHlsT3RwvnWsUeQd7FxFMalNN6xxIppmG\n" ~
-					"xLBXecSucrFO5td/XIzOcTNH14x/cd9qUkP/esiXMgWIZZ5rzIP3xV1O+iUkBQtW\n" ~
-					"WfHPM6f+tqwsuUEa5AbyZvXFk3gyiQi8N/GR1FqEMV/CXB8SjSQZ9k/prLbWAP1e\n" ~
-					"Z68ZIK+doJrdCnFXqzzEuBDpx9fv06N9vmKuR3cNlKIaJah73jQneJGyvnTSdAO1\n" ~
-					"LaK5zdE7uL88/MQLA0uqGnytLcJvqqSz4ykIimRSSaJ1H/6Dkhj+9GoJfwCTo6Pi\n" ~
-					"8eY7q4ECgYEA+z/9YtLVUdfHTgcydrJfg1CDx/VXFLp9wfTF/qW26shsvXeAQpSk\n" ~
-					"We16qd4lhG60VP3dYtMkpYRmpCR105NK+4qrhN5KzYbfGE2fGFqy8fc9YHX7dOPJ\n" ~
-					"ENnMvwselj7UZAn8Q93iWnMo1ixZX+QSad3ZZvOTnif0lXelSrehR2ECgYEA0VTX\n" ~
-					"nmcgeJcE3/A8AfOjrIsIdELVCb/1MjewXG13Hzy/r1511AJWQWGRlKY2HoOxKzHF\n" ~
-					"CZkNEt65Bp8BIObxvdmASqDNutSjK77DHWM/yPw+VyxsUbqeOmzppRqW/ZPZNKRG\n" ~
-					"+qwQsv/y9Zz9miPo2ltaY8/JxBgK0Y2mLFOex5cCgYB220eoJ2row7YyMG9r/Wf3\n" ~
-					"u/ALeQGP+cUiKwQ7OfO1T8k5PD39wUmajSB5GXEQHDrM9idz58SvVFomDmV7CHPx\n" ~
-					"WSFYwrwKTGJfoeDAaa+7jaWIa2fgXR2yDgaw3bbDhsd858hh5qZ8+Xt5DhPdrAwV\n" ~
-					"7vA4psPPjsFCsA4OsZ3nIQKBgHikFugZsyMMliihgVP2oFuufR7T7YeC88MPSTrb\n" ~
-					"c42zKx3cqLeY6TEhFA/BgusvJoooUtBnPpujdKsWNEZMEwJBOajI6AhGyAtME5L6\n" ~
-					"QiaJCTygQ4UOsmYloroeiup1rPajvqx1QeKHk/Rtl9Kf43EEuSFQ/Y1f9cwzgJOH\n" ~
-					"VbjdAoGADAk3ayBCy2Rnso4uS08tB/7n9hIc1nrZA9zgivUJWbw05ZR6SpypPfPG\n" ~
-					"NO/1P3P3+E7rffVhuz9Fu6zAmLoEqeeZqJJmAcmqjUXVIsbb2o4eY1aTIv+32P8J\n" ~
-					"B3MYkn3Ba3tQA0dF2e7r08D/H9a5xfvzpUKwVfs6q0cPiN8V1X0=\n" ~
-					"-----END RSA PRIVATE KEY-----"
-				,
+				"EXPIRE": env.get("COOKIE_EXPIRE", 14400),
+				"COOKIE_NAME": env.get("COOKIE_NAME", "jwt_token"),
+				"AUTH_PUBLIC_KEY": env.get("AUTH_PUBLIC_KEY", ""),
+				"AUTH_PRIVATE_KEY": env.get("AUTH_PRIVATE_KEY", ""),
 			},
 			"Runtime.Web.Backend":
 			{
@@ -193,6 +155,16 @@ class ModuleDescription implements
 		},
 		"providers":
 		{
+			"Runtime.ORM.Mysql":
+			{
+				"default":
+				{
+					"host": env.get("MYSQL_HOST", ""),
+					"username": env.get("MYSQL_USERNAME", ""),
+					"password": env.get("MYSQL_PASSWORD", ""),
+					"db": env.get("MYSQL_DB", ""),
+				}
+			}
 		}
 	};
 	

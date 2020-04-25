@@ -95,6 +95,9 @@ class AuthPage extends Component
 			%row{
 				text-align: left;
 			}
+			%head{
+				font-weight: bold;
+			}
 			%wrap{
 				padding-bottom: 20px;
 			}
@@ -130,6 +133,10 @@ class AuthPage extends Component
 	pure html render(LayoutModel layout, AuthPageModel model, Dict params, html content) =>
 	
 		<div @class='content' @key='content'>
+			
+			<div @class='wrap head'>
+				Login
+			</div>
 			
 			<div @class='wrap'>
 				<div @class='row label'>
