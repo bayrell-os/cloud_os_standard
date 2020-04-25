@@ -7,3 +7,9 @@
 [submodule "src/lib/Runtime.Crypt"]
 	path = src/lib/Runtime.Crypt
 	url = https://github.com/bayrell/Runtime.Crypt
+[submodule "src/lib/Runtime.ORM"]
+	path = src/lib/Runtime.ORM
+	url = https://github.com/bayrell/Runtime.ORM
+[submodule "src/lib/Runtime.ORM.MySQL"]
+	path = src/lib/Runtime.ORM.MySQL
+	url = https://github.com/bayrell/Runtime.ORM.MySQL
