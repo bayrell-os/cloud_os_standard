@@ -1,7 +1,10 @@
+/example/auth_private.key
+/example/auth_public.key
 /compiler
 /compiler.new
 /node_modules
 /src/app/[^\\]*/es6
 /src/app/[^\\]*/nodejs
 /src/app/[^\\]*/php
+/src/compiler.new
 /src/web/assets

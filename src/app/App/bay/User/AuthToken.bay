@@ -1,0 +1,109 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.User;
+
+use Runtime.lib;
+use Runtime.CoreProvider;
+use Runtime.RuntimeUtils;
+use Runtime.Crypt.JWT;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Request;
+
+
+struct AuthToken extends CoreProvider
+{
+	int created = 0;
+	int expire = 0;
+	int user_id = 0;
+	string login = "";
+	string session_key = "";
+	string token_str = "";
+	
+	
+	
+	/**
+	 * Create token from env
+	 */
+	static RenderContainer Middleware(RenderContainer container)
+	{
+		/* Get cookie and auth public key */
+		string cookie_name = @ -> method config([classof AuthToken, "COOKIE_NAME"]);
+		string auth_public_key = @ -> method config([classof AuthToken, "AUTH_PUBLIC_KEY"]);
+		string auth_token_str = container -> method getCookie(cookie_name) -> attr "value";
+		int time = @ -> method time;
+		
+		/* Read token string */
+		AuthToken token = static::parse
+		(
+			auth_token_str, auth_public_key
+		);
+		
+		if (token != null and time > token.expire) token = null;
+		
+		/* Add auth token to pocket */
+		container = container ->
+			lib::setAttr(["layout", "pocket", classof AuthToken], token)
+		;
+		
+		/* Returns new container */
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Parse token by auth_public_key
+	 */
+	pure AuthToken parse(string auth_token_str, string auth_public_key)
+	{
+		/* Decode jwt */
+		Dict d = JWT::decode(auth_token_str, auth_public_key, 'RS256');
+		if (d == null) return null;
+		return new AuthToken
+		{
+			"created": d.get("c", 0, "int"),
+			"expire": d.get("e", 0, "int"),
+			"user_id": d.get("i", 0, "int"),
+			"login": d.get("u", 0, "string"),
+			"session_key": d.get("s", 0, "string"),
+			"token_str": auth_token_str,
+		};
+	}
+	
+	
+	
+	/**
+	 * Create new token
+	 */
+	pure AuthToken sign(string auth_private_key) =>
+		AuthToken (AuthToken token) use (auth_private_key)
+		{
+			Dict d = {
+				"c": token.created,
+				"e": token.expire,
+				"u": token.login,
+				"i": token.user_id,
+				"s": token.session_key,
+			};
+			string auth_token_str = JWT::encode(d, auth_private_key, 'RS256');
+			return token.copy{ "token_str": auth_token_str };
+		}
+	;
+	
+}

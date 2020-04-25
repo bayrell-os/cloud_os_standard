@@ -1,0 +1,148 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.User;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.RuntimeUtils;
+use Runtime.Web.Annotations.ApiList;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Cookie;
+use Runtime.Web.JsonResponse;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Response;
+use App.User.AuthToken;
+
+
+@RouteList{}
+@ApiList{ "api_name": "App.User", "space_name": "AuthInterface" }
+class AuthApi
+{
+	#ifdef BACKEND then
+	
+	
+	/**
+	 * Check login and password
+	 */
+	static bool checkLoginAndPassword(string username, string password)
+	{
+		if (username != "test" or password != "test") return false;
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Login
+	 */
+	@Route{ "uri": "/api/login/" }
+	static async RenderContainer actionLogin(RenderContainer container)
+	{
+		MessageRPC msg = new MessageRPC{};
+		AuthToken token = null;
+		
+		Dict payload = container
+			-> attr "request"
+			-> method decodePayload
+		;
+		
+		string username = payload
+			-> lib::get("username", "")
+			-> monad lib::to("string", "")
+		;
+		
+		string password = payload
+			-> lib::get("password", "")
+			-> monad lib::to("string", "")
+		;
+		
+		if (not static::checkLoginAndPassword(username, password))
+		{
+			msg = msg -> method fail(null, "Wrong password");
+		}
+		else
+		{
+			string cookie_name = @ -> method config([classof AuthToken, "COOKIE_NAME"]);
+			string auth_private_key = @ -> method config([classof AuthToken, "AUTH_PRIVATE_KEY"]);
+			int cookie_expire = @ -> method config([classof AuthToken, "EXPIRE"]);
+			
+			int time = @ -> method time;
+			int expire = time + cookie_expire;
+			token = new AuthToken
+			{
+				"created": time,
+				"expire": expire,
+				"login": username,
+			};
+			token = token -> method sign(auth_private_key);
+			
+			container = container
+				-> method setCookie
+				(
+					new Cookie
+					{
+						"name": cookie_name,
+						"value": token.token_str,
+						"expire": expire,
+						"path": "/",
+					}
+				)
+			;
+			
+			msg = msg -> method success("Ok");
+		}
+		
+		container <= response <= new JsonResponse{ "data": msg };
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Logout
+	 */
+	@Route{ "uri": "/api/logout/" }
+	static async RenderContainer actionLogout(RenderContainer container)
+	{
+		MessageRPC msg = new MessageRPC{};
+		
+		string cookie_name = @ -> method config([classof AuthToken, "COOKIE_NAME"]);
+		container = container
+			-> method setCookie
+			(
+				new Cookie
+				{
+					"name": cookie_name,
+					"expire": 0,
+					"value": "",
+					"path": "/",
+				}
+			)
+		;
+		
+		msg = msg -> method success("ok");
+		container <= response <= new JsonResponse{ "data": msg };
+		return container;
+	}
+	
+	
+	#endif
+}

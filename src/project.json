@@ -1,0 +1,7 @@
+{
+	"name": "Cloud Web Panel",
+	"modules": [
+		"/app",
+		"/lib"
+	]
+}

@@ -1,6 +1,6 @@
 <?php
 
-set_time_limit(60);
+set_time_limit(30);
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 ini_set("display_startup_errors", 1);
@@ -14,7 +14,7 @@ $app = new Loader();
 try
 {
 	$app
-		->main_class( "App.AppServer" )
+		->main_module( "App" )
 		->base_path( $basepath )
 		->add_src( $basepath . "/app" )
 		->add_src( $basepath . "/lib" )

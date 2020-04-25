@@ -1,0 +1,250 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App;
+
+use Runtime.Context;
+use Runtime.CoreStruct;
+use Runtime.RuntimeConstant;
+use Runtime.Annotations.Entity;
+use Runtime.Annotations.Manager;
+use Runtime.Annotations.LambdaChain;
+use Runtime.Annotations.LambdaChainDeclare;
+use Runtime.Annotations.Provider;
+use Runtime.Interfaces.AssetsInterface;
+use Runtime.Interfaces.ContextInterface;
+use Runtime.Interfaces.ModuleDescriptionInterface;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Request;
+
+
+class ModuleDescription implements 
+	ModuleDescriptionInterface,
+	AssetsInterface
+{
+
+	
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	pure string getModuleName() => "App";
+	
+	
+	
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	pure string getModuleVersion() => "0.9.0";
+	
+	
+	
+	/**
+	 * Returns required modules
+	 * @return Dict<string>
+	 */
+	pure Dict<string> requiredModules() =>
+	{
+		'Runtime': '>=0.3',
+		'Runtime.Web': '*',
+		
+		/* Backend */
+		#ifdef BACKEND then
+		'Runtime.Web.Backend': '*',
+		#endif
+	};
+	
+	
+	
+	/**
+	 * Returns module files load order
+	 * @return Collection<string>
+	 */
+	pure Collection<string> assets() => 
+	[
+		"App/User/AuthPage",
+		"App/User/AuthPageModel",
+		"App/User/AuthToken",
+		"App/ModuleDescription",
+	];
+	
+	
+	
+	/**
+	 * Returns enities
+	 */
+	pure Collection<Dict> entities() =>
+	[
+		/* Index page */
+		new Entity{ "name": "App.User.AuthPage" },
+		
+		/* Backend */
+		#ifdef BACKEND then
+		new LambdaChain
+		{
+			"name": RenderContainer::RENDER_CHAIN,
+			"value": "App.User.AuthToken::Middleware",
+			"pos": RenderContainer::RENDER_CHAIN_BEFORE_CALL_ROUTE,
+		},
+		
+		new Entity{ "name": "App.User.AuthApi" },
+		#endif
+		
+		/* Frontend */
+		#ifdef FRONTEND then
+		new Provider
+		{
+			"name": RuntimeConstant::BUS_INTERFACE,
+			"value": "Runtime.Web.Drivers.BusProvider",
+		}
+		#endif
+	];
+	
+	
+	
+	/**
+	 * Returns sync loaded files
+	 */		
+	pure Vector<string> resources() => null;
+	
+	
+	
+	#ifdef BACKEND then
+	
+	/**
+	 * Returns context settings
+	 * @return Dict<string>
+	 */
+	pure Dict<string> appSettings(Dict env) => 
+	{
+		"config":
+		{
+			"App.User.AuthToken":
+			{
+				"EXPIRE": 4 * 60 * 60,
+				"COOKIE_NAME": "jwt_token",
+				"AUTH_PUBLIC_KEY":
+					"-----BEGIN PUBLIC KEY-----\n" ~
+					"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzXKCewcQVSvxZJQ6ptuD\n" ~
+					"+QDNN+rEgE9EKBIkDza435k7DevVYhm5t+N87ENzJUyQhv2AeP3QZqsj/uJZl49l\n" ~
+					"8oMPwfDF29SRrz8SBu4rqM6uEfdq278FMzjtDxpYTUekTmXHmkxUk+PQigQRIQ69\n" ~
+					"uEGJ5iyyy2kLv/u7v2N6HVIetJYqTkYBIpyw1u2oSvQra4BXqjEEjJjIICitYL6c\n" ~
+					"IMBQw/o4QL66ce5TVAgg2Aamegx1Fihu4VZU+hcPSPmJ0rXvBmP7ubQDnGsbSvmD\n" ~
+					"ART/mS3nsQbQ3AdlP4sRNDmS2zo+oHOSMoOwhe3c8J7SrPPU4WLVSLIOJF4rL3uB\n" ~
+					"NwIDAQAB\n" ~
+					"-----END PUBLIC KEY-----"
+				,
+				"AUTH_PRIVATE_KEY": 
+					"-----BEGIN RSA PRIVATE KEY-----\n" ~
+					"MIIEogIBAAKCAQEAzXKCewcQVSvxZJQ6ptuD+QDNN+rEgE9EKBIkDza435k7DevV\n" ~
+					"Yhm5t+N87ENzJUyQhv2AeP3QZqsj/uJZl49l8oMPwfDF29SRrz8SBu4rqM6uEfdq\n" ~
+					"278FMzjtDxpYTUekTmXHmkxUk+PQigQRIQ69uEGJ5iyyy2kLv/u7v2N6HVIetJYq\n" ~
+					"TkYBIpyw1u2oSvQra4BXqjEEjJjIICitYL6cIMBQw/o4QL66ce5TVAgg2Aamegx1\n" ~
+					"Fihu4VZU+hcPSPmJ0rXvBmP7ubQDnGsbSvmDART/mS3nsQbQ3AdlP4sRNDmS2zo+\n" ~
+					"oHOSMoOwhe3c8J7SrPPU4WLVSLIOJF4rL3uBNwIDAQABAoIBAGO01Tpb/UM4pliH\n" ~
+					"z8c29d+c0fv3RhJ3Zb6Ev1da2XI67XweHlsT3RwvnWsUeQd7FxFMalNN6xxIppmG\n" ~
+					"xLBXecSucrFO5td/XIzOcTNH14x/cd9qUkP/esiXMgWIZZ5rzIP3xV1O+iUkBQtW\n" ~
+					"WfHPM6f+tqwsuUEa5AbyZvXFk3gyiQi8N/GR1FqEMV/CXB8SjSQZ9k/prLbWAP1e\n" ~
+					"Z68ZIK+doJrdCnFXqzzEuBDpx9fv06N9vmKuR3cNlKIaJah73jQneJGyvnTSdAO1\n" ~
+					"LaK5zdE7uL88/MQLA0uqGnytLcJvqqSz4ykIimRSSaJ1H/6Dkhj+9GoJfwCTo6Pi\n" ~
+					"8eY7q4ECgYEA+z/9YtLVUdfHTgcydrJfg1CDx/VXFLp9wfTF/qW26shsvXeAQpSk\n" ~
+					"We16qd4lhG60VP3dYtMkpYRmpCR105NK+4qrhN5KzYbfGE2fGFqy8fc9YHX7dOPJ\n" ~
+					"ENnMvwselj7UZAn8Q93iWnMo1ixZX+QSad3ZZvOTnif0lXelSrehR2ECgYEA0VTX\n" ~
+					"nmcgeJcE3/A8AfOjrIsIdELVCb/1MjewXG13Hzy/r1511AJWQWGRlKY2HoOxKzHF\n" ~
+					"CZkNEt65Bp8BIObxvdmASqDNutSjK77DHWM/yPw+VyxsUbqeOmzppRqW/ZPZNKRG\n" ~
+					"+qwQsv/y9Zz9miPo2ltaY8/JxBgK0Y2mLFOex5cCgYB220eoJ2row7YyMG9r/Wf3\n" ~
+					"u/ALeQGP+cUiKwQ7OfO1T8k5PD39wUmajSB5GXEQHDrM9idz58SvVFomDmV7CHPx\n" ~
+					"WSFYwrwKTGJfoeDAaa+7jaWIa2fgXR2yDgaw3bbDhsd858hh5qZ8+Xt5DhPdrAwV\n" ~
+					"7vA4psPPjsFCsA4OsZ3nIQKBgHikFugZsyMMliihgVP2oFuufR7T7YeC88MPSTrb\n" ~
+					"c42zKx3cqLeY6TEhFA/BgusvJoooUtBnPpujdKsWNEZMEwJBOajI6AhGyAtME5L6\n" ~
+					"QiaJCTygQ4UOsmYloroeiup1rPajvqx1QeKHk/Rtl9Kf43EEuSFQ/Y1f9cwzgJOH\n" ~
+					"VbjdAoGADAk3ayBCy2Rnso4uS08tB/7n9hIc1nrZA9zgivUJWbw05ZR6SpypPfPG\n" ~
+					"NO/1P3P3+E7rffVhuz9Fu6zAmLoEqeeZqJJmAcmqjUXVIsbb2o4eY1aTIv+32P8J\n" ~
+					"B3MYkn3Ba3tQA0dF2e7r08D/H9a5xfvzpUKwVfs6q0cPiN8V1X0=\n" ~
+					"-----END RSA PRIVATE KEY-----"
+				,
+			},
+			"Runtime.Web.Backend":
+			{
+				"api": true,
+				"bus_default": true,
+				"bus": "",
+			},
+		},
+		"secrets":
+		{
+		},
+		"providers":
+		{
+		}
+	};
+	
+	
+	
+	/**
+	 * Init context
+	 */
+	static Context appInit(Context c)
+	{
+		return c -> method init;
+	}
+	
+	
+	
+	/**
+	 * Start context
+	 */
+	static async Context appStart(Context c)
+	{
+		return c -> await method start;
+	}
+	
+	
+	
+	/**
+	 * Run request
+	 */
+	static async RenderContainer appRequest(Context c, Request request)
+	{
+		Route route = null;
+		Dict<string> params = null;
+		Collection<Route> routes = RenderContainer::getRoutes(c.entities);
+		
+		/* Search route */
+		list res = RenderContainer::findRoute(routes, request);
+		route = res.item(0); params = res.item(1);
+		
+		/* Create render container  */
+		RenderContainer container = new RenderContainer
+		{
+			"request": request,
+			"route": route,
+			"route_params": params,
+		};
+		
+		/* Render route */
+		container = c -> await method chainAwait(RenderContainer::RENDER_CHAIN, [ container ]);
+		
+		/* Result */
+		return container;
+	}
+	
+	#endif
+}

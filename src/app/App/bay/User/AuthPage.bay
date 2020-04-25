@@ -1,0 +1,216 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.User;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.RuntimeConstant;
+use Runtime.RuntimeUtils;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.Template;
+use Runtime.Web.Events.Mouse.MouseClickEvent;
+use App.User.AuthPageModel;
+
+
+@RouteList{}
+@Template{ "model_name": classof AuthPageModel }
+class AuthPage extends Component
+{
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/login/" }
+	static async RenderContainer AuthPage(RenderContainer container)
+	{
+		AuthPageModel model = new AuthPageModel
+		{
+			"name": "",
+			"password": "",
+		};
+		
+		/* Set title */
+		container <= layout <= title <= "Login page";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof AuthPage;
+		container <= layout <= page_model <= model;
+		container <= layout <= f_inc <= 1;
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Returns required components
+	 */
+	pure Collection<string> components() =>
+	[
+	];
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) =>
+		@css{
+			%content{
+				text-align: center;
+				padding-top: 50px;
+				width: 500px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			%row{
+				text-align: left;
+			}
+			%wrap{
+				padding-bottom: 20px;
+			}
+			%label{
+				padding-bottom: 5px;
+			}
+			%label label{
+			}
+			%input input{
+				padding: 5px 10px;
+				width: 100%;
+			}
+			%button{
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+			%message{
+			}
+			%result.success{
+				color: green;
+			}
+			%result.error{
+				color: red;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, AuthPageModel model, Dict params, html content) =>
+	
+		<div @class='content' @key='content'>
+			
+			<div @class='wrap'>
+				<div @class='row label'>
+					<label for='auth-username'>Username</label>
+				</div>
+				<div @class='row input'>
+					<input @bind="username" id='auth-username' />
+				</div>
+			</div>
+			
+			<div @class='wrap'>
+				<div @class='row label'>
+					<label for='auth-password'>Password</label>
+				</div>
+				<div @class='row input'>
+					<input type='password' @bind="password" id='auth-password' />
+				</div>
+			</div>
+			
+			<div @class='wrap'>
+				<button @class='button button-login' @eventAsync:MouseClickEvent='onLoginClick'>Login</button>
+			</div>
+			
+			<div @class='wrap result' class={ static::getResultClass(model) }>
+				{ model.message }
+				{ model.success }
+				{ model.error }
+			</div>
+			
+		</div>
+		
+	;
+	
+	
+	
+	/**
+	 * Returns result class
+	 */
+	pure string getResultClass(AuthPageModel model)
+	{
+		if (model.success != "") return "success";
+		if (model.error != "") return "error";
+		return "";
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * Mouse click event
+	 */
+	async void onLoginClick(MouseClickEvent e)
+	{
+		this.updateModel
+		{
+			"message": "Please wait ...",
+		};
+		
+		/* Login */
+		MessageRPC msg = @
+			-> method getProvider(RuntimeConstant::BUS_INTERFACE)
+			-> await method post
+			{
+				"url": "/api/login/",
+				"data":
+				{
+					"username": this.model.username,
+					"password": this.model.password,
+				}
+			}
+			-> lib::createStruct(classof MessageRPC)
+		;
+		
+		this.updateModel
+		{
+			"message": "",
+			"error": msg -> attr "error",
+			"success": (msg != null and msg::isSuccess(msg)) ? msg.response : "",
+		};
+	}
+	
+	#endif
+}

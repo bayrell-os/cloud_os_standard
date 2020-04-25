@@ -1,0 +1,13 @@
+$TTL 10
+
+@ IN SOA ns.local. hostmaster.ns.local. (
+	0       ; serial
+	30      ; refresh
+	45      ; retry
+	300     ; expire
+	15      ; minimum
+)
+
+@       IN    NS    ns.local.
+ns      IN     A    127.0.0.1    
+*       IN     A    127.0.0.2
