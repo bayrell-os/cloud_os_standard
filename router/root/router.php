@@ -5,6 +5,7 @@ $services = [];
 
 function nslookup($domain)
 {
+	if ($domain == "") return [];
 	$cmd = "nslookup ${domain} 127.0.0.11 |grep Address | awk '{print $2}'";
 	$str = shell_exec($cmd);
 	$arr = explode("\n", $str);
@@ -33,25 +34,42 @@ function update_service($services, $service_name)
 
 function update_upstreams($services)
 {
-	$content = "";
+	$new_content = "";
 	
 	foreach ($services as $service_name => $ips)
 	{
 		if (count($ips) == 0) continue;
 		
-		$content .= "upstream ${service_name}.local {\n";
+		$new_content .= "upstream ${service_name}.local {\n";
 		foreach ($ips as $ip){
-			$content .= "\tserver ${ip};\n";
+			$new_content .= "\tserver ${ip};\n";
 		}
-		$content .= "}\n";
+		$new_content .= "}\n";
 		
 	}
 	
+	$file = "/etc/nginx/conf.d/99-upstreams.conf";
+	$old_content = @file_get_contents($file);
 	
-	var_dump($content);
+	if ($old_content != $new_content)
+	{
+		file_put_contents($file, $new_content);
+		echo "[router.php] Updated upstreams\n";
+		nginx_reload();
+	}
 }
 
 
+function nginx_reload()
+{
+	echo "[router.php] Nginx reload\n";
+	$s = shell_exec("/usr/sbin/nginx -s reload");
+	echo "[router.php] " . $s;
+}
+
+
+$CLOUD_WEB_PANEL = getenv("CLOUD_WEB_PANEL");
+echo "[router.php] Monitor gateway: " . $CLOUD_WEB_PANEL . "\n";
 
 while (true)
 {
@@ -59,7 +77,7 @@ while (true)
 	try
 	{
 		$old_services = $services;
-		$services = update_service($services, "cloud_web_panel");
+		$services = update_service($services, $CLOUD_WEB_PANEL);
 		if ($old_services != $services)
 		{
 			update_upstreams($services);

@@ -10,11 +10,11 @@ secrets:
 services:
 
     router:
-        image: bayrell/cloud_router:20200425_172522
+        image: bayrell/cloud_router:20200425_171807
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "router_data:/data"
-            - "../router/root/router.php:/root/router.php"
+            #- "../router/root/router.php:/root/router.php"
         secrets:
             - AUTH_PUBLIC_KEY
             - AUTH_PRIVATE_KEY
@@ -24,8 +24,7 @@ services:
             DNS_RESOLVER: 127.0.0.11
             CLOUD_WEB_PANEL: cloud_web_panel
         ports:
-            - 80:80
-            - 443:443
+            - 81:80
             - 8080:8080
         deploy:
             replicas: 1
