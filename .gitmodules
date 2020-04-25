@@ -4,3 +4,6 @@
 [submodule "src/lib/Runtime.Web"]
 	path = src/lib/Runtime.Web
 	url = https://github.com/bayrell/Runtime.Web
+[submodule "src/lib/Runtime.Crypt"]
+	path = src/lib/Runtime.Crypt
+	url = https://github.com/bayrell/Runtime.Crypt

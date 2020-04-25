@@ -1,3 +1,3 @@
-FROM bayrell/centos7_php71:latest
+FROM bayrell/alpine_php:latest
 
-ADD src /var/www/app
+ADD src /var/www/html
