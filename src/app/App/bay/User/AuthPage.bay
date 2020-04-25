@@ -187,6 +187,8 @@ class AuthPage extends Component
 		this.updateModel
 		{
 			"message": "Please wait ...",
+			"error": "",
+			"success": "",
 		};
 		
 		/* Login */

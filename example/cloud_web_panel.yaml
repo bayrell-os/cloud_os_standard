@@ -1,0 +1,57 @@
+version: "3.7"
+
+secrets:
+    AUTH_PUBLIC_KEY:
+        file: ./auth_public.key
+    AUTH_PRIVATE_KEY:
+        file: ./auth_private.key
+
+
+services:
+
+    cloud_web_panel:
+        image: bayrell/cloud_web_panel:20200425_161149
+        hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
+        volumes:
+            - "cloud_web_panel_data:/data"
+            - "../src:/var/www/html:ro"
+        secrets:
+            - AUTH_PUBLIC_KEY
+            - AUTH_PRIVATE_KEY
+        env_file:
+            - common.env
+        environment:
+            MYSQL_HOST: "172.20.0.13"
+            MYSQL_USERNAME: "root"
+            MYSQL_PASSWORD: "mysqlrootpassword"
+            MYSQL_DB: "cloud_web_panel"
+        deploy:
+            replicas: 1
+            update_config:
+                parallelism: 1
+                failure_action: rollback
+                delay: 5s
+            restart_policy:
+                condition: "on-failure"
+                delay: 10s
+                window: 120s
+            placement:
+                constraints:
+                    - node.role == manager
+        networks:
+            - backend
+        logging:
+            driver: journald
+
+volumes:
+    cloud_web_panel_data:
+
+networks:
+
+    backend:
+        driver: overlay
+        attachable: true
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.21.0.0/16

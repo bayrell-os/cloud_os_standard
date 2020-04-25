@@ -9,22 +9,24 @@ secrets:
 
 services:
 
-    cloud_web_panel:
-        image: bayrell/cloud_web_panel:latest
+    router:
+        image: bayrell/cloud_router:20200425_172522
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
-            - "cloud_web_panel_data:/data"
-            - "../src:/var/www/app:ro"
+            - "router_data:/data"
+            - "../router/root/router.php:/root/router.php"
         secrets:
             - AUTH_PUBLIC_KEY
             - AUTH_PRIVATE_KEY
         env_file:
             - common.env
         environment:
-            MYSQL_HOST: "172.20.0.13"
-            MYSQL_USERNAME: "root"
-            MYSQL_PASSWORD: "mysqlrootpassword"
-            MYSQL_DB: "cloud_web_panel"
+            DNS_RESOLVER: 127.0.0.11
+            CLOUD_WEB_PANEL: cloud_web_panel
+        ports:
+            - 80:80
+            - 443:443
+            - 8080:8080
         deploy:
             replicas: 1
             update_config:
@@ -44,7 +46,7 @@ services:
             driver: journald
 
 volumes:
-    cloud_web_panel_data:
+    router_data:
 
 networks:
 
