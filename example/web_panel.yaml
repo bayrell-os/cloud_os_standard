@@ -10,7 +10,7 @@ secrets:
 services:
 
     web_panel:
-        image: bayrell/cloud_web_panel:20200426_172214
+        image: bayrell/cloud_web_panel:20200426_182030
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "web_panel_data:/data"
@@ -44,6 +44,7 @@ services:
                     - node.role == manager
         networks:
             - backend
+            - frontend
         logging:
             driver: journald
 
@@ -59,3 +60,12 @@ networks:
             driver: default
             config:
                 - subnet: 172.21.0.0/16
+
+    frontend:
+        driver: overlay
+        attachable: true
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.22.0.0/16
+                

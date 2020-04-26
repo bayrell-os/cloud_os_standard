@@ -10,7 +10,7 @@ secrets:
 services:
 
     router:
-        image: bayrell/cloud_router:20200426_172704
+        image: bayrell/cloud_router:20200426_182005
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "router_data:/data"
@@ -41,7 +41,7 @@ services:
                 constraints:
                     - node.role == manager
         networks:
-            - backend
+            - frontend
         logging:
             driver: journald
 
@@ -50,10 +50,10 @@ volumes:
 
 networks:
 
-    backend:
+    frontend:
         driver: overlay
         attachable: true
         ipam:
             driver: default
             config:
-                - subnet: 172.21.0.0/16
+                - subnet: 172.22.0.0/16
