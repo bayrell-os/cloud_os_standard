@@ -1,6 +1,6 @@
-FROM bayrell/alpine_php_fpm:latest
+FROM bayrell/alpine_php_fpm:7.2
 
-RUN apk add dnsmasq && rm -rf /var/cache/apk/*
+RUN apk add dnsmasq php7-pdo_mysql && rm -rf /var/cache/apk/*
 
 ADD router /src/files
 RUN cd ~; \

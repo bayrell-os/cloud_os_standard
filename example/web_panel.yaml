@@ -10,10 +10,11 @@ secrets:
 services:
 
     web_panel:
-        image: bayrell/cloud_web_panel:20200425_185051
+        image: bayrell/cloud_web_panel:20200426_170357
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "web_panel_data:/data"
+            - "/var/run/docker.sock:/var/run/docker.sock"
             - "../src:/var/www/html:ro"
         secrets:
             - AUTH_PUBLIC_KEY
@@ -21,10 +22,12 @@ services:
         env_file:
             - common.env
         environment:
-            MYSQL_HOST: "172.20.0.13"
-            MYSQL_USERNAME: "root"
-            MYSQL_PASSWORD: "mysqlrootpassword"
+            MYSQL_HOST: "mysql1"
+            MYSQL_USERNAME: "lasto4ka"
+            MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
             MYSQL_DB: "cloud_web_panel"
+            COOKIE_NAME: auth_token
+            COOKIE_EXPIRE: 86400
         deploy:
             replicas: 1
             update_config:

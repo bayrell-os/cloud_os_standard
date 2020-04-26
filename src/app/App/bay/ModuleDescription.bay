@@ -67,6 +67,7 @@ class ModuleDescription implements
 		
 		/* Backend */
 		#ifdef BACKEND then
+		'Runtime.ORM.MySQL': '*',
 		'Runtime.Web.Backend': '*',
 		#endif
 	};
@@ -79,6 +80,7 @@ class ModuleDescription implements
 	 */
 	pure Collection<string> assets() => 
 	[
+		"App/Adminer",
 		"App/User/AuthPage",
 		"App/User/AuthPageModel",
 		"App/User/AuthToken",
@@ -97,6 +99,9 @@ class ModuleDescription implements
 		
 		/* Backend */
 		#ifdef BACKEND then
+		
+		new Entity{ "name": "App.Adminer" },
+		
 		new LambdaChain
 		{
 			"name": RenderContainer::RENDER_CHAIN,

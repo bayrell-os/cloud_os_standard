@@ -1,0 +1,120 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App;
+
+use Runtime.lib;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+
+
+@RouteList{}
+class Adminer extends Component
+{
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/adminer/{version}/" }
+	static async RenderContainer actionAdminer(RenderContainer container)
+	{
+		string content = "";
+		string version = container -> attr "route_params" -> lib::get("version", "");
+		
+		#ifcode PHP then
+		$file_path = \Runtime\rtl::getModulePath($ctx, "App") . "/data/adminer-4.7.6.php";
+		@ob_start();
+		include $file_path;
+		$content = ob_get_contents();
+		@ob_end_clean();
+		#endif
+		
+		container <= response <= new Response{ "content": content };
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/adminer/" }
+	static async RenderContainer actionIndex(RenderContainer container)
+	{
+		Dict attrs = @ -> lib::attr(["settings", "providers", "Runtime.ORM.Mysql", "default"], {});
+		
+		/* Set title */
+		container <= layout <= title <= "Login page";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof Adminer;
+		container <= layout <= page_model <=
+		{
+			"db": attrs,
+		};
+		container <= layout <= f_inc <= 1;
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
+		<div>
+			Redirect. Please wait...
+			<form id="adminer_form" method="post" action="/adminer/4.7.6/">
+				<input type='hidden' name='auth[driver]' value='server' />
+				<input type='hidden' name='auth[server]' value={ model.get("db", "").get("host", "") } />
+				<input type='hidden' name='auth[username]' value={ model.get("db", "").get("username", "") } />
+				<input type='hidden' name='auth[password]' value={ model.get("db", "").get("password", "") } />
+				<input type='hidden' name='auth[permanent]' value='1' />
+			</form>
+		</div>
+	;
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * Update component
+	 */
+	public void onUpdate(bool created)
+	{
+		if (created)
+		{
+			#ifcode JAVASCRIPT then
+			adminer_form.submit()
+			#endif
+		}
+	}
+	
+	#endif
+	
+}
