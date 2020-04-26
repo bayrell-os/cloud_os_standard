@@ -10,18 +10,19 @@ secrets:
 services:
 
     web_panel:
-        image: bayrell/cloud_web_panel:20200426_170357
+        image: bayrell/cloud_web_panel:20200426_172214
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "web_panel_data:/data"
             - "/var/run/docker.sock:/var/run/docker.sock"
-            - "../src:/var/www/html:ro"
+            - "../src:/var/www:ro"
         secrets:
             - AUTH_PUBLIC_KEY
             - AUTH_PRIVATE_KEY
         env_file:
             - common.env
         environment:
+            MEMCACHED: "memcached1"
             MYSQL_HOST: "mysql1"
             MYSQL_USERNAME: "lasto4ka"
             MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
