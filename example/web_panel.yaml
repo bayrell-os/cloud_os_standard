@@ -10,7 +10,7 @@ secrets:
 services:
 
     web_panel:
-        image: bayrell/cloud_web_panel:20200426_182030
+        image: bayrell/cloud_web_panel:20200427_120525
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "web_panel_data:/data"

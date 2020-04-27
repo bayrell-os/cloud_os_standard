@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
     router:
-        image: bayrell/cloud_router:20200427_090851
+        image: bayrell/cloud_router:20200427_121919
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "router_data:/data"
@@ -12,6 +12,8 @@ services:
             - common.env
         environment:
             DNS_RESOLVER: 127.0.0.11
+            SYSTEM_PANEL: web_panel
+            SYSTEM_DOMAIN: raspa.local
         ports:
             - 80:80
             - 443:443
@@ -33,38 +35,6 @@ services:
         logging:
             driver: journald
             
-            
-    system_router:
-        image: bayrell/cloud_router:20200427_090851
-        hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
-        volumes:
-            - "router_data:/data"
-            - "../router/root/router.php:/root/router.php"
-        env_file:
-            - common.env
-        environment:
-            DNS_RESOLVER: 127.0.0.11
-            SYSTEM_PANEL: web_panel
-        ports:
-            - 8080:80
-            - 8443:443
-        deploy:
-            replicas: 1
-            update_config:
-                parallelism: 1
-                failure_action: rollback
-                delay: 5s
-            restart_policy:
-                condition: "on-failure"
-                delay: 10s
-                window: 120s
-            placement:
-                constraints:
-                    - node.role == manager
-        networks:
-            - frontend
-        logging:
-            driver: journald            
 
 volumes:
     router_data:

@@ -1,0 +1,189 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App;
+
+use Runtime.lib;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+
+
+class Layout extends Component
+{
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "Runtime.Web";
+	
+	
+	
+	/**
+	 * Required components
+	 */
+	pure Collection<string> components() => null;
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			*{box-sizing: border-box;}body{margin:0;padding:0;}
+			%layout{
+				min-height: 100%;
+			}
+			%layout_wrap{
+				position: relative;
+				min-height: 100%;
+				padding-bottom: 35px;
+			}
+			%layout_footer{
+				position: relative;
+				font-size: 12px;
+				height: 24px;
+				margin-top: -24px;
+			}
+			%layout_footer .b_in{
+			}
+			%layout_menu, %layout_content_wrap{
+				display: inline-block;
+				vertical-align: top;
+			}
+			%layout_menu{
+				width: 240px;
+			}
+			%layout_content_wrap{
+				width: calc(100% - 240px);
+			}
+			%layout_site_name, %layout_title{
+				font-size: 16px;
+			}
+			%layout_site_name, %layout_title, %layout_page{
+				padding: 10px;
+			}
+			%layout_menu_items ul, %layout_menu_items li{
+				padding: 0; margin: 0;
+				list-style: none;
+			}
+			%layout_menu_items ul{
+				background-color: #8E4497;
+				color: #337ab7;
+				padding-left: 20px;
+			}
+			%layout_menu_items ul li{
+				background-color: white;
+			}
+			%layout_menu_items ul%level0{
+				padding-left: 0px;
+			}
+			%layout_menu_items ul%level0 > li{
+				background-color: #f5f5f5;
+			}
+			%layout_menu_items li a{
+				display: block;
+				padding: 10px 15px;
+				border-bottom: 1px solid #e7e7e7;
+			}
+			%layout_title {
+				box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
+				background-color: #8E4497;
+				color: white;
+			}
+			%layout_content{
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, LayoutModel model, Dict params, html content)
+	{
+		string class_name = model.page_class;
+		return 
+			<div @class='layout'>
+				<div @class='layout_wrap'>
+					<div @class='layout_menu'>
+						<div @class='layout_site_name'>
+							<a class='nolink' href='/'>{ _("App", "Web Panel") }</a>
+						</div>
+						<div @class='layout_menu_items'>
+							<ul @class='level0'>
+								<li>
+									<a class='nolink' href='/'>{ _("App", "Dashboard") }</a>
+								</li>
+								<li>
+									<a class='nolink'>{ _("App", "Cluster") }</a>
+									<ul>
+										<li>
+											<a class='nolink' href='/nodes/'>{ _("App", "Nodes") }</a>
+										</li>
+										<li>
+											<a class='nolink' href='/stacks/'>{ _("App", "Stacks") }</a>
+										</li>
+										<li>
+											<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
+										</li>
+										<li>
+											<a class='nolink' href='/tasks/'>{ _("App", "Tasks") }</a>
+										</li>
+										<li>
+											<a class='nolink' href='/networks/'>{ _("App", "Networks") }</a>
+										</li>
+										<li>
+											<a class='nolink' href='/logs/'>{ _("App", "Logs") }</a>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<a class='nolink' href='/networks/'>{ _("App", "Users") }</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div @class='layout_content_wrap'>
+						<div @class='layout_title'>{ model.title }</div>
+						<div @class='layout_content'>
+							<div @class='layout_breadcrumbs'>
+							</div>
+							<div @class='layout_page'>
+								<{class_name} @bind="page_model" @key="view"></{class_name}>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div @class='layout_footer'>
+					<div class='b_out'><div class='b_in'>
+						{ "(c) BAYRELL Cloud OS 2020 \"Ildar Bikmamatov\" <support@bayrell.org>" }
+					</div></div>
+				</div>
+			</div>
+		;
+	}
+	
+	
+}

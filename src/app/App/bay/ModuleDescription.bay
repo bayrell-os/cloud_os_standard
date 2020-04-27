@@ -81,6 +81,8 @@ class ModuleDescription implements
 	pure Collection<string> assets() => 
 	[
 		"App/Adminer",
+		"App/IndexPage",
+		"App/Layout",
 		"App/User/AuthPage",
 		"App/User/AuthPageModel",
 		"App/User/AuthToken",
@@ -94,8 +96,17 @@ class ModuleDescription implements
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		/* Index page */
+		/* Pages */
+		new Entity{ "name": "App.IndexPage" },
 		new Entity{ "name": "App.User.AuthPage" },
+		
+		/* Layout */
+		new LambdaChain
+		{
+			"name": RenderContainer::LAYOUT_CHAIN,
+			"value": "App.ModuleDescription::layout",
+		},
+		
 		
 		/* Backend */
 		#ifdef BACKEND then
@@ -127,8 +138,20 @@ class ModuleDescription implements
 	/**
 	 * Returns sync loaded files
 	 */		
-	pure Vector<string> resources() => null;
+	pure Vector<string> resources() =>
+	[
+		"App/core.css",
+	];
 	
+	
+	
+	/**
+	 * App layout
+	 */
+	pure string layout(string layout_class_name)
+	{
+		return "App.Layout";
+	}
 	
 	
 	#ifdef BACKEND then

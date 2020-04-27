@@ -32,6 +32,12 @@ use Runtime.Web.Response;
 class Adminer extends Component
 {
 	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
 	
 	/**
 	 * Route Action

@@ -40,7 +40,7 @@ function update_upstreams($services)
 	{
 		if (count($ips) == 0) continue;
 		
-		$new_content .= "upstream ${service_name}.local {\n";
+		$new_content .= "upstream ${service_name}.test {\n";
 		foreach ($ips as $ip){
 			$new_content .= "\tserver ${ip};\n";
 		}
