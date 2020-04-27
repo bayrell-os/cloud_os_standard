@@ -1,4 +1,5 @@
-if [ ! -z $CLOUD_WEB_PANEL ]; then
-	sed -i "s|%CLOUD_WEB_PANEL%|${CLOUD_WEB_PANEL}|g" /etc/nginx/sites-enabled/cloud_web_panel.conf
+if [ ! -z $SYSTEM_PANEL ]; then
+	rm -f /etc/nginx/sites-enabled/99-default.conf
+	sed -i "s|%SYSTEM_PANEL%|${SYSTEM_PANEL}|g" /etc/nginx/sites-available/99-system-panel.conf
+	ln -s ../sites-available/99-system-panel.conf /etc/nginx/sites-enabled/99-default.conf
 fi
-chmod +x /root/router.sh

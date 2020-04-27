@@ -68,8 +68,8 @@ function nginx_reload()
 }
 
 
-$CLOUD_WEB_PANEL = getenv("CLOUD_WEB_PANEL");
-echo "[router.php] Monitor gateway: " . $CLOUD_WEB_PANEL . "\n";
+$SYSTEM_PANEL = getenv("SYSTEM_PANEL");
+echo "[router.php] Monitor gateway: " . $SYSTEM_PANEL . "\n";
 
 while (true)
 {
@@ -77,7 +77,7 @@ while (true)
 	try
 	{
 		$old_services = $services;
-		$services = update_service($services, $CLOUD_WEB_PANEL);
+		$services = update_service($services, $SYSTEM_PANEL);
 		if ($old_services != $services)
 		{
 			update_upstreams($services);
