@@ -33,7 +33,6 @@ use App.User.AuthToken;
 
 
 @RouteList{}
-@ApiList{ "api_name": "App.User", "space_name": "AuthInterface" }
 class AuthApi
 {
 	#ifdef BACKEND then

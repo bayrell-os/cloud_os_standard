@@ -13,3 +13,6 @@
 [submodule "src/lib/Runtime.ORM.MySQL"]
 	path = src/lib/Runtime.ORM.MySQL
 	url = https://github.com/bayrell/Runtime.ORM.MySQL
+[submodule "src/lib/Runtime.Cron"]
+	path = src/lib/Runtime.Cron
+	url = https://github.com/bayrell/Runtime.Cron

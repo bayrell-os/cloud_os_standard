@@ -67,6 +67,7 @@ class ModuleDescription implements
 		
 		/* Backend */
 		#ifdef BACKEND then
+		'Runtime.Cron': '*',
 		'Runtime.ORM.MySQL': '*',
 		'Runtime.Web.Backend': '*',
 		#endif
@@ -84,7 +85,6 @@ class ModuleDescription implements
 		"App/IndexPage",
 		"App/Layout",
 		"App/User/AuthPage",
-		"App/User/AuthPageModel",
 		"App/User/AuthToken",
 		"App/ModuleDescription",
 	];
@@ -112,6 +112,7 @@ class ModuleDescription implements
 		#ifdef BACKEND then
 		
 		new Entity{ "name": "App.Adminer" },
+		new Entity{ "name": "App.Cron.SyncDockerServices" },
 		
 		new LambdaChain
 		{
@@ -122,6 +123,7 @@ class ModuleDescription implements
 		
 		new Entity{ "name": "App.User.AuthApi" },
 		#endif
+		
 		
 		/* Frontend */
 		#ifdef FRONTEND then
@@ -140,7 +142,7 @@ class ModuleDescription implements
 	 */		
 	pure Vector<string> resources() =>
 	[
-		"App/core.css",
+		"@App/core.css",
 	];
 	
 	

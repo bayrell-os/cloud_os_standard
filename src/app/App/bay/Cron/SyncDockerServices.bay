@@ -16,16 +16,27 @@
  *  limitations under the License.
  */
 
-namespace App.User;
+namespace App.Cron;
 
-use Runtime.CoreStruct;
+use Runtime.Cron.CronList;
+use Runtime.Cron.CronMethod;
 
 
-struct AuthPageModel extends CoreStruct
+@CronList{}
+class SyncDockerServices
 {
-	string username = "";
-	string password = "";
-	string message = "";
-	string success = "";
-	string error = "";
+	
+	
+	
+	@CronMethod{}
+	static async void sync()
+	{
+		
+		
+		
+		
+	}
+	
+	
+	
 }

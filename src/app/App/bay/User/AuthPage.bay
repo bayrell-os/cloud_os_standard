@@ -51,19 +51,20 @@ class AuthPage extends Component
 	 */
 	@Route{ "uri": "/login/" }
 	static async RenderContainer AuthPage(RenderContainer container)
-	{
-		AuthPageModel model = new AuthPageModel
-		{
-			"name": "",
-			"password": "",
-		};
-		
+	{	
 		/* Set title */
 		container <= layout <= title <= "Login page";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof AuthPage;
-		container <= layout <= page_model <= model;
+		container <= layout <= page_model <=
+		{
+			"username": "",
+			"password": "",
+			"message": "",
+			"success": "",
+			"error": "",
+		};
 		container <= layout <= f_inc <= 1;
 		
 		return container;
@@ -161,9 +162,9 @@ class AuthPage extends Component
 			</div>
 			
 			<div @class='wrap result' class={ static::getResultClass(model) }>
-				{ model.message }
-				{ model.success }
-				{ model.error }
+				{ model.get("message", "") }
+				{ model.get("success", "") }
+				{ model.get("error", "") }
 			</div>
 			
 		</div>
@@ -177,8 +178,8 @@ class AuthPage extends Component
 	 */
 	pure string getResultClass(AuthPageModel model)
 	{
-		if (model.success != "") return "success";
-		if (model.error != "") return "error";
+		if (model.get("success", "") != "") return "success";
+		if (model.get("error", "") != "") return "error";
 		return "";
 	}
 	
@@ -206,8 +207,8 @@ class AuthPage extends Component
 				"url": "/api/login/",
 				"data":
 				{
-					"username": this.model.username,
-					"password": this.model.password,
+					"username": this.model -> attr "username",
+					"password": this.model -> attr "password",
 				}
 			}
 			-> lib::createStruct(classof MessageRPC)
@@ -216,7 +217,7 @@ class AuthPage extends Component
 		this.updateModel
 		{
 			"message": "",
-			"error": msg -> attr "error",
+			"error": msg -> attr "error" -> monad lib::default("System error"),
 			"success": (msg != null and msg::isSuccess(msg)) ? msg.response : "",
 		};
 	}
