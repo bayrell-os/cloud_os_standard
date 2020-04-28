@@ -16,23 +16,26 @@
  *  limitations under the License.
  */
 
-namespace App.Cron;
+namespace App.Task;
 
-use Runtime.Cron.CronList;
-use Runtime.Cron.CronMethod;
+use Runtime.Task.TaskList;
+use Runtime.Task.TaskMethod;
+use Runtime.Task.TaskOutputProvider;
 
 
-@CronList{}
+@TaskList{}
 class SyncDockerServices
 {
 	
 	
 	
-	@CronMethod{}
+	@TaskMethod{}
 	static async void sync()
 	{
 		
+		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
 		
+		output -> method writeln("Ok");
 		
 		
 	}

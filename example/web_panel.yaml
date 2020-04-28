@@ -14,7 +14,7 @@ services:
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "web_panel_data:/data"
-            - "/var/run/docker.sock:/var/run/docker.sock"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "../src:/var/www:ro"
         secrets:
             - AUTH_PUBLIC_KEY

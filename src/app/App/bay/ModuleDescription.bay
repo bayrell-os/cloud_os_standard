@@ -67,8 +67,8 @@ class ModuleDescription implements
 		
 		/* Backend */
 		#ifdef BACKEND then
-		'Runtime.Cron': '*',
 		'Runtime.ORM.MySQL': '*',
+		'Runtime.Task': '*',
 		'Runtime.Web.Backend': '*',
 		#endif
 	};
@@ -112,7 +112,7 @@ class ModuleDescription implements
 		#ifdef BACKEND then
 		
 		new Entity{ "name": "App.Adminer" },
-		new Entity{ "name": "App.Cron.SyncDockerServices" },
+		new Entity{ "name": "App.Task.SyncDockerServices" },
 		
 		new LambdaChain
 		{
