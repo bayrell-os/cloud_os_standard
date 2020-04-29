@@ -29,9 +29,23 @@ use App.Task.AppTaskLib;
 
 
 @TaskList{}
-class SyncDockerServices
+class SyncDockerServicesTask
 {
 	
+	@TaskMethod
+	{
+		"timer": 15,
+	}
+	static async void sync()
+	{
+		await static::sync_services();
+	}
+	
+	
+	
+	/**
+	 * Sync services
+	 */
 	static async void sync_services()
 	{
 		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
@@ -50,24 +64,11 @@ class SyncDockerServices
 			
 			output -> method writeln ("Update service " ~ service_name);
 			
-			/* Find service by id */
-			Cursor c = p
-				/* -> lib::copy{ "log_query": true } */
-				-> method query
-				(
-					"select `id` from docker_services where service_id=:service_id limit 1",
-					{
-						"service_id": service_id,
-					}
-				)
-			;
-			Dict row = c.fetch();
-			c.close();
 			
 			/* Insert or update */
-			if (row)
-			{
-				p -> method update
+			p
+				/* -> lib::copy{ "log_query": true } */
+				-> method insert_or_update
 				(
 					"docker_services",
 					{
@@ -80,34 +81,27 @@ class SyncDockerServices
 						"timestamp": time,
 						"json": RuntimeUtils::json_encode(service),
 					}
-				);
-			}
-			else
-			{
-				p -> method insert
-				(
-					"docker_services",
-					{
-						"service_id": service_id,
-						"name": service_name,
-						"image": service_image,
-						"enable": 1,
-						"timestamp": time,
-						"json": RuntimeUtils::json_encode(service),
-					}
-				);
-			}
+				)
+				-> method end
+			;
+			
 		}
+		
+		
+		/* Disable old services */
+		p
+			/* -> lib::copy{ "log_query": true } */
+			-> method query
+			(
+				"update docker_services set enable=0 where timestamp != :timestamp",
+				{
+					"timestamp": time,
+				}
+			)
+			-> method end
+		;
+		
 	}
-	
-	
-	
-	@TaskMethod{}
-	static async void sync()
-	{
-		await static::sync_services();
-	}
-	
 	
 	
 }

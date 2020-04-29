@@ -29,7 +29,7 @@ use Runtime.Web.Response;
 
 
 @RouteList{}
-class Adminer extends Component
+class AdminerPage extends Component
 {
 	
 	/**
@@ -100,7 +100,7 @@ class Adminer extends Component
 		container <= layout <= title <= "Login page";
 		
 		/* Create model */
-		container <= layout <= page_class <= classof Adminer;
+		container <= layout <= page_class <= classof AdminerPage;
 		container <= layout <= page_model <=
 		{
 			"db": attrs,

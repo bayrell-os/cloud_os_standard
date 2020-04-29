@@ -111,8 +111,8 @@ class ModuleDescription implements
 		/* Backend */
 		#ifdef BACKEND then
 		
-		new Entity{ "name": "App.Adminer" },
-		new Entity{ "name": "App.Task.SyncDockerServices" },
+		new Entity{ "name": "App.AdminerPage" },
+		new Entity{ "name": "App.Task.SyncDockerServicesTask" },
 		
 		new LambdaChain
 		{

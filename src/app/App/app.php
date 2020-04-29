@@ -29,7 +29,6 @@ $env = array_merge
 	[
 		"AUTH_PRIVATE_KEY" => file_get_contents("/run/secrets/AUTH_PRIVATE_KEY"),
 		"AUTH_PUBLIC_KEY" => file_get_contents("/run/secrets/AUTH_PUBLIC_KEY"),
-		"MYSQL_DB" => "web_panel",
 	]
 );
 
