@@ -18,26 +18,94 @@
 
 namespace App.Task;
 
+use Runtime.lib;
+use Runtime.RuntimeUtils;
 use Runtime.Task.TaskList;
 use Runtime.Task.TaskMethod;
 use Runtime.Task.TaskOutputProvider;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.ProviderInterface;
+use App.Task.AppTaskLib;
 
 
 @TaskList{}
 class SyncDockerServices
 {
 	
+	static async void sync_services()
+	{
+		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
+		ProviderInterface p = @ -> method getProvider(classof ProviderInterface);
+		
+		int time = @.time();
+		string s = AppTaskLib::dockerApi("/services");
+		Collection services = RuntimeUtils::json_decode(s);
+		
+		for (int i=0; i<services.count(); i++)
+		{
+			Dict service = services.item(i);
+			string service_id = service.get("ID", "");
+			string service_name = service -> lib::attr(["Spec", "Name"], "");
+			string service_image = service -> lib::attr(["Spec", "Labels", "com.docker.stack.image"], "");
+			
+			output -> method writeln ("Update service " ~ service_name);
+			
+			/* Find service by id */
+			Cursor c = p
+				/* -> lib::copy{ "log_query": true } */
+				-> method query
+				(
+					"select `id` from docker_services where service_id=:service_id limit 1",
+					{
+						"service_id": service_id,
+					}
+				)
+			;
+			Dict row = c.fetch();
+			c.close();
+			
+			/* Insert or update */
+			if (row)
+			{
+				p -> method update
+				(
+					"docker_services",
+					{
+						"service_id": service_id,
+					},
+					{
+						"name": service_name,
+						"image": service_image,
+						"enable": 1,
+						"timestamp": time,
+						"json": RuntimeUtils::json_encode(service),
+					}
+				);
+			}
+			else
+			{
+				p -> method insert
+				(
+					"docker_services",
+					{
+						"service_id": service_id,
+						"name": service_name,
+						"image": service_image,
+						"enable": 1,
+						"timestamp": time,
+						"json": RuntimeUtils::json_encode(service),
+					}
+				);
+			}
+		}
+	}
+	
 	
 	
 	@TaskMethod{}
 	static async void sync()
 	{
-		
-		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
-		
-		output -> method writeln("Ok");
-		
-		
+		await static::sync_services();
 	}
 	
 	

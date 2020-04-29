@@ -15,7 +15,7 @@ services:
         volumes:
             - "web_panel_data:/data"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
-            - "../src:/var/www:ro"
+            - "../src:/var/www"
         secrets:
             - AUTH_PUBLIC_KEY
             - AUTH_PRIVATE_KEY
@@ -26,7 +26,7 @@ services:
             MYSQL_HOST: "mysql1"
             MYSQL_USERNAME: "lasto4ka"
             MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
-            MYSQL_DB: "cloud_web_panel"
+            MYSQL_DB: "web_panel"
             COOKIE_NAME: auth_token
             COOKIE_EXPIRE: 86400
         deploy:

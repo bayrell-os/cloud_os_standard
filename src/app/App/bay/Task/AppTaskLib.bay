@@ -16,15 +16,13 @@
  *  limitations under the License.
  */
 
-namespace App;
+namespace App.Task;
 
 
-class AppLib
+class AppTaskLib
 {
 	
-	#ifdef BACKEND then
-	
-	async string dockerApi(string url)
+	static async string dockerApi(string url)
 	{
 		string content = "";
 		
@@ -34,8 +32,5 @@ class AppLib
 		
 		return content;
 	}
-	
-	#endif
-	
 	
 }

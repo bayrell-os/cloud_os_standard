@@ -185,7 +185,7 @@ class ModuleDescription implements
 		},
 		"providers":
 		{
-			"Runtime.ORM.Mysql":
+			"Runtime.ORM.MySQL.Provider":
 			{
 				"default":
 				{
