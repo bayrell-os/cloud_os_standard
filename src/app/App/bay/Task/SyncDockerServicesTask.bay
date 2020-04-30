@@ -20,11 +20,13 @@ namespace App.Task;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
+use Runtime.Task.CronMethod;
+use Runtime.Task.CronTimer;
 use Runtime.Task.TaskList;
 use Runtime.Task.TaskMethod;
 use Runtime.Task.TaskOutputProvider;
 use Runtime.ORM.Cursor;
-use Runtime.ORM.ProviderInterface;
+use Runtime.ORM.ORMProviderInterface;
 use App.Task.AppTaskLib;
 
 
@@ -32,7 +34,7 @@ use App.Task.AppTaskLib;
 class SyncDockerServicesTask
 {
 	
-	@TaskMethod
+	@CronTimer
 	{
 		"timer": 15,
 	}
@@ -49,7 +51,7 @@ class SyncDockerServicesTask
 	static async void sync_services()
 	{
 		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
-		ProviderInterface p = @ -> method getProvider(classof ProviderInterface);
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
 		int time = @.time();
 		string s = AppTaskLib::dockerApi("/services");
@@ -70,7 +72,7 @@ class SyncDockerServicesTask
 				/* -> lib::copy{ "log_query": true } */
 				-> method insert_or_update
 				(
-					"docker_services",
+					p.prefix ~ "docker_services",
 					{
 						"service_id": service_id,
 					},
@@ -93,7 +95,7 @@ class SyncDockerServicesTask
 			/* -> lib::copy{ "log_query": true } */
 			-> method query
 			(
-				"update docker_services set enable=0 where timestamp != :timestamp",
+				"update " ~ p.prefix ~ "docker_services set enable=0 where timestamp != :timestamp",
 				{
 					"timestamp": time,
 				}
