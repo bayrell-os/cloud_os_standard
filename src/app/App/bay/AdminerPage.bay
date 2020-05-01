@@ -43,7 +43,7 @@ class AdminerPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/info/" }
+	@Route{ "uri": "/adminer/info/", "name": "app.adminer.info" }
 	static async RenderContainer actionInfo(RenderContainer container)
 	{
 		string content = "";
@@ -66,7 +66,7 @@ class AdminerPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/{version}/" }
+	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
 	static async RenderContainer actionAdminer(RenderContainer container)
 	{
 		string content = "";
@@ -91,7 +91,7 @@ class AdminerPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/" }
+	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		Dict attrs = @ -> lib::attr(["settings", "providers", "Runtime.ORM.Mysql", "default"], {});

@@ -106,6 +106,11 @@ class Layout extends Component
 				padding: 10px 15px;
 				border-bottom: 1px solid #e7e7e7;
 			}
+			%layout_menu_items li.active > a, %layout_menu_items li.active > a:hover{
+				background-color: #337ab7;
+				border-color: #337ab7;
+				color: white;
+			}
 			%layout_title {
 				box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
 				background-color: #8E4497;
@@ -124,6 +129,7 @@ class Layout extends Component
 	pure html render(LayoutModel layout, LayoutModel model, Dict params, html content)
 	{
 		string class_name = model.page_class;
+		
 		return 
 			<div @class='layout'>
 				<div @class='layout_wrap'>
@@ -133,34 +139,39 @@ class Layout extends Component
 						</div>
 						<div @class='layout_menu_items'>
 							<ul @class='level0'>
-								<li>
+								<li class={ rs::start(model.route.name, "app.index") ? "active": "" }>
 									<a class='nolink' href='/'>{ _("App", "Dashboard") }</a>
 								</li>
 								<li>
 									<a class='nolink'>{ _("App", "Cluster") }</a>
 									<ul>
-										<li>
+										<li class={ rs::start(model.route.name, "app.nodes") ? "active": "" }>
 											<a class='nolink' href='/nodes/'>{ _("App", "Nodes") }</a>
 										</li>
-										<li>
+										<li class={ rs::start(model.route.name, "app.stacks") ? "active": "" }>
 											<a class='nolink' href='/stacks/'>{ _("App", "Stacks") }</a>
 										</li>
-										<li>
+										<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
 											<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
 										</li>
-										<li>
+										<li class={ rs::start(model.route.name, "app.tasks") ? "active": "" }>
 											<a class='nolink' href='/tasks/'>{ _("App", "Tasks") }</a>
 										</li>
-										<li>
+										<li class={ rs::start(model.route.name, "app.networks") ? "active": "" }>
 											<a class='nolink' href='/networks/'>{ _("App", "Networks") }</a>
 										</li>
-										<li>
+										<li class={ rs::start(model.route.name, "app.logs") ? "active": "" }>
 											<a class='nolink' href='/logs/'>{ _("App", "Logs") }</a>
 										</li>
 									</ul>
 								</li>
 								<li>
-									<a class='nolink' href='/networks/'>{ _("App", "Users") }</a>
+									<a class='nolink'>{ _("App", "Admin") }</a>
+									<ul>
+										<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
+											<a class='nolink' href='/users/'>{ _("App", "Users") }</a>
+										</li>
+									</ul>
 								</li>
 							</ul>
 						</div>

@@ -1,0 +1,245 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.Service;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Events.Mouse.MouseClickEvent;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+use Runtime.Web.Button.Button;
+
+
+@RouteList{}
+class ServicePage extends Component
+{
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/services/", "name": "app.services.index" }
+	static async RenderContainer actionIndex(RenderContainer container)
+	{
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Service.ServiceCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "search",
+				"data":
+				{
+				},
+			}
+		);
+		
+		/* Set title */
+		container <= layout <= title <= "Service page";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof ServicePage;
+		container <= layout <= page_model <=
+		{
+			"active": 1,
+			"items": (msg::isSuccess(msg)) ? msg.response : [],
+		};
+		container <= layout <= f_inc <= 1;
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Returns required components
+	 */
+	pure Collection<string> components() => 
+	[
+		classof Button,
+	];
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			%items, %info{
+				display: inline-block;
+				vertical-align: top;
+			}
+			%items{
+				width: 350px;
+				position: relative;
+			}
+			%item{
+				padding: 10px;
+				cursor: pointer;
+				border-bottom: 1px #ccc solid;
+			}
+			%item.active{
+				background-color: #337ab7;
+				border-color: #337ab7;
+				color: white;
+			}
+			%item_row{
+				padding-bottom: 5px;
+			}
+			%item_row:last-child{
+				padding-bottom: 0px;
+			}
+			%item_label, %item_text{
+				display: inline-block;
+				vertical-align: top;
+			}
+			%item_label{
+				display: none;
+				width: 0px;
+				text-align: right;
+				padding-right: 5px;
+			}
+			%item_text{
+				width: calc(100% - 0px);
+				text-align: left;
+				padding-left: 5px;
+				overflow-wrap: anywhere;
+			}
+			%info{
+				width: calc(100% - 350px);
+				padding-left: 10px;
+			}
+			%info_row{
+				padding-bottom: 15px;
+			}
+			%info_row:last-child{
+				padding-bottom: 0px;
+			}
+			%info_label{
+				font-weight: bold;
+				padding-bottom: 5px;
+			}
+			%info_value{}
+			%info_value input{
+				width: 100%;
+				padding: 5px 10px;
+			}
+			%info_buttons{
+				text-align: center;
+			}
+			%info_buttons %(Button)button{
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
+		<div>
+			<div @class='items' @key={ "items" }>
+			{ 
+				model.item("items").map
+				(
+					html (Dict item, int index) use (model) =>
+						<div @class='item' data-index={ index } @key={ index }
+							class={ model.item("active") == index ? "active": "" }
+							@event:MouseClickEvent="onItemClick"
+						>
+							<div @class='item_row name'>
+								<div @class='item_label'>{ _("App", "Name") }:</div>
+								<div @class='item_text'>{ rtl::attr(item, ["name"], "") }</div>
+							</div>
+							<div @class='item_row image'>
+								<div @class='item_label'>{ _("App", "Image") }:</div>
+								<div @class='item_text'>{ rtl::attr(item, ["image"], "") }</div>
+							</div>
+						</div>
+				)
+			}
+			</div>
+			<div @class='info' @key={ "info" }>
+				{ model.item("active") >= 0 ? static::showActiveItem(layout, model) : "" }
+			</div>
+		</div>
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html showActiveItem(LayoutModel layout, Dict model) =>
+		<div @class='info_row'>
+			<div @class='info_label'>{ _("App", "Name") }:</div>
+			<div @class='info_value'>
+				<input value={ rtl::attr(static::getActiveItem(model), ["name"]) } />
+			</div>
+		</div>
+		<div @class='info_row'>
+			<div @class='info_label'>{ _("App", "Image") }:</div>
+			<div @class='info_value'>
+				<input value={ rtl::attr(static::getActiveItem(model), ["image"]) } />
+			</div>
+		</div>
+		<div @class='info_row info_buttons'>
+			<Button>Save</Button>
+			<Button>Delete</Button>
+		</div>
+	;
+	
+	
+	
+	/**
+	 * Returns active item
+	 */
+	pure memorize Dict getActiveItem(Dict model) => rtl::attr(model, ["items", model.item("active")], null);
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	void onItemClick(MouseClickEvent e)
+	{
+		this.updateModel
+		{
+			"active": e.target.@getAttribute("data-index"),
+		};
+	}
+	
+	#endif
+	
+}

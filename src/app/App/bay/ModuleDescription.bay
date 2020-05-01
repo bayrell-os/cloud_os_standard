@@ -84,8 +84,11 @@ class ModuleDescription implements
 		"App/Adminer",
 		"App/IndexPage",
 		"App/Layout",
+		"App/Service/ServicePage",
+		"App/Service/ServicePageModel",
 		"App/User/AuthPage",
 		"App/User/AuthToken",
+		"App/User/UserPage",
 		"App/ModuleDescription",
 	];
 	
@@ -98,7 +101,9 @@ class ModuleDescription implements
 	[
 		/* Pages */
 		new Entity{ "name": "App.IndexPage" },
+		new Entity{ "name": "App.Service.ServicePage" },
 		new Entity{ "name": "App.User.AuthPage" },
+		new Entity{ "name": "App.User.UserPage" },
 		
 		/* Layout */
 		new LambdaChain
@@ -121,6 +126,7 @@ class ModuleDescription implements
 			"pos": RenderContainer::RENDER_CHAIN_BEFORE_CALL_ROUTE,
 		},
 		
+		new Entity{ "name": "App.Service.ServiceCrudApi" },
 		new Entity{ "name": "App.User.AuthApi" },
 		#endif
 		

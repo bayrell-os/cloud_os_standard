@@ -16,58 +16,51 @@
  *  limitations under the License.
  */
 
-namespace App;
+namespace App.Service;
 
 use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.RuntimeUtils;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.ORMProviderInterface;
+use Runtime.Web.Annotations.ApiList;
+use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Cookie;
+use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
-use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
 
 
-@RouteList{}
-class IndexPage extends Component
+@ApiList{ "space_name": "CrudInterface" }
+class ServiceCrudApi
 {
 	
 	/**
-	 * Returns module name
+	 * Search
 	 */
-	pure string moduleName() => "App";
-	
-	
-	
-	/**
-	 * Route Action
-	 * @return WebContainer
-	 */
-	@Route{ "uri": "/", "name": "app.index" }
-	static async RenderContainer actionIndex(RenderContainer container)
+	@ApiMethod{ "method_name": "search" }
+	static async MessageRPC search(MessageRPC msg)
 	{
-		/* Set title */
-		container <= layout <= title <= "Index page";
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
-		/* Create model */
-		container <= layout <= page_class <= classof IndexPage;
-		container <= layout <= page_model <=
-		{
-		};
-		container <= layout <= f_inc <= 1;
+		string sql = "select * from " ~ p.prefix ~ "docker_services limit 100";
+		Cursor cursor = p
+			-> await method query(sql)
+		;
+		Collection<Dict> res = await cursor.fetchAll
+		(
+			Dict (Dict item)
+			{
+				item <= json <= RuntimeUtils::json_decode(item.json);
+				return item;
+			}
+		);
+		cursor.close();
 		
-		return container;
+		return msg -> method success(res);
 	}
 	
-	
-	
-	/**
-	 * Component render
-	 */
-	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
-		<div>
-			Hello
-		</div>
-	;
 	
 }

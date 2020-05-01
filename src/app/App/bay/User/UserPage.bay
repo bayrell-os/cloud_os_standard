@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace App;
+namespace App.User;
 
 use Runtime.lib;
 use Runtime.Web.Annotations.Route;
@@ -29,7 +29,7 @@ use Runtime.Web.Response;
 
 
 @RouteList{}
-class IndexPage extends Component
+class UserPage extends Component
 {
 	
 	/**
@@ -43,14 +43,14 @@ class IndexPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/", "name": "app.index" }
+	@Route{ "uri": "/users/", "name": "app.users.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		/* Set title */
-		container <= layout <= title <= "Index page";
+		container <= layout <= title <= "User page";
 		
 		/* Create model */
-		container <= layout <= page_class <= classof IndexPage;
+		container <= layout <= page_class <= classof UserPage;
 		container <= layout <= page_model <=
 		{
 		};
@@ -66,7 +66,7 @@ class IndexPage extends Component
 	 */
 	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
 		<div>
-			Hello
+			User list
 		</div>
 	;
 	

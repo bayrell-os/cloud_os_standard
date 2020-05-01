@@ -16,3 +16,6 @@
 [submodule "src/lib/Runtime.Task"]
 	path = src/lib/Runtime.Task
 	url = https://github.com/bayrell/Runtime.Task
+[submodule "src/lib/Runtime.Web.Button"]
+	path = src/lib/Runtime.Web.Button
+	url = https://github.com/bayrell/Runtime.Web.Button
