@@ -31,6 +31,7 @@ use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
+use App.Task.AppTaskLib;
 
 
 @ApiList{ "space_name": "CrudInterface" }
@@ -45,7 +46,7 @@ class ServiceCrudApi
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
-		string sql = "select * from " ~ p.prefix ~ "docker_services limit 100";
+		string sql = "select * from " ~ p.prefix ~ "docker_services order by id desc limit 100";
 		Cursor cursor = p
 			-> await method query(sql)
 		;
@@ -62,5 +63,23 @@ class ServiceCrudApi
 		return msg -> method success(res);
 	}
 	
+	
+	
+	/**
+	 * Update
+	 */
+	@ApiMethod{ "method_name": "update" }
+	static async MessageRPC update(MessageRPC msg)
+	{
+		Dict res = msg -> attr "data" -> await AppTaskLib::dockerUpdateService;
+		
+		/* Check if error */
+		if (res == null) return msg -> method fail();
+		if (res.has("Error")) return msg -> method fail(null, res.item("Error"));
+		
+		/* Success */
+		return msg -> method success(res);
+	}
+		
 	
 }

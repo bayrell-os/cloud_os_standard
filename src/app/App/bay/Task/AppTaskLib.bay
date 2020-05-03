@@ -18,19 +18,128 @@
 
 namespace App.Task;
 
+use Runtime.lib;
+use Runtime.RuntimeUtils;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.ORMProviderInterface;
+
 
 class AppTaskLib
 {
 	
-	static async string dockerApi(string url)
+	static async string dockerApi(string url, string m = "GET", string post = null)
 	{
 		string content = "";
+		string cmd = "sudo /usr/bin/curl -s -x " ~ m ~ " -H 'Content-Type: application/json' ";
+		if (post != null) cmd ~= "-d '" ~ post ~ "' ";
+		
+		cmd ~= "--unix-socket /var/run/docker.sock http:/v1.39" ~ url;
 		
 		#ifcode PHP then
-		$content = @shell_exec("curl -s --unix-socket /var/run/docker.sock http:/v1.39" . $url);
+		$content = @shell_exec($cmd . " &2>/dev/null");
 		#endif
 		
 		return content;
 	}
 	
+	
+	
+	/**
+	 * Get diff from spec
+	 */
+	pure Dict getDockerUpdateSpec(Dict old_json, Dict new_json)
+	{
+		if (old_json === null) return null;
+		if (new_json === null) return null;
+		
+		bool updated = false;
+		Dict diff_spec = rtl::attr(old_json, ["Spec"], {});
+		
+		/* Change image */
+		string old_image = rtl::attr(old_json, ["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		string new_image = rtl::attr(new_json, ["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		if (old_image != new_image and new_image != "")
+		{
+			if (rtl::attr(diff_spec, ["TaskTemplate"], null) === null)
+			{
+				diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate"], {});
+			}
+			if (rtl::attr(diff_spec, ["TaskTemplate", "ContainerSpec"], null) === null)
+			{
+				diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate", "ContainerSpec"], {});
+			}
+			diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate", "ContainerSpec", "Image"], new_image);
+			updated = true;
+		}
+		
+		return [updated, diff_spec];
+	}
+	
+	
+	
+	/**
+	 * Get service from docker
+	 */
+	static async Dict dockerGetService(string service_id)
+	{
+		string url_api = "/services/" ~ service_id;
+		string content = await AppTaskLib::dockerApi(url_api);
+		return RuntimeUtils::json_decode(content);
+	}
+	
+	
+	
+	/**
+	 * Update service in docker
+	 */
+	static async Dict dockerUpdateService(Dict new_json)
+	{
+		string service_id = new_json -> attr "ID";
+		if (service_id == null) return {};
+		
+		Dict old_json = static::dockerGetService(service_id);
+		if (old_json == null) return {"Error": _("App", "Service not found") };
+		
+		string version = old_json -> attr "Version" -> attr "Index";
+		if (version == null) return {};
+		
+		list res = static::getDockerUpdateSpec(old_json, new_json);
+		if (res == null) return {"Error": _("App", "Update service spec error") };
+		
+		bool updated = res[0];
+		Dict diff_spec = res[1];
+		if (not updated) return {"Message": _("App", "Service not updated") };
+		
+		string s = RuntimeUtils::json_encode(diff_spec);
+		string url_api = "/services/" ~ service_id ~ "/update?version=" ~ version;
+		
+		/* Update service */
+		string content = await AppTaskLib::dockerApi(url_api, "POST", s);
+		Dict res = RuntimeUtils::json_decode(content);
+		
+		res = res.setIm("Message", _("App", "Service updated") );
+		return res;
+	}
+	
+	
+	
+	/**
+	 * Returns service by id
+	 */
+	static async Dict dbGetServiceById(string service_id)
+	{
+		if (service_id == "") return null;
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		Dict item = p
+			-> await method query
+			(
+				"select * from " ~ p.prefix ~ "docker_services where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method getOne
+		;
+		return item;
+	}
 }

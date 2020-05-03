@@ -70,21 +70,21 @@ class SyncDockerServicesTask
 			/* Insert or update */
 			p
 				/* -> lib::copy{ "log_query": true } */
-				-> method insert_or_update
+				-> await method insert_or_update
 				(
 					p.prefix ~ "docker_services",
 					{
 						"service_id": service_id,
 					},
 					{
-						"name": service_name,
-						"image": service_image,
+						"_name": service_name,
+						"_image": service_image,
 						"enable": 1,
 						"timestamp": time,
 						"json": RuntimeUtils::json_encode(service),
 					}
 				)
-				-> method end
+				-> await method end
 			;
 			
 		}
@@ -93,14 +93,14 @@ class SyncDockerServicesTask
 		/* Disable old services */
 		p
 			/* -> lib::copy{ "log_query": true } */
-			-> method query
+			-> await method query
 			(
 				"update " ~ p.prefix ~ "docker_services set enable=0 where timestamp != :timestamp",
 				{
 					"timestamp": time,
 				}
 			)
-			-> method end
+			-> await method end
 		;
 		
 	}
