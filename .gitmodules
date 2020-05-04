@@ -19,3 +19,6 @@
 [submodule "src/lib/Runtime.Web.Button"]
 	path = src/lib/Runtime.Web.Button
 	url = https://github.com/bayrell/Runtime.Web.Button
+[submodule "src/lib/Runtime.Web.Dialog"]
+	path = src/lib/Runtime.Web.Dialog
+	url = https://github.com/bayrell/Runtime.Web.Dialog
