@@ -27,10 +27,13 @@ use Runtime.ORM.ORMProviderInterface;
 class AppTaskLib
 {
 	
+	/**
+	 * Send docker command
+	 */
 	static async string dockerApi(string url, string m = "GET", string post = null)
 	{
 		string content = "";
-		string cmd = "sudo /usr/bin/curl -s -x " ~ m ~ " -H 'Content-Type: application/json' ";
+		string cmd = "sudo /usr/bin/curl -s -X " ~ m ~ " -H 'Content-Type: application/json' ";
 		if (post != null) cmd ~= "-d '" ~ post ~ "' ";
 		
 		cmd ~= "--unix-socket /var/run/docker.sock http:/v1.39" ~ url;
@@ -95,20 +98,21 @@ class AppTaskLib
 	static async Dict dockerUpdateService(Dict new_json)
 	{
 		string service_id = new_json -> attr "ID";
-		if (service_id == null) return {};
+		if (service_id == null) return {"Error": _("App", "Service ID is not set"), "Code": -1};
 		
 		Dict old_json = static::dockerGetService(service_id);
-		if (old_json == null) return {"Error": _("App", "Service not found") };
+		service_id = old_json -> attr "ID";
+		if (service_id == null) return {"Error": _("App", "Service not found"), "Code": -2 };
 		
 		string version = old_json -> attr "Version" -> attr "Index";
 		if (version == null) return {};
 		
 		list res = static::getDockerUpdateSpec(old_json, new_json);
-		if (res == null) return {"Error": _("App", "Update service spec error") };
+		if (res == null) return {"Error": _("App", "Update service spec error"), "Code": -3  };
 		
 		bool updated = res[0];
 		Dict diff_spec = res[1];
-		if (not updated) return {"Message": _("App", "Service not updated") };
+		if (not updated) return {"Message": _("App", "Service not updated"), "Code": 2  };
 		
 		string s = RuntimeUtils::json_encode(diff_spec);
 		string url_api = "/services/" ~ service_id ~ "/update?version=" ~ version;
@@ -117,7 +121,46 @@ class AppTaskLib
 		string content = await AppTaskLib::dockerApi(url_api, "POST", s);
 		Dict res = RuntimeUtils::json_decode(content);
 		
-		res = res.setIm("Message", _("App", "Service updated") );
+		res = res.setIm("Message", _("App", "Service updated")).setIm("Code", 1);
+		return res;
+	}
+	
+	
+	
+	/**
+	 * Delete service in docker
+	 */
+	static async Dict dockerDeleteService(Dict spec_json)
+	{
+		string service_id = spec_json -> attr "ID";
+		if (service_id == null) return {"Error": _("App", "Service ID is not set"), "Code": -1};
+		
+		/* Delete service */
+		string url_api = "/services/" ~ service_id;
+		string content = await AppTaskLib::dockerApi(url_api, "DELETE");
+		Dict res = RuntimeUtils::json_decode(content);
+		
+		int code = 0;
+		string message = res.get("message", "");
+		string error = "";
+		if (message == "")
+		{
+			code = 1;
+			message = _("App", "Service deleted");
+		}
+		else
+		{
+			error = message;
+			message = "";
+			code = -1;
+		}
+		
+		res =
+		{
+			"Error": error,
+			"Message": message,
+			"Code": code,
+		};
 		return res;
 	}
 	

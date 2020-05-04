@@ -30,12 +30,18 @@ use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
 use Runtime.Web.Button.Button;
+use Runtime.Web.Dialog.Dialog;
+use Runtime.Web.Dialog.DialogEvent;
+use Runtime.Web.Dialog.DialogModel;
+use App.Service.Form;
+use App.Service.FormEvent;
+use App.Service.FormModel;
 use App.Service.ServicePageModel;
 
 
 @RouteList{}
 class ServicePage extends Component
-{
+{	
 	
 	/**
 	 * Returns module name
@@ -73,9 +79,6 @@ class ServicePage extends Component
 		{
 			"items": (msg::isSuccess(msg)) ? msg.response : [],
 		};
-		container <= layout <= page_model <= item <=
-			container.layout.page_model -> method getActiveItem
-		;
 		container <= layout <= f_inc <= 1;
 		
 		return container;
@@ -89,6 +92,8 @@ class ServicePage extends Component
 	pure Collection<string> components() => 
 	[
 		classof Button,
+		classof Dialog,
+		classof Form,
 	];
 	
 	
@@ -107,6 +112,7 @@ class ServicePage extends Component
 				position: relative;
 			}
 			%item{
+				position: relative;
 				padding: 10px;
 				cursor: pointer;
 				border-bottom: 1px #ccc solid;
@@ -138,40 +144,17 @@ class ServicePage extends Component
 				padding-left: 5px;
 				overflow-wrap: anywhere;
 			}
+			%item_disabled{
+				position: absolute;
+				right: 0;
+				top: 0;
+				background-color: #880000;
+				color: white;
+				font-size: 12px;
+			}
 			%info{
 				width: calc(100% - 350px);
 				padding-left: 10px;
-			}
-			%info_row{
-				padding-bottom: 15px;
-			}
-			%info_row:last-child{
-				padding-bottom: 0px;
-			}
-			%info_label{
-				font-weight: bold;
-				padding-bottom: 5px;
-			}
-			%info_value{}
-			%info_value input{
-				width: 100%;
-				padding: 5px 10px;
-			}
-			%info_buttons{
-				text-align: center;
-			}
-			%info_buttons %(Button)button{
-				margin-left: 10px;
-				margin-right: 10px;
-			}
-			%info_result{
-				text-align: center;
-			}
-			%info_result.success{
-				color: green;
-			}
-			%info_result.error{
-				color: red;
 			}
 		}
 	;
@@ -183,6 +166,9 @@ class ServicePage extends Component
 	 */
 	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
 		<div>
+			<div @class='buttons_top'>
+				<Button @eventAsync:MouseClickEvent="onShowAddClick">Add</Button>
+			</div>
 			<div @class='items' @key={ "items" }>
 			{ 
 				model.items.map
@@ -198,67 +184,31 @@ class ServicePage extends Component
 							</div>
 							<div @class='item_row image'>
 								<div @class='item_label'>{ _("App", "Image") }:</div>
-								<div @class='item_text'>{
+								<div @class='item_text'>
+								{
 									static::trimImageName
 									(
 										rtl::attr(item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"], "")
 									)
-								}</div>
+								}
+								</div>
 							</div>
+							{
+								item.get("enable", 0) == 1 ? "" : 
+									( <div @class='item_disabled'>{ _("App", "Disabled") }</div> )
+							}
 						</div>
 				)
 			}
 			</div>
 			<div @class='info' @key={ "info" }>
-				{ model.active >= 0 ? static::showActiveItem(layout, model) : "" }
+				<Form @bind="form_edit" action="edit"></Form>
 			</div>
+			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT }>
+				<Form @bind="form_add" action="add" @event:FormEvent="onFormAddEvent"></Form>
+			</Dialog>
 		</div>
 	;
-	
-	
-	
-	/**
-	 * Component render
-	 */
-	pure html showActiveItem(LayoutModel layout, Dict model) =>
-		<div @class='info_row'>
-			<div @class='info_label'>{ _("App", "Name") }:</div>
-			<div @class='info_value'>
-				<input data-name="name" @event:ChangeEvent="onItemChange" readonly="readonly"
-					value={ rtl::attr(model.item, ["json", "Spec", "Name"]) } 
-				/>
-			</div>
-		</div>
-		<div @class='info_row'>
-			<div @class='info_label'>{ _("App", "Image") }:</div>
-			<div @class='info_value'>
-				<input data-name="image" @event:ChangeEvent="onItemChange"
-					value={ rtl::attr(model.item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"]) }
-				/>
-			</div>
-		</div>
-		<div @class='info_row info_buttons'>
-			<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
-			<Button @eventAsync:MouseClickEvent="onDeleteClick">Delete</Button>
-		</div>
-		<div @class='info_row info_result' class={ static::getResultClass(model) }>
-			{ model.get("message", "") }
-			{ model.get("success", "") }
-			{ model.get("error", "") }
-		</div>
-	;
-	
-	
-	
-	/**
-	 * Returns result class
-	 */
-	pure string getResultClass(ServicePageModel model)
-	{
-		if (model.success != "") return "success";
-		if (model.error != "") return "error";
-		return "";
-	}
 	
 	
 	
@@ -276,93 +226,49 @@ class ServicePage extends Component
 	
 	#ifdef FRONTEND then
 	
+	
+	/**
+	 * Add click
+	 */
+	async void onShowAddClick(MouseClickEvent e)
+	{
+		e.cancel();
+		this.updateModel
+		{
+			"form_add": new FormModel
+			{
+				"item": new Dict(),
+			}
+		};
+		this.dialog_add.show();
+	}
+	
+	
+	
+	/**
+	 * Form add Event
+	 */
+	async void onFormAddEvent(FormEvent e)
+	{
+		if (e.event == "cancel")
+		{
+			this.dialog_add.hide();
+		}
+	}
+	
+	
+	
 	/**
 	 * Click item
 	 */
 	void onItemClick(MouseClickEvent e)
 	{
 		Dict model = this.model;
-		model <= active <= e.target.@getAttribute("data-index");
-		model <= item <= model -> method getActiveItem;
+		model <= active <= e.target.params.get("data-index");
+		model <= form_edit <= item <= model -> method getActiveItem;
 		this.setModel(model);
 	}
-	
-	
-	
-	/**
-	 * Item change
-	 */
-	void onItemChange(ChangeEvent e)
-	{
-		Dict item = this.model.item;
-		string name = e.target.@getAttribute("data-name");
 		
-		if (name == "image")
-		{
-			item = rtl::setAttr(item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"], e.value);
-		}
-		
-		this.updateModel
-		{
-			"item": item,
-		};
-	}
-	
-	
-	
-	/**
-	 * Update click
-	 */
-	async void onUpdateClick(MouseClickEvent e)
-	{
-		Dict item = this.model.item;
-		int active = this.model.active;
-		
-		this.updateModel
-		{
-			"message": _("App", "Please wait ..."),
-			"error": "",
-			"success": "",
-		};
-		
-		Dict model = this.model;
-		model <= items <= this.model.items.setIm(active, item);
-		model <= item <= model -> method getActiveItem;
-		
-		MessageRPC msg = @ -> await method sendMessage
-		(
-			new MessageRPC
-			{
-				"api_name": "App.Service.ServiceCrudApi",
-				"space_name": "CrudInterface",
-				"method_name": "update",
-				"data": model -> attr "item" -> attr "json",
-			}
-		);		
-		
-		bool is_success = msg -> method isSuccess;
-		if (is_success)
-		{
-			this.setModel(model);
-		}
-		
-		this.updateModel
-		{
-			"message": "",
-			"error": msg -> attr "error",
-			"success": msg -> attr "response" -> attr "Message" -> monad lib::default(""),
-		};
-	}
-	
-	
-	
-	/**
-	 * Delete click
-	 */
-	async void onDeleteClick(MouseClickEvent e)
-	{
-	}
-	
 	#endif
 	
 }

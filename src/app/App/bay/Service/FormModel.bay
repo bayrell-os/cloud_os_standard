@@ -20,21 +20,13 @@ namespace App.Service;
 
 use Runtime.CoreStruct;
 use Runtime.Web.Dialog.DialogModel;
-use App.Service.FormModel;
 
 
-struct ServicePageModel extends CoreStruct
+struct FormModel extends CoreStruct
 {
-	int active = -1;
-	Collection<Dict> items = null;
-	FormModel form_add = new FormModel();
-	FormModel form_edit = new FormModel();
-	DialogModel dialog_add = new DialogModel();
-	
-	
-	/**
-	 * Returns active item
-	 */
-	pure Dict getActiveItem(ServicePageModel model) => rtl::attr(model, ["items", model.active], null);
-	
+	Dict item = null;
+	string message = "";
+	string success = "";
+	string error = "";
+	DialogModel dialog_delete = new DialogModel();
 }

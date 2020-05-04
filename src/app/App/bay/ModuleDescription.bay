@@ -81,9 +81,12 @@ class ModuleDescription implements
 	 */
 	pure Collection<string> assets() => 
 	[
-		"App/Adminer",
+		"App/AdminerPage",
 		"App/IndexPage",
 		"App/Layout",
+		"App/Service/Form",
+		"App/Service/FormEvent",
+		"App/Service/FormModel",
 		"App/Service/ServicePage",
 		"App/Service/ServicePageModel",
 		"App/User/AuthPage",

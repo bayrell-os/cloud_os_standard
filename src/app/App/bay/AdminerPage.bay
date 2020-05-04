@@ -94,7 +94,7 @@ class AdminerPage extends Component
 	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
-		Dict attrs = @ -> lib::attr(["settings", "providers", "Runtime.ORM.Mysql", "default"], {});
+		Dict attrs = @ -> lib::attr(["settings", "providers", "Runtime.ORM.MySQL.Provider", "default"], {});
 		
 		/* Set title */
 		container <= layout <= title <= "Login page";
@@ -140,7 +140,7 @@ class AdminerPage extends Component
 		if (created)
 		{
 			#ifcode JAVASCRIPT then
-			adminer_form.submit()
+			adminer_form.submit();
 			#endif
 		}
 	}

@@ -66,7 +66,18 @@ class ServiceCrudApi
 	
 	
 	/**
-	 * Update
+	 * Add service
+	 */
+	@ApiMethod{ "method_name": "add" }
+	static async MessageRPC add(MessageRPC msg)
+	{
+		return msg -> method fail(null, "Error", -1)
+	}
+	
+	
+	
+	/**
+	 * Update service
 	 */
 	@ApiMethod{ "method_name": "update" }
 	static async MessageRPC update(MessageRPC msg)
@@ -74,12 +85,116 @@ class ServiceCrudApi
 		Dict res = msg -> attr "data" -> await AppTaskLib::dockerUpdateService;
 		
 		/* Check if error */
-		if (res == null) return msg -> method fail();
-		if (res.has("Error")) return msg -> method fail(null, res.item("Error"));
+		if (res == null)
+			return msg ->
+				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
+			;
+		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
 		
 		/* Success */
-		return msg -> method success(res);
+		return msg
+			-> method success
+			(
+				null,
+				res.get("Message", _("App", "Ok")), res.get("Code", 1)
+			)
+		;
 	}
+	
+	
+	
+	/**
+	 * Enable service
+	 */
+	@ApiMethod{ "method_name": "enable" }
+	static async MessageRPC enable(MessageRPC msg)
+	{
+		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
 		
+		/* Check if error */
+		if (res == null)
+			return msg ->
+				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
+			;
+		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
+		
+		/* Success */
+		return msg
+			-> method success
+			(
+				null,
+				res.get("Message", _("App", "Ok")), res.get("Code", 1)
+			)
+		;
+	}
+	
+	
+	
+	/**
+	 * Disable service
+	 */
+	@ApiMethod{ "method_name": "disable" }
+	static async MessageRPC disable(MessageRPC msg)
+	{
+		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
+		
+		/* Check if error */
+		if (res == null)
+			return msg ->
+				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
+			;
+		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
+		
+		/* Success */
+		return msg
+			-> method success
+			(
+				null,
+				res.get("Message", _("App", "Ok")), res.get("Code", 1)
+			)
+		;
+	}
+	
+	
+	
+	/**
+	 * Delete service
+	 */
+	@ApiMethod{ "method_name": "delete" }
+	static async MessageRPC delete(MessageRPC msg)
+	{
+		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
+		string service_id = msg -> attr "data" -> attr "ID";
+		
+		/* Check if error */
+		if (res == null)
+			return msg ->
+				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
+			;
+		
+		/* Delete service from database */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"delete from " ~ p.prefix ~ "docker_services where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		res = {};
+		
+		/* Success */
+		return msg
+			-> method success
+			(
+				null,
+				res.get("Message", _("App", "Ok")), res.get("Code", 1)
+			)
+		;
+	}
 	
 }

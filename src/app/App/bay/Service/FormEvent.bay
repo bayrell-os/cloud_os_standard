@@ -19,22 +19,10 @@
 namespace App.Service;
 
 use Runtime.CoreStruct;
-use Runtime.Web.Dialog.DialogModel;
-use App.Service.FormModel;
+use Runtime.Web.Events.UIEvent;
 
 
-struct ServicePageModel extends CoreStruct
+struct FormEvent extends UIEvent
 {
-	int active = -1;
-	Collection<Dict> items = null;
-	FormModel form_add = new FormModel();
-	FormModel form_edit = new FormModel();
-	DialogModel dialog_add = new DialogModel();
-	
-	
-	/**
-	 * Returns active item
-	 */
-	pure Dict getActiveItem(ServicePageModel model) => rtl::attr(model, ["items", model.active], null);
-	
+	string event = "";
 }
