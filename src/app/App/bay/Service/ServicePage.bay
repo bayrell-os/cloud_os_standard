@@ -42,6 +42,8 @@ use App.Service.ServicePageModel;
 @RouteList{}
 class ServicePage extends Component
 {	
+	Dialog dialog_add = null;
+	
 	
 	/**
 	 * Returns module name
@@ -195,7 +197,7 @@ class ServicePage extends Component
 							</div>
 							{
 								item.get("enable", 0) == 1 ? "" : 
-									( <div @class='item_disabled'>{ _("App", "Disabled") }</div> )
+									<div @class='item_disabled'>{ _("App", "Disabled") }</div>
 							}
 						</div>
 				)
@@ -204,8 +206,8 @@ class ServicePage extends Component
 			<div @class='info' @key={ "info" }>
 				<Form @bind="form_edit" action="edit"></Form>
 			</div>
-			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT }>
-				<Form @bind="form_add" action="add" @event:FormEvent="onFormAddEvent"></Form>
+			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT } show_buttons={ false }>
+				<Form @bind="form_add" action="add" @eventAsync:FormEvent="onFormAddEvent"></Form>
 			</Dialog>
 		</div>
 	;

@@ -139,21 +139,22 @@ class Form extends Component
 			<div @class='form_row form_buttons'>
 			{
 				params.get("action", "") == "add" ?
+				(
+					<Button @eventAsync:MouseClickEvent="onAddClick">Add</Button>
+					<Button @eventAsync:MouseClickEvent="onCancelClick">Cancel</Button>
+				) :
+				(
+					model.item.get("enable", 1) == 1 ?
 					(
-						<Button @eventAsync:MouseClickEvent="onAddClick">Add</Button>
-						<Button @eventAsync:MouseClickEvent="onCancelClick">Cancel</Button>
+						<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
+						<Button @eventAsync:MouseClickEvent="onDisableClick">Disable</Button>
+						<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
 					) :
-					( ( model.item.get("enable", 1) == 1 ) ?
-						(
-							<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
-							<Button @eventAsync:MouseClickEvent="onDisableClick">Disable</Button>
-							<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
-						) :
-						(
-							<Button @eventAsync:MouseClickEvent="onEnableClick">Enable</Button>
-							<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
-						)
+					(
+						<Button @eventAsync:MouseClickEvent="onEnableClick">Enable</Button>
+						<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
 					)
+				)
 			}
 			</div>
 			<div @class='form_row form_result' class={ static::getResultClass(model) }>
@@ -163,9 +164,9 @@ class Form extends Component
 			</div>
 			{
 				params.get("action", "") != "edit" ? "" :
-					( <Dialog @bind="dialog_delete" @ref="dialog_delete" @eventAsync:DialogEvent="onDialogEvent"
+					<Dialog @bind="dialog_delete" @ref="dialog_delete" @eventAsync:DialogEvent="onDialogEvent"
 						style={ DialogModel::STYLE_CONFIRM } auto_hide={ false }
-					/> )
+					/>
 			}
 		</div>
 	;
@@ -259,6 +260,22 @@ class Form extends Component
 	async void onAddClick(MouseClickEvent e)
 	{
 		e.cancel();
+		
+		this.updateModel
+		{
+			"message": _("App", "Please wait ..."),
+			"error": "",
+			"success": "",
+		};
+		
+		await rtl::sleep(1000);
+		
+		this.updateModel
+		{
+			"message": "",
+			"error": "Error",
+			"success": "",
+		};
 	}
 	
 	
