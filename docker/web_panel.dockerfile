@@ -1,6 +1,6 @@
 FROM bayrell/alpine_php_fpm:7.3
 
-RUN apk add sudo; \
+RUN apk add sudo docker; \
 	rm -rf /var/cache/apk/*; \
 	sed -i 's|# %wheel ALL=(ALL) NOPASSWD: ALL|%wheel ALL=(ALL) NOPASSWD: ALL|g' /etc/sudoers; \
 	adduser www wheel; \

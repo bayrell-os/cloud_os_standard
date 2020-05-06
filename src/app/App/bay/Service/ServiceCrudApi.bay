@@ -20,6 +20,7 @@ namespace App.Service;
 
 use Runtime.lib;
 use Runtime.MessageRPC;
+use Runtime.Monad;
 use Runtime.RuntimeUtils;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
@@ -31,12 +32,47 @@ use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
-use App.Task.AppTaskLib;
+use App.AppLib;
 
 
 @ApiList{ "space_name": "CrudInterface" }
 class ServiceCrudApi
 {
+	
+	/**
+	 * Get Result
+	 */
+	pure fn getResult(MessageRPC msg, string s, int code) =>
+		MessageRPC (Monad res) use (msg, s, code)
+		{
+			if (res.err == null and res.val === null)
+				return new Monad
+				(
+					msg ->
+						method fail(null, _("App", s), -1)
+				);
+			
+			if (res.err != null)
+				return new Monad
+				(
+					msg ->
+						method fail(null, res.err.getErrorMessage(), res.err.getErrorCode())
+				);
+			
+			/* Success */
+			return new Monad
+			(
+				msg
+					-> method success
+					(
+						res.val,
+						res.val.get("Message", _("App", "Ok")), res.val.get("Code", 1)
+					)
+			);
+		}
+	;
+	
+	
 	
 	/**
 	 * Search
@@ -46,7 +82,7 @@ class ServiceCrudApi
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
-		string sql = "select * from " ~ p.prefix ~ "docker_services order by id desc limit 100";
+		string sql = "select * from " ~ p.prefix ~ "docker_services where is_deleted=0 order by id desc limit 100";
 		Cursor cursor = p
 			-> await method query(sql)
 		;
@@ -80,26 +116,12 @@ class ServiceCrudApi
 	 * Update service
 	 */
 	@ApiMethod{ "method_name": "update" }
-	static async MessageRPC update(MessageRPC msg)
-	{
-		Dict res = msg -> attr "data" -> await AppTaskLib::dockerUpdateService;
-		
-		/* Check if error */
-		if (res == null)
-			return msg ->
-				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
-			;
-		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
-		
-		/* Success */
-		return msg
-			-> method success
-			(
-				null,
-				res.get("Message", _("App", "Ok")), res.get("Code", 1)
-			)
+	static async MessageRPC update(MessageRPC msg) =>
+		msg
+			-> attr "data"
+			-> await AppLib::dockerUpdateService
+			-> monad static::getResult(msg, _("App", "Update error"), -1)
 		;
-	}
 	
 	
 	
@@ -107,26 +129,12 @@ class ServiceCrudApi
 	 * Enable service
 	 */
 	@ApiMethod{ "method_name": "enable" }
-	static async MessageRPC enable(MessageRPC msg)
-	{
-		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
-		
-		/* Check if error */
-		if (res == null)
-			return msg ->
-				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
-			;
-		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
-		
-		/* Success */
-		return msg
-			-> method success
-			(
-				null,
-				res.get("Message", _("App", "Ok")), res.get("Code", 1)
-			)
+	static async MessageRPC enable(MessageRPC msg) =>
+		msg
+			-> attr "data" -> attr "spec" -> attr "ID"
+			-> await AppLib::dockerEnableService
+			-> monad static::getResult(msg, _("App", "Enable error"), -1)
 		;
-	}
 	
 	
 	
@@ -134,26 +142,12 @@ class ServiceCrudApi
 	 * Disable service
 	 */
 	@ApiMethod{ "method_name": "disable" }
-	static async MessageRPC disable(MessageRPC msg)
-	{
-		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
-		
-		/* Check if error */
-		if (res == null)
-			return msg ->
-				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
-			;
-		if (res.has("Error")) return msg -> method fail(null, res.item("Error"), res.get("Code", -1));
-		
-		/* Success */
-		return msg
-			-> method success
-			(
-				null,
-				res.get("Message", _("App", "Ok")), res.get("Code", 1)
-			)
+	static async MessageRPC disable(MessageRPC msg) =>
+		msg
+			-> attr "data" -> attr "spec" -> attr "ID"
+			-> await AppLib::dockerDisableService
+			-> monad static::getResult(msg, _("App", "Disable error"), -1)
 		;
-	}
 	
 	
 	
@@ -161,40 +155,24 @@ class ServiceCrudApi
 	 * Delete service
 	 */
 	@ApiMethod{ "method_name": "delete" }
-	static async MessageRPC delete(MessageRPC msg)
-	{
-		Dict res = msg -> attr "data" -> await AppTaskLib::dockerDeleteService;
-		string service_id = msg -> attr "data" -> attr "ID";
-		
-		/* Check if error */
-		if (res == null)
-			return msg ->
-				method fail(null, res.item(_("App", "Update error res is null")), res.get("Code", -1))
-			;
-		
-		/* Delete service from database */
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		p
-			-> await method query
-			(
-				"delete from " ~ p.prefix ~ "docker_services where service_id = :service_id limit 1",
-				{
-					"service_id": service_id,
-				}
-			)
-			-> await method end
+	static async MessageRPC delete(MessageRPC msg) =>
+		msg
+			-> attr "data" -> attr "spec" -> attr "ID"
+			-> await AppLib::dockerDisableService
+			
+			-> monad lib::set( msg, true )
+			-> attr "data" -> attr "spec" -> attr "ID"
+			-> await AppLib::databaseDeleteService
+			
+			-> monad lib::set( msg, true )
+			-> attr "data" -> attr "service_id"
+			-> await AppLib::dockerDisableService
+			
+			-> monad lib::set( msg, true )
+			-> attr "data" -> attr "service_id"
+			-> await AppLib::databaseDeleteService
+			
+			-> monad static::getResult(msg, _("App", "Delete error"), -1)
 		;
-		
-		res = {};
-		
-		/* Success */
-		return msg
-			-> method success
-			(
-				null,
-				res.get("Message", _("App", "Ok")), res.get("Code", 1)
-			)
-		;
-	}
 	
 }

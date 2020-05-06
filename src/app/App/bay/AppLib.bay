@@ -16,16 +16,18 @@
  *  limitations under the License.
  */
 
-namespace App.Task;
+namespace App;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
+use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
 
 
-class AppTaskLib
+class AppLib
 {
+	#ifdef BACKEND then
 	
 	/**
 	 * Send docker command
@@ -86,7 +88,7 @@ class AppTaskLib
 	static async Dict dockerGetService(string service_id)
 	{
 		string url_api = "/services/" ~ service_id;
-		string content = await AppTaskLib::dockerApi(url_api);
+		string content = await static::dockerApi(url_api);
 		return RuntimeUtils::json_decode(content);
 	}
 	
@@ -98,31 +100,82 @@ class AppTaskLib
 	static async Dict dockerUpdateService(Dict new_json)
 	{
 		string service_id = new_json -> attr "ID";
-		if (service_id == null) return {"Error": _("App", "Service ID is not set"), "Code": -1};
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
 		
 		Dict old_json = static::dockerGetService(service_id);
 		service_id = old_json -> attr "ID";
-		if (service_id == null) return {"Error": _("App", "Service not found"), "Code": -2 };
+		if (service_id == null) throw new RuntimeException( _("App", "Service not found"), -1 );
 		
 		string version = old_json -> attr "Version" -> attr "Index";
-		if (version == null) return {};
+		if (version == null) throw new RuntimeException( _("App", "Service version is null"), -1 );
 		
 		list res = static::getDockerUpdateSpec(old_json, new_json);
-		if (res == null) return {"Error": _("App", "Update service spec error"), "Code": -3  };
+		if (res == null)  throw new RuntimeException( _("App", "Update service spec error"), -1 );
 		
 		bool updated = res[0];
 		Dict diff_spec = res[1];
-		if (not updated) return {"Message": _("App", "Service not updated"), "Code": 2  };
+		if (not updated) return { "Message": _("App", "Service not updated"), "Code": 2 };
 		
 		string s = RuntimeUtils::json_encode(diff_spec);
 		string url_api = "/services/" ~ service_id ~ "/update?version=" ~ version;
 		
 		/* Update service */
-		string content = await AppTaskLib::dockerApi(url_api, "POST", s);
+		string content = await static::dockerApi(url_api, "POST", s);
 		Dict res = RuntimeUtils::json_decode(content);
 		
-		res = res.setIm("Message", _("App", "Service updated")).setIm("Code", 1);
-		return res;
+		return { "Message": _("App", "Service updated"), "Code": 1 };
+	}
+	
+	
+	
+	/**
+	 * Enable service in docker
+	 */
+	static async Dict dockerEnableService(string service_id)
+	{
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		Dict item = await static::databaseGetServiceById(service_id);
+		if (item == null) throw new RuntimeException( _("App", "Service not found"), -1 );
+		
+		Dict spec = item -> attr "json" -> RuntimeUtils::json_decode -> attr "Spec" -> RuntimeUtils::json_encode;
+		if (spec == null) throw new RuntimeException( _("App", "Spec not found"), -1 );
+		
+		string url_api = "/services/create";
+		string content = await static::dockerApi(url_api, "POST", spec);
+		Dict res = RuntimeUtils::json_decode(content);
+		if (res == null) throw new RuntimeException( _("App", "Create service error"), -1 );
+		
+		string new_service_id = res -> attr "ID";
+		if (new_service_id == null) throw new RuntimeException( _("App", "Service does not created"), -1 );
+		
+		/* Update service id */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set service_id=:new_service_id, is_deleted=0, enable=1 "~
+					" where service_id = :old_service_id limit 1",
+				{
+					"old_service_id": service_id,
+					"new_service_id": new_service_id,
+				}
+			)
+			-> await method end
+		;
+		p
+			-> await method query
+			(
+				"delete from " ~ p.prefix ~ "docker_services "~
+					" where service_id = :old_service_id limit 1",
+				{
+					"old_service_id": service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		return { "Message": _("App", "Service enabled"), "Code": 1, "service_id": new_service_id };
 	}
 	
 	
@@ -130,38 +183,54 @@ class AppTaskLib
 	/**
 	 * Delete service in docker
 	 */
-	static async Dict dockerDeleteService(Dict spec_json)
+	static async Dict dockerDisableService(string service_id)
 	{
-		string service_id = spec_json -> attr "ID";
-		if (service_id == null) return {"Error": _("App", "Service ID is not set"), "Code": -1};
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
 		
 		/* Delete service */
 		string url_api = "/services/" ~ service_id;
-		string content = await AppTaskLib::dockerApi(url_api, "DELETE");
+		string content = await static::dockerApi(url_api, "DELETE");
 		Dict res = RuntimeUtils::json_decode(content);
 		
-		int code = 0;
-		string message = res.get("message", "");
-		string error = "";
-		if (message == "")
+		/* Success */
+		if (content == "")
 		{
-			code = 1;
-			message = _("App", "Service deleted");
-		}
-		else
-		{
-			error = message;
-			message = "";
-			code = -1;
+			return { "Message": _("App", "Service disabled"), "Code": 1 };
 		}
 		
-		res =
+		/* Check if error */
+		string message = res.get("message", "");
+		if (message != "")
 		{
-			"Error": error,
-			"Message": message,
-			"Code": code,
-		};
-		return res;
+			throw new RuntimeException( message, -1 );
+		}
+		
+		return { "Message": _("App", "Service disabled"), "Code": 1 };
+	}
+	
+	
+	
+	/**
+	 * Delete service from database
+	 */
+	static async Dict databaseDeleteService(string service_id)
+	{
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		/* Delete service from database */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set is_deleted=1 where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		return { "Message": _("App", "Service deleted"), "Code": 1 };
 	}
 	
 	
@@ -169,7 +238,7 @@ class AppTaskLib
 	/**
 	 * Returns service by id
 	 */
-	static async Dict dbGetServiceById(string service_id)
+	static async Dict databaseGetServiceById(string service_id)
 	{
 		if (service_id == "") return null;
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
@@ -185,4 +254,6 @@ class AppTaskLib
 		;
 		return item;
 	}
+	
+	#endif
 }

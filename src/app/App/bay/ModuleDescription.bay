@@ -120,7 +120,7 @@ class ModuleDescription implements
 		#ifdef BACKEND then
 		
 		new Entity{ "name": "App.AdminerPage" },
-		new Entity{ "name": "App.Task.SyncDockerServicesTask" },
+		new Entity{ "name": "App.SyncDockerServicesTask" },
 		
 		new LambdaChain
 		{

@@ -16,18 +16,18 @@
  *  limitations under the License.
  */
 
-namespace App.Task;
+namespace App;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
-use Runtime.Task.CronMethod;
-use Runtime.Task.CronTimer;
-use Runtime.Task.TaskList;
-use Runtime.Task.TaskMethod;
+use Runtime.Task.Annotations.CronTask;
+use Runtime.Task.Annotations.CronTimer;
+use Runtime.Task.Annotations.TaskList;
+use Runtime.Task.Annotations.TaskMethod;
 use Runtime.Task.TaskOutputProvider;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
-use App.Task.AppTaskLib;
+use App.AppLib;
 
 
 @TaskList{}
@@ -54,7 +54,8 @@ class SyncDockerServicesTask
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
 		int time = @.time();
-		string s = AppTaskLib::dockerApi("/services");
+		string s = AppLib::dockerApi("/services");
+		
 		Collection services = RuntimeUtils::json_decode(s);
 		
 		for (int i=0; i<services.count(); i++)
@@ -79,6 +80,7 @@ class SyncDockerServicesTask
 					{
 						"_name": service_name,
 						"_image": service_image,
+						"is_deleted": 0,
 						"enable": 1,
 						"timestamp": time,
 						"json": RuntimeUtils::json_encode(service),
@@ -89,15 +91,23 @@ class SyncDockerServicesTask
 			
 		}
 		
-		
-		/* Disable old services */
 		p
-			/* -> lib::copy{ "log_query": true } */
 			-> await method query
 			(
 				"update " ~ p.prefix ~ "docker_services set enable=0 where timestamp != :timestamp",
 				{
 					"timestamp": time,
+				}
+			)
+			-> await method end
+		;
+		
+		p
+			-> await method query
+			(
+				"delete from " ~ p.prefix ~ "docker_services where is_deleted=1 and timestamp < :timestamp",
+				{
+					"timestamp": time - 7*24*60*60,
 				}
 			)
 			-> await method end

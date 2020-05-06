@@ -195,19 +195,18 @@ class ServicePage extends Component
 								}
 								</div>
 							</div>
-							{
-								item.get("enable", 0) == 1 ? "" : 
-									<div @class='item_disabled'>{ _("App", "Disabled") }</div>
-							}
+							<div @class='item_disabled'>
+								{ item.get("enable", 1) == 1 ? "" : _("App", "Disabled") }
+							</div>
 						</div>
 				)
 			}
 			</div>
 			<div @class='info' @key={ "info" }>
-				<Form @bind="form_edit" action="edit"></Form>
+				<Form @bind="form_edit" action="edit" @eventAsync:FormEvent="onFormEvent"></Form>
 			</div>
 			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT } show_buttons={ false }>
-				<Form @bind="form_add" action="add" @eventAsync:FormEvent="onFormAddEvent"></Form>
+				<Form @bind="form_add" action="add" @eventAsync:FormEvent="onFormEvent"></Form>
 			</Dialog>
 		</div>
 	;
@@ -250,11 +249,50 @@ class ServicePage extends Component
 	/**
 	 * Form add Event
 	 */
-	async void onFormAddEvent(FormEvent e)
+	async void onFormEvent(FormEvent e)
 	{
-		if (e.event == "cancel")
+		if (e.event == FormEvent::CANCEL_ADD_DIALOG)
 		{
 			this.dialog_add.hide();
+		}
+		else if (e.event == FormEvent::ACTION_ENABLE)
+		{
+			Dict item = this.model -> method getActiveItem;
+			item <= service_id <= e.service_id;
+			item <= enable <= 1;
+			item = rtl::setAttr(item, ["json", "ID"], e.service_id);
+			
+			FormModel form_edit = this.model.form_edit;
+			form_edit <= item <= item;
+			
+			this.updateModel
+			{
+				"items": this.model.items.setIm(this.model.active, item),
+				"form_edit": form_edit,
+			};
+		}
+		else if (e.event == FormEvent::ACTION_DISABLE)
+		{
+			Dict item = this.model -> method getActiveItem;
+			item <= enable <= 0;
+			
+			FormModel form_edit = this.model.form_edit;
+			form_edit <= item <= item;
+			
+			this.updateModel
+			{
+				"items": this.model.items.setIm(this.model.active, item),
+				"form_edit": form_edit,
+			};
+		}
+		else if (e.event == FormEvent::ACTION_DELETE)
+		{
+			this.updateModel
+			{
+				"active": -1,
+				"items": this.model.items.removeIm(this.model.active),
+				"form_edit": new FormModel(),
+			};
 		}
 	}
 	
@@ -268,6 +306,9 @@ class ServicePage extends Component
 		Dict model = this.model;
 		model <= active <= e.target.params.get("data-index");
 		model <= form_edit <= item <= model -> method getActiveItem;
+		model <= form_edit <= message <= "";
+		model <= form_edit <= error <= "";
+		model <= form_edit <= success <= "";
 		this.setModel(model);
 	}
 		

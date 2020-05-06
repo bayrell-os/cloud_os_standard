@@ -143,17 +143,15 @@ class Form extends Component
 					<Button @eventAsync:MouseClickEvent="onAddClick">Add</Button>
 					<Button @eventAsync:MouseClickEvent="onCancelClick">Cancel</Button>
 				) :
+				model.item.get("enable", 1) == 1 ?
 				(
-					model.item.get("enable", 1) == 1 ?
-					(
-						<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
-						<Button @eventAsync:MouseClickEvent="onDisableClick">Disable</Button>
-						<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
-					) :
-					(
-						<Button @eventAsync:MouseClickEvent="onEnableClick">Enable</Button>
-						<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
-					)
+					<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
+					<Button @eventAsync:MouseClickEvent="onDisableClick">Disable</Button>
+					<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
+				) :
+				(
+					<Button @eventAsync:MouseClickEvent="onEnableClick">Enable</Button>
+					<Button @eventAsync:MouseClickEvent="onForceDeleteClick">Force delete</Button>
 				)
 			}
 			</div>
@@ -291,7 +289,7 @@ class Form extends Component
 		(
 			new FormEvent
 			{
-				"event": "cancel",
+				"event": FormEvent::CANCEL_ADD_DIALOG,
 				"instance": this,
 			}
 		);
@@ -385,6 +383,14 @@ class Form extends Component
 			return;
 		}
 		
+		/* Clear message */
+		this.updateModel
+		{
+			"message": "",
+			"error": "",
+			"success": "",
+		};
+		
 		/* Set dialog message */
 		this.dialog_delete.updateModel
 		{
@@ -401,7 +407,10 @@ class Form extends Component
 				"api_name": "App.Service.ServiceCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": action,
-				"data": e.tag -> attr "item" -> attr "json",
+				"data": {
+					"service_id": e.tag -> attr "item" -> attr "service_id",
+					"spec": e.tag -> attr "item" -> attr "json",
+				}
 			}
 		);
 		
@@ -410,6 +419,49 @@ class Form extends Component
 		{
 			/* Hide dialog */
 			this.dialog_delete.hide();
+			
+			/* Clear message */
+			this.updateModel
+			{
+				"message": "",
+				"error": "",
+				"success": "",
+			};
+			
+			if (action == "delete")
+			{
+				this.signalOut
+				(
+					new FormEvent
+					{
+						"event": FormEvent::ACTION_DELETE,
+						"instance": this,
+					}
+				);
+			}
+			else if (action == "enable")
+			{
+				this.signalOut
+				(
+					new FormEvent
+					{
+						"event": FormEvent::ACTION_ENABLE,
+						"instance": this,
+						"service_id": msg -> attr "response" -> attr "service_id",
+					}
+				);
+			}
+			else if (action == "disable")
+			{
+				this.signalOut
+				(
+					new FormEvent
+					{
+						"event": FormEvent::ACTION_DISABLE,
+						"instance": this,
+					}
+				);
+			}
 		}
 		else
 		{
