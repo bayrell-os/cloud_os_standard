@@ -55,7 +55,6 @@ class YamlCrudApi
 		(
 			Dict (Dict item)
 			{
-				item <= json <= RuntimeUtils::json_decode(item.json);
 				return item;
 			}
 		);
@@ -64,5 +63,91 @@ class YamlCrudApi
 		return msg -> method success(res);
 	}
 	
+	
+	
+	/**
+	 * Add
+	 */
+	@ApiMethod{ "method_name": "add" }
+	static async MessageRPC add(MessageRPC msg)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		string name = msg -> attr "data" -> attr "name";
+		string content = msg -> attr "data" -> attr "content";
+		
+		/* Insert */
+		int id = p
+			-> await method insert
+			(
+				p.prefix ~ "docker_yaml",
+				{
+					"name": name,
+					"content": content,
+				}
+			)
+			-> await method end
+		;
+		
+		return msg -> method success({ "id": id, }, _("App", "Success"));
+	}
+	
+	
+	
+	/**
+	 * Update
+	 */
+	@ApiMethod{ "method_name": "update" }
+	static async MessageRPC update(MessageRPC msg)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		string id = msg -> attr "data" -> attr "id";
+		string name = msg -> attr "data" -> attr "name";
+		string content = msg -> attr "data" -> attr "content";
+		
+		/* Insert or update */
+		p
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_yaml",
+				{
+					"id": id,
+				},
+				{
+					"name": name,
+					"content": content,
+				}
+			)
+			-> await method end
+		;
+		
+		return msg -> method success(null, _("App", "Success"));
+	}
+	
+	
+	
+	/**
+	 * Delete
+	 */
+	@ApiMethod{ "method_name": "delete" }
+	static async MessageRPC delete(MessageRPC msg)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		string id = msg -> attr "data";
+		p
+			-> await method query
+			(
+				"delete from " ~ p.prefix ~ "docker_yaml where id=:id",
+				{
+					"id": id,
+				}
+			)
+			-> await method end
+		;
+		
+		return msg -> method success(null, _("App", "Success"));
+	}
 	
 }

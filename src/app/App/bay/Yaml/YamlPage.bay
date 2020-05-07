@@ -234,8 +234,16 @@ class YamlPage extends Component
 			this.dialog_add.hide();
 			this.updateModel
 			{
+				"active": 0,
 				"items": this.model.items.unshiftIm(e.item),
 				"form_add": new FormModel(),
+			};
+			this.updateModel
+			{
+				"form_edit": new FormModel
+				{
+					"item": this.model -> method getActiveItem,
+				}
 			};
 		}
 		else if (e.event == FormEvent::ACTION_DELETE)

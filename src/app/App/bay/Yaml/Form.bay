@@ -126,9 +126,9 @@ class Form extends Component
 				</div>
 			</div>
 			<div @class='form_row'>
-				<div @class='form_label'>{ _("App", "Image") }:</div>
+				<div @class='form_label'>{ _("App", "Content") }:</div>
 				<div @class='form_value'>
-					<textarea data-name="image" @event:ChangeEvent="onItemChange"
+					<textarea data-name="content" @event:ChangeEvent="onItemChange"
 					>{ rtl::attr(model.item, ["content"]) }</textarea>
 				</div>
 			</div>
@@ -195,6 +195,58 @@ class Form extends Component
 	
 	
 	/**
+	 * Add click
+	 */
+	async void onAddClick(MouseClickEvent e)
+	{
+		e.cancel();
+		
+		Dict item = this.model -> attr "item";
+		
+		this.updateModel
+		{
+			"message": _("App", "Please wait ..."),
+			"error": "",
+			"success": "",
+		};
+		
+		/* Call api */
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Yaml.YamlCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "add",
+				"data": item
+			}
+		);
+		
+		bool is_success = msg -> method isSuccess;
+		this.updateModel
+		{
+			"message": "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
+		};
+		
+		if (is_success)
+		{
+			item <= id <= msg -> attr "response" -> attr "id";
+			this.signalOut
+			(
+				new FormEvent
+				{
+					"event": FormEvent::ACTION_ADD,
+					"item": item,
+				}
+			);
+		}
+	}
+	
+	
+	
+	/**
 	 * Update click
 	 */
 	async void onUpdateClick(MouseClickEvent e)
@@ -217,10 +269,10 @@ class Form extends Component
 		(
 			new MessageRPC
 			{
-				"api_name": "App.Service.ServiceCrudApi",
+				"api_name": "App.Yaml.YamlCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": "update",
-				"data": model -> attr "item" -> attr "json",
+				"data": model -> attr "item",
 			}
 		);		
 		
@@ -231,61 +283,6 @@ class Form extends Component
 			"error": msg -> attr "error",
 			"success": msg -> attr "success_message",
 		};
-	}
-	
-	
-	
-	/**
-	 * Add click
-	 */
-	async void onAddClick(MouseClickEvent e)
-	{
-		e.cancel();
-		
-		Dict item = this.model -> attr "item";
-		
-		this.updateModel
-		{
-			"message": _("App", "Please wait ..."),
-			"error": "",
-			"success": "",
-		};
-		
-		/* Call api */
-		MessageRPC msg = @ -> await method sendMessage
-		(
-			new MessageRPC
-			{
-				"api_name": "App.Service.ServiceCrudApi",
-				"space_name": "CrudInterface",
-				"method_name": "add",
-				"data": item -> attr "json"
-			}
-		);
-		
-		bool is_success = msg -> method isSuccess;
-		this.updateModel
-		{
-			"message": "",
-			"error": msg -> attr "error",
-			"success": msg -> attr "success_message",
-		};
-		
-		if (is_success)
-		{
-			string service_id = msg -> attr "response" -> attr "service_id";
-			Dict json = msg -> attr "response" -> attr "json";
-			item = rtl::setAttr(item, ["service_id"], service_id);
-			item = rtl::setAttr(item, ["json"], json);
-			this.signalOut
-			(
-				new FormEvent
-				{
-					"event": FormEvent::ACTION_ADD,
-					"item": item,
-				}
-			);
-		}
 	}
 	
 	
@@ -325,7 +322,7 @@ class Form extends Component
 			"tag": 
 			{
 				"action": "delete",
-				"item": this.model.item
+				"item": this.model.item -> attr "id"
 			},
 		};
 	}
@@ -367,7 +364,7 @@ class Form extends Component
 		(
 			new MessageRPC
 			{
-				"api_name": "App.Service.ServiceCrudApi",
+				"api_name": "App.Yaml.YamlCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": action,
 				"data": e.tag -> attr "item",
