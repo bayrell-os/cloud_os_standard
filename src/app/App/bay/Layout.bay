@@ -149,13 +149,13 @@ class Layout extends Component
 											<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
 										</li>
 										<li class={ rs::start(model.route.name, "app.yaml") ? "active": "" }>
-											<a class='nolink' href='/services/'>{ _("App", "Yaml") }</a>
+											<a class='nolink' href='/yaml/'>{ _("App", "Yaml") }</a>
 										</li>
 										<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
-											<a class='nolink' href='/services/'>{ _("App", "Nginx") }</a>
+											<a class='nolink' href='/nginx/'>{ _("App", "Nginx") }</a>
 										</li>
 										<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
-											<a class='nolink' href='/services/'>{ _("App", "CLI") }</a>
+											<a class='nolink' href='/cli/'>{ _("App", "CLI") }</a>
 										</li>
 									</ul>
 								</li>

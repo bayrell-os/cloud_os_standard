@@ -1,0 +1,68 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.Yaml;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.Monad;
+use Runtime.RuntimeUtils;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.ORMProviderInterface;
+use Runtime.Web.Annotations.ApiList;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Cookie;
+use Runtime.Web.JsonResponse;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Response;
+
+
+@ApiList{ "space_name": "CrudInterface" }
+class YamlCrudApi
+{
+	
+	
+	/**
+	 * Search
+	 */
+	@ApiMethod{ "method_name": "search" }
+	static async MessageRPC search(MessageRPC msg)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		string sql = "select * from " ~ p.prefix ~ "docker_yaml order by id desc limit 100";
+		Cursor cursor = p
+			-> await method query(sql)
+		;
+		Collection<Dict> res = await cursor.fetchAll
+		(
+			Dict (Dict item)
+			{
+				item <= json <= RuntimeUtils::json_decode(item.json);
+				return item;
+			}
+		);
+		cursor.close();
+		
+		return msg -> method success(res);
+	}
+	
+	
+}

@@ -89,6 +89,11 @@ class ModuleDescription implements
 		"App/Service/FormModel",
 		"App/Service/ServicePage",
 		"App/Service/ServicePageModel",
+		"App/Yaml/Form",
+		"App/Yaml/FormEvent",
+		"App/Yaml/FormModel",
+		"App/Yaml/YamlPage",
+		"App/Yaml/YamlPageModel",
 		"App/User/AuthPage",
 		"App/User/AuthToken",
 		"App/User/UserPage",
@@ -107,6 +112,7 @@ class ModuleDescription implements
 		new Entity{ "name": "App.Service.ServicePage" },
 		new Entity{ "name": "App.User.AuthPage" },
 		new Entity{ "name": "App.User.UserPage" },
+		new Entity{ "name": "App.Yaml.YamlPage" },
 		
 		/* Layout */
 		new LambdaChain
@@ -131,6 +137,7 @@ class ModuleDescription implements
 		
 		new Entity{ "name": "App.Service.ServiceCrudApi" },
 		new Entity{ "name": "App.User.AuthApi" },
+		new Entity{ "name": "App.Yaml.YamlCrudApi" },
 		#endif
 		
 		

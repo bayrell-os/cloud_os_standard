@@ -1,0 +1,419 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.Yaml;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+use Runtime.Web.Button.Button;
+use Runtime.Web.Dialog.Dialog;
+use Runtime.Web.Dialog.DialogEvent;
+use Runtime.Web.Dialog.DialogModel;
+use Runtime.Web.Events.Mouse.MouseClickEvent;
+use Runtime.Web.Events.User.ChangeEvent;
+use App.Yaml.FormEvent;
+use App.Yaml.FormModel;
+
+
+class Form extends Component
+{
+	Dialog dialog_delete = null;
+	
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	/**
+	 * Returns required components
+	 */
+	pure Collection<string> components() => 
+	[
+		classof Button,
+		classof Dialog,
+	];
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			%form{
+			}
+			%form_row{
+				padding-bottom: 15px;
+			}
+			%form_row:last-child{
+				padding-bottom: 0px;
+			}
+			%form_label{
+				font-weight: bold;
+				padding-bottom: 5px;
+			}
+			%form_value{}
+			%form_value input, %form_value textarea{
+				width: 100%;
+				padding: 5px 10px;
+			}
+			%form_value textarea{
+				height: 400px;
+			}
+			%form_buttons{
+				text-align: center;
+			}
+			%form_buttons %(Button)button{
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			%form_result{
+				text-align: center;
+			}
+			%form_result.success{
+				color: green;
+			}
+			%form_result.error{
+				color: red;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, FormModel model, Dict params, html content) =>
+		model.item != null ? static::renderForm(layout, model, params, content) : ""
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html renderForm(LayoutModel layout, FormModel model, Dict params, html content) =>
+		<div @class='form'>
+			<div @class='form_row'>
+				<div @class='form_label'>{ _("App", "Name") }:</div>
+				<div @class='form_value'>
+					<input data-name="name" @event:ChangeEvent="onItemChange"
+						value={ rtl::attr(model.item, ["name"]) } 
+					/>
+				</div>
+			</div>
+			<div @class='form_row'>
+				<div @class='form_label'>{ _("App", "Image") }:</div>
+				<div @class='form_value'>
+					<textarea data-name="image" @event:ChangeEvent="onItemChange"
+					>{ rtl::attr(model.item, ["content"]) }</textarea>
+				</div>
+			</div>
+			<div @class='form_row form_buttons'>
+			{
+				params.get("action", "") == "add" ?
+				(
+					<Button @eventAsync:MouseClickEvent="onAddClick">Add</Button>
+					<Button @eventAsync:MouseClickEvent="onCancelClick">Cancel</Button>
+				) :
+				(
+					<Button @eventAsync:MouseClickEvent="onUpdateClick">Update</Button>
+					<Button @eventAsync:MouseClickEvent="onDeleteClick">Delete</Button>
+				)
+			}
+			</div>
+			<div @class='form_row form_result' class={ static::getResultClass(model) }>
+				{ model.message }
+				{ model.success }
+				{ model.error }
+			</div>
+			{
+				params.get("action", "") != "edit" ? "" :
+					<Dialog @bind="dialog_delete" @ref="dialog_delete" @eventAsync:DialogEvent="onDialogEvent"
+						style={ DialogModel::STYLE_CONFIRM } auto_hide={ false }
+					/>
+			}
+		</div>
+	;
+	
+	
+	
+	/**
+	 * Returns result class
+	 */
+	pure string getResultClass(FormModel model)
+	{
+		if (model.success != "") return "success";
+		if (model.error != "") return "error";
+		return "";
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Item change
+	 */
+	void onItemChange(ChangeEvent e)
+	{
+		Dict item = this.model.item;
+		string name = e.target.params.get("data-name");
+		
+		item = rtl::setAttr(item, [name], e.value);
+		
+		this.updateModel
+		{
+			"item": item,
+		};
+	}
+	
+	
+	
+	/**
+	 * Update click
+	 */
+	async void onUpdateClick(MouseClickEvent e)
+	{
+		e.cancel();
+		
+		Dict item = this.model.item;
+		int active = this.model.active;
+		
+		this.updateModel
+		{
+			"message": _("App", "Please wait ..."),
+			"error": "",
+			"success": "",
+		};
+		
+		Dict model = this.model;
+		
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Service.ServiceCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "update",
+				"data": model -> attr "item" -> attr "json",
+			}
+		);		
+		
+		bool is_success = msg -> method isSuccess;
+		this.updateModel
+		{
+			"message": "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
+		};
+	}
+	
+	
+	
+	/**
+	 * Add click
+	 */
+	async void onAddClick(MouseClickEvent e)
+	{
+		e.cancel();
+		
+		Dict item = this.model -> attr "item";
+		
+		this.updateModel
+		{
+			"message": _("App", "Please wait ..."),
+			"error": "",
+			"success": "",
+		};
+		
+		/* Call api */
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Service.ServiceCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "add",
+				"data": item -> attr "json"
+			}
+		);
+		
+		bool is_success = msg -> method isSuccess;
+		this.updateModel
+		{
+			"message": "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
+		};
+		
+		if (is_success)
+		{
+			string service_id = msg -> attr "response" -> attr "service_id";
+			Dict json = msg -> attr "response" -> attr "json";
+			item = rtl::setAttr(item, ["service_id"], service_id);
+			item = rtl::setAttr(item, ["json"], json);
+			this.signalOut
+			(
+				new FormEvent
+				{
+					"event": FormEvent::ACTION_ADD,
+					"item": item,
+				}
+			);
+		}
+	}
+	
+	
+	
+	/**
+	 * Cancel click
+	 */
+	async void onCancelClick(MouseClickEvent e)
+	{
+		e.cancel();
+		
+		this.signalOut
+		(
+			new FormEvent
+			{
+				"event": FormEvent::CANCEL_ADD_DIALOG,
+			}
+		);
+	}
+	
+	
+	
+	/**
+	 * Force delete click
+	 */
+	async void onDeleteClick(MouseClickEvent e)
+	{
+		e.cancel();
+		if (this.model.item == null) return;
+		
+		string name = rtl::attr(this.model.item, ["name"]);
+		
+		/* Show dialog */
+		this.dialog_delete.show
+		{
+			"title": _("App", "Delete %name% ?", {"name": name}),
+			"tag": 
+			{
+				"action": "delete",
+				"item": this.model.item
+			},
+		};
+	}
+	
+	
+	
+	/**
+	 * Dialog event
+	 */
+	async void onDialogEvent(DialogEvent e)
+	{
+		string action = e.tag -> attr "action";
+		
+		if (e.button_result != "ok")
+		{
+			/* Hide dialog */
+			this.dialog_delete.hide();
+			return;
+		}
+		
+		/* Clear message */
+		this.updateModel
+		{
+			"message": "",
+			"error": "",
+			"success": "",
+		};
+		
+		/* Set dialog message */
+		this.dialog_delete.updateModel
+		{
+			"message": _("App", "Please wait ..."),
+			"error": "",
+			"success": "",
+		};
+		
+		/* Call api */
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Service.ServiceCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": action,
+				"data": e.tag -> attr "item",
+			}
+		);
+		
+		bool is_success = msg -> method isSuccess;
+		if (is_success)
+		{
+			/* Hide dialog */
+			this.dialog_delete.hide();
+			
+			/* Clear message */
+			this.updateModel
+			{
+				"message": "",
+				"error": "",
+				"success": "",
+			};
+			
+			if (action == "delete")
+			{
+				this.signalOut
+				(
+					new FormEvent
+					{
+						"event": FormEvent::ACTION_DELETE,
+					}
+				);
+			}
+			
+		}
+		else
+		{
+			/* Update dialog error */
+			this.dialog_delete.updateModel
+			{
+				"message": "",
+				"error": msg -> attr "error",
+				"success": msg -> attr "success_message",
+			};
+		}
+		
+	}
+	
+	
+	#endif
+	
+}

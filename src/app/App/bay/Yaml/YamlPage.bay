@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace App.Service;
+namespace App.Yaml;
 
 use Runtime.lib;
 use Runtime.MessageRPC;
@@ -33,15 +33,16 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
-use App.Service.Form;
-use App.Service.FormEvent;
-use App.Service.FormModel;
-use App.Service.ServicePageModel;
+use App.Yaml.YamlPageModel;
+use App.Yaml.Form;
+use App.Yaml.FormEvent;
+use App.Yaml.FormModel;
 
 
 @RouteList{}
-class ServicePage extends Component
-{	
+class YamlPage extends Component
+{
+	
 	Dialog dialog_add = null;
 	
 	
@@ -56,14 +57,14 @@ class ServicePage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/services/", "name": "app.services.index" }
+	@Route{ "uri": "/yaml/", "name": "app.yaml.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		MessageRPC msg = @ -> await method sendMessage
 		(
 			new MessageRPC
 			{
-				"api_name": "App.Service.ServiceCrudApi",
+				"api_name": "App.Yaml.YamlCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": "search",
 				"data":
@@ -73,11 +74,11 @@ class ServicePage extends Component
 		);
 		
 		/* Set title */
-		container <= layout <= title <= "Service page";
+		container <= layout <= title <= "Yaml";
 		
 		/* Create model */
-		container <= layout <= page_class <= classof ServicePage;
-		container <= layout <= page_model <= new ServicePageModel
+		container <= layout <= page_class <= classof YamlPage;
+		container <= layout <= page_model <= new YamlPageModel
 		{
 			"items": (msg::isSuccess(msg)) ? msg.response : [],
 		};
@@ -182,23 +183,9 @@ class ServicePage extends Component
 						>
 							<div @class='item_row name'>
 								<div @class='item_label'>{ _("App", "Name") }:</div>
-								<div @class='item_text'>{ rtl::attr(item, ["json", "Spec", "Name"], "") }</div>
+								<div @class='item_text'>{ rtl::attr(item, ["name"], "") }</div>
 							</div>
-							<div @class='item_row image'>
-								<div @class='item_label'>{ _("App", "Image") }:</div>
-								<div @class='item_text'>
-								{
-									static::trimImageName
-									(
-										rtl::attr(item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"], "")
-									)
-								}
-								</div>
-							</div>
-							<div @class='item_disabled'>
-								{ item.get("enable", 1) == 1 ? "" : _("App", "Disabled") }
-							</div>
-						</div>
+						</div>					
 				)
 			}
 			</div>
@@ -210,18 +197,6 @@ class ServicePage extends Component
 			</Dialog>
 		</div>
 	;
-	
-	
-	
-	/**
-	 * Trim name
-	 */
-	pure string trimImageName(string name)
-	{
-		int pos = rs::search(name, "@");
-		if (pos != -1) name = rs::substr(name, 0, pos);
-		return name;
-	}
 	
 	
 	
@@ -245,7 +220,6 @@ class ServicePage extends Component
 	}
 	
 	
-	
 	/**
 	 * Form add Event
 	 */
@@ -262,36 +236,6 @@ class ServicePage extends Component
 			{
 				"items": this.model.items.unshiftIm(e.item),
 				"form_add": new FormModel(),
-			};
-		}
-		else if (e.event == FormEvent::ACTION_ENABLE)
-		{
-			Dict item = this.model -> method getActiveItem;
-			item <= service_id <= e.service_id;
-			item <= enable <= 1;
-			item = rtl::setAttr(item, ["json", "ID"], e.service_id);
-			
-			FormModel form_edit = this.model.form_edit;
-			form_edit <= item <= item;
-			
-			this.updateModel
-			{
-				"items": this.model.items.setIm(this.model.active, item),
-				"form_edit": form_edit,
-			};
-		}
-		else if (e.event == FormEvent::ACTION_DISABLE)
-		{
-			Dict item = this.model -> method getActiveItem;
-			item <= enable <= 0;
-			
-			FormModel form_edit = this.model.form_edit;
-			form_edit <= item <= item;
-			
-			this.updateModel
-			{
-				"items": this.model.items.setIm(this.model.active, item),
-				"form_edit": form_edit,
 			};
 		}
 		else if (e.event == FormEvent::ACTION_DELETE)
@@ -320,6 +264,7 @@ class ServicePage extends Component
 		model <= form_edit <= success <= "";
 		this.setModel(model);
 	}
+		
 	
 	#endif
 	
