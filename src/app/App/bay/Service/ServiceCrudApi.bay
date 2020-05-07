@@ -32,7 +32,7 @@ use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
-use App.AppLib;
+use App.DockerLib;
 
 
 @ApiList{ "space_name": "CrudInterface" }
@@ -105,10 +105,12 @@ class ServiceCrudApi
 	 * Add service
 	 */
 	@ApiMethod{ "method_name": "add" }
-	static async MessageRPC add(MessageRPC msg)
-	{
-		return msg -> method fail(null, "Error", -1)
-	}
+	static async MessageRPC add(MessageRPC msg) =>
+		msg
+			-> attr "data"
+			-> await DockerLib::dockerAddService
+			-> monad static::getResult(msg, _("App", "Add error"), -1)
+		;
 	
 	
 	
@@ -119,7 +121,7 @@ class ServiceCrudApi
 	static async MessageRPC update(MessageRPC msg) =>
 		msg
 			-> attr "data"
-			-> await AppLib::dockerUpdateService
+			-> await DockerLib::dockerUpdateService
 			-> monad static::getResult(msg, _("App", "Update error"), -1)
 		;
 	
@@ -132,7 +134,7 @@ class ServiceCrudApi
 	static async MessageRPC enable(MessageRPC msg) =>
 		msg
 			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await AppLib::dockerEnableService
+			-> await DockerLib::dockerEnableService
 			-> monad static::getResult(msg, _("App", "Enable error"), -1)
 		;
 	
@@ -145,7 +147,7 @@ class ServiceCrudApi
 	static async MessageRPC disable(MessageRPC msg) =>
 		msg
 			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await AppLib::dockerDisableService
+			-> await DockerLib::dockerDisableService
 			-> monad static::getResult(msg, _("App", "Disable error"), -1)
 		;
 	
@@ -158,19 +160,19 @@ class ServiceCrudApi
 	static async MessageRPC delete(MessageRPC msg) =>
 		msg
 			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await AppLib::dockerDisableService
+			-> await DockerLib::dockerDisableService
 			
 			-> monad lib::set( msg, true )
 			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await AppLib::databaseDeleteService
+			-> await DockerLib::databaseDeleteService
 			
 			-> monad lib::set( msg, true )
 			-> attr "data" -> attr "service_id"
-			-> await AppLib::dockerDisableService
+			-> await DockerLib::dockerDisableService
 			
 			-> monad lib::set( msg, true )
 			-> attr "data" -> attr "service_id"
-			-> await AppLib::databaseDeleteService
+			-> await DockerLib::databaseDeleteService
 			
 			-> monad static::getResult(msg, _("App", "Delete error"), -1)
 		;

@@ -25,9 +25,11 @@ use Runtime.Web.Events.UIEvent;
 struct FormEvent extends UIEvent
 {
 	static const string CANCEL_ADD_DIALOG = "cancel_add_dialog";
+	static const string ACTION_ADD = "add";
 	static const string ACTION_ENABLE = "enable";
 	static const string ACTION_DISABLE = "disable";
 	static const string ACTION_DELETE = "delete";
 	string event = "";
 	string service_id = "";
+	Dict item = null;
 }

@@ -145,23 +145,17 @@ class Layout extends Component
 								<li>
 									<a class='nolink'>{ _("App", "Cluster") }</a>
 									<ul>
-										<li class={ rs::start(model.route.name, "app.nodes") ? "active": "" }>
-											<a class='nolink' href='/nodes/'>{ _("App", "Nodes") }</a>
-										</li>
-										<li class={ rs::start(model.route.name, "app.stacks") ? "active": "" }>
-											<a class='nolink' href='/stacks/'>{ _("App", "Stacks") }</a>
-										</li>
 										<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
 											<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
 										</li>
-										<li class={ rs::start(model.route.name, "app.tasks") ? "active": "" }>
-											<a class='nolink' href='/tasks/'>{ _("App", "Tasks") }</a>
+										<li class={ rs::start(model.route.name, "app.yaml") ? "active": "" }>
+											<a class='nolink' href='/services/'>{ _("App", "Yaml") }</a>
 										</li>
-										<li class={ rs::start(model.route.name, "app.networks") ? "active": "" }>
-											<a class='nolink' href='/networks/'>{ _("App", "Networks") }</a>
+										<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
+											<a class='nolink' href='/services/'>{ _("App", "Nginx") }</a>
 										</li>
-										<li class={ rs::start(model.route.name, "app.logs") ? "active": "" }>
-											<a class='nolink' href='/logs/'>{ _("App", "Logs") }</a>
+										<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
+											<a class='nolink' href='/services/'>{ _("App", "CLI") }</a>
 										</li>
 									</ul>
 								</li>

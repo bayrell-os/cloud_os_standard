@@ -60,10 +60,10 @@ class SyncDockerServicesTask
 		
 		for (int i=0; i<services.count(); i++)
 		{
-			Dict service = services.item(i);
-			string service_id = service.get("ID", "");
-			string service_name = service -> lib::attr(["Spec", "Name"], "");
-			string service_image = service -> lib::attr(["Spec", "Labels", "com.docker.stack.image"], "");
+			Dict json = services.item(i);
+			string service_id = json.get("ID", "");
+			string service_name = json -> lib::attr(["Spec", "Name"], "");
+			string service_image = json -> lib::attr(["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
 			
 			output -> method writeln ("Update service " ~ service_name);
 			
@@ -83,7 +83,7 @@ class SyncDockerServicesTask
 						"is_deleted": 0,
 						"enable": 1,
 						"timestamp": time,
-						"json": RuntimeUtils::json_encode(service),
+						"json": RuntimeUtils::json_encode(json),
 					}
 				)
 				-> await method end
@@ -107,7 +107,7 @@ class SyncDockerServicesTask
 			(
 				"delete from " ~ p.prefix ~ "docker_services where is_deleted=1 and timestamp < :timestamp",
 				{
-					"timestamp": time - 7*24*60*60,
+					"timestamp": time - 24*60*60,
 				}
 			)
 			-> await method end

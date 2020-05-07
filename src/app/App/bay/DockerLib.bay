@@ -25,7 +25,7 @@ use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
 
 
-class AppLib
+class DockerLib
 {
 	#ifdef BACKEND then
 	
@@ -95,6 +95,30 @@ class AppLib
 	
 	
 	/**
+	 * Add service in docker
+	 */
+	static async Dict dockerAddService(Dict json)
+	{
+		string s = json -> attr "Spec" -> RuntimeUtils::json_encode;
+		string url_api = "/services/create";
+		string content = await static::dockerApi(url_api, "POST", s);
+		Dict res = RuntimeUtils::json_decode(content);
+		if (res == null) throw new RuntimeException( _("App", "Error create service in docker"), -1 );
+		
+		string message = res -> attr "message" -> monad lib::default( _("App", "Service does not created") );
+		string service_id = res -> attr "ID";
+		if (service_id == null) throw new RuntimeException( message, -1 );
+		
+		/* Update spec of the service */
+		Dict new_json = await static::dockerGetService(service_id);
+		await static::databaseUpdateService(service_id, new_json);
+		
+		return { "Message": _("App", "Service created"), "Code": 1, "json": new_json, "service_id": service_id };
+	}
+	
+	
+	
+	/**
 	 * Update service in docker
 	 */
 	static async Dict dockerUpdateService(Dict new_json)
@@ -102,15 +126,15 @@ class AppLib
 		string service_id = new_json -> attr "ID";
 		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
 		
-		Dict old_json = static::dockerGetService(service_id);
-		service_id = old_json -> attr "ID";
-		if (service_id == null) throw new RuntimeException( _("App", "Service not found"), -1 );
+		Dict old_spec = static::dockerGetService(service_id);
+		service_id = old_spec -> attr "ID";
+		if (service_id == null) throw new RuntimeException( _("App", "Service in docker not found"), -1 );
 		
-		string version = old_json -> attr "Version" -> attr "Index";
+		string version = old_spec -> attr "Version" -> attr "Index";
 		if (version == null) throw new RuntimeException( _("App", "Service version is null"), -1 );
 		
-		list res = static::getDockerUpdateSpec(old_json, new_json);
-		if (res == null)  throw new RuntimeException( _("App", "Update service spec error"), -1 );
+		list res = static::getDockerUpdateSpec(old_spec, new_json);
+		if (res == null)  throw new RuntimeException( _("App", "Update docker service spec error"), -1 );
 		
 		bool updated = res[0];
 		Dict diff_spec = res[1];
@@ -131,12 +155,12 @@ class AppLib
 	/**
 	 * Enable service in docker
 	 */
-	static async Dict dockerEnableService(string service_id)
+	static async Dict dockerEnableService(string old_service_id)
 	{
-		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		if (old_service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
 		
-		Dict item = await static::databaseGetServiceById(service_id);
-		if (item == null) throw new RuntimeException( _("App", "Service not found"), -1 );
+		Dict item = await static::databaseGetServiceById(old_service_id);
+		if (item == null) throw new RuntimeException( _("App", "Service in database not found"), -1 );
 		
 		Dict spec = item -> attr "json" -> RuntimeUtils::json_decode -> attr "Spec" -> RuntimeUtils::json_encode;
 		if (spec == null) throw new RuntimeException( _("App", "Spec not found"), -1 );
@@ -149,31 +173,9 @@ class AppLib
 		string new_service_id = res -> attr "ID";
 		if (new_service_id == null) throw new RuntimeException( _("App", "Service does not created"), -1 );
 		
-		/* Update service id */
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		p
-			-> await method query
-			(
-				"update " ~ p.prefix ~ "docker_services set service_id=:new_service_id, is_deleted=0, enable=1 "~
-					" where service_id = :old_service_id limit 1",
-				{
-					"old_service_id": service_id,
-					"new_service_id": new_service_id,
-				}
-			)
-			-> await method end
-		;
-		p
-			-> await method query
-			(
-				"delete from " ~ p.prefix ~ "docker_services "~
-					" where service_id = :old_service_id limit 1",
-				{
-					"old_service_id": service_id,
-				}
-			)
-			-> await method end
-		;
+		/* Update spec of the service */
+		Dict spec = await static::dockerGetService(new_service_id);
+		await static::databaseUpdateService(old_service_id, spec);
 		
 		return { "Message": _("App", "Service enabled"), "Code": 1, "service_id": new_service_id };
 	}
@@ -193,19 +195,99 @@ class AppLib
 		Dict res = RuntimeUtils::json_decode(content);
 		
 		/* Success */
-		if (content == "")
+		if (content != "")
 		{
-			return { "Message": _("App", "Service disabled"), "Code": 1 };
+			/* Check if error */
+			string message = res.get("message", "");
+			if (message != "")
+			{
+				throw new RuntimeException( message, -1 );
+			}
+			
+			throw new RuntimeException( "Error disable service", -1 );
 		}
 		
-		/* Check if error */
-		string message = res.get("message", "");
-		if (message != "")
-		{
-			throw new RuntimeException( message, -1 );
-		}
+		/* Disables service in database */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set enable=0 where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method end
+		;
 		
 		return { "Message": _("App", "Service disabled"), "Code": 1 };
+	}
+	
+	
+	
+	/**
+	 * Update service from database
+	 */
+	static async Dict databaseUpdateService(string old_service_id, Dict json)
+	{
+		if (old_service_id == null) throw new RuntimeException( _("App", "Old service id is not set"), -1 );
+		
+		int time = @.time();
+		string new_service_id = json.get("ID", "");
+		string service_name = json -> lib::attr(["Spec", "Name"], "");
+		string service_image = json -> lib::attr(["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		
+		if (new_service_id == null) throw new RuntimeException( _("App", "New service id is not set"), -1 );
+		
+		/* Update service id */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set service_id=:new_service_id, is_deleted=0, enable=1 " ~
+					" where service_id = :old_service_id limit 1",
+				{
+					"old_service_id": old_service_id,
+					"new_service_id": new_service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		/* Delete wrong service */
+		p
+			-> await method query
+			(
+				"delete from " ~ p.prefix ~ "docker_services " ~
+					" where service_id = :old_service_id limit 1",
+				{
+					"old_service_id": old_service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		/* Insert or update */
+		p
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_services",
+				{
+					"service_id": new_service_id,
+				},
+				{
+					"_name": service_name,
+					"_image": service_image,
+					"is_deleted": 0,
+					"enable": 1,
+					"timestamp": time,
+					"json": RuntimeUtils::json_encode(json),
+				}
+			)
+			-> await method end
+		;
+		
+		return { "Message": _("App", "Service deleted"), "Code": 1 };
 	}
 	
 	

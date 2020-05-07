@@ -255,6 +255,15 @@ class ServicePage extends Component
 		{
 			this.dialog_add.hide();
 		}
+		else if (e.event == FormEvent::ACTION_ADD)
+		{
+			this.dialog_add.hide();
+			this.updateModel
+			{
+				"items": this.model.items.unshiftIm(e.item),
+				"form_add": new FormModel(),
+			};
+		}
 		else if (e.event == FormEvent::ACTION_ENABLE)
 		{
 			Dict item = this.model -> method getActiveItem;

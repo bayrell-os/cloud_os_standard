@@ -259,6 +259,8 @@ class Form extends Component
 	{
 		e.cancel();
 		
+		Dict item = this.model -> attr "item";
+		
 		this.updateModel
 		{
 			"message": _("App", "Please wait ..."),
@@ -266,14 +268,41 @@ class Form extends Component
 			"success": "",
 		};
 		
-		await rtl::sleep(1000);
+		/* Call api */
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Service.ServiceCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "add",
+				"data": item -> attr "json"
+			}
+		);
 		
+		bool is_success = msg -> method isSuccess;
 		this.updateModel
 		{
 			"message": "",
-			"error": "Error",
-			"success": "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
 		};
+		
+		if (is_success)
+		{
+			string service_id = msg -> attr "response" -> attr "service_id";
+			Dict json = msg -> attr "response" -> attr "json";
+			item = rtl::setAttr(item, ["service_id"], service_id);
+			item = rtl::setAttr(item, ["json"], json);
+			this.signalOut
+			(
+				new FormEvent
+				{
+					"event": FormEvent::ACTION_ADD,
+					"item": item,
+				}
+			);
+		}
 	}
 	
 	
@@ -290,7 +319,6 @@ class Form extends Component
 			new FormEvent
 			{
 				"event": FormEvent::CANCEL_ADD_DIALOG,
-				"instance": this,
 			}
 		);
 	}
@@ -435,7 +463,6 @@ class Form extends Component
 					new FormEvent
 					{
 						"event": FormEvent::ACTION_DELETE,
-						"instance": this,
 					}
 				);
 			}
@@ -446,7 +473,6 @@ class Form extends Component
 					new FormEvent
 					{
 						"event": FormEvent::ACTION_ENABLE,
-						"instance": this,
 						"service_id": msg -> attr "response" -> attr "service_id",
 					}
 				);
@@ -458,7 +484,6 @@ class Form extends Component
 					new FormEvent
 					{
 						"event": FormEvent::ACTION_DISABLE,
-						"instance": this,
 					}
 				);
 			}
