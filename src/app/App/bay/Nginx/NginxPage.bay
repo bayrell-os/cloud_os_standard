@@ -1,0 +1,279 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.Nginx;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Events.Mouse.MouseClickEvent;
+use Runtime.Web.Events.User.ChangeEvent;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+use Runtime.Web.Button.Button;
+use Runtime.Web.Dialog.Dialog;
+use Runtime.Web.Dialog.DialogEvent;
+use Runtime.Web.Dialog.DialogModel;
+use App.Nginx.NginxPageModel;
+use App.Nginx.Form;
+use App.Nginx.FormEvent;
+use App.Nginx.FormModel;
+
+
+@RouteList{}
+class NginxPage extends Component
+{
+	
+	Dialog dialog_add = null;
+	
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/nginx/", "name": "app.nginx.index" }
+	static async RenderContainer actionIndex(RenderContainer container)
+	{
+		MessageRPC msg = @ -> await method sendMessage
+		(
+			new MessageRPC
+			{
+				"api_name": "App.Nginx.NginxCrudApi",
+				"space_name": "CrudInterface",
+				"method_name": "search",
+				"data":
+				{
+				},
+			}
+		);
+		
+		/* Set title */
+		container <= layout <= title <= "Nginx";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof NginxPage;
+		container <= layout <= page_model <= new NginxPageModel
+		{
+			"items": (msg::isSuccess(msg)) ? msg.response : [],
+		};
+		container <= layout <= f_inc <= 1;
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Returns required components
+	 */
+	pure Collection<string> components() => 
+	[
+		classof Button,
+		classof Dialog,
+		classof Form,
+	];
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			%items, %info{
+				display: inline-block;
+				vertical-align: top;
+			}
+			%items{
+				width: 350px;
+				position: relative;
+			}
+			%item{
+				position: relative;
+				padding: 10px;
+				cursor: pointer;
+				border-bottom: 1px #ccc solid;
+			}
+			%item.active{
+				background-color: #337ab7;
+				border-color: #337ab7;
+				color: white;
+			}
+			%item_row{
+				padding-bottom: 5px;
+			}
+			%item_row:last-child{
+				padding-bottom: 0px;
+			}
+			%item_label, %item_text{
+				display: inline-block;
+				vertical-align: top;
+			}
+			%item_label{
+				display: none;
+				width: 0px;
+				text-align: right;
+				padding-right: 5px;
+			}
+			%item_text{
+				width: calc(100% - 0px);
+				text-align: left;
+				padding-left: 5px;
+				overflow-wrap: anywhere;
+			}
+			%item_disabled{
+				position: absolute;
+				right: 0;
+				top: 0;
+				background-color: #880000;
+				color: white;
+				font-size: 12px;
+			}
+			%info{
+				width: calc(100% - 350px);
+				padding-left: 10px;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
+		<div>
+			<div @class='buttons_top'>
+				<Button @eventAsync:MouseClickEvent="onShowAddClick">Add</Button>
+			</div>
+			<div @class='items' @key={ "items" }>
+			{
+				model.items.map
+				(
+					html (Dict item, int index) use (model) =>
+						<div @class='item' data-index={ index } @key={ index }
+							class={ model.active == index ? "active": "" }
+							@event:MouseClickEvent="onItemClick"
+						>
+							<div @class='item_row name'>
+								<div @class='item_label'>{ _("App", "Name") }:</div>
+								<div @class='item_text'>{ rtl::attr(item, ["name"], "") }</div>
+							</div>
+						</div>					
+				)
+			}
+			</div>
+			<div @class='info' @key={ "info" }>
+				<Form @bind="form_edit" action="edit" @eventAsync:FormEvent="onFormEvent"></Form>
+			</div>
+			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT } show_buttons={ false }>
+				<Form @bind="form_add" action="add" @eventAsync:FormEvent="onFormEvent"></Form>
+			</Dialog>
+		</div>
+	;
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Add click
+	 */
+	async void onShowAddClick(MouseClickEvent e)
+	{
+		e.cancel();
+		this.updateModel
+		{
+			"form_add": new FormModel
+			{
+				"item": new Dict(),
+			}
+		};
+		this.dialog_add.show();
+	}
+	
+	
+	/**
+	 * Form add Event
+	 */
+	async void onFormEvent(FormEvent e)
+	{
+		if (e.event == FormEvent::CANCEL_ADD_DIALOG)
+		{
+			this.dialog_add.hide();
+		}
+		else if (e.event == FormEvent::ACTION_ADD)
+		{
+			this.dialog_add.hide();
+			this.updateModel
+			{
+				"active": 0,
+				"items": this.model.items.unshiftIm(e.item),
+				"form_add": new FormModel(),
+			};
+			this.updateModel
+			{
+				"form_edit": new FormModel
+				{
+					"item": this.model -> method getActiveItem,
+				}
+			};
+		}
+		else if (e.event == FormEvent::ACTION_DELETE)
+		{
+			this.updateModel
+			{
+				"active": -1,
+				"items": this.model.items.removeIm(this.model.active),
+				"form_edit": new FormModel(),
+			};
+		}
+	}
+	
+	
+	
+	/**
+	 * Click item
+	 */
+	void onItemClick(MouseClickEvent e)
+	{
+		Dict model = this.model;
+		model <= active <= e.target.params.get("data-index");
+		model <= form_edit <= item <= model -> method getActiveItem;
+		model <= form_edit <= message <= "";
+		model <= form_edit <= error <= "";
+		model <= form_edit <= success <= "";
+		this.setModel(model);
+	}
+		
+	
+	#endif
+	
+}

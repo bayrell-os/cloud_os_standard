@@ -84,19 +84,30 @@ class ModuleDescription implements
 		"App/AdminerPage",
 		"App/IndexPage",
 		"App/Layout",
+		"App/Nginx/Form",
+		"App/Nginx/FormEvent",
+		"App/Nginx/FormModel",
+		"App/Nginx/NginxPage",
+		"App/Nginx/NginxPageModel",
 		"App/Service/Form",
 		"App/Service/FormEvent",
 		"App/Service/FormModel",
 		"App/Service/ServicePage",
 		"App/Service/ServicePageModel",
+		"App/User/AuthPage",
+		"App/User/AuthToken",
+		"App/User/Form",
+		"App/User/FormEvent",
+		"App/User/FormModel",
+		"App/User/UserCrudApi",
+		"App/User/UserPage",
+		"App/User/UserPageModel",
 		"App/Yaml/Form",
 		"App/Yaml/FormEvent",
 		"App/Yaml/FormModel",
+		"App/Yaml/YamlCrudApi",
 		"App/Yaml/YamlPage",
 		"App/Yaml/YamlPageModel",
-		"App/User/AuthPage",
-		"App/User/AuthToken",
-		"App/User/UserPage",
 		"App/ModuleDescription",
 	];
 	
@@ -109,6 +120,7 @@ class ModuleDescription implements
 	[
 		/* Pages */
 		new Entity{ "name": "App.IndexPage" },
+		new Entity{ "name": "App.Nginx.NginxPage" },
 		new Entity{ "name": "App.Service.ServicePage" },
 		new Entity{ "name": "App.User.AuthPage" },
 		new Entity{ "name": "App.User.UserPage" },
@@ -135,8 +147,10 @@ class ModuleDescription implements
 			"pos": RenderContainer::RENDER_CHAIN_BEFORE_CALL_ROUTE,
 		},
 		
+		new Entity{ "name": "App.Nginx.NginxCrudApi" },
 		new Entity{ "name": "App.Service.ServiceCrudApi" },
 		new Entity{ "name": "App.User.AuthApi" },
+		new Entity{ "name": "App.User.UserCrudApi" },
 		new Entity{ "name": "App.Yaml.YamlCrudApi" },
 		#endif
 		
