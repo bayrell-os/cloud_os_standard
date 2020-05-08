@@ -47,7 +47,7 @@ class UserCrudApi
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
-		string sql = "select * from " ~ p.prefix ~ "docker_users order by id desc limit 100";
+		string sql = "select * from " ~ p.prefix ~ "docker_users order by name limit 100";
 		Cursor cursor = p
 			-> await method query(sql)
 		;
@@ -74,7 +74,6 @@ class UserCrudApi
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
 		string name = msg -> attr "data" -> attr "name";
-		string content = msg -> attr "data" -> attr "content";
 		
 		/* Insert */
 		int id = p
@@ -83,7 +82,6 @@ class UserCrudApi
 				p.prefix ~ "docker_users",
 				{
 					"name": name,
-					"content": content,
 				}
 			)
 			-> await method end
@@ -104,7 +102,6 @@ class UserCrudApi
 		
 		string id = msg -> attr "data" -> attr "id";
 		string name = msg -> attr "data" -> attr "name";
-		string content = msg -> attr "data" -> attr "content";
 		
 		/* Insert or update */
 		p
@@ -116,7 +113,6 @@ class UserCrudApi
 				},
 				{
 					"name": name,
-					"content": content,
 				}
 			)
 			-> await method end

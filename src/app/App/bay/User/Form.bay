@@ -125,13 +125,6 @@ class Form extends Component
 					/>
 				</div>
 			</div>
-			<div @class='form_row'>
-				<div @class='form_label'>{ _("App", "Content") }:</div>
-				<div @class='form_value'>
-					<textarea data-name="content" @event:ChangeEvent="onItemChange"
-					>{ rtl::attr(model.item, ["content"]) }</textarea>
-				</div>
-			</div>
 			<div @class='form_row form_buttons'>
 			{
 				params.get("action", "") == "add" ?
@@ -269,7 +262,7 @@ class Form extends Component
 		(
 			new MessageRPC
 			{
-				"api_name": "App.Yaml.YamlCrudApi",
+				"api_name": "App.User.UserCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": "update",
 				"data": model -> attr "item",
@@ -364,7 +357,7 @@ class Form extends Component
 		(
 			new MessageRPC
 			{
-				"api_name": "App.Yaml.YamlCrudApi",
+				"api_name": "App.User.UserCrudApi",
 				"space_name": "CrudInterface",
 				"method_name": action,
 				"data": e.tag -> attr "item",
