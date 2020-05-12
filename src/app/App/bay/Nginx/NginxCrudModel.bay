@@ -20,6 +20,10 @@ namespace App.Nginx;
 
 use Runtime.lib;
 use Runtime.Web.CRUD.CrudModel;
+use Runtime.Web.CRUD.FieldInfo;
+use Runtime.Web.CRUD.Fields.Input;
+use Runtime.Web.CRUD.Fields.Select;
+use Runtime.Web.CRUD.Fields.TextArea;
 
 
 struct NginxCrudModel extends CrudModel
@@ -32,7 +36,61 @@ struct NginxCrudModel extends CrudModel
 	
 	
 	
+	/**
+	 * Setup fields
+	 */
+	pure Dict<string, FieldInfo> buildFields() => {}
+		
+		/* Name */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "name",
+				"label": _("App", "Name"),
+				"form": classof Input,
+			}
+		)
+		
+		/* Enable */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "enable",
+				"label": _("App", "Enable"),
+				"form": classof Select,
+				"select":
+				[
+					{ "id": 0, "value": _("App", "Disable") },
+					{ "id": 1, "value": _("App", "Enable") },
+				],
+			}
+		)
+		
+		/* Content */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "content",
+				"label": _("App", "Content"),
+				"form": classof TextArea,
+			}
+		)
+	;
 	
+	
+	
+	/**
+	 * Returns form fields
+	 */
+	pure Collection<string> getDefaultFormFields() =>
+	[
+		"name",
+		"enable",
+		"content",
+	];
 	
 	
 }

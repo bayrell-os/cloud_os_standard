@@ -35,6 +35,7 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
+use App.Nginx.NginxCrudModel;
 
 
 @RouteList{}
@@ -74,7 +75,7 @@ class NginxPage extends ListPage
 		
 		/* Create model */
 		container <= layout <= page_class <= classof NginxPage;
-		container <= layout <= page_model <= CrudModel::create();
+		container <= layout <= page_model <= NginxCrudModel::create();
 		container <= layout <= page_model <= items <= msg::isSuccess(msg) ? msg.response : [];
 		container <= layout <= f_inc <= 1;
 		
@@ -86,7 +87,7 @@ class NginxPage extends ListPage
 	/**
 	 * Render item
 	 */
-	pure html renderItem(LayoutModel layout, CrudModel model, Dict item, Dict params) =>
+	pure html renderItem(LayoutModel layout, NginxCrudModel model, Dict item, Dict params) =>
 		<div @class="item_row name">
 			<div @class="item_label">{ _("App", "Name") }:</div>
 			<div @class="item_text">{ rtl::attr(item, ["name"], "") }</div>
