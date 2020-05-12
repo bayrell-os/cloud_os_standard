@@ -29,14 +29,15 @@ use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
 
 
-@ApiList{ "space_name": "CrudInterface" }
-class NginxCrudApi
+@ApiList{ "api_name": "App.Nginx", "space_name": classof CrudInterface }
+class NginxCrudApi implements CrudInterface
 {
 	
 	
@@ -74,10 +75,21 @@ class NginxCrudApi
 	
 	
 	/**
-	 * Add
+	 * Get by ID
 	 */
-	@ApiMethod{ "method_name": "add" }
-	static async MessageRPC add(MessageRPC msg)
+	@ApiMethod{ "method_name": "getByID" }
+	static async MessageRPC getByID(MessageRPC msg)
+	{
+		return msg;
+	}
+	
+	
+	
+	/**
+	 * Create
+	 */
+	@ApiMethod{ "method_name": "create" }
+	static async MessageRPC create(MessageRPC msg)
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		int time = @.time();

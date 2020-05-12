@@ -18,24 +18,21 @@
 
 namespace App.Nginx;
 
-use Runtime.CoreStruct;
-use Runtime.Web.Dialog.DialogModel;
-use App.Nginx.FormModel;
+use Runtime.lib;
+use Runtime.Web.CRUD.CrudModel;
 
 
-struct NginxPageModel extends CoreStruct
+struct NginxCrudModel extends CrudModel
 {
 	
-	int active = -1;
-	Collection<Dict> items = null;
-	FormModel form_add = new FormModel();
-	FormModel form_edit = new FormModel();
-	DialogModel dialog_add = new DialogModel();
-	
-	
 	/**
-	 * Returns active item
+	 * Returns api name
 	 */
-	pure Dict getActiveItem(NginxPageModel model) => rtl::attr(model, ["items", model.active], null);
+	pure string crudApiName() => "App.Nginx";
+	
+	
+	
+	
+	
 	
 }

@@ -312,13 +312,18 @@ class ServicePage extends Component
 	 */
 	void onItemClick(MouseClickEvent e)
 	{
-		Dict model = this.model;
-		model <= active <= e.target.params.get("data-index");
-		model <= form_edit <= item <= model -> method getActiveItem;
-		model <= form_edit <= message <= "";
-		model <= form_edit <= error <= "";
-		model <= form_edit <= success <= "";
-		this.setModel(model);
+		int index = e.target.params.get("data-index");
+		ServicePageModel model = this.model();
+		FormModel form_edit = new FormModel();
+		form_edit <= item <= rtl::attr(model, ["items", index], null);
+		form_edit <= message <= "";
+		form_edit <= error <= "";
+		form_edit <= success <= "";
+		this.updateModel
+		{
+			"active": index,
+			"form_edit": form_edit,
+		};
 	}
 	
 	#endif

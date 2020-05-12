@@ -31,6 +31,7 @@ use Runtime.Interfaces.ContextInterface;
 use Runtime.Interfaces.ModuleDescriptionInterface;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
 use Runtime.Web.Request;
 
 
@@ -64,6 +65,7 @@ class ModuleDescription implements
 	{
 		'Runtime': '>=0.3',
 		'Runtime.Web': '*',
+		'Runtime.Web.CRUD': '*',
 		
 		/* Backend */
 		#ifdef BACKEND then
@@ -84,11 +86,7 @@ class ModuleDescription implements
 		"App/AdminerPage",
 		"App/IndexPage",
 		"App/Layout",
-		"App/Nginx/Form",
-		"App/Nginx/FormEvent",
-		"App/Nginx/FormModel",
 		"App/Nginx/NginxPage",
-		"App/Nginx/NginxPageModel",
 		"App/Service/Form",
 		"App/Service/FormEvent",
 		"App/Service/FormModel",
@@ -129,7 +127,7 @@ class ModuleDescription implements
 		/* Layout */
 		new LambdaChain
 		{
-			"name": RenderContainer::LAYOUT_CHAIN,
+			"name": RenderHelper::LAYOUT_CHAIN,
 			"value": "App.ModuleDescription::layout",
 		},
 		
@@ -142,9 +140,9 @@ class ModuleDescription implements
 		
 		new LambdaChain
 		{
-			"name": RenderContainer::RENDER_CHAIN,
+			"name": RenderHelper::RENDER_CHAIN,
 			"value": "App.User.AuthToken::Middleware",
-			"pos": RenderContainer::RENDER_CHAIN_BEFORE_CALL_ROUTE,
+			"pos": RenderHelper::RENDER_CHAIN_BEFORE_CALL_ROUTE,
 		},
 		
 		new Entity{ "name": "App.Nginx.NginxCrudApi" },
@@ -159,7 +157,7 @@ class ModuleDescription implements
 		#ifdef FRONTEND then
 		new Provider
 		{
-			"name": RuntimeConstant::BUS_INTERFACE,
+			"name": RenderHelper::BUS_INTERFACE,
 			"value": "Runtime.Web.Drivers.BusProvider",
 		}
 		#endif
@@ -257,10 +255,10 @@ class ModuleDescription implements
 	{
 		Route route = null;
 		Dict<string> params = null;
-		Collection<Route> routes = RenderContainer::getRoutes(c.entities);
+		Collection<Route> routes = RenderHelper::getRoutesByEntities(c.entities);
 		
 		/* Search route */
-		list res = RenderContainer::findRoute(routes, request);
+		list res = RenderHelper::findRoute(routes, request);
 		route = res.item(0); params = res.item(1);
 		
 		/* Create render container  */
@@ -272,7 +270,7 @@ class ModuleDescription implements
 		};
 		
 		/* Render route */
-		container = c -> await method chainAwait(RenderContainer::RENDER_CHAIN, [ container ]);
+		container = c -> await method chainAwait(RenderHelper::RENDER_CHAIN, [ container ]);
 		
 		/* Result */
 		return container;

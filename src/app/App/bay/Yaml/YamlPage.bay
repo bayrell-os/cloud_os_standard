@@ -264,7 +264,7 @@ class YamlPage extends Component
 	 */
 	void onItemClick(MouseClickEvent e)
 	{
-		Dict model = this.model;
+		Dict model = this.model();
 		model <= active <= e.target.params.get("data-index");
 		model <= form_edit <= item <= model -> method getActiveItem;
 		model <= form_edit <= message <= "";

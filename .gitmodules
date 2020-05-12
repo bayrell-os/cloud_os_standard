@@ -22,3 +22,6 @@
 [submodule "src/lib/Runtime.Web.Dialog"]
 	path = src/lib/Runtime.Web.Dialog
 	url = https://github.com/bayrell/Runtime.Web.Dialog
+[submodule "src/lib/Runtime.Web.CRUD"]
+	path = src/lib/Runtime.Web.CRUD
+	url = https://github.com/bayrell/Runtime.Web.CRUD
