@@ -22,6 +22,7 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Monad;
 use Runtime.RuntimeUtils;
+use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
@@ -40,6 +41,8 @@ use Runtime.Web.Response;
 class NginxCrudApi implements CrudInterface
 {
 	
+	#ifdef BACKEND then
+	
 	
 	/**
 	 * Search
@@ -48,6 +51,7 @@ class NginxCrudApi implements CrudInterface
 	static async MessageRPC search(MessageRPC msg)
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		Collection<Dict> res;
 		
 		try
 		{
@@ -55,7 +59,7 @@ class NginxCrudApi implements CrudInterface
 			Cursor cursor = p
 				-> await method query(sql)
 			;
-			Collection<Dict> res = await cursor.fetchAll
+			res = await cursor.fetchAll
 			(
 				Dict (Dict item)
 				{
@@ -91,8 +95,14 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "create" }
 	static async MessageRPC create(MessageRPC msg)
 	{
+		throw new ApiException("Error 1111");
+		
+		return msg -> method fail(null, "Error 1111", -1);
+		
+		
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		int time = @.time();
+		int id;
 		
 		string name = msg -> attr "data" -> attr "name";
 		string enable = msg -> attr "data" -> attr "enable";
@@ -101,7 +111,7 @@ class NginxCrudApi implements CrudInterface
 		/* Insert */
 		try
 		{
-			int id = p
+			id = p
 				-> await method insert
 				(
 					p.prefix ~ "docker_nginx",
@@ -198,5 +208,8 @@ class NginxCrudApi implements CrudInterface
 		
 		return msg -> method success(null, _("App", "Success"));
 	}
+	
+	
+	#endif
 	
 }

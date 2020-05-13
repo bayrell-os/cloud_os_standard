@@ -86,6 +86,7 @@ class ModuleDescription implements
 		"App/AdminerPage",
 		"App/IndexPage",
 		"App/Layout",
+		"App/Nginx/NginxCrudModel",
 		"App/Nginx/NginxPage",
 		"App/Service/Form",
 		"App/Service/FormEvent",

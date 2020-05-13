@@ -52,12 +52,14 @@ class Layout extends Component
 		@css{
 			*{box-sizing: border-box;}body{margin:0;padding:0;}
 			%layout{
-				min-height: 100%;
+				height: 100%;
 			}
 			%layout_wrap{
 				position: relative;
-				min-height: 100%;
-				padding-bottom: 35px;
+				height: 100vh;
+				padding-bottom: 20px;
+				display: flex;
+				align-items: stretch;
 			}
 			%layout_footer{
 				position: relative;
@@ -67,39 +69,45 @@ class Layout extends Component
 			}
 			%layout_footer .b_in{
 			}
-			%layout_menu, %layout_content_wrap{
-				display: inline-block;
-				vertical-align: top;
-			}
-			%layout_menu{
-				width: 240px;
+			%layout_menu_wrap{
+				position: relative;
+				width: 200px;
 			}
 			%layout_content_wrap{
-				width: calc(100% - 240px);
+				position: relative;
+				width: calc(100% - 200px);
 			}
 			%layout_site_name, %layout_title{
 				font-size: 16px;
+				height: 40px;
 			}
-			%layout_site_name, %layout_title, %layout_page{
+			%layout_site_name, %layout_title, %layout_page, %layout_content{
 				padding: 10px;
 			}
+			%layout_content{
+				position: relative;
+				height: calc(100% - 40px);
+				padding-bottom: 0;
+				padding-right: 0;
+			}
+			%layout_menu_label{
+				font-size: 14px;
+				font-weight: bold;
+				padding: 10px;
+			}
+			%layout_menu{
+				position: relative;
+				height: calc(100% - 40px);
+				overflow-y: auto;
+			}
+			%layout_menu_items{}
 			%layout_menu_items ul, %layout_menu_items li{
 				padding: 0; margin: 0;
 				list-style: none;
 			}
-			%layout_menu_items ul{
-				background-color: #8E4497;
-				color: #337ab7;
-				padding-left: 20px;
-			}
-			%layout_menu_items ul li{
+			%layout_menu_items ul{}
+			%layout_menu_items li{
 				background-color: white;
-			}
-			%layout_menu_items ul%level0{
-				padding-left: 0px;
-			}
-			%layout_menu_items ul%level0 > li{
-				background-color: #f5f5f5;
 			}
 			%layout_menu_items li a{
 				display: block;
@@ -112,11 +120,7 @@ class Layout extends Component
 				color: white;
 			}
 			%layout_title {
-				box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
-				background-color: #8E4497;
-				color: white;
-			}
-			%layout_content{
+				color: black;
 			}
 		}
 	;
@@ -133,51 +137,54 @@ class Layout extends Component
 		return 
 			<div @class='layout'>
 				<div @class='layout_wrap'>
-					<div @class='layout_menu'>
+					<div @class='layout_menu_wrap'>
+						
 						<div @class='layout_site_name'>
 							<a class='nolink' href='/'>{ _("App", "Web Panel") }</a>
 						</div>
-						<div @class='layout_menu_items'>
-							<ul @class='level0'>
-								<li class={ rs::start(model.route.name, "app.index") ? "active": "" }>
-									<a class='nolink' href='/'>{ _("App", "Dashboard") }</a>
-								</li>
-								<li>
-									<a class='nolink'>{ _("App", "Cluster") }</a>
-									<ul>
-										<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
-											<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
-										</li>
-										<li class={ rs::start(model.route.name, "app.yaml") ? "active": "" }>
-											<a class='nolink' href='/yaml/'>{ _("App", "Yaml") }</a>
-										</li>
-										<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
-											<a class='nolink' href='/nginx/'>{ _("App", "Nginx") }</a>
-										</li>
-										<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
-											<a class='nolink' href='/cli/'>{ _("App", "CLI") }</a>
-										</li>
-									</ul>
-								</li>
-								<li>
-									<a class='nolink'>{ _("App", "Admin") }</a>
-									<ul>
-										<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
-											<a class='nolink' href='/users/'>{ _("App", "Users") }</a>
-										</li>
-									</ul>
-								</li>
-							</ul>
+						
+						<div @class='layout_menu'>
+							<div @class='layout_menu_label'>
+								{ _("App", "Cluster") }
+							</div>
+							<div @class='layout_menu_items'>
+								<ul>
+									<li class={ rs::start(model.route.name, "app.index") ? "active": "" }>
+										<a class='nolink' href='/'>{ _("App", "Dashboard") }</a>
+									</li>
+									<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
+										<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
+									</li>
+									<li class={ rs::start(model.route.name, "app.yaml") ? "active": "" }>
+										<a class='nolink' href='/yaml/'>{ _("App", "Yaml") }</a>
+									</li>
+									<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
+										<a class='nolink' href='/nginx/'>{ _("App", "Nginx") }</a>
+									</li>
+									<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
+										<a class='nolink' href='/cli/'>{ _("App", "CLI") }</a>
+									</li>
+								</ul>
+							</div>
+							
+							<div @class='layout_menu_label'>
+								{ _("App", "Admin") }
+							</div>
+							<div @class='layout_menu_items'>
+								<ul>
+									<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
+										<a class='nolink' href='/'>{ _("App", "Users") }</a>
+									</li>
+								</ul>
+							</div>
 						</div>
+						
 					</div>
 					<div @class='layout_content_wrap'>
 						<div @class='layout_title'>{ model.title }</div>
+						<div @class='layout_breadcrumbs'></div>
 						<div @class='layout_content'>
-							<div @class='layout_breadcrumbs'>
-							</div>
-							<div @class='layout_page'>
-								<{class_name} @bind="page_model" @key="view"></{class_name}>
-							</div>
+							<{class_name} @bind="page_model" @key="view"></{class_name}>
 						</div>
 					</div>
 				</div>

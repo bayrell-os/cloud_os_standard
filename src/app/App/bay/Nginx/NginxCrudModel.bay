@@ -65,6 +65,7 @@ struct NginxCrudModel extends CrudModel
 					{ "id": 0, "value": _("App", "Disable") },
 					{ "id": 1, "value": _("App", "Enable") },
 				],
+				"default_value": 0,
 			}
 		)
 		

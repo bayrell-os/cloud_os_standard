@@ -87,7 +87,7 @@ class NginxPage extends ListPage
 	/**
 	 * Render item
 	 */
-	pure html renderItem(LayoutModel layout, NginxCrudModel model, Dict item, Dict params) =>
+	pure html renderItem(LayoutModel layout, NginxCrudModel model, Dict params, Dict item) =>
 		<div @class="item_row name">
 			<div @class="item_label">{ _("App", "Name") }:</div>
 			<div @class="item_text">{ rtl::attr(item, ["name"], "") }</div>
