@@ -29,6 +29,7 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.CRUD.CrudModel;
 use Runtime.Web.CRUD.ListPage;
 use Runtime.Web.Button.Button;
@@ -51,6 +52,13 @@ class NginxPage extends ListPage
 	
 	
 	/**
+	 * Returns api name
+	 */
+	pure string crudApiName() => "App.Nginx";
+	
+	
+	
+	/**
 	 * Route Action
 	 * @return WebContainer
 	 */
@@ -58,17 +66,17 @@ class NginxPage extends ListPage
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		MessageRPC msg = @ -> await method sendMessage
-		(
-			new MessageRPC
+		{
+			"api_name": static::crudApiName(),
+			"space_name": classof CrudInterface,
+			"method_name": "search",
+			"data":
 			{
-				"api_name": "App.Nginx.NginxCrudApi",
-				"space_name": "CrudInterface",
-				"method_name": "search",
-				"data":
-				{
-				},
-			}
-		);
+			},
+		};
+		
+		/* Get items */
+		Collection items = msg::isSuccess(msg) ? msg["response"]["items"] : [];
 		
 		/* Set title */
 		container <= layout <= title <= "Nginx";
@@ -76,7 +84,7 @@ class NginxPage extends ListPage
 		/* Create model */
 		container <= layout <= page_class <= classof NginxPage;
 		container <= layout <= page_model <= NginxCrudModel::create();
-		container <= layout <= page_model <= items <= msg::isSuccess(msg) ? msg.response : [];
+		container <= layout <= page_model <= items <= items != null ? items : [];
 		container <= layout <= f_inc <= 1;
 		
 		return container;

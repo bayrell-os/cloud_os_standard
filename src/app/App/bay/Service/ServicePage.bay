@@ -72,6 +72,8 @@ class ServicePage extends Component
 			}
 		);
 		
+		Collection items = msg::isSuccess(msg) ? msg["response"]["items"] : [];
+		
 		/* Set title */
 		container <= layout <= title <= "Service page";
 		
@@ -79,7 +81,7 @@ class ServicePage extends Component
 		container <= layout <= page_class <= classof ServicePage;
 		container <= layout <= page_model <= new ServicePageModel
 		{
-			"items": (msg::isSuccess(msg)) ? msg.response : [],
+			"items": items != null ? items : [],
 		};
 		container <= layout <= f_inc <= 1;
 		

@@ -27,19 +27,13 @@ use Runtime.Web.CRUD.Fields.TextArea;
 
 
 struct NginxCrudModel extends CrudModel
-{
-	
-	/**
-	 * Returns api name
-	 */
-	pure string crudApiName() => "App.Nginx";
-	
+{	
 	
 	
 	/**
 	 * Setup fields
 	 */
-	pure Dict<string, FieldInfo> buildFields() => {}
+	pure memorize Dict<FieldInfo> buildFields() => {}
 		
 		/* Name */
 		-> static::addField
@@ -49,6 +43,7 @@ struct NginxCrudModel extends CrudModel
 				"api_name": "name",
 				"label": _("App", "Name"),
 				"form": classof Input,
+				"required": true,
 			}
 		)
 		
@@ -77,6 +72,7 @@ struct NginxCrudModel extends CrudModel
 				"api_name": "content",
 				"label": _("App", "Content"),
 				"form": classof TextArea,
+				"default_value": "",
 			}
 		)
 	;
@@ -93,5 +89,23 @@ struct NginxCrudModel extends CrudModel
 		"content",
 	];
 	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	pure Collection<Collection<string>> getDefaultTableOrder() =>
+	[ 
+		["name", "asc"]
+	];
+	
+	
+	
+	/**
+	 * Validation
+	 */
+	pure void validate(Dict item, string action)
+	{
+	}
 	
 }

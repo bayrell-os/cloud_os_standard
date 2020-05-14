@@ -30,18 +30,34 @@ use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
+use App.Nginx.NginxCrudModel;
 
 
 @ApiList{ "api_name": "App.Nginx", "space_name": classof CrudInterface }
-class NginxCrudApi implements CrudInterface
+class NginxCrudApi extends CrudApi implements CrudInterface
 {
 	
 	#ifdef BACKEND then
+	
+	
+	/**
+	 * Returns crud model name
+	 */
+	pure string crudModelName() => classof NginxCrudModel;
+	
+	
+	
+	/**
+	 * Returns crud table name
+	 */
+	pure string crudTableName() => "docker_nginx";
+	
 	
 	
 	/**
@@ -50,30 +66,7 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "search" }
 	static async MessageRPC search(MessageRPC msg)
 	{
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		Collection<Dict> res;
-		
-		try
-		{
-			string sql = "select * from " ~ p.prefix ~ "docker_nginx order by name limit 100";
-			Cursor cursor = p
-				-> await method query(sql)
-			;
-			res = await cursor.fetchAll
-			(
-				Dict (Dict item)
-				{
-					return item;
-				}
-			);
-			cursor.close();
-		}
-		catch (RuntimeException e)
-		{
-			return msg -> method fail(null, e.getErrorMessage(), -1);
-		}
-		
-		return msg -> method success(res);
+		return await parent::search(msg);
 	}
 	
 	
@@ -84,7 +77,7 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "getByID" }
 	static async MessageRPC getByID(MessageRPC msg)
 	{
-		return msg;
+		return await parent::getByID(msg);
 	}
 	
 	
@@ -95,42 +88,7 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "create" }
 	static async MessageRPC create(MessageRPC msg)
 	{
-		throw new ApiException("Error 1111");
-		
-		return msg -> method fail(null, "Error 1111", -1);
-		
-		
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		int time = @.time();
-		int id;
-		
-		string name = msg -> attr "data" -> attr "name";
-		string enable = msg -> attr "data" -> attr "enable";
-		string content = msg -> attr "data" -> attr "content";
-		
-		/* Insert */
-		try
-		{
-			id = p
-				-> await method insert
-				(
-					p.prefix ~ "docker_nginx",
-					{
-						"name": name,
-						"enable": enable,
-						"content": content,
-						"timestamp": time,
-					}
-				)
-				-> await method end
-			;
-		}
-		catch (RuntimeException e)
-		{
-			return msg -> method fail(null, e.getErrorMessage(), -1);
-		}
-		
-		return msg -> method success({ "id": id, }, _("App", "Success"));
+		return await parent::create(msg);
 	}
 	
 	
@@ -141,40 +99,7 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "update" }
 	static async MessageRPC update(MessageRPC msg)
 	{
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		
-		int time = @.time();
-		string id = msg -> attr "data" -> attr "id";
-		string enable = msg -> attr "data" -> attr "enable";
-		string name = msg -> attr "data" -> attr "name";
-		string content = msg -> attr "data" -> attr "content";
-		
-		/* Insert or update */
-		try
-		{
-			p
-				-> await method insert_or_update
-				(
-					p.prefix ~ "docker_nginx",
-					{
-						"id": id,
-					},
-					{
-						"name": name,
-						"enable": enable,
-						"content": content,
-						"timestamp": time,
-					}
-				)
-				-> await method end
-			;
-		}
-		catch (RuntimeException e)
-		{
-			return msg -> method fail(null, e.getErrorMessage(), -1);
-		}
-		
-		return msg -> method success(null, _("App", "Success"));
+		return await parent::update(msg);
 	}
 	
 	
@@ -185,28 +110,7 @@ class NginxCrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "delete" }
 	static async MessageRPC delete(MessageRPC msg)
 	{
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		
-		try
-		{
-			string id = msg -> attr "data";
-			p
-				-> await method query
-				(
-					"update " ~ p.prefix ~ "docker_nginx set is_deleted=1 where id=:id",
-					{
-						"id": id,
-					}
-				)
-				-> await method end
-			;
-		}
-		catch (RuntimeException e)
-		{
-			return msg -> method fail(null, e.getErrorMessage(), -1);
-		}
-		
-		return msg -> method success(null, _("App", "Success"));
+		return await parent::delete(msg);
 	}
 	
 	
