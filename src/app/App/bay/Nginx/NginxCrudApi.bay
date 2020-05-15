@@ -32,6 +32,7 @@ use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.CrudInterface;
+use Runtime.Web.CRUD.FieldInfo;
 use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
@@ -57,6 +58,24 @@ class NginxCrudApi extends CrudApi implements CrudInterface
 	 * Returns crud table name
 	 */
 	pure string crudTableName() => "docker_nginx";
+	
+	
+	
+	/**
+	 * Filter item
+	 */
+	static Dict filter(CrudApi api) =>
+		async Dict (Dict item) use (api)
+		{
+			fn f = parent::filter(api);
+			var item = await f(item);
+			
+			int time = @.time();
+			item <= timestamp <= time;
+			
+			return item;
+		}
+	;
 	
 	
 	

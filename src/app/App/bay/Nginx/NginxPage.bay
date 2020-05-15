@@ -87,19 +87,28 @@ class NginxPage extends ListPage
 		container <= layout <= page_model <= items <= items != null ? items : [];
 		container <= layout <= f_inc <= 1;
 		
+		/* Add top buttons */
+		container = rtl::setAttr
+		(
+			container,
+			["layout", "storage", "App.Layout.TopButtons"],
+			[
+				{
+					"label": "Add",
+					"component": classof NginxPage,
+					"onClick": "onShowAddClick",
+				}
+			]
+		);
+		
 		return container;
 	}
 	
 	
 	
 	/**
-	 * Render item
+	 * Render Top Buttons
 	 */
-	pure html renderItem(LayoutModel layout, NginxCrudModel model, Dict params, Dict item) =>
-		<div @class="item_row name">
-			<div @class="item_label">{ _("App", "Name") }:</div>
-			<div @class="item_text">{ rtl::attr(item, ["name"], "") }</div>
-		</div>
-	;
+	pure html renderTopButtons(LayoutModel layout, CrudModel model, Dict params) => "";
 	
 }

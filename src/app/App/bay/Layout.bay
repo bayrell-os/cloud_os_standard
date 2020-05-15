@@ -26,6 +26,8 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.Button.Button;
+use Runtime.Web.Events.MouseClickEvent;
 
 
 class Layout extends Component
@@ -41,7 +43,10 @@ class Layout extends Component
 	/**
 	 * Required components
 	 */
-	pure Collection<string> components() => null;
+	pure Collection<string> components() =>
+	[
+		classof Button,
+	];
 	
 	
 	
@@ -77,12 +82,22 @@ class Layout extends Component
 				position: relative;
 				width: calc(100% - 200px);
 			}
-			%layout_site_name, %layout_title{
+			%layout_site_name, %layout_title_wrap{
 				font-size: 16px;
 				height: 40px;
 			}
-			%layout_site_name, %layout_title, %layout_page, %layout_content{
+			%layout_site_name, %layout_title_wrap, %layout_page, %layout_content{
 				padding: 10px;
+			}
+			%layout_title_wrap {
+				display: flex;
+				align-items: stretch;
+			}
+			%layout_title{
+				width: 350px;
+			}
+			%layout_top_buttons{
+				width: calc(100% - 350px);
 			}
 			%layout_content{
 				position: relative;
@@ -119,9 +134,6 @@ class Layout extends Component
 				border-color: #337ab7;
 				color: white;
 			}
-			%layout_title {
-				color: black;
-			}
 		}
 	;
 	
@@ -140,7 +152,7 @@ class Layout extends Component
 					<div @class='layout_menu_wrap'>
 						
 						<div @class='layout_site_name'>
-							<a class='nolink' href='/'>{ _("App", "Web Panel") }</a>
+							<a class='nolink' href='/'>{ _("App", "Docker web panel") }</a>
 						</div>
 						
 						<div @class='layout_menu'>
@@ -181,8 +193,10 @@ class Layout extends Component
 						
 					</div>
 					<div @class='layout_content_wrap'>
-						<div @class='layout_title'>{ model.title }</div>
-						<div @class='layout_breadcrumbs'></div>
+						<div @class='layout_title_wrap'>
+							<div @class='layout_title'>{ model.title }</div>
+							<div @class='layout_top_buttons'>{ static::renderTopButtons(layout) }</div>
+						</div>
 						<div @class='layout_content'>
 							<{class_name} @bind="page_model" @key="view"></{class_name}>
 						</div>
@@ -197,5 +211,39 @@ class Layout extends Component
 		;
 	}
 	
+	
+	/**
+	 * Render Top Buttons
+	 */
+	pure html renderTopButtons(LayoutModel layout)
+	{
+		Collection<Dict> top_buttons = rtl::attr(layout, ["storage", "App.Layout.TopButtons"]);
+		if (top_buttons == null) return "";
+		return top_buttons.map
+		(
+			html (Dict button) use (layout) =>
+				<Button @eventAsync:MouseClickEvent="onTopButtonClick" @tag={ button }>{ button["label"] }</Button>
+		);
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * Top button click
+	 */
+	async void onTopButtonClick(MouseClickEvent e)
+	{
+		Dict tag = e["target"]["params"]["@tag"];
+		string class_name = tag["component"];
+		string method_name = tag["onClick"];
+		Component c = this.driver.findComponents(class_name)[0];
+		fn f = rtl::method(c, method_name);
+		await f(e);
+	}
+	
+	
+	#endif
 	
 }

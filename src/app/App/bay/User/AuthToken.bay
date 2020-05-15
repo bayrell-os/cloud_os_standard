@@ -56,9 +56,9 @@ struct AuthToken extends CoreProvider
 		
 		if (token != null and time > token.expire) token = null;
 		
-		/* Add auth token to pocket */
+		/* Add auth token to layout storage */
 		container = container ->
-			lib::setAttr(["layout", "pocket", classof AuthToken], token)
+			lib::setAttr(["layout", "storage", classof AuthToken], token)
 		;
 		
 		/* Returns new container */
