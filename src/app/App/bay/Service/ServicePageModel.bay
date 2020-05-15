@@ -18,23 +18,80 @@
 
 namespace App.Service;
 
-use Runtime.CoreStruct;
-use Runtime.Web.Dialog.DialogModel;
-use App.Service.FormModel;
+use Runtime.lib;
+use Runtime.Web.CRUD.CrudModel;
+use Runtime.Web.CRUD.FieldInfo;
+use Runtime.Web.CRUD.Fields.Input;
+use Runtime.Web.CRUD.Fields.Select;
+use Runtime.Web.CRUD.Fields.TextArea;
 
 
-struct ServicePageModel extends CoreStruct
-{
-	int active = -1;
-	Collection<Dict> items = null;
-	FormModel form_add = new FormModel();
-	FormModel form_edit = new FormModel();
-	DialogModel dialog_add = new DialogModel();
+struct ServicePageModel extends CrudModel
+{	
 	
 	
 	/**
-	 * Returns active item
+	 * Setup fields
 	 */
-	pure Dict getActiveItem(ServicePageModel model) => rtl::attr(model, ["items", model.active], null);
+	pure memorize Dict<FieldInfo> buildFields() => {}
+		
+		/* Name */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "name",
+				"label": _("App", "Name"),
+				"form": classof Input,
+				"model": ["json", "Spec", "Name"],
+				"required": true,
+				"virtual": true,
+			}
+		)
+		
+		/* Image */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "image",
+				"label": _("App", "Image"),
+				"form": classof Input,
+				"model": ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"],
+				"required": true,
+				"virtual": true,
+			}
+		)
+	;
+	
+	
+	
+	/**
+	 * Returns form fields
+	 */
+	pure Collection<string> getDefaultFormFields() =>
+	[
+		"name",
+		"image",
+	];
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	pure Collection<Collection<string>> getDefaultTableOrder() =>
+	[ 
+		["_name", "asc"]
+	];
+	
+	
+	
+	/**
+	 * Validation
+	 */
+	pure void validate(Dict item, string action)
+	{
+	}
 	
 }

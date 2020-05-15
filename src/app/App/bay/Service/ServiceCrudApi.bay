@@ -22,53 +22,85 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Monad;
 use Runtime.RuntimeUtils;
+use Runtime.Exceptions.ApiException;
+use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
 use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.CrudInterface;
+use Runtime.Web.CRUD.FieldInfo;
 use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
-use App.DockerLib;
+use App.Service.ServicePageModel;
 
 
-@ApiList{ "space_name": "CrudInterface" }
-class ServiceCrudApi
+@ApiList{ "api_name": "App.Service", "space_name": classof CrudInterface }
+class ServiceCrudApi extends CrudApi implements CrudInterface
 {
 	
+	#ifdef BACKEND then
+	
+	
 	/**
-	 * Get Result
+	 * Returns crud model name
 	 */
-	pure fn getResult(MessageRPC msg, string s, int code) =>
-		MessageRPC (Monad res) use (msg, s, code)
+	pure string crudModelName() => classof ServicePageModel;
+	
+	
+	
+	/**
+	 * Returns crud table name
+	 */
+	pure string crudTableName() => "docker_services";
+	
+	
+	
+	/**
+	 * Api init
+	 */
+	pure async CrudApi apiInit(CrudApi api) => api;
+	
+	
+	
+	/**
+	 * Convert item from database
+	 */
+	pure fn<Dict, Dict> fromDatabase(CrudApi api) =>
+		Dict (Dict item)
 		{
-			if (res.err == null and res.val === null)
-				return new Monad
-				(
-					msg ->
-						method fail(null, _("App", s), -1)
-				);
-			
-			if (res.err != null)
-				return new Monad
-				(
-					msg ->
-						method fail(null, res.err.getErrorMessage(), res.err.getErrorCode())
-				);
-			
-			/* Success */
-			return new Monad
-			(
-				msg
-					-> method success
-					(
-						res.val,
-						res.val.get("Message", _("App", "Ok")), res.val.get("Code", 1)
-					)
-			);
+			item <= json <= RuntimeUtils::json_decode(item["json"]);
+			return item;
+		}
+	;
+	
+	
+	
+	/**
+	 * Convert item to database
+	 */
+	pure fn<Dict, Dict> toDatabase(CrudApi api) =>
+		Dict (Dict item)
+		{
+			item <= json <= RuntimeUtils::json_encode(item["json"]);
+			return item;
+		}
+	;
+	
+	
+	
+	/**
+	 * Process item
+	 */
+	pure fn<var, Dict> processItem(CrudApi api, Dict old_item = null) =>
+		async var (Dict item) use (api, old_item)
+		{
+			return item;
 		}
 	;
 	
@@ -80,101 +112,54 @@ class ServiceCrudApi
 	@ApiMethod{ "method_name": "search" }
 	static async MessageRPC search(MessageRPC msg)
 	{
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		
-		string sql = "select * from " ~ p.prefix ~ "docker_services where is_deleted=0 order by id desc limit 100";
-		Cursor cursor = p
-			-> await method query(sql)
-		;
-		Collection<Dict> res = await cursor.fetchAll
-		(
-			Dict (Dict item)
-			{
-				item <= json <= RuntimeUtils::json_decode(item.json);
-				return item;
-			}
-		);
-		cursor.close();
-		
-		return msg -> method success(res);
+		return await parent::search(msg);
 	}
 	
 	
 	
 	/**
-	 * Add service
+	 * Get by ID
 	 */
-	@ApiMethod{ "method_name": "add" }
-	static async MessageRPC add(MessageRPC msg) =>
-		msg
-			-> attr "data"
-			-> await DockerLib::dockerAddService
-			-> monad static::getResult(msg, _("App", "Add error"), -1)
-		;
+	@ApiMethod{ "method_name": "getByID" }
+	static async MessageRPC getByID(MessageRPC msg)
+	{
+		return await parent::getByID(msg);
+	}
 	
 	
 	
 	/**
-	 * Update service
+	 * Create
+	 */
+	@ApiMethod{ "method_name": "create" }
+	static async MessageRPC create(MessageRPC msg)
+	{
+		return await parent::create(msg);
+	}
+	
+	
+	
+	/**
+	 * Update
 	 */
 	@ApiMethod{ "method_name": "update" }
-	static async MessageRPC update(MessageRPC msg) =>
-		msg
-			-> attr "data"
-			-> await DockerLib::dockerUpdateService
-			-> monad static::getResult(msg, _("App", "Update error"), -1)
-		;
+	static async MessageRPC update(MessageRPC msg)
+	{
+		return await parent::update(msg);
+	}
 	
 	
 	
 	/**
-	 * Enable service
-	 */
-	@ApiMethod{ "method_name": "enable" }
-	static async MessageRPC enable(MessageRPC msg) =>
-		msg
-			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await DockerLib::dockerEnableService
-			-> monad static::getResult(msg, _("App", "Enable error"), -1)
-		;
-	
-	
-	
-	/**
-	 * Disable service
-	 */
-	@ApiMethod{ "method_name": "disable" }
-	static async MessageRPC disable(MessageRPC msg) =>
-		msg
-			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await DockerLib::dockerDisableService
-			-> monad static::getResult(msg, _("App", "Disable error"), -1)
-		;
-	
-	
-	
-	/**
-	 * Delete service
+	 * Delete
 	 */
 	@ApiMethod{ "method_name": "delete" }
-	static async MessageRPC delete(MessageRPC msg) =>
-		msg
-			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await DockerLib::dockerDisableService
-			
-			-> monad lib::set( msg, true )
-			-> attr "data" -> attr "spec" -> attr "ID"
-			-> await DockerLib::databaseDeleteService
-			
-			-> monad lib::set( msg, true )
-			-> attr "data" -> attr "service_id"
-			-> await DockerLib::dockerDisableService
-			
-			-> monad lib::set( msg, true )
-			-> attr "data" -> attr "service_id"
-			-> await DockerLib::databaseDeleteService
-			
-			-> monad static::getResult(msg, _("App", "Delete error"), -1)
-		;
+	static async MessageRPC delete(MessageRPC msg)
+	{
+		return await parent::delete(msg);
+	}
+	
+	
+	#endif
 	
 }

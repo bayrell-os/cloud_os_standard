@@ -26,7 +26,7 @@ use Runtime.Web.CRUD.Fields.Select;
 use Runtime.Web.CRUD.Fields.TextArea;
 
 
-struct NginxCrudModel extends CrudModel
+struct NginxPageModel extends CrudModel
 {	
 	
 	

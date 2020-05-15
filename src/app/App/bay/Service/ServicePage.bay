@@ -29,26 +29,32 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.CRUD.CrudInterface;
+use Runtime.Web.CRUD.CrudModel;
+use Runtime.Web.CRUD.ListPage;
 use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
-use App.Service.Form;
-use App.Service.FormEvent;
-use App.Service.FormModel;
 use App.Service.ServicePageModel;
 
 
 @RouteList{}
-class ServicePage extends Component
-{	
-	Dialog dialog_add = null;
+class ServicePage extends ListPage
+{
 	
 	
 	/**
 	 * Returns module name
 	 */
 	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Returns api name
+	 */
+	pure string crudApiName() => "App.Service";
 	
 	
 	
@@ -60,30 +66,40 @@ class ServicePage extends Component
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		MessageRPC msg = @ -> await method sendMessage
-		(
-			new MessageRPC
+		{
+			"api_name": static::crudApiName(),
+			"space_name": classof CrudInterface,
+			"method_name": "search",
+			"data":
 			{
-				"api_name": "App.Service.ServiceCrudApi",
-				"space_name": "CrudInterface",
-				"method_name": "search",
-				"data":
-				{
-				},
-			}
-		);
+			},
+		};
 		
+		/* Get items */
 		Collection items = msg::isSuccess(msg) ? msg["response"]["items"] : [];
 		
 		/* Set title */
-		container <= layout <= title <= "Service page";
+		container <= layout <= title <= "Service";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof ServicePage;
-		container <= layout <= page_model <= new ServicePageModel
-		{
-			"items": items != null ? items : [],
-		};
+		container <= layout <= page_model <= ServicePageModel::create();
+		container <= layout <= page_model <= items <= items != null ? items : [];
 		container <= layout <= f_inc <= 1;
+		
+		/* Add top buttons */
+		container = rtl::setAttr
+		(
+			container,
+			["layout", "storage", "App.Layout.TopButtons"],
+			[
+				{
+					"label": "Add",
+					"component": classof ServicePage,
+					"onClick": "onShowAddClick",
+				}
+			]
+		);
 		
 		return container;
 	}
@@ -91,125 +107,29 @@ class ServicePage extends Component
 	
 	
 	/**
-	 * Returns required components
+	 * Render Top Buttons
 	 */
-	pure Collection<string> components() => 
-	[
-		classof Button,
-		classof Dialog,
-		classof Form,
-	];
+	pure html renderTopButtons(LayoutModel layout, CrudModel model, Dict params) => "";
 	
 	
 	
 	/**
-	 * Component css
+	 * Render item
 	 */
-	pure string css(Dict<string> vars) => 
-		@css{
-			%items, %info{
-				display: inline-block;
-				vertical-align: top;
-			}
-			%items{
-				width: 350px;
-				position: relative;
-			}
-			%item{
-				position: relative;
-				padding: 10px;
-				cursor: pointer;
-				border-bottom: 1px #ccc solid;
-			}
-			%item.active{
-				background-color: #337ab7;
-				border-color: #337ab7;
-				color: white;
-			}
-			%item_row{
-				padding-bottom: 5px;
-			}
-			%item_row:last-child{
-				padding-bottom: 0px;
-			}
-			%item_label, %item_text{
-				display: inline-block;
-				vertical-align: top;
-			}
-			%item_label{
-				display: none;
-				width: 0px;
-				text-align: right;
-				padding-right: 5px;
-			}
-			%item_text{
-				width: calc(100% - 0px);
-				text-align: left;
-				padding-left: 5px;
-				overflow-wrap: anywhere;
-			}
-			%item_disabled{
-				position: absolute;
-				right: 0;
-				top: 0;
-				background-color: #880000;
-				color: white;
-				font-size: 12px;
-			}
-			%info{
-				width: calc(100% - 350px);
-				padding-left: 10px;
-			}
-		}
-	;
-	
-	
-	
-	/**
-	 * Component render
-	 */
-	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
-		<div>
-			<div @class='buttons_top'>
-				<Button @eventAsync:MouseClickEvent="onShowAddClick">Add</Button>
-			</div>
-			<div @class='items' @key={ "items" }>
+	pure html renderItem(LayoutModel layout, CrudModel model, Dict params, Dict item) =>
+		<div @class='item_row name'>
+			{ rtl::attr(item, ["json", "Spec", "Name"], "") }
+		</div>
+		<div @class='item_row image'>
 			{
-				model.items.map
+				static::trimImageName
 				(
-					html (Dict item, int index) use (model) =>
-						<div @class='item' data-index={ index } @key={ index }
-							class={ model.active == index ? "active": "" }
-							@event:MouseClickEvent="onItemClick"
-						>
-							<div @class='item_row name'>
-								<div @class='item_label'>{ _("App", "Name") }:</div>
-								<div @class='item_text'>{ rtl::attr(item, ["json", "Spec", "Name"], "") }</div>
-							</div>
-							<div @class='item_row image'>
-								<div @class='item_label'>{ _("App", "Image") }:</div>
-								<div @class='item_text'>
-								{
-									static::trimImageName
-									(
-										rtl::attr(item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"], "")
-									)
-								}
-								</div>
-							</div>
-							<div @class='item_disabled'>
-								{ item.get("enable", 1) == 1 ? "" : _("App", "Disabled") }
-							</div>
-						</div>
+					rtl::attr(item, ["json", "Spec", "TaskTemplate", "ContainerSpec", "Image"], "")
 				)
 			}
-			</div>
-			<div @class='info' @key={ "info" }>
-				<Form @bind="form_edit" action="edit" @eventAsync:FormEvent="onFormEvent"></Form>
-			</div>
-			<Dialog @bind="dialog_add" @ref="dialog_add" style={ DialogModel::STYLE_CONTENT } show_buttons={ false }>
-				<Form @bind="form_add" action="add" @eventAsync:FormEvent="onFormEvent"></Form>
-			</Dialog>
+		</div>
+		<div @class='item_disabled'>
+			{ item.get("enable", 0) == 0 ? _("App", "Disabled") : "" }
 		</div>
 	;
 	
@@ -224,110 +144,5 @@ class ServicePage extends Component
 		if (pos != -1) name = rs::substr(name, 0, pos);
 		return name;
 	}
-	
-	
-	
-	#ifdef FRONTEND then
-	
-	
-	/**
-	 * Add click
-	 */
-	async void onShowAddClick(MouseClickEvent e)
-	{
-		e.cancel();
-		this.updateModel
-		{
-			"form_add": new FormModel
-			{
-				"item": new Dict(),
-			}
-		};
-		this.dialog_add.show();
-	}
-	
-	
-	
-	/**
-	 * Form add Event
-	 */
-	async void onFormEvent(FormEvent e)
-	{
-		if (e.event == FormEvent::CANCEL_ADD_DIALOG)
-		{
-			this.dialog_add.hide();
-		}
-		else if (e.event == FormEvent::ACTION_ADD)
-		{
-			this.dialog_add.hide();
-			this.updateModel
-			{
-				"items": this.model.items.unshiftIm(e.item),
-				"form_add": new FormModel(),
-			};
-		}
-		else if (e.event == FormEvent::ACTION_ENABLE)
-		{
-			Dict item = this.model -> method getActiveItem;
-			item <= service_id <= e.service_id;
-			item <= enable <= 1;
-			item = rtl::setAttr(item, ["json", "ID"], e.service_id);
-			
-			FormModel form_edit = this.model.form_edit;
-			form_edit <= item <= item;
-			
-			this.updateModel
-			{
-				"items": this.model.items.setIm(this.model.active, item),
-				"form_edit": form_edit,
-			};
-		}
-		else if (e.event == FormEvent::ACTION_DISABLE)
-		{
-			Dict item = this.model -> method getActiveItem;
-			item <= enable <= 0;
-			
-			FormModel form_edit = this.model.form_edit;
-			form_edit <= item <= item;
-			
-			this.updateModel
-			{
-				"items": this.model.items.setIm(this.model.active, item),
-				"form_edit": form_edit,
-			};
-		}
-		else if (e.event == FormEvent::ACTION_DELETE)
-		{
-			this.updateModel
-			{
-				"active": -1,
-				"items": this.model.items.removeIm(this.model.active),
-				"form_edit": new FormModel(),
-			};
-		}
-	}
-	
-	
-	
-	/**
-	 * Click item
-	 */
-	void onItemClick(MouseClickEvent e)
-	{
-		int index = e.target.params.get("data-index");
-		ServicePageModel model = this.model();
-		FormModel form_edit = new FormModel();
-		form_edit <= item <= rtl::attr(model, ["items", index], null);
-		form_edit <= message <= "";
-		form_edit <= error <= "";
-		form_edit <= success <= "";
-		this.updateModel
-		{
-			"active": index,
-			"form_edit": form_edit,
-		};
-	}
-	
-	#endif
 	
 }

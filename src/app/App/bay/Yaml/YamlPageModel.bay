@@ -18,24 +18,76 @@
 
 namespace App.Yaml;
 
-use Runtime.CoreStruct;
-use Runtime.Web.Dialog.DialogModel;
-use App.Yaml.FormModel;
+use Runtime.lib;
+use Runtime.Web.CRUD.CrudModel;
+use Runtime.Web.CRUD.FieldInfo;
+use Runtime.Web.CRUD.Fields.Input;
+use Runtime.Web.CRUD.Fields.Select;
+use Runtime.Web.CRUD.Fields.TextArea;
 
 
-struct YamlPageModel extends CoreStruct
-{
-	
-	int active = -1;
-	Collection<Dict> items = null;
-	FormModel form_add = new FormModel();
-	FormModel form_edit = new FormModel();
-	DialogModel dialog_add = new DialogModel();
+struct YamlPageModel extends CrudModel
+{	
 	
 	
 	/**
-	 * Returns active item
+	 * Setup fields
 	 */
-	pure Dict getActiveItem(YamlPageModel model) => rtl::attr(model, ["items", model.active], null);
+	pure memorize Dict<FieldInfo> buildFields() => {}
+		
+		/* Name */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "name",
+				"label": _("App", "Name"),
+				"form": classof Input,
+				"required": true,
+			}
+		)
+		
+		/* Content */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "content",
+				"label": _("App", "Content"),
+				"form": classof TextArea,
+				"default_value": "",
+			}
+		)
+	;
+	
+	
+	
+	/**
+	 * Returns form fields
+	 */
+	pure Collection<string> getDefaultFormFields() =>
+	[
+		"name",
+		"content",
+	];
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	pure Collection<Collection<string>> getDefaultTableOrder() =>
+	[ 
+		["name", "asc"]
+	];
+	
+	
+	
+	/**
+	 * Validation
+	 */
+	pure void validate(Dict item, string action)
+	{
+	}
 	
 }

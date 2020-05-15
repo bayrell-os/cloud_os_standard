@@ -37,7 +37,7 @@ use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
-use App.Nginx.NginxCrudModel;
+use App.Nginx.NginxPageModel;
 
 
 @ApiList{ "api_name": "App.Nginx", "space_name": classof CrudInterface }
@@ -50,7 +50,7 @@ class NginxCrudApi extends CrudApi implements CrudInterface
 	/**
 	 * Returns crud model name
 	 */
-	pure string crudModelName() => classof NginxCrudModel;
+	pure string crudModelName() => classof NginxPageModel;
 	
 	
 	
@@ -62,19 +62,35 @@ class NginxCrudApi extends CrudApi implements CrudInterface
 	
 	
 	/**
-	 * Filter item
+	 * Api init
 	 */
-	static Dict filter(CrudApi api) =>
-		async Dict (Dict item) use (api)
-		{
-			fn f = parent::filter(api);
-			var item = await f(item);
-			
-			int time = @.time();
-			item <= timestamp <= time;
-			
-			return item;
-		}
+	pure async CrudApi apiInit(CrudApi api) => api;
+	
+	
+	
+	/**
+	 * Convert item from database
+	 */
+	pure fn<Dict, Dict> fromDatabase(CrudApi api) =>
+		Dict (Dict item) => item
+	;
+	
+	
+	
+	/**
+	 * Convert item to database
+	 */
+	pure fn<Dict, Dict> toDatabase(CrudApi api) =>
+		Dict (Dict item) => item
+	;
+	
+	
+	
+	/**
+	 * Process item
+	 */
+	pure fn<var, Dict> processItem(CrudApi api, Dict old_item = null) =>
+		async var (Dict item) use (api, old_item) => item
 	;
 	
 	

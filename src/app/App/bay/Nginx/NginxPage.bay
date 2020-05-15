@@ -36,7 +36,7 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
-use App.Nginx.NginxCrudModel;
+use App.Nginx.NginxPageModel;
 
 
 @RouteList{}
@@ -83,7 +83,7 @@ class NginxPage extends ListPage
 		
 		/* Create model */
 		container <= layout <= page_class <= classof NginxPage;
-		container <= layout <= page_model <= NginxCrudModel::create();
+		container <= layout <= page_model <= NginxPageModel::create();
 		container <= layout <= page_model <= items <= items != null ? items : [];
 		container <= layout <= f_inc <= 1;
 		
