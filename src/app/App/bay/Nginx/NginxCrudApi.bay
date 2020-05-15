@@ -90,7 +90,14 @@ class NginxCrudApi extends CrudApi implements CrudInterface
 	 * Process item
 	 */
 	pure fn<var, Dict> processItem(CrudApi api, Dict old_item = null) =>
-		async var (Dict item) use (api, old_item) => item
+		async var (Dict item) use (api, old_item)
+		{
+			if (api.action == "create" or api.action == "update")
+			{
+				item <= timestamp <= @.time();
+			}
+			return item;
+		}
 	;
 	
 	
