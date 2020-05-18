@@ -29,6 +29,7 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.CRUD.CrudEvent;
 use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.CRUD.CrudModel;
 use Runtime.Web.CRUD.ListPage;
@@ -36,6 +37,7 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
+use App.Service.ServiceForm;
 use App.Service.ServicePageModel;
 
 
@@ -55,6 +57,13 @@ class ServicePage extends ListPage
 	 * Returns api name
 	 */
 	pure string crudApiName() => "App.Service";
+	
+	
+	
+	/**
+	 * Returns form class name
+	 */
+	pure string getFormClassName() => classof ServiceForm;
 	
 	
 	
@@ -144,5 +153,209 @@ class ServicePage extends ListPage
 		if (pos != -1) name = rs::substr(name, 0, pos);
 		return name;
 	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Dialog event
+	 */
+	async void onDialogEvent(DialogEvent e)
+	{
+		if (e.instance.params["@key"] == "dialog_answer")
+		{
+			if (e.button_result == "ok")
+			{
+				string action = e["tag"]["action"];
+				Dict item = e["tag"]["item"];
+				if (action == "enable")
+				{
+					await this.onEnableItem( item["id"] );
+					return;
+				}
+				else if (action == "disable")
+				{
+					await this.onDisableItem( item["id"] );
+					return;
+				}
+			}
+		}
+		
+		await parent::onDialogEvent(e);
+	}
+	
+	
+	
+	/**
+	 * Form add Event
+	 */
+	async void onCrudEvent(CrudEvent e)
+	{
+		CrudModel model = this.model();
+		
+		if (e.event == "enable")
+		{
+			int index = model.active;
+			Dict item = model -> method getItemByIndex(index);
+			this.dialog_answer.show
+			{
+				"title": _("Runtime.Web.CRUD", "Enable %name% ?", {"name": model::getItemName(item)}),
+				"tag": 
+				{
+					"action": "enable",
+					"item": item
+				},
+			};
+			return;
+		}
+		else if (e.event == "disable")
+		{
+			int index = model.active;
+			Dict item = model -> method getItemByIndex(index);
+			this.dialog_answer.show
+			{
+				"title": _("Runtime.Web.CRUD", "Disable %name% ?", {"name": model::getItemName(item)}),
+				"tag": 
+				{
+					"action": "disable",
+					"item": item
+				},
+			};
+			return;
+		}
+		
+		await parent::onCrudEvent(e);
+	}
+	
+	
+	/**
+	 * Enable item
+	 */
+	async void onEnableItem(int item_id)
+	{
+		CrudModel model = this.model();
+		string api_name = static::crudApiName();
+		
+		/* Set wait message */
+		this.dialog_answer.updateModel
+		{
+			"message": _("Runtime.Web.CRUD", "Please wait ..."),
+			"success": "",
+			"error": "",
+		};
+		
+		/* Call create api */
+		MessageRPC msg = @ -> await method sendMessage
+		{
+			"api_name": api_name,
+			"space_name": classof CrudInterface,
+			"method_name": "enable",
+			"data":
+			{
+				"id": item_id,
+			},
+		};
+		
+		/* Set result */
+		bool is_success = msg -> method isSuccess;
+		if (is_success)
+		{
+			CrudModel model = this.model();
+			Dict item = msg["response"]["item"];
+			
+			/* Update item */
+			int index = model.items.find( bool (Dict elem) use (item) => item["id"] == elem["id"] );
+			this.updateModel
+			{
+				"items": model.items.setIm(index, item),
+			};
+			this.form_edit.updateModel
+			{
+				"item": item,
+			}
+			
+			/* Hide dialog */
+			this.dialog_answer.hide();
+		}
+		else
+		{
+			/* Set error message */
+			this.dialog_answer.updateModel
+			{
+				"message": "",
+				"success": "",
+				"error": msg -> attr "error",
+			};
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * Disable item
+	 */
+	async void onDisableItem(int item_id)
+	{
+		CrudModel model = this.model();
+		string api_name = static::crudApiName();
+		
+		/* Set wait message */
+		this.dialog_answer.updateModel
+		{
+			"message": _("Runtime.Web.CRUD", "Please wait ..."),
+			"success": "",
+			"error": "",
+		};
+		
+		/* Call create api */
+		MessageRPC msg = @ -> await method sendMessage
+		{
+			"api_name": api_name,
+			"space_name": classof CrudInterface,
+			"method_name": "disable",
+			"data":
+			{
+				"id": item_id,
+			},
+		};
+		
+		/* Set result */
+		bool is_success = msg -> method isSuccess;
+		if (is_success)
+		{
+			CrudModel model = this.model();
+			Dict item = msg["response"]["item"];
+			
+			/* Update item */
+			int index = model.items.find( bool (Dict elem) use (item) => item["id"] == elem["id"] );
+			this.updateModel
+			{
+				"items": model.items.setIm(index, item),
+			};
+			this.form_edit.updateModel
+			{
+				"item": item,
+			}
+			
+			/* Hide dialog */
+			this.dialog_answer.hide();
+		}
+		else
+		{
+			/* Set error message */
+			this.dialog_answer.updateModel
+			{
+				"message": "",
+				"success": "",
+				"error": msg -> attr "error",
+			};
+		}
+		
+	}
+	
+	#endif
 	
 }

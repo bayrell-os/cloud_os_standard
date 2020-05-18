@@ -88,6 +88,7 @@ class ModuleDescription implements
 		"App/Layout",
 		"App/Nginx/NginxPage",
 		"App/Nginx/NginxPageModel",
+		"App/Service/ServiceForm",
 		"App/Service/ServicePage",
 		"App/Service/ServicePageModel",
 		"App/User/AuthPage",

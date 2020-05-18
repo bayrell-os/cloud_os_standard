@@ -27,7 +27,7 @@ use Runtime.Task.Annotations.TaskMethod;
 use Runtime.Task.TaskOutputProvider;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
-use App.AppLib;
+use App.DockerLib;
 
 
 @TaskList{}
@@ -54,7 +54,7 @@ class SyncDockerServicesTask
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
 		int time = @.time();
-		string s = AppLib::dockerApi("/services");
+		string s = DockerLib::dockerApi("/services");
 		
 		Collection services = RuntimeUtils::json_decode(s);
 		

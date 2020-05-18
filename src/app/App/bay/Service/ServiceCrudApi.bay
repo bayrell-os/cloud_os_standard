@@ -21,11 +21,13 @@ namespace App.Service;
 use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Monad;
+use Runtime.RuntimeConstant;
 use Runtime.RuntimeUtils;
 use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
+use Runtime.ORM.QueryBuilder;
 use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
@@ -38,6 +40,7 @@ use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
 use App.Service.ServicePageModel;
+use App.DockerLib;
 
 
 @ApiList{ "api_name": "App.Service", "space_name": classof CrudInterface }
@@ -107,6 +110,51 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	
 	
 	/**
+	 * Get Result
+	 */
+	pure fn getResult(MessageRPC msg, string s, int code) =>
+		MessageRPC (Monad res) use (msg, s, code)
+		{
+			if (res.err == null and res.val === null)
+				return new Monad( msg -> method fail(null, _("App", s), -1) );
+			
+			if (res.err != null)
+				return new Monad( msg -> method exception(res.err) );
+			
+			/* Success */
+			return new Monad
+			(
+				msg
+					-> method success
+					(
+						res.val,
+						res.val.get("Message", _("App", "Ok")),
+						res.val.get("Code", 1)
+					)
+			);
+		}
+	;
+	
+	
+	
+	/**
+	 * Build search query
+	 */
+	pure QueryBuilder buildSearchQuery(CrudApi api)
+	{
+		QueryBuilder q = parent::buildSearchQuery(api);
+		
+		q = q -> method where
+		{
+			"is_deleted": 0,
+		};
+		
+		return q;
+	}
+	
+	
+	
+	/**
 	 * Search
 	 */
 	@ApiMethod{ "method_name": "search" }
@@ -120,10 +168,10 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	/**
 	 * Get by ID
 	 */
-	@ApiMethod{ "method_name": "getByID" }
-	static async MessageRPC getByID(MessageRPC msg)
+	@ApiMethod{ "method_name": "findItem" }
+	static async MessageRPC findItem(MessageRPC msg)
 	{
-		return await parent::getByID(msg);
+		return await parent::findItem(msg);
 	}
 	
 	
@@ -134,7 +182,24 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "create" }
 	static async MessageRPC create(MessageRPC msg)
 	{
-		return await parent::create(msg);
+		Dict item = msg["data"]["item"];
+		CrudApi api = static::newInstance
+		{
+			"action": "create",
+			"msg": msg,
+			"item": item,
+		};
+		
+		/* Convert item */
+		Dict item = item
+			-> await static::validate(api)
+		;
+		
+		return item
+			-> attr "json"
+			-> await static::dockerAddService
+			-> monad static::getResult(msg, _("App", "Update error"), -1)
+		;
 	}
 	
 	
@@ -145,7 +210,24 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "update" }
 	static async MessageRPC update(MessageRPC msg)
 	{
-		return await parent::update(msg);
+		Dict item = msg["data"]["item"];
+		CrudApi api = static::newInstance
+		{
+			"action": "update",
+			"msg": msg,
+			"item": item,
+		};
+		
+		/* Convert item */
+		Dict item = item
+			-> await static::validate(api)
+		;
+		
+		return msg
+			-> attr "data" -> attr "item" -> attr "json"
+			-> await static::dockerUpdateService
+			-> monad static::getResult(msg, _("App", "Update error"), -1)
+		;
 	}
 	
 	
@@ -156,7 +238,407 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "delete" }
 	static async MessageRPC delete(MessageRPC msg)
 	{
-		return await parent::delete(msg);
+		string item_id = msg["data"]["id"];
+		
+		/* Create crud api */
+		CrudApi api = static::newInstance
+		{
+			"action": "delete",
+			"msg": msg,
+			"id": item_id,
+		};
+		
+		/* Find item */
+		Dict row = item_id -> await static::getById(api);
+		Dict service_id_1 = row["service_id"];
+		Dict service_id_2 = row["json"]["ID"];
+		
+		/* Disable service */
+		service_id_1 -> await static::dockerDisableService -> monad lib::clearError();
+		service_id_1 -> await static::databaseDeleteService -> monad lib::clearError();
+		service_id_2 -> await static::dockerDisableService -> monad lib::clearError();
+		service_id_2 -> await static::databaseDeleteService -> monad lib::clearError();
+		
+		return msg -> method success({ "id": item_id }, _("Runtime.WEB.CRUD", "Success deleted"));
+	}
+	
+	
+	
+	/**
+	 * Enable
+	 */
+	@ApiMethod{ "method_name": "enable" }
+	static async MessageRPC enable(MessageRPC msg)
+	{
+		string item_id = msg["data"]["id"];
+		
+		/* Create crud api */
+		CrudApi api = static::newInstance
+		{
+			"action": "enable",
+			"msg": msg,
+			"id": item_id,
+		};
+		
+		/* Find item */
+		Dict row = item_id -> await static::getById(api);
+		Dict service_id = row["service_id"];
+		
+		/* Enable service */
+		return service_id
+			-> await static::dockerEnableService
+			-> monad static::getResult(msg, _("App", "Enable error"), -1)
+		;
+	}
+	
+	
+	
+	/**
+	 * Disable
+	 */
+	@ApiMethod{ "method_name": "disable" }
+	static async MessageRPC disable(MessageRPC msg)
+	{
+		string item_id = msg["data"]["id"];
+		
+		/* Create crud api */
+		CrudApi api = static::newInstance
+		{
+			"action": "disable",
+			"msg": msg,
+			"id": item_id,
+		};
+		
+		/* Find item */
+		Dict row = item_id -> await static::getById(api);
+		Dict service_id = row["service_id"];
+		
+		/* Disable service */
+		return service_id
+			-> await static::dockerDisableService
+			-> monad static::getResult(msg, _("App", "Disable error"), -1)
+		;
+	}
+	
+	
+	
+	/* ================================== Docker ================================== */
+	
+	/**
+	 * Get diff from spec
+	 */
+	pure Dict getDockerUpdateSpec(Dict old_json, Dict new_json)
+	{
+		if (old_json === null) return null;
+		if (new_json === null) return null;
+		
+		bool updated = false;
+		Dict diff_spec = rtl::attr(old_json, ["Spec"], {});
+		
+		/* Change image */
+		string old_image = rtl::attr(old_json, ["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		string new_image = rtl::attr(new_json, ["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		if (old_image != new_image and new_image != "")
+		{
+			if (rtl::attr(diff_spec, ["TaskTemplate"], null) === null)
+			{
+				diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate"], {});
+			}
+			if (rtl::attr(diff_spec, ["TaskTemplate", "ContainerSpec"], null) === null)
+			{
+				diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate", "ContainerSpec"], {});
+			}
+			diff_spec = rtl::setAttr(diff_spec, ["TaskTemplate", "ContainerSpec", "Image"], new_image);
+			updated = true;
+		}
+		
+		return [updated, diff_spec];
+	}
+	
+	
+	
+	/**
+	 * Get service from docker
+	 */
+	static async Dict dockerGetService(string service_id)
+	{
+		string url_api = "/services/" ~ service_id;
+		string content = await DockerLib::dockerApi(url_api);
+		return RuntimeUtils::json_decode(content);
+	}
+	
+	
+	
+	/**
+	 * Add service in docker
+	 */
+	static async Dict dockerAddService(Dict json)
+	{
+		string s = json -> attr "Spec" -> RuntimeUtils::json_encode;
+		string url_api = "/services/create";
+		string content = await DockerLib::dockerApi(url_api, "POST", s);
+		Dict res = RuntimeUtils::json_decode(content);
+		if (res == null) throw new RuntimeException( _("App", "Error create service in docker"), -1 );
+		
+		string message = res -> attr "message" -> monad lib::default( _("App", "Service does not created") );
+		string service_id = res -> attr "ID";
+		if (service_id == null) throw new RuntimeException( message, -1 );
+		
+		/* Update spec of the service */
+		Dict new_json = await static::dockerGetService(service_id);
+		await static::databaseUpdateService("", new_json);
+		
+		/* Read service from database */
+		Dict item = await static::databaseGetServiceById(service_id);
+		
+		return { "Message": _("App", "Service created"), "Code": 1, "item": item, "id": item["id"] };
+	}
+	
+	
+	
+	/**
+	 * Update service in docker
+	 */
+	static async Dict dockerUpdateService(Dict new_json)
+	{
+		string service_id = new_json -> attr "ID";
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		Dict old_spec = static::dockerGetService(service_id);
+		service_id = old_spec -> attr "ID";
+		if (service_id == null) throw new RuntimeException( _("App", "Service in docker not found"), -1 );
+		
+		string version = old_spec -> attr "Version" -> attr "Index";
+		if (version == null) throw new RuntimeException( _("App", "Service version is null"), -1 );
+		
+		list res = static::getDockerUpdateSpec(old_spec, new_json);
+		if (res == null)  throw new RuntimeException( _("App", "Update docker service spec error"), -1 );
+		
+		bool updated = res[0];
+		Dict diff_spec = res[1];
+		if (not updated)
+		{
+			Dict item = await static::databaseGetServiceById(service_id);
+			return { "Message": _("App", "Service not updated"), "Code": 2, "item": item, "id": item["id"] };
+		}
+		
+		string s = RuntimeUtils::json_encode(diff_spec);
+		string url_api = "/services/" ~ service_id ~ "/update?version=" ~ version;
+		
+		/* Update service */
+		string content = await DockerLib::dockerApi(url_api, "POST", s);
+		Dict res = RuntimeUtils::json_decode(content);
+		
+		/* Update spec of the service */
+		Dict spec = await static::dockerGetService(service_id);
+		await static::databaseUpdateService(service_id, spec);
+		
+		/* Read service from database */
+		Dict item = await static::databaseGetServiceById(service_id);
+		
+		return { "Message": _("App", "Service updated"), "Code": 1, "item": item, "id": item["id"] };
+	}
+	
+	
+	
+	/**
+	 * Enable service in docker
+	 */
+	static async Dict dockerEnableService(string old_service_id)
+	{
+		if (old_service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		Dict item = await static::databaseGetServiceById(old_service_id);
+		if (item == null) throw new RuntimeException( _("App", "Service in database not found"), -1 );
+		
+		Dict spec = item -> attr "json" -> attr "Spec" -> RuntimeUtils::json_encode;
+		if (spec == null) throw new RuntimeException( _("App", "Spec not found"), -1 );
+		
+		string url_api = "/services/create";
+		string content = await DockerLib::dockerApi(url_api, "POST", spec);
+		Dict res = RuntimeUtils::json_decode(content);
+		if (res == null) throw new RuntimeException( _("App", "Create service error"), -1 );
+		
+		string new_service_id = res -> attr "ID";
+		if (new_service_id == null) throw new RuntimeException( _("App", "Service does not created"), -1 );
+		
+		/* Update spec of the service */
+		Dict spec = await static::dockerGetService(new_service_id);
+		await static::databaseUpdateService(old_service_id, spec);
+		
+		/* Read service from database */
+		Dict item = await static::databaseGetServiceById(new_service_id);
+		
+		return { "Message": _("App", "Service enabled"), "Code": 1, "item": item, "id": item["id"] };
+	}
+	
+	
+	
+	/**
+	 * Delete service in docker
+	 */
+	static async Dict dockerDisableService(string service_id)
+	{
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		/* Delete service */
+		string url_api = "/services/" ~ service_id;
+		string content = await DockerLib::dockerApi(url_api, "DELETE");
+		Dict res = RuntimeUtils::json_decode(content);
+		
+		/* Success */
+		if (content != "")
+		{
+			/* Check if error */
+			string message = res.get("message", "");
+			if (message != "")
+			{
+				throw new RuntimeException( message, -1 );
+			}
+			
+			throw new RuntimeException( "Error disable service", -1 );
+		}
+		
+		/* Disables service in database */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set enable=0 where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		/* Read service from database */
+		Dict item = await static::databaseGetServiceById(service_id);
+		
+		return { "Message": _("App", "Service disabled"), "Code": 1, "item": item, "id": item["id"] };
+	}
+	
+	
+	
+	/**
+	 * Update service from database
+	 */
+	static async Dict databaseUpdateService(string old_service_id, Dict json)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		int time = @.time();
+		string new_service_id = json.get("ID", "");
+		string service_name = json -> lib::attr(["Spec", "Name"], "");
+		string service_image = json -> lib::attr(["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+		
+		if (new_service_id == null) throw new RuntimeException( _("App", "New service id is not set"), -1 );
+		
+		/* Update service id */
+		if (old_service_id != "")
+		{
+			p
+				-> await method query
+				(
+					"update " ~ p.prefix ~ "docker_services set service_id=:new_service_id, is_deleted=0, enable=1 " ~
+						" where service_id = :old_service_id limit 1",
+					{
+						"old_service_id": old_service_id,
+						"new_service_id": new_service_id,
+					}
+				)
+				-> await method end
+			;
+		}
+		
+		if (old_service_id != new_service_id)
+		{
+			/* Delete wrong service */
+			if (old_service_id != "")
+			{
+				p
+					-> await method query
+					(
+						"delete from " ~ p.prefix ~ "docker_services " ~
+							" where service_id = :old_service_id limit 1",
+						{
+							"old_service_id": old_service_id,
+						}
+					)
+					-> await method end
+				;
+			}
+			
+			/* Insert or update */
+			p
+				-> await method insert_or_update
+				(
+					p.prefix ~ "docker_services",
+					{
+						"service_id": new_service_id,
+					},
+					{
+						"_name": service_name,
+						"_image": service_image,
+						"is_deleted": 0,
+						"enable": 1,
+						"timestamp": time,
+						"json": RuntimeUtils::json_encode(json),
+					}
+				)
+				-> await method end
+			;
+		}
+		
+		return { "Message": _("App", "Service deleted"), "Code": 1 };
+	}
+	
+	
+	
+	/**
+	 * Delete service from database
+	 */
+	static async Dict databaseDeleteService(string service_id)
+	{
+		if (service_id == null) throw new RuntimeException( _("App", "Service ID is not set"), -1 );
+		
+		/* Delete service from database */
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		p
+			-> await method query
+			(
+				"update " ~ p.prefix ~ "docker_services set is_deleted=1 where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method end
+		;
+		
+		return { "Message": _("App", "Service deleted"), "Code": 1 };
+	}
+	
+	
+	
+	/**
+	 * Returns service by id
+	 */
+	static async Dict databaseGetServiceById(string service_id)
+	{
+		if (service_id == "") return null;
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		Dict item = p
+			-> await method query
+			(
+				"select * from " ~ p.prefix ~ "docker_services where service_id = :service_id limit 1",
+				{
+					"service_id": service_id,
+				}
+			)
+			-> await method getOne
+		;
+		item <= json <= RuntimeUtils::json_decode(item["json"]);
+		return item;
 	}
 	
 	

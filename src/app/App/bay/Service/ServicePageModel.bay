@@ -94,4 +94,11 @@ struct ServicePageModel extends CrudModel
 	{
 	}
 	
+	
+	
+	/**
+	 * Returns item name
+	 */
+	pure string getItemName(Dict item) => item["json"]["Spec"]["Name"];
+	
 }

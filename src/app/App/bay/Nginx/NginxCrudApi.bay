@@ -116,10 +116,10 @@ class NginxCrudApi extends CrudApi implements CrudInterface
 	/**
 	 * Get by ID
 	 */
-	@ApiMethod{ "method_name": "getByID" }
-	static async MessageRPC getByID(MessageRPC msg)
+	@ApiMethod{ "method_name": "findItem" }
+	static async MessageRPC findItem(MessageRPC msg)
 	{
-		return await parent::getByID(msg);
+		return await parent::findItem(msg);
 	}
 	
 	
