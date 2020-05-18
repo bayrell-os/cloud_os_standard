@@ -391,7 +391,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		/* Read service from database */
 		Dict item = await static::databaseGetServiceById(service_id);
 		
-		return { "Message": _("App", "Service created"), "Code": 1, "item": item, "id": item["id"] };
+		return { "Message": _("App", "Service created"), "Code": 1, "item": item };
 	}
 	
 	
@@ -436,7 +436,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		/* Read service from database */
 		Dict item = await static::databaseGetServiceById(service_id);
 		
-		return { "Message": _("App", "Service updated"), "Code": 1, "item": item, "id": item["id"] };
+		return { "Message": _("App", "Service updated"), "Code": 1, "item": item };
 	}
 	
 	
@@ -469,7 +469,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		/* Read service from database */
 		Dict item = await static::databaseGetServiceById(new_service_id);
 		
-		return { "Message": _("App", "Service enabled"), "Code": 1, "item": item, "id": item["id"] };
+		return { "Message": _("App", "Service enabled"), "Code": 1, "item": item };
 	}
 	
 	
@@ -515,7 +515,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		/* Read service from database */
 		Dict item = await static::databaseGetServiceById(service_id);
 		
-		return { "Message": _("App", "Service disabled"), "Code": 1, "item": item, "id": item["id"] };
+		return { "Message": _("App", "Service disabled"), "Code": 1, "item": item };
 	}
 	
 	
