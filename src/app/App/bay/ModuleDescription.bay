@@ -85,7 +85,7 @@ class ModuleDescription implements
 	[
 		"App/AdminerPage",
 		"App/IndexPage",
-		"App/Layout",
+		"App/AdminLayout",
 		"App/Nginx/NginxPage",
 		"App/Nginx/NginxPageModel",
 		"App/Service/ServiceForm",
@@ -95,8 +95,11 @@ class ModuleDescription implements
 		"App/User/AuthToken",
 		"App/User/UserPage",
 		"App/User/UserPageModel",
+		"App/Yaml/YamlForm",
 		"App/Yaml/YamlPage",
 		"App/Yaml/YamlPageModel",
+		"App/Yaml/YamlFilesPage",
+		"App/Yaml/YamlFilesPageModel",
 		"App/ModuleDescription",
 	];
 	
@@ -114,6 +117,7 @@ class ModuleDescription implements
 		new Entity{ "name": "App.User.AuthPage" },
 		new Entity{ "name": "App.User.UserPage" },
 		new Entity{ "name": "App.Yaml.YamlPage" },
+		new Entity{ "name": "App.Yaml.YamlFilesPage" },
 		
 		/* Layout */
 		new LambdaChain
@@ -132,8 +136,8 @@ class ModuleDescription implements
 		new LambdaChain
 		{
 			"name": RenderHelper::RENDER_CHAIN,
-			"value": "App.User.AuthToken::Middleware",
-			"pos": RenderHelper::RENDER_CHAIN_BEFORE_CALL_ROUTE,
+			"value": "App.User.AuthToken::RenderChainMiddleware",
+			"pos": RenderHelper::RENDER_CHAIN_MIDDLEWARE,
 		},
 		
 		new Entity{ "name": "App.Nginx.NginxCrudApi" },
@@ -141,6 +145,7 @@ class ModuleDescription implements
 		new Entity{ "name": "App.User.AuthApi" },
 		new Entity{ "name": "App.User.UserCrudApi" },
 		new Entity{ "name": "App.Yaml.YamlCrudApi" },
+		new Entity{ "name": "App.Yaml.YamlFilesCrudApi" },
 		#endif
 		
 		
@@ -169,9 +174,11 @@ class ModuleDescription implements
 	/**
 	 * App layout
 	 */
-	pure string layout(string layout_class_name)
+	pure string layout(RenderContainer container)
 	{
-		return "App.Layout";
+		string layout_name = container["layout"]["layout_name"];
+		if (layout_name == "admin") return "App.AdminLayout";
+		return "Runtime.Web.Layout";
 	}
 	
 	
@@ -187,7 +194,7 @@ class ModuleDescription implements
 		{
 			"App.User.AuthToken":
 			{
-				"EXPIRE": env.get("COOKIE_EXPIRE", 14400),
+				"EXPIRE": env.get("COOKIE_EXPIRE", 100800),
 				"COOKIE_NAME": env.get("COOKIE_NAME", "jwt_token"),
 				"AUTH_PUBLIC_KEY": env.get("AUTH_PUBLIC_KEY", ""),
 				"AUTH_PRIVATE_KEY": env.get("AUTH_PRIVATE_KEY", ""),

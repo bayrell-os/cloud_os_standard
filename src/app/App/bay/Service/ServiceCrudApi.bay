@@ -100,11 +100,8 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	/**
 	 * Process item
 	 */
-	pure fn<var, Dict> processItem(CrudApi api, Dict old_item = null) =>
-		async var (Dict item) use (api, old_item)
-		{
-			return item;
-		}
+	pure fn<var, Dict> processItem(CrudApi api, Dict filter_item, Dict new_item, Dict old_item = null)
+		=> filter_item
 	;
 	
 	

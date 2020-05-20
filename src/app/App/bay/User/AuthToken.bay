@@ -24,6 +24,7 @@ use Runtime.RuntimeUtils;
 use Runtime.Crypt.JWT;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Request;
+use App.User.AuthPage;
 
 
 struct AuthToken extends CoreProvider
@@ -40,7 +41,7 @@ struct AuthToken extends CoreProvider
 	/**
 	 * Create token from env
 	 */
-	static RenderContainer Middleware(RenderContainer container)
+	static RenderContainer RenderChainMiddleware(RenderContainer container)
 	{
 		/* Get cookie and auth public key */
 		string cookie_name = @ -> method config([classof AuthToken, "COOKIE_NAME"]);
@@ -62,6 +63,21 @@ struct AuthToken extends CoreProvider
 		;
 		
 		/* Returns new container */
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Check auth middleware
+	 */
+	static RenderContainer checkAuthMiddleware(RenderContainer container)
+	{
+		AuthToken token = container["layout"]["storage"][classof AuthToken];
+		if (token == null)
+		{
+			container = await AuthPage::AuthPage(container);
+		}
 		return container;
 	}
 	

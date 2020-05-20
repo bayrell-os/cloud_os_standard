@@ -22,6 +22,7 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Events.Mouse.MouseClickEvent;
 use Runtime.Web.Events.User.ChangeEvent;
 use Runtime.Web.Component;
@@ -29,6 +30,7 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.CRUD.CrudEvent;
 use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.CRUD.CrudModel;
 use Runtime.Web.CRUD.ListPage;
@@ -36,10 +38,12 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
+use App.Yaml.YamlForm;
 use App.Yaml.YamlPageModel;
 
 
 @RouteList{}
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 class YamlPage extends ListPage
 {
 	
@@ -55,6 +59,13 @@ class YamlPage extends ListPage
 	 * Returns api name
 	 */
 	pure string crudApiName() => "App.Yaml";
+	
+	
+	
+	/**
+	 * Returns form class name
+	 */
+	pure string getFormClassName() => classof YamlForm;
 	
 	
 	
@@ -80,6 +91,7 @@ class YamlPage extends ListPage
 		
 		/* Set title */
 		container <= layout <= title <= "Yaml";
+		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof YamlPage;
@@ -110,5 +122,82 @@ class YamlPage extends ListPage
 	 * Render Top Buttons
 	 */
 	pure html renderTopButtons(LayoutModel layout, CrudModel model, Dict params) => "";
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Form add Event
+	 */
+	async void onCrudEvent(CrudEvent e)
+	{
+		CrudModel model = this.model();
+		
+		if (e.event == "compose")
+		{
+			await this.onComposeItem( e.item );
+			return;
+		}
+		
+		await parent::onCrudEvent(e);
+	}
+	
+	
+	
+	/**
+	 * Compose item
+	 */
+	async void onComposeItem(Dict item)
+	{
+		CrudModel model = this.model();
+		string api_name = static::crudApiName();
+		
+		/* Set wait message */
+		this.form_edit.setApiWaitResponse();
+		
+		/* Call create api */
+		MessageRPC msg = @ -> await method sendMessage
+		{
+			"api_name": api_name,
+			"space_name": classof CrudInterface,
+			"method_name": "compose",
+			"data":
+			{
+				"item": item,
+			},
+		};
+		
+		/* Set result */
+		bool is_success = msg -> method isSuccess;
+		if (is_success)
+		{
+			CrudModel model = this.model();
+			Dict item = msg["response"]["item"];
+			
+			/* Find index */
+			int index = model.items.find( bool (Dict elem) use (item) => item["id"] == elem["id"] );
+			this.updateModel
+			{
+				"items": model.items.setIm(index, item),
+			};
+			this.form_edit.updateModel
+			{
+				"item": item,
+			}
+			
+			/* Set form message */
+			this.form_edit.setApiResponse(msg);
+		}
+		else
+		{
+			/* Set error message */
+			this.form_edit.setApiResponse(msg);
+		}
+	}
+	
+	
+	#endif
 	
 }

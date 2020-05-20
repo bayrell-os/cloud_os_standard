@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace App.User;
+namespace App.Yaml;
 
 use Runtime.lib;
 use Runtime.MessageRPC;
@@ -30,19 +30,22 @@ use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
+use Runtime.Web.CRUD.CrudEvent;
 use Runtime.Web.CRUD.CrudInterface;
 use Runtime.Web.CRUD.CrudModel;
+use Runtime.Web.CRUD.Form;
 use Runtime.Web.CRUD.ListPage;
 use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
 use Runtime.Web.Dialog.DialogModel;
-use App.User.UserPageModel;
+use App.Yaml.YamlFilesForm;
+use App.Yaml.YamlFilesPageModel;
 
 
 @RouteList{}
 @RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
-class UserPage extends ListPage
+class YamlFilesPage extends ListPage
 {
 	
 	
@@ -56,7 +59,14 @@ class UserPage extends ListPage
 	/**
 	 * Returns api name
 	 */
-	pure string crudApiName() => "App.User";
+	pure string crudApiName() => "App.Yaml.Files";
+	
+	
+	
+	/**
+	 * Returns form class name
+	 */
+	pure string getFormClassName() => classof Form;
 	
 	
 	
@@ -64,7 +74,7 @@ class UserPage extends ListPage
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/users/", "name": "app.users.index" }
+	@Route{ "uri": "/yaml/files/", "name": "app.yaml.files.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		MessageRPC msg = @ -> await method sendMessage
@@ -81,12 +91,12 @@ class UserPage extends ListPage
 		Collection items = msg::isSuccess(msg) ? msg["response"]["items"] : [];
 		
 		/* Set title */
-		container <= layout <= title <= "User";
+		container <= layout <= title <= "Yaml Files";
 		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
-		container <= layout <= page_class <= classof UserPage;
-		container <= layout <= page_model <= UserPageModel::create();
+		container <= layout <= page_class <= classof YamlFilesPage;
+		container <= layout <= page_model <= YamlFilesPageModel::create();
 		container <= layout <= page_model <= items <= items != null ? items : [];
 		container <= layout <= f_inc <= 1;
 		
@@ -98,7 +108,7 @@ class UserPage extends ListPage
 			[
 				{
 					"label": "Add",
-					"component": classof UserPage,
+					"component": classof YamlFilesPage,
 					"onClick": "onShowAddClick",
 				}
 			]
@@ -113,5 +123,33 @@ class UserPage extends ListPage
 	 * Render Top Buttons
 	 */
 	pure html renderTopButtons(LayoutModel layout, CrudModel model, Dict params) => "";
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Crud Event
+	 */
+	async void onCrudEvent(CrudEvent e)
+	{
+		CrudModel model = this.model();
+		await parent::onCrudEvent(e);
+	}
+	
+	
+	
+	/**
+	 * Dialog Event
+	 */
+	async void onDialogEvent(DialogEvent e)
+	{
+		CrudModel model = this.model();
+		await parent::onDialogEvent(e);
+	}
+	
+	
+	#endif
 	
 }

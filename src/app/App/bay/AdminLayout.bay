@@ -19,6 +19,8 @@
 namespace App;
 
 use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.RuntimeConstant;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Component;
@@ -30,7 +32,7 @@ use Runtime.Web.Button.Button;
 use Runtime.Web.Events.MouseClickEvent;
 
 
-class Layout extends Component
+class AdminLayout extends Component
 {
 	
 	/**
@@ -139,6 +141,13 @@ class Layout extends Component
 				border-color: #337ab7;
 				color: white;
 			}
+			%layout_menu_logout{
+				text-align: center;
+				padding-top: 100px;
+			}
+			%layout_menu_logout > div{
+				padding-top: 5px;
+			}
 		}
 	;
 	
@@ -172,8 +181,11 @@ class Layout extends Component
 									<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
 										<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
 									</li>
-									<li class={ rs::start(model.route.name, "app.yaml") ? "active": "" }>
+									<li class={ rs::start(model.route.name, "app.yaml.index") ? "active": "" }>
 										<a class='nolink' href='/yaml/'>{ _("App", "Yaml") }</a>
+									</li>
+									<li class={ rs::start(model.route.name, "app.yaml.files") ? "active": "" }>
+										<a class='nolink' href='/yaml/files/'>{ _("App", "Yaml Files") }</a>
 									</li>
 									<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
 										<a class='nolink' href='/nginx/'>{ _("App", "Nginx") }</a>
@@ -194,6 +206,12 @@ class Layout extends Component
 									</li>
 								</ul>
 							</div>
+							
+							<div @class='layout_menu_logout'>
+								<Button @eventAsync:MouseClickEvent="onLogoutClick">{ _("App", "Logout") }</Button>
+								<div>{ layout["storage"][static::getCurrentClassName()]["logout_message"] }</div>
+							</div>
+							
 						</div>
 						
 					</div>
@@ -246,6 +264,42 @@ class Layout extends Component
 		Component c = this.driver.findComponents(class_name)[0];
 		fn f = rtl::method(c, method_name);
 		await f(e);
+	}
+	
+	
+	
+	/**
+	 * Log out click
+	 */
+	async void onLogoutClick(MouseClickEvent e)
+	{
+		this.driver.updateModelValue
+		(
+			["storage", static::getCurrentClassName(), "logout_message"],
+			_("Runtime.Web.CRUD", "Please wait ...")
+		);
+		
+		/* Login */
+		MessageRPC msg = @
+			-> method getProvider(RuntimeConstant::BUS_INTERFACE)
+			-> await method post
+			{
+				"url": "/api/logout/",
+			}
+			-> lib::createStruct(classof MessageRPC)
+		;
+		
+		bool is_success = msg -> method isSuccess;
+		this.driver.updateModelValue
+		(
+			["storage", static::getCurrentClassName(), "logout_message"],
+			is_success ? msg -> attr "success_message" : msg -> attr "error"
+		);
+		
+		if (is_success)
+		{
+			this.driver.reloadPage();
+		}
 	}
 	
 	

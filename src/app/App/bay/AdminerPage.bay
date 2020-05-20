@@ -21,6 +21,7 @@ namespace App;
 use Runtime.lib;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Component;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
@@ -44,6 +45,7 @@ class AdminerPage extends Component
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/info/", "name": "app.adminer.info" }
+	@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 	static async RenderContainer actionInfo(RenderContainer container)
 	{
 		string content = "";
@@ -67,6 +69,7 @@ class AdminerPage extends Component
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
+	@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 	static async RenderContainer actionAdminer(RenderContainer container)
 	{
 		string content = "";
@@ -92,6 +95,7 @@ class AdminerPage extends Component
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
+	@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		Dict attrs = @ -> lib::attr(["settings", "providers", "Runtime.ORM.MySQL.Provider", "default"], {});

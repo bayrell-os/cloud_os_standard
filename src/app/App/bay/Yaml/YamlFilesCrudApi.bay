@@ -21,7 +21,6 @@ namespace App.Yaml;
 use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Monad;
-use Runtime.RuntimeConstant;
 use Runtime.RuntimeUtils;
 use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.RuntimeException;
@@ -38,13 +37,12 @@ use Runtime.Web.Cookie;
 use Runtime.Web.JsonResponse;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
-use App.Yaml.YamlPageModel;
+use App.Yaml.YamlFilesPageModel;
 use App.DockerLib;
-use App.SyncDockerServicesTask;
 
 
-@ApiList{ "api_name": "App.Yaml", "space_name": classof CrudInterface }
-class YamlCrudApi extends CrudApi implements CrudInterface
+@ApiList{ "api_name": "App.Yaml.Files", "space_name": classof CrudInterface }
+class YamlFilesCrudApi extends CrudApi implements CrudInterface
 {
 	
 	#ifdef BACKEND then
@@ -53,14 +51,14 @@ class YamlCrudApi extends CrudApi implements CrudInterface
 	/**
 	 * Returns crud model name
 	 */
-	pure string crudModelName() => classof YamlPageModel;
+	pure string crudModelName() => classof YamlFilesPageModel;
 	
 	
 	
 	/**
 	 * Returns crud table name
 	 */
-	pure string crudTableName() => "docker_yaml";
+	pure string crudTableName() => "docker_yaml_files";
 	
 	
 	
@@ -150,83 +148,6 @@ class YamlCrudApi extends CrudApi implements CrudInterface
 	{
 		return await parent::delete(msg);
 	}
-	
-	
-	
-	/**
-	 * Compose
-	 */
-	@ApiMethod{ "method_name": "compose" }
-	static async MessageRPC compose(MessageRPC msg)
-	{
-		Dict item = msg["data"]["item"];
-		CrudApi api = static::newInstance
-		{
-			"action": "compose",
-			"msg": msg,
-			"item": item,
-		};
-		
-		/* Update in database */
-		msg = await parent::update(msg);
-		if (msg.code < RuntimeConstant::ERROR_OK)
-		{
-			return msg;
-		}
-		
-		/* Get updated item */
-		Dict row = msg["response"]["item"];
-		
-		/* Save yaml file */
-		string name = row["name"];
-		string stack = row["stack"];
-		string content = row["content"];
-		string dir_path = "/tmp/docker";
-		string file_name = stack ~ "_" ~ name ~ ".yaml";
-		string file_path = dir_path ~ "/" ~ file_name;
-		
-		await rtl::mkdir(dir_path);
-		await rtl::saveLocalFile(file_path, content);
-		await static::createYamlFiles();
-		
-		string cmd = "sudo docker stack deploy -c " ~ file_path ~ " " ~ stack ~ " --with-registry-auth";
-		string result = await DockerLib::exec(cmd);
-		
-		/* Sync services */
-		SyncDockerServicesTask::sync_services();
-		
-		return msg -> method success({ "item": item }, result);
-	}
-	
-	
-	
-	/**
-	 * Create yaml files
-	 */
-	static async void createYamlFiles()
-	{
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
-		string table_name = static::crudTableName();
-		string dir_path = "/tmp/docker";
-		
-		Cursor cursor = p -> await method query
-		(
-			"select * from " ~ p.prefix ~ "docker_yaml_files",
-		);
-		
-		while (true)
-		{
-			Dict row = await cursor.fetch();
-			if (row == null)
-			{
-				break;
-			}
-			await rtl::saveLocalFile(row["file_name"], row["content"], "utf8", dir_path);
-		}
-		
-		await cursor.close();
-	}
-	
 	
 	#endif
 	

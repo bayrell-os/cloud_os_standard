@@ -26,7 +26,7 @@ use Runtime.Web.CRUD.Fields.Select;
 use Runtime.Web.CRUD.Fields.TextArea;
 
 
-struct YamlPageModel extends CrudModel
+struct YamlFilesPageModel extends CrudModel
 {	
 	
 	
@@ -40,20 +40,8 @@ struct YamlPageModel extends CrudModel
 		(
 			new FieldInfo
 			{
-				"api_name": "name",
-				"label": _("App", "Name"),
-				"form": classof Input,
-				"required": true,
-			}
-		)
-		
-		/* Name */
-		-> static::addField
-		(
-			new FieldInfo
-			{
-				"api_name": "stack",
-				"label": _("App", "Stack"),
+				"api_name": "file_name",
+				"label": _("App", "File name"),
 				"form": classof Input,
 				"required": true,
 			}
@@ -79,8 +67,7 @@ struct YamlPageModel extends CrudModel
 	 */
 	pure Collection<string> getDefaultFormFields() =>
 	[
-		"name",
-		"stack",
+		"file_name",
 		"content",
 	];
 	
@@ -91,7 +78,7 @@ struct YamlPageModel extends CrudModel
 	 */
 	pure Collection<Collection<string>> getDefaultTableOrder() =>
 	[ 
-		["name", "asc"]
+		["file_name", "asc"]
 	];
 	
 	
@@ -102,5 +89,12 @@ struct YamlPageModel extends CrudModel
 	pure void validate(Dict item, string action)
 	{
 	}
+	
+	
+	
+	/**
+	 * Returns item name
+	 */
+	pure string getItemName(Dict item) => item["file_name"];
 	
 }

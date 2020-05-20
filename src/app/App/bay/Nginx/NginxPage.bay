@@ -22,6 +22,7 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Events.Mouse.MouseClickEvent;
 use Runtime.Web.Events.User.ChangeEvent;
 use Runtime.Web.Component;
@@ -40,6 +41,7 @@ use App.Nginx.NginxPageModel;
 
 
 @RouteList{}
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 class NginxPage extends ListPage
 {
 	
@@ -80,6 +82,7 @@ class NginxPage extends ListPage
 		
 		/* Set title */
 		container <= layout <= title <= "Nginx";
+		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof NginxPage;

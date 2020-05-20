@@ -29,12 +29,11 @@ use Runtime.Web.RenderHelper;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.Template;
-use Runtime.Web.Events.Mouse.MouseClickEvent;
+use Runtime.Web.Events.MouseClickEvent;
 use App.User.AuthPageModel;
 
 
 @RouteList{}
-@Template{ "model_name": classof AuthPageModel }
 class AuthPage extends Component
 {
 	
@@ -192,6 +191,8 @@ class AuthPage extends Component
 	 */
 	async void onLoginClick(MouseClickEvent e)
 	{
+		AuthPageModel model = this.model();
+		
 		this.updateModel
 		{
 			"message": "Please wait ...",
@@ -207,8 +208,8 @@ class AuthPage extends Component
 				"url": "/api/login/",
 				"data":
 				{
-					"username": this.model -> attr "username",
-					"password": this.model -> attr "password",
+					"username": model -> attr "username",
+					"password": model -> attr "password",
 				}
 			}
 			-> lib::createStruct(classof MessageRPC)
@@ -217,9 +218,15 @@ class AuthPage extends Component
 		this.updateModel
 		{
 			"message": "",
-			"error": msg -> attr "error" -> monad lib::default("System error"),
-			"success": (msg != null and msg::isSuccess(msg)) ? msg.response : "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
 		};
+		
+		bool is_success = msg -> method isSuccess;
+		if (is_success)
+		{
+			this.driver.reloadPage();
+		}
 	}
 	
 	#endif

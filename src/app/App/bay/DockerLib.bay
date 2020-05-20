@@ -48,8 +48,19 @@ class DockerLib
 	}
 	
 	
-	
-	
+	/**
+	 * Send docker command
+	 */
+	static async string exec(string cmd)
+	{
+		string content = "";
+		
+		#ifcode PHP then
+		$content = exec($cmd . " 2>&1");
+		#endif
+		
+		return content;
+	}
 	
 	#endif
 }

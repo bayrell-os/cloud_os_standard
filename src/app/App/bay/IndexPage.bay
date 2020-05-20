@@ -21,6 +21,7 @@ namespace App;
 use Runtime.lib;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Component;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
@@ -29,6 +30,7 @@ use Runtime.Web.Response;
 
 
 @RouteList{}
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 class IndexPage extends Component
 {
 	
@@ -48,6 +50,7 @@ class IndexPage extends Component
 	{
 		/* Set title */
 		container <= layout <= title <= "Index page";
+		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof IndexPage;

@@ -22,6 +22,7 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Events.Mouse.MouseClickEvent;
 use Runtime.Web.Events.User.ChangeEvent;
 use Runtime.Web.Component;
@@ -42,6 +43,7 @@ use App.Service.ServicePageModel;
 
 
 @RouteList{}
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
 class ServicePage extends ListPage
 {
 	
@@ -89,6 +91,7 @@ class ServicePage extends ListPage
 		
 		/* Set title */
 		container <= layout <= title <= "Service";
+		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof ServicePage;
@@ -126,10 +129,13 @@ class ServicePage extends ListPage
 	 * Render item
 	 */
 	pure html renderItem(LayoutModel layout, CrudModel model, Dict params, Dict item) =>
-		<div @class='item_row name'>
+		<div @class='item_row item_row--id'>
+			ID: { rtl::attr(item, ["json", "ID"], "") }
+		</div>
+		<div @class='item_row item_row--name'>
 			{ rtl::attr(item, ["json", "Spec", "Name"], "") }
 		</div>
-		<div @class='item_row image'>
+		<div @class='item_row item_row--image'>
 			{
 				static::trimImageName
 				(

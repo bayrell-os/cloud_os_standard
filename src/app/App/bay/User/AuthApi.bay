@@ -75,7 +75,7 @@ class AuthApi
 		
 		if (not static::checkLoginAndPassword(username, password))
 		{
-			msg = msg -> method fail(null, "Wrong password");
+			msg = msg -> method fail(null, _("App", "Wrong password")) -> lib::set("have_answer", true);
 		}
 		else
 		{
@@ -106,7 +106,7 @@ class AuthApi
 				)
 			;
 			
-			msg = msg -> method success("Ok");
+			msg = msg -> method success(null, _("App", "Ok")) -> lib::set("have_answer", true);
 		}
 		
 		container <= response <= new JsonResponse{ "data": msg };
@@ -137,7 +137,7 @@ class AuthApi
 			)
 		;
 		
-		msg = msg -> method success("ok");
+		msg = msg -> method success(null, _("App", "Ok")) -> lib::set("have_answer", true);
 		container <= response <= new JsonResponse{ "data": msg };
 		return container;
 	}

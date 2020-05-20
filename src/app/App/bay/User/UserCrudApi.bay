@@ -24,6 +24,7 @@ use Runtime.Monad;
 use Runtime.RuntimeUtils;
 use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.RuntimeException;
+use Runtime.Crypt.Password;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
 use Runtime.Web.Annotations.ApiList;
@@ -87,10 +88,31 @@ class UserCrudApi extends CrudApi implements CrudInterface
 	
 	
 	/**
+	 * Validate item
+	 */
+	static Dict<Collection<string>> validateItem
+		(CrudApi api, Dict<FieldInfo> fields, Dict item, Dict<Collection<string>> validate)
+	{
+		string password1 = item["password1"];
+		string password2 = item["password2"];
+		
+		if (password1 != "" and password1 != password2)
+		{
+			validate = validate
+				-> static::addValidateError("password2", _("App", "Password must be equal"))
+			;
+		}
+		
+		return validate;
+	}
+	
+	
+	
+	/**
 	 * Process item
 	 */
-	pure fn<var, Dict> processItem(CrudApi api, Dict old_item = null) =>
-		async var (Dict item) use (api, old_item) => item
+	pure fn<var, Dict> processItem(CrudApi api, Dict filter_item, Dict new_item, Dict old_item = null)
+		=> filter_item
 	;
 	
 	
@@ -123,7 +145,17 @@ class UserCrudApi extends CrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "create" }
 	static async MessageRPC create(MessageRPC msg)
 	{
-		return await parent::create(msg);
+		Dict item = msg["data"]["item"];
+		msg = await parent::create(msg);
+		
+		/* Save password if exists */
+		string user_id = msg["response"]["item"]["id"];
+		await static::savePassword(user_id, item);
+		
+		/* Generate nginx password */
+		await static::nginxPasswdCreate();
+		
+		return msg;
 	}
 	
 	
@@ -134,7 +166,17 @@ class UserCrudApi extends CrudApi implements CrudInterface
 	@ApiMethod{ "method_name": "update" }
 	static async MessageRPC update(MessageRPC msg)
 	{
-		return await parent::update(msg);
+		Dict item = msg["data"]["item"];
+		msg = await parent::update(msg);
+		
+		/* Save password if exists */
+		string user_id = msg["response"]["item"]["id"];
+		await static::savePassword(user_id, item);
+		
+		/* Generate nginx password */
+		await static::nginxPasswdCreate();
+		
+		return msg;
 	}
 	
 	
@@ -148,6 +190,90 @@ class UserCrudApi extends CrudApi implements CrudInterface
 		return await parent::delete(msg);
 	}
 	
+	
+	
+	/**
+	 * Save password
+	 */
+	static async void savePassword(string user_id, Dict item)
+	{
+		string password1 = item["password1"];
+		string password2 = item["password2"];
+		
+		if (password1 != "")
+		{
+			ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+			
+			p
+			/* -> lib::set("log_query", true) */
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_users_auth",
+				{
+					"user_id": user_id,
+					"type": "password",
+				},
+				{
+					"value": Password::createHash(password1),
+				}
+			)
+			-> await method end;
+			
+		}
+	}
+	
+	
+	
+	/**
+	 * Nginx password
+	 */
+	static async void nginxPasswdCreate()
+	{
+		string htpasswd = "";
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		string table_name = static::crudTableName();
+		
+		Cursor cursor = p -> await method query
+		(
+			"select u.*, a.value as password from " ~ p.prefix ~ "docker_users as u " ~
+			"left join docker_users_auth as a on (u.id = a.user_id and a.type='password')",
+		);
+		
+		while (true)
+		{
+			Dict row = await cursor.fetch();
+			if (row == null)
+			{
+				break;
+			}
+			
+			int banned = row["banned"];
+			string name = row["name"];
+			string password = row["password"];
+			
+			htpasswd ~= name ~ ":" ~ password ~ "\n";
+		}
+		
+		await cursor.close();
+		
+		
+		/* Insert or update nginx file */
+		p
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_nginx",
+				{
+					"name": "inc/htpasswd.inc",
+				},
+				{
+					"enable": 1,
+					"content": htpasswd,
+					"timestamp": @.time(),
+					"is_deleted": 0,
+				}
+			)
+			-> await method end;
+	}
 	
 	#endif
 	

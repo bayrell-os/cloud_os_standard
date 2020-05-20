@@ -46,6 +46,30 @@ struct UserPageModel extends CrudModel
 				"required": true,
 			}
 		)
+		
+		/* Password */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "password1",
+				"label": _("App", "Password"),
+				"form": classof Input,
+				"virtual": true,
+			}
+		)
+		
+		/* Password2 */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "password2",
+				"label": _("App", "Repeat password"),
+				"form": classof Input,
+				"virtual": true,
+			}
+		)
 	;
 	
 	
@@ -56,6 +80,8 @@ struct UserPageModel extends CrudModel
 	pure Collection<string> getDefaultFormFields() =>
 	[
 		"name",
+		"password1",
+		"password2",
 	];
 	
 	

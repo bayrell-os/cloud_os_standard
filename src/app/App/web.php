@@ -3,5 +3,5 @@
 $app = include "app.php";
 
 /* Run web */
-$app->run("Runtime.Web.Backend.Entry", "run");
+$app->entrypoint("Runtime.Web.Backend.Entry")->run();
 exit($app->return_code);
