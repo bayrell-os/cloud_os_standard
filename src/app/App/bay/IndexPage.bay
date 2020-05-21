@@ -30,7 +30,7 @@ use Runtime.Web.Response;
 
 
 @RouteList{}
-@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
 class IndexPage extends Component
 {
 	

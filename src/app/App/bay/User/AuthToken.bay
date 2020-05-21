@@ -20,8 +20,13 @@ namespace App.User;
 
 use Runtime.lib;
 use Runtime.CoreProvider;
+use Runtime.MessageRPC;
+use Runtime.RuntimeConstant;
 use Runtime.RuntimeUtils;
+use Runtime.Exceptions.ApiException;
 use Runtime.Crypt.JWT;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Web.ApiContainer;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Request;
 use App.User.AuthPage;
@@ -39,7 +44,7 @@ struct AuthToken extends CoreProvider
 	
 	
 	/**
-	 * Create token from env
+	 * RenderChainMiddleware
 	 */
 	static RenderContainer RenderChainMiddleware(RenderContainer container)
 	{
@@ -69,14 +74,42 @@ struct AuthToken extends CoreProvider
 	
 	
 	/**
-	 * Check auth middleware
+	 * Check auth route middleware
 	 */
-	static RenderContainer checkAuthMiddleware(RenderContainer container)
+	static RenderContainer checkAuthRouteMiddleware(RenderContainer container)
 	{
 		AuthToken token = container["layout"]["storage"][classof AuthToken];
 		if (token == null)
 		{
 			container = await AuthPage::AuthPage(container);
+		}
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Filter ApiContainer
+	 */
+	static ApiContainer filterApiContainer(ApiContainer container)
+	{
+		/* Add auth token to api storage */
+		AuthToken token = container["render_container"]["layout"]["storage"][classof AuthToken];
+		container = container -> lib::setAttr(["dict", classof AuthToken], token);
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Check auth api middleware
+	 */
+	static ApiContainer checkAuthApiMiddleware(ApiContainer container)
+	{
+		AuthToken token = container["dict"][classof AuthToken];
+		if (token == null)
+		{
+			throw new ApiException(_("Runtime.Web", "Auth error"), RuntimeConstant::ERROR_AUTH);
 		}
 		return container;
 	}

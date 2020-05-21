@@ -29,6 +29,7 @@ use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
 use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Web.Annotations.ApiMiddleware;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.CRUD.CrudApi;
@@ -44,6 +45,7 @@ use App.SyncDockerServicesTask;
 
 
 @ApiList{ "api_name": "App.Yaml", "space_name": classof CrudInterface }
+@ApiMiddleware{ "value": "App.User.AuthToken::checkAuthApiMiddleware" }
 class YamlCrudApi extends CrudApi implements CrudInterface
 {
 	

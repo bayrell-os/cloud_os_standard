@@ -41,7 +41,7 @@ use App.User.UserPageModel;
 
 
 @RouteList{}
-@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
 class UserPage extends ListPage
 {
 	
@@ -67,7 +67,7 @@ class UserPage extends ListPage
 	@Route{ "uri": "/users/", "name": "app.users.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
-		MessageRPC msg = @ -> await method sendMessage
+		MessageRPC msg = container -> await method sendMessage
 		{
 			"api_name": static::crudApiName(),
 			"space_name": classof CrudInterface,

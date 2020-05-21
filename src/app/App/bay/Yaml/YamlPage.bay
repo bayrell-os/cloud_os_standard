@@ -43,7 +43,7 @@ use App.Yaml.YamlPageModel;
 
 
 @RouteList{}
-@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
 class YamlPage extends ListPage
 {
 	
@@ -76,7 +76,7 @@ class YamlPage extends ListPage
 	@Route{ "uri": "/yaml/", "name": "app.yaml.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
-		MessageRPC msg = @ -> await method sendMessage
+		MessageRPC msg = container -> await method sendMessage
 		{
 			"api_name": static::crudApiName(),
 			"space_name": classof CrudInterface,

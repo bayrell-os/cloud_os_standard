@@ -44,7 +44,7 @@ use App.Yaml.YamlFilesPageModel;
 
 
 @RouteList{}
-@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
 class YamlFilesPage extends ListPage
 {
 	
@@ -77,7 +77,7 @@ class YamlFilesPage extends ListPage
 	@Route{ "uri": "/yaml/files/", "name": "app.yaml.files.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
-		MessageRPC msg = @ -> await method sendMessage
+		MessageRPC msg = container -> await method sendMessage
 		{
 			"api_name": static::crudApiName(),
 			"space_name": classof CrudInterface,

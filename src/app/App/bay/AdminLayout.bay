@@ -171,13 +171,24 @@ class AdminLayout extends Component
 						
 						<div @class='layout_menu'>
 							<div @class='layout_menu_label'>
-								{ _("App", "Cluster") }
+								{ _("App", "Dashboard") }
 							</div>
 							<div @class='layout_menu_items'>
 								<ul>
 									<li class={ rs::start(model.route.name, "app.index") ? "active": "" }>
-										<a class='nolink' href='/'>{ _("App", "Dashboard") }</a>
+										<a class='nolink' href='/'>{ _("App", "Main") }</a>
 									</li>
+									<li class={ rs::start(model.route.name, "app.nodes") ? "active": "" }>
+										<a class='nolink' href='/'>{ _("App", "Nodes") }</a>
+									</li>
+								</ul>
+							</div>
+							
+							<div @class='layout_menu_label'>
+								{ _("App", "Cluster") }
+							</div>
+							<div @class='layout_menu_items'>
+								<ul>
 									<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
 										<a class='nolink' href='/services/'>{ _("App", "Services") }</a>
 									</li>

@@ -41,7 +41,7 @@ use App.Nginx.NginxPageModel;
 
 
 @RouteList{}
-@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthMiddleware" }
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
 class NginxPage extends ListPage
 {
 	
@@ -67,7 +67,7 @@ class NginxPage extends ListPage
 	@Route{ "uri": "/nginx/", "name": "app.nginx.index" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
-		MessageRPC msg = @ -> await method sendMessage
+		MessageRPC msg = container -> await method sendMessage
 		{
 			"api_name": static::crudApiName(),
 			"space_name": classof CrudInterface,

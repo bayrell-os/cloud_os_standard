@@ -140,6 +140,12 @@ class ModuleDescription implements
 			"pos": RenderHelper::RENDER_CHAIN_MIDDLEWARE,
 		},
 		
+		new LambdaChain
+		{
+			"name": RenderHelper::API_CONTAINER,
+			"value": "App.User.AuthToken::filterApiContainer",
+		},
+		
 		new Entity{ "name": "App.Nginx.NginxCrudApi" },
 		new Entity{ "name": "App.Service.ServiceCrudApi" },
 		new Entity{ "name": "App.User.AuthApi" },
