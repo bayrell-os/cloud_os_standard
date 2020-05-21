@@ -225,7 +225,9 @@ class AuthPage extends Component
 		bool is_success = msg -> method isSuccess;
 		if (is_success)
 		{
-			this.driver.reloadPage();
+			string url = this.driver.layout_model.uri;
+			if (url == "/login/") url = "/";
+			this.driver.reloadPage(this.driver.layout_model.route_prefix ~ url);
 		}
 	}
 	
