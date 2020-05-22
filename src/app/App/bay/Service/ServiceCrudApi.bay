@@ -80,6 +80,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		Dict (Dict item)
 		{
 			item <= json <= RuntimeUtils::json_decode(item["json"]);
+			item <= tasks <= RuntimeUtils::json_decode(item["tasks"]);
 			return item;
 		}
 	;
@@ -93,6 +94,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		Dict (Dict item)
 		{
 			item <= json <= RuntimeUtils::json_encode(item["json"]);
+			item <= tasks <= RuntimeUtils::json_encode(item["tasks"]);
 			return item;
 		}
 	;
@@ -143,10 +145,13 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	{
 		QueryBuilder q = parent::buildSearchQuery(api);
 		
-		q = q -> method where
-		{
-			"is_deleted": 0,
-		};
+		q = q
+			-> method fields(["id", "service_id", "enable", "timestamp", "json"])
+			-> method where
+			{
+				"is_deleted": 0,
+			}
+		;
 		
 		return q;
 	}
@@ -434,6 +439,7 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		
 		/* Read service from database */
 		Dict item = await static::databaseGetServiceById(service_id);
+		/* item <= json <= new_json; */
 		
 		return { "Message": _("App", "Service updated"), "Code": 1, "item": item };
 	}
@@ -567,27 +573,27 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 					-> await method end
 				;
 			}
-			
-			/* Insert or update */
-			p
-				-> await method insert_or_update
-				(
-					p.prefix ~ "docker_services",
-					{
-						"service_id": new_service_id,
-					},
-					{
-						"_name": service_name,
-						"_image": service_image,
-						"is_deleted": 0,
-						"enable": 1,
-						"timestamp": time,
-						"json": RuntimeUtils::json_encode(json),
-					}
-				)
-				-> await method end
-			;
 		}
+		
+		/* Insert or update */
+		p
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_services",
+				{
+					"service_id": new_service_id,
+				},
+				{
+					"_name": service_name,
+					"_image": service_image,
+					"is_deleted": 0,
+					"enable": 1,
+					"timestamp": time,
+					"json": RuntimeUtils::json_encode(json),
+				}
+			)
+			-> await method end
+		;
 		
 		return { "Message": _("App", "Service deleted"), "Code": 1 };
 	}
@@ -629,7 +635,8 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		Dict item = p
 			-> await method query
 			(
-				"select * from " ~ p.prefix ~ "docker_services where service_id = :service_id limit 1",
+				"select id, service_id, enable, timestamp, is_deleted, json from " ~
+					p.prefix ~ "docker_services where service_id = :service_id limit 1",
 				{
 					"service_id": service_id,
 				}
@@ -638,6 +645,65 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 		;
 		item <= json <= RuntimeUtils::json_decode(item["json"]);
 		return item;
+	}
+	
+	
+	
+	/**
+	 * Returns balancer data
+	 */
+	pure Dict getBalancerData(Dict json, Collection tasks)
+	{
+		Dict res =
+		{
+			"state":
+			{
+				"work": 0,
+				"total": 0,
+			},
+			"services": [],
+		};
+		
+		Collection services = [];
+		int total = rtl::attr(json, ["Spec", "Mode", "Replicated", "Replicas"], 1);
+		int work = 0;
+		
+		for (int i=0; i<tasks.count(); i++)
+		{
+			Dict task = tasks.item(i);
+			string state = task["Status"]["State"];
+			if (state == "running")
+			{
+				Dict service =
+				{
+					"id": task["ID"],
+					"timestamp": task["Status"]["Timestamp"],
+					"networks": [],
+				};
+				Collection NetworksAttachments = task["NetworksAttachments"];
+				if (NetworksAttachments != null)
+				{
+					for (int j=0; j<NetworksAttachments.count(); j++)
+					{
+						Dict network = NetworksAttachments.item(j);
+						service <= networks <= service.networks.pushIm
+						{
+							"id": network["Network"]["ID"],
+							"name": network["Network"]["Spec"]["Name"],
+							"addresses": network["Addresses"],
+						};
+					}
+				}
+				services = services.pushIm(service);
+				work++;
+			}
+		}
+		
+		res <= state <= work <= work;
+		res <= state <= total <= total;
+		res <= services <= services;
+		
+		return res;
 	}
 	
 	

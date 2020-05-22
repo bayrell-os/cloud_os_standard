@@ -22,8 +22,8 @@ use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.RuntimeConstant;
 use Runtime.RuntimeUtils;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Annotations.Route;
@@ -64,7 +64,6 @@ class AuthPage extends Component
 			"success": "",
 			"error": "",
 		};
-		container <= layout <= f_inc <= 1;
 		
 		return container;
 	}

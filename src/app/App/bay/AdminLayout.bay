@@ -23,8 +23,8 @@ use Runtime.MessageRPC;
 use Runtime.RuntimeConstant;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
@@ -175,11 +175,11 @@ class AdminLayout extends Component
 							</div>
 							<div @class='layout_menu_items'>
 								<ul>
-									<li class={ rs::start(model.route.name, "app.index") ? "active": "" }>
+									<li class={ rs::start(model.route.name, "app.dashboard.main") ? "active": "" }>
 										<a class='nolink' href='/'>{ _("App", "Main") }</a>
 									</li>
-									<li class={ rs::start(model.route.name, "app.nodes") ? "active": "" }>
-										<a class='nolink' href='/'>{ _("App", "Nodes") }</a>
+									<li class={ rs::start(model.route.name, "app.dashboard.nodes") ? "active": "" }>
+										<a class='nolink' href='/nodes/'>{ _("App", "Nodes") }</a>
 									</li>
 								</ul>
 							</div>
@@ -202,7 +202,7 @@ class AdminLayout extends Component
 										<a class='nolink' href='/nginx/'>{ _("App", "Nginx") }</a>
 									</li>
 									<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
-										<a class='nolink' href='/'>{ _("App", "CLI") }</a>
+										<a class='nolink' href='/cli/'>{ _("App", "CLI") }</a>
 									</li>
 								</ul>
 							</div>
@@ -214,6 +214,12 @@ class AdminLayout extends Component
 								<ul>
 									<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
 										<a class='nolink' href='/users/'>{ _("App", "Users") }</a>
+									</li>
+									<li>
+										<a class='nolink' href='/adminer/'>{ _("App", "Adminer") }</a>
+									</li>
+									<li>
+										<a class='nolink' href='/adminer/info/'>{ _("App", "PHP Info") }</a>
 									</li>
 								</ul>
 							</div>

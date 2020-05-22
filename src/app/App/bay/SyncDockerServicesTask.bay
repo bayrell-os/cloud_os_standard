@@ -27,6 +27,7 @@ use Runtime.Task.Annotations.TaskMethod;
 use Runtime.Task.TaskOutputProvider;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
+use App.Service.ServiceCrudApi;
 use App.DockerLib;
 
 
@@ -54,7 +55,7 @@ class SyncDockerServicesTask
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
 		int time = @.time();
-		string s = DockerLib::dockerApi("/services");
+		string s = await DockerLib::dockerApi("/services");
 		
 		Collection services = RuntimeUtils::json_decode(s);
 		
@@ -66,7 +67,11 @@ class SyncDockerServicesTask
 			string service_image = json -> lib::attr(["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
 			
 			output -> method writeln ("Update service " ~ service_name);
+			string tasks_str = await DockerLib::dockerApi("/tasks?filters=" ~
+				rs::url_encode('{"service":{"' ~ service_name ~ '":true}}'))
+			;
 			
+			Dict tasks = RuntimeUtils::json_decode(tasks_str);
 			
 			/* Insert or update */
 			p
@@ -84,6 +89,8 @@ class SyncDockerServicesTask
 						"enable": 1,
 						"timestamp": time,
 						"json": RuntimeUtils::json_encode(json),
+						"tasks": tasks_str,
+						"balancer": RuntimeUtils::json_encode( ServiceCrudApi::getBalancerData(json, tasks) ),
 					}
 				)
 				-> await method end

@@ -22,8 +22,8 @@ use Runtime.lib;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.RouteMiddleware;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
@@ -31,7 +31,7 @@ use Runtime.Web.Response;
 
 @RouteList{}
 @RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
-class IndexPage extends Component
+class CLIPage extends Component
 {
 	
 	/**
@@ -45,19 +45,18 @@ class IndexPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/", "name": "app.index" }
+	@Route{ "uri": "/", "name": "app.cli" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		/* Set title */
-		container <= layout <= title <= "Index page";
+		container <= layout <= title <= "CLI page";
 		container <= layout <= layout_name <= "admin";
 		
 		/* Create model */
-		container <= layout <= page_class <= classof IndexPage;
+		container <= layout <= page_class <= classof CLIPage;
 		container <= layout <= page_model <=
 		{
 		};
-		container <= layout <= f_inc <= 1;
 		
 		return container;
 	}
@@ -69,7 +68,7 @@ class IndexPage extends Component
 	 */
 	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
 		<div>
-			Hello
+			Command Line Interface
 		</div>
 	;
 	

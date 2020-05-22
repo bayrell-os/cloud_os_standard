@@ -25,8 +25,8 @@ use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.RouteMiddleware;
 use Runtime.Web.Events.Mouse.MouseClickEvent;
 use Runtime.Web.Events.User.ChangeEvent;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
@@ -97,7 +97,6 @@ class YamlPage extends ListPage
 		container <= layout <= page_class <= classof YamlPage;
 		container <= layout <= page_model <= YamlPageModel::create();
 		container <= layout <= page_model <= items <= items != null ? items : [];
-		container <= layout <= f_inc <= 1;
 		
 		/* Add top buttons */
 		container = rtl::setAttr

@@ -84,8 +84,12 @@ class ModuleDescription implements
 	pure Collection<string> assets() => 
 	[
 		"App/AdminerPage",
-		"App/IndexPage",
 		"App/AdminLayout",
+		"App/CLIPage",
+		"App/Dashboard/MainPage",
+		"App/Dashboard/MainPageModel",
+		"App/Dashboard/NodesPage",
+		"App/Dashboard/NodesPageModel",
 		"App/Nginx/NginxPage",
 		"App/Nginx/NginxPageModel",
 		"App/Service/ServiceForm",
@@ -111,7 +115,8 @@ class ModuleDescription implements
 	pure Collection<Dict> entities() =>
 	[
 		/* Pages */
-		new Entity{ "name": "App.IndexPage" },
+		new Entity{ "name": "App.Dashboard.MainPage" },
+		new Entity{ "name": "App.Dashboard.NodesPage" },
 		new Entity{ "name": "App.Nginx.NginxPage" },
 		new Entity{ "name": "App.Service.ServicePage" },
 		new Entity{ "name": "App.User.AuthPage" },
@@ -146,6 +151,8 @@ class ModuleDescription implements
 			"value": "App.User.AuthToken::filterApiContainer",
 		},
 		
+		/* Api */
+		new Entity{ "name": "App.Dashboard.DashboardApi" },
 		new Entity{ "name": "App.Nginx.NginxCrudApi" },
 		new Entity{ "name": "App.Service.ServiceCrudApi" },
 		new Entity{ "name": "App.User.AuthApi" },
@@ -160,7 +167,7 @@ class ModuleDescription implements
 		new Provider
 		{
 			"name": RenderHelper::BUS_INTERFACE,
-			"value": "Runtime.Web.Drivers.BusProvider",
+			"value": "Runtime.Web.Frontend.BusProvider",
 		}
 		#endif
 	];
@@ -184,7 +191,7 @@ class ModuleDescription implements
 	{
 		string layout_name = container["layout"]["layout_name"];
 		if (layout_name == "admin") return "App.AdminLayout";
-		return "Runtime.Web.Layout";
+		return "Runtime.Web.Frontend.Layout";
 	}
 	
 	
@@ -204,6 +211,10 @@ class ModuleDescription implements
 				"COOKIE_NAME": env.get("COOKIE_NAME", "jwt_token"),
 				"AUTH_PUBLIC_KEY": env.get("AUTH_PUBLIC_KEY", ""),
 				"AUTH_PRIVATE_KEY": env.get("AUTH_PRIVATE_KEY", ""),
+			},
+			"Runtime.Web":
+			{
+				"f_inc": 101,
 			},
 			"Runtime.Web.Backend":
 			{

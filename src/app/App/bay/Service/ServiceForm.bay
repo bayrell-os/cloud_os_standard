@@ -20,8 +20,8 @@ namespace App.Service;
 
 use Runtime.lib;
 use Runtime.MessageRPC;
-use Runtime.Web.Component;
-use Runtime.Web.LayoutModel;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.Button.Button;
 use Runtime.Web.CRUD.Form;
 use Runtime.Web.CRUD.FormModel;

@@ -41,7 +41,7 @@ class DockerLib
 		cmd ~= "--unix-socket /var/run/docker.sock http:/v1.39" ~ url;
 		
 		#ifcode PHP then
-		$content = @shell_exec($cmd . " &2>/dev/null");
+		$content = @shell_exec($cmd . " 2>/dev/null");
 		#endif
 		
 		return content;

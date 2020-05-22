@@ -1,0 +1,271 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App.Dashboard;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.RouteMiddleware;
+use Runtime.Web.Events.MouseClickEvent;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Response;
+use App.Dashboard.MainPageModel;
+
+
+@RouteList{}
+@RouteMiddleware{ "value": "App.User.AuthToken::checkAuthRouteMiddleware" }
+class MainPage extends Component
+{
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/", "name": "app.dashboard.main" }
+	static async RenderContainer actionIndex(RenderContainer container)
+	{
+		/* Set title */
+		container <= layout <= title <= "Dashboard";
+		container <= layout <= layout_name <= "admin";
+		
+		/* Get services state */
+		MessageRPC msg = container -> await method sendMessage
+		{
+			"api_name": "App.Dashboard",
+			"space_name": "default",
+			"method_name": "getServices",
+			"data":
+			{
+			},
+		};
+		
+		/* Create model */
+		container <= layout <= page_class <= classof MainPage;
+		container <= layout <= page_model <= new MainPageModel
+		{
+			"services": (msg -> method isSuccess) ? msg["response"] : null,
+		};
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			%content{
+				height: 100%;
+				display: flex;
+				align-items: stretch;
+			}
+			%left, %right{
+				width: 50%;
+				position: relative;
+				overflow-y: auto;
+			}
+			%left{
+				padding-right: 10px;
+			}
+			%right{
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+			%services{
+				display: table;
+				border-left: 1px #ccc solid;
+				border-top: 1px #ccc solid;
+				width: 100%;
+			}
+			%service{
+				display: table-row;
+				cursor: pointer;
+			}
+			%service:hover{
+				background: #eee;
+			}
+			%service.active{
+				background-color: #337ab7;
+				border-color: #337ab7;
+				color: white;
+			}
+			%service_item{
+				display: table-cell;
+				padding: 5px;
+				border-bottom: 1px #ccc solid;
+				border-right: 1px #ccc solid;
+			}
+			%label{
+				font-weight: bold;
+			}
+			%info_item{
+				overflow-wrap: anywhere;
+				padding-bottom: 10px;
+			}
+			%info_item:last-child{
+				padding-bottom: 0px;
+			}
+			%info_item--error > .label{
+				padding-bottom: 5px;
+			}
+			%info_item_error{
+				padding-bottom: 5px;
+			}
+			%info_item_error:last-child{
+				padding-bottom: 0px;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, MainPageModel model, Dict params, html content) =>
+		<div @class="content">
+			<div @class="left">
+				{ model.services != null ? static::renderServices(layout, model) : "" }
+			</div>
+			<div @class="right">
+				{ model.services != null ? static::renderInfo(layout, model) : "" }
+			</div>
+		</div>
+	;
+	
+	
+	
+	/**
+	 * Render services
+	 */
+	pure html renderServices(LayoutModel layout, MainPageModel model) =>
+		<div @class="services">
+			<div @class="service">
+				<div @class="service_item label service_item--name">{ _("App", "Name") }</div>
+				<div @class="service_item label service_item--image">{ _("App", "Image") }</div>
+				<div @class="service_item label service_item--status">{ _("App", "Status") }</div>
+			</div>
+			{ model["services"].map
+			(
+				html (Dict service, int index) use (model) =>
+					<div @class="service" class={ model.active == index ? "active" : "" }
+						@event:MouseClickEvent="onClick" data-index={ index } @key={ index }
+					>
+						<div @class="service_item service_item--name">{ service["_name"] }</div>
+						<div @class="service_item service_item--image">{ static::trimImageName(service["_image"]) }</div>
+						<div @class="service_item service_item--status">
+							{ service["balancer"]["state"]["work"] } / { service["balancer"]["state"]["total"] }
+						</div>
+					</div>
+			) }
+		</div>
+	;
+	
+	
+	
+	/**
+	 * Render info
+	 */
+	pure html renderInfo(LayoutModel layout, MainPageModel model)
+	{
+		Dict service = model.services.get(model.active, null);
+		if (service == null) return "";
+		
+		Collection errors = service["tasks"].filter
+		(
+			bool (Dict task) => task["Status"]["State"] == "rejected"
+		);
+		
+		return
+			<div @class="info">
+				<div @class="info_item info_item--name"><b>{ _("App", "Name") }:</b> { service["_name"] }</div>
+				<div @class="info_item info_item--image"><b>{ _("App", "Image") }:</b> { service["_image"] }</div>
+				<div @class="info_item info_item--status">
+					<b>{ _("App", "Status") }:</b>&nbsp;
+					{ service["balancer"]["state"]["work"] } / { service["balancer"]["state"]["total"] }
+				</div>
+				
+				{
+					errors.count() > 0 ?
+						<div @class="info_item info_item--error">
+							<div class='label bold'>{ _("App", "Last errors") }:</div>
+							
+							{
+								errors.map
+								(
+									html (Dict task) =>
+										<div @class="info_item_error">
+											[{ rs::substr(task["Status"]["Timestamp"], 0, 19) }]&nbsp;
+											{ task["Status"]["Err"] }
+										</div>
+								)
+							}
+							
+						</div>
+					: ""
+				}
+				
+			</div>
+		;
+	}
+	
+	
+	
+	/**
+	 * Trim name
+	 */
+	pure string trimImageName(string name)
+	{
+		int pos = rs::search(name, "@");
+		if (pos != -1) name = rs::substr(name, 0, pos);
+		return name;
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * On click
+	 */
+	public void onClick(MouseClickEvent e)
+	{
+		int pos = e.target.params["data-index"];
+		this.updateModel
+		{
+			"active": pos,
+		};
+	}
+	
+	#endif
+	
+}
