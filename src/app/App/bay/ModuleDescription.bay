@@ -115,6 +115,7 @@ class ModuleDescription implements
 	pure Collection<Dict> entities() =>
 	[
 		/* Pages */
+		new Entity{ "name": "App.CLIPage" },
 		new Entity{ "name": "App.Dashboard.MainPage" },
 		new Entity{ "name": "App.Dashboard.NodesPage" },
 		new Entity{ "name": "App.Nginx.NginxPage" },

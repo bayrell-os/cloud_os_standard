@@ -56,7 +56,7 @@ class DockerLib
 		string content = "";
 		
 		#ifcode PHP then
-		$content = exec($cmd . " 2>&1");
+		$content = @shell_exec($cmd);
 		#endif
 		
 		return content;

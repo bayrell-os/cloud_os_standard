@@ -22,4 +22,7 @@ use Runtime.CoreStruct;
 
 struct NodesPageModel extends CoreStruct
 {
+	Collection services = null;
+	Dict nodes = null;
+	int active = -1;
 }

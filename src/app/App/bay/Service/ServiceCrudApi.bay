@@ -648,65 +648,6 @@ class ServiceCrudApi extends CrudApi implements CrudInterface
 	}
 	
 	
-	
-	/**
-	 * Returns balancer data
-	 */
-	pure Dict getBalancerData(Dict json, Collection tasks)
-	{
-		Dict res =
-		{
-			"state":
-			{
-				"work": 0,
-				"total": 0,
-			},
-			"services": [],
-		};
-		
-		Collection services = [];
-		int total = rtl::attr(json, ["Spec", "Mode", "Replicated", "Replicas"], 1);
-		int work = 0;
-		
-		for (int i=0; i<tasks.count(); i++)
-		{
-			Dict task = tasks.item(i);
-			string state = task["Status"]["State"];
-			if (state == "running")
-			{
-				Dict service =
-				{
-					"id": task["ID"],
-					"timestamp": task["Status"]["Timestamp"],
-					"networks": [],
-				};
-				Collection NetworksAttachments = task["NetworksAttachments"];
-				if (NetworksAttachments != null)
-				{
-					for (int j=0; j<NetworksAttachments.count(); j++)
-					{
-						Dict network = NetworksAttachments.item(j);
-						service <= networks <= service.networks.pushIm
-						{
-							"id": network["Network"]["ID"],
-							"name": network["Network"]["Spec"]["Name"],
-							"addresses": network["Addresses"],
-						};
-					}
-				}
-				services = services.pushIm(service);
-				work++;
-			}
-		}
-		
-		res <= state <= work <= work;
-		res <= state <= total <= total;
-		res <= services <= services;
-		
-		return res;
-	}
-	
-	
 	#endif
 	
 }

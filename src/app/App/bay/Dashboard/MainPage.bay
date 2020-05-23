@@ -60,7 +60,7 @@ class MainPage extends Component
 		{
 			"api_name": "App.Dashboard",
 			"space_name": "default",
-			"method_name": "getServices",
+			"method_name": "status",
 			"data":
 			{
 			},
@@ -70,7 +70,7 @@ class MainPage extends Component
 		container <= layout <= page_class <= classof MainPage;
 		container <= layout <= page_model <= new MainPageModel
 		{
-			"services": (msg -> method isSuccess) ? msg["response"] : null,
+			"services": (msg -> method isSuccess) ? msg["response"]["services"] : null,
 		};
 		
 		return container;
@@ -134,14 +134,25 @@ class MainPage extends Component
 			%info_item:last-child{
 				padding-bottom: 0px;
 			}
-			%info_item--error > .label{
+			%info_actions > .label{
 				padding-bottom: 5px;
 			}
-			%info_item_error{
+			%info_item_action{
 				padding-bottom: 5px;
 			}
-			%info_item_error:last-child{
+			%info_item_action:last-child{
 				padding-bottom: 0px;
+			}
+			%info_item_action.state-ready .state{
+				color: #00aa00;
+				font-weight: bold;
+			}
+			%info_item_action.state-failed .state, %info_item_action.state-rejected .state{
+				color: red;
+				font-weight: bold;
+			}
+			%info_item_action_error{
+				color: red;
 			}
 		}
 	;
@@ -183,7 +194,7 @@ class MainPage extends Component
 						<div @class="service_item service_item--name">{ service["_name"] }</div>
 						<div @class="service_item service_item--image">{ static::trimImageName(service["_image"]) }</div>
 						<div @class="service_item service_item--status">
-							{ service["balancer"]["state"]["work"] } / { service["balancer"]["state"]["total"] }
+							{ service["balancer"]["State"]["Work"] } / { service["balancer"]["State"]["Total"] }
 						</div>
 					</div>
 			) }
@@ -200,9 +211,13 @@ class MainPage extends Component
 		Dict service = model.services.get(model.active, null);
 		if (service == null) return "";
 		
-		Collection errors = service["tasks"].filter
+		Collection tasks = service["balancer"]["Tasks"];
+		Collection errors = service["balancer"]["Tasks"].filter
 		(
-			bool (Dict task) => task["Status"]["State"] == "rejected"
+			bool (Dict task) =>
+				task["Status"]["State"] == "rejected" or
+				task["Status"]["State"] == "failed" or
+				task["Status"]["State"] == "running"
 		);
 		
 		return
@@ -211,22 +226,20 @@ class MainPage extends Component
 				<div @class="info_item info_item--image"><b>{ _("App", "Image") }:</b> { service["_image"] }</div>
 				<div @class="info_item info_item--status">
 					<b>{ _("App", "Status") }:</b>&nbsp;
-					{ service["balancer"]["state"]["work"] } / { service["balancer"]["state"]["total"] }
+					{ service["balancer"]["State"]["Work"] } / { service["balancer"]["State"]["Total"] }
 				</div>
 				
 				{
-					errors.count() > 0 ?
-						<div @class="info_item info_item--error">
-							<div class='label bold'>{ _("App", "Last errors") }:</div>
+					tasks.count() > 0 ?
+						<div @class="info_item info_actions">
+							<div class='label bold' @key='label'>
+								{ _("App", "Last actions") }:
+							</div>
 							
 							{
-								errors.map
+								tasks.map
 								(
-									html (Dict task) =>
-										<div @class="info_item_error">
-											[{ rs::substr(task["Status"]["Timestamp"], 0, 19) }]&nbsp;
-											{ task["Status"]["Err"] }
-										</div>
+									html (Dict task, int index) => static::renderAction(task, index)
 								)
 							}
 							
@@ -234,6 +247,30 @@ class MainPage extends Component
 					: ""
 				}
 				
+			</div>
+		;
+	}
+	
+	
+	
+	/**
+	 * Render action
+	 */
+	pure html renderAction(Dict task, int index)
+	{
+		return
+			<div @class="info_item_action" class={ "state-" ~ task["Status"]["State"] } @key={ index }>
+				[{ rs::substr(task["Status"]["Timestamp"], 0, 19) }]&nbsp;
+				<span class="state">{ rs::strtoupper(task["Status"]["State"]) }</span>&nbsp;
+				on { task["Node"]["Hostname"] }, id={ task["ID"] }
+				{
+					(
+						task["Status"]["State"] == "rejected" or
+						task["Status"]["State"] == "failed"
+					) ?
+						<div @class="info_item_action_error">{ task["Status"]["Err"] }</div>
+					: ""
+				}
 			</div>
 		;
 	}

@@ -27,6 +27,7 @@ use Runtime.ORM.QueryBuilder;
 use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.ApiMiddleware;
+use App.DockerLib;
 
 
 @ApiList{ "api_name": "App.Dashboard", "space_name": "default" }
@@ -40,15 +41,24 @@ class DashboardApi
 	/**
 	 * Returns services info
 	 */
-	@ApiMethod{ "method_name": "getServices" }
+	@ApiMethod{ "method_name": "status" }
 	static async MessageRPC getServices(MessageRPC msg)
 	{
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
+		string s = await DockerLib::dockerApi("/nodes");
+		Dict nodes = s
+			-> RuntimeUtils::json_decode
+			-> lib::sort
+			(
+				int (Dict a, Dict b) => a["Description"]["Hostname"] > b["Description"]["Hostname"]
+			)
+		;
+		
 		QueryBuilder q = new QueryBuilder()
 			-> method select("docker_services", p.prefix)
 			-> method fields([
-				"id", "service_id", "_name", "_image", "enable", "timestamp", "json", "tasks", "balancer",
+				"id", "service_id", "_name", "_image", "enable", "timestamp", "balancer",
 			])
 			-> method order([ ["_name", "asc"] ])
 			-> method where
@@ -62,41 +72,31 @@ class DashboardApi
 			-> await method getAll
 			-> lib::map
 			(
-				Dict (Dict item)
-				{
-					item = item
-						-> lib::set( "balancer", RuntimeUtils::json_decode(item["balancer"]) )
-						-> lib::set( "tasks", RuntimeUtils::json_decode(item["tasks"]) )
-					;
-					
-					/* Sort tasks by time */
-					item <= tasks <= item["tasks"].sortIm
-					(
-						bool (Dict a, Dict b)
-						{
-							int time_a = rtl::timestamp( rs::substr(a["Status"]["Timestamp"], 0, 19) );
-							int time_b = rtl::timestamp( rs::substr(b["Status"]["Timestamp"], 0, 19) );
-							return time_a < time_b;
-						}
-					);
-					
-					return item;
-				}
+				Dict (Dict item) => item
+					-> lib::set( "balancer", RuntimeUtils::json_decode(item["balancer"]) )
 			)
 		;
 		
-		return msg -> method success(services);
+		return msg -> method success
+		{
+			"nodes": nodes,
+			"services": services,
+		};
 	}
 	
 	
 	
 	/**
-	 * Returns nodes info
+	 * Execute shell command
 	 */
-	@ApiMethod{ "method_name": "getNodes" }
-	static async MessageRPC getNodes(MessageRPC msg)
+	@ApiMethod{ "method_name": "exec" }
+	static async MessageRPC exec(MessageRPC msg)
 	{
-		return msg -> method success(null);
+		string content = await DockerLib::exec("sudo " ~ msg["data"]["cmd"] ~ " 2>&1");
+		return msg -> method success
+		{
+			"content": content,
+		};
 	}
 	
 	

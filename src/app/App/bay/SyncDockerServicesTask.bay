@@ -54,6 +54,12 @@ class SyncDockerServicesTask
 		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
 		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
 		
+		string s = await DockerLib::dockerApi("/nodes");
+		Dict nodes = s
+			-> RuntimeUtils::json_decode
+			-> lib::transition( list (Dict node) => [ node, node["ID"] ] )
+		;
+		
 		int time = @.time();
 		string s = await DockerLib::dockerApi("/services");
 		
@@ -90,7 +96,7 @@ class SyncDockerServicesTask
 						"timestamp": time,
 						"json": RuntimeUtils::json_encode(json),
 						"tasks": tasks_str,
-						"balancer": RuntimeUtils::json_encode( ServiceCrudApi::getBalancerData(json, tasks) ),
+						"balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
 					}
 				)
 				-> await method end
@@ -122,5 +128,83 @@ class SyncDockerServicesTask
 		
 	}
 	
+	
+	
+	/**
+	 * Returns balancer data
+	 */
+	pure Dict getBalancerData(Dict json, Collection tasks, Dict nodes)
+	{
+		Dict res =
+		{
+			"State":
+			{
+				"Work": 0,
+				"Total": 0,
+			},
+			"Tasks": [],
+		};
+		
+		Collection Tasks = [];
+		int total = rtl::attr(json, ["Spec", "Mode", "Replicated", "Replicas"], 1);
+		int work = 0;
+		
+		tasks = tasks.sortIm
+		(
+			bool (Dict a, Dict b)
+			{
+				int time_a = rtl::timestamp( rs::substr(a["Status"]["Timestamp"], 0, 19) );
+				int time_b = rtl::timestamp( rs::substr(b["Status"]["Timestamp"], 0, 19) );
+				return time_a < time_b;
+			}
+		);
+		
+		for (int i=0; i<tasks.count(); i++)
+		{
+			Dict task = tasks.item(i);
+			string state = task["Status"]["State"];
+			
+			Dict node = nodes.get(task["NodeID"], null);
+			
+			Dict service =
+			{
+				"ID": task["ID"],
+				"Status": task["Status"],
+				"Slot": task["Slot"],
+				"Node": {
+					"ID": task["NodeID"],
+					"Hostname": node["Description"]["Hostname"],
+					"Status": node["Status"],
+				},
+				"Networks": [],
+			};
+			Collection NetworksAttachments = task["NetworksAttachments"];
+			if (NetworksAttachments != null)
+			{
+				for (int j=0; j<NetworksAttachments.count(); j++)
+				{
+					Dict network = NetworksAttachments.item(j);
+					service <= Networks <= service.Networks.pushIm
+					{
+						"ID": network["Network"]["ID"],
+						"Name": network["Network"]["Spec"]["Name"],
+						"Addresses": network["Addresses"],
+					};
+				}
+			}
+			Tasks = Tasks.pushIm(service);
+			
+			if (state == "running")
+			{
+				work++;
+			}
+		}
+		
+		res <= State <= Work <= work;
+		res <= State <= Total <= total;
+		res <= Tasks <= Tasks;
+		
+		return res;
+	}
 	
 }

@@ -192,7 +192,7 @@ class YamlCrudApi extends CrudApi implements CrudInterface
 		await static::createYamlFiles();
 		
 		string cmd = "sudo docker stack deploy -c " ~ file_path ~ " " ~ stack ~ " --with-registry-auth";
-		string result = await DockerLib::exec(cmd);
+		string result = await DockerLib::exec(cmd ~ " 2>/dev/null");
 		
 		/* Sync services */
 		SyncDockerServicesTask::sync_services();

@@ -21,6 +21,9 @@ namespace App.User;
 use Runtime.lib;
 use Runtime.MessageRPC;
 use Runtime.RuntimeUtils;
+use Runtime.Crypt.Password;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.ORMProviderInterface;
 use Runtime.Web.Annotations.ApiList;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Web.Annotations.Route;
@@ -41,10 +44,25 @@ class AuthApi
 	/**
 	 * Check login and password
 	 */
-	static bool checkLoginAndPassword(string username, string password)
+	static async bool checkLoginAndPassword(string username, string password)
 	{
-		if (username != "test" or password != "test") return false;
-		return true;
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		/* Select password */
+		Dict item = p -> await method query
+		(
+			"select u.*, a.value as password from " ~ p.prefix ~ "docker_users as u " ~
+			"left join docker_users_auth as a on (u.id = a.user_id and a.type='password') " ~
+			"where u.name=:user_name",
+			{
+				"user_name": username,
+			}
+		)
+		-> await method getOne;
+		
+		if (item == null) return false;
+		string hash = item.get("password", "");
+		return Password::verify(password, hash);
 	}
 	
 	
@@ -73,7 +91,8 @@ class AuthApi
 			-> monad lib::to("string", "")
 		;
 		
-		if (not static::checkLoginAndPassword(username, password))
+		bool flag = await static::checkLoginAndPassword(username, password);
+		if (not flag)
 		{
 			msg = msg -> method fail(null, _("App", "Wrong password")) -> lib::set("have_answer", true);
 		}

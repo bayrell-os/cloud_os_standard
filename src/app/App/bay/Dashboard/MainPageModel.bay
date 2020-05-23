@@ -23,6 +23,6 @@ use Runtime.CoreStruct;
 
 struct MainPageModel extends CoreStruct
 {
-	Dict services = null;
+	Collection services = null;
 	int active = -1;
 }

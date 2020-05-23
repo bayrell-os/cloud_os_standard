@@ -19,15 +19,16 @@
 namespace App.Dashboard;
 
 use Runtime.lib;
+use Runtime.MessageRPC;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.RouteMiddleware;
+use Runtime.Web.Events.MouseClickEvent;
 use Runtime.Web.Frontend.Component;
 use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderHelper;
 use Runtime.Web.Response;
-use App.Dashboard.MainPageModel;
 use App.Dashboard.NodesPageModel;
 
 
@@ -51,13 +52,26 @@ class NodesPage extends Component
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		/* Set title */
-		container <= layout <= title <= "Nodes page";
+		container <= layout <= title <= "Nodes";
 		container <= layout <= layout_name <= "admin";
+		
+		/* Get services state */
+		MessageRPC msg = container -> await method sendMessage
+		{
+			"api_name": "App.Dashboard",
+			"space_name": "default",
+			"method_name": "status",
+			"data":
+			{
+			},
+		};
 		
 		/* Create model */
 		container <= layout <= page_class <= classof NodesPage;
 		container <= layout <= page_model <= new NodesPageModel
 		{
+			"services": (msg -> method isSuccess) ? msg["response"]["services"] : null,
+			"nodes": (msg -> method isSuccess) ? msg["response"]["nodes"] : null,
 		};
 		
 		return container;
@@ -66,12 +80,112 @@ class NodesPage extends Component
 	
 	
 	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			
+		}
+	;
+	
+	
+	
+	/**
 	 * Component render
 	 */
-	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
-		<div>
-			Nodes
-		</div>
-	;
+	pure html render(LayoutModel layout, NodesPageModel model, Dict params, html content)
+	{
+		if (model.nodes == null) return "";
+		
+		return
+			<div @class="nodes">
+			{
+				model.nodes.map
+				(
+					html (Dict node, int index) use (model) =>
+						<div @class="node" @key={ index }>
+							<div @class="node_name">{ _("App", "Hostname") }: { node["Description"]["Hostname"] }</div>
+							<ul @class="node_services">
+								{ static::renderNodeTasks(model, node) }
+							</ul>
+						</div>
+				)
+			}
+			</div>
+		;
+	}
+	
+	
+	
+	/**
+	 * Render tasks
+	 */
+	pure html renderNodeTasks(NodesPageModel model, Dict node)
+	{
+		Collection tasks = static::getNodeTasks(model, node);
+		return tasks.map
+		(
+			html (Dict task) =>
+				<li @class="node_service">
+					{ task["ServiceName"] } [{ task["ID"] }] { _("App", "Address") }:&nbsp;
+					{
+						rs::join
+						(
+							", ",
+							task["Networks"].map
+							(
+								string (Dict net) => net["Addresses"][0]
+							)
+						)
+					}
+				</li>
+		);
+	}
+	
+	
+	
+	/**
+	 * Get node tasks
+	 */
+	pure html getNodeTasks(NodesPageModel model, Dict node)
+	{
+		Vector tasks = new Vector();
+		
+		if (model.services != null)
+		{
+			for (int i=0; i<model.services.count(); i++)
+			{
+				Dict item = model.services.item(i);
+				Collection Tasks = item["balancer"]["Tasks"];
+				for (int j=0; j<Tasks.count(); j++)
+				{
+					Dict task = Tasks.item(j);
+					if (task["Node"]["ID"] == node["ID"] and task["Status"]["State"] == "running")
+					{
+						tasks.push(task.setIm("ServiceName", item["_name"]));
+					}
+				}
+			}
+		}
+		
+		return tasks.toCollection();
+	}
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * On click
+	 */
+	public void onClick(MouseClickEvent e)
+	{
+		int pos = e.target.params["data-index"];
+		this.updateModel
+		{
+			"active": pos,
+		};
+	}
+	
+	#endif
 	
 }

@@ -19,9 +19,11 @@
 namespace App;
 
 use Runtime.lib;
+use Runtime.MessageRPC;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.RouteMiddleware;
+use Runtime.Web.Events.KeyDownEvent;
 use Runtime.Web.Frontend.Component;
 use Runtime.Web.Frontend.LayoutModel;
 use Runtime.Web.RenderContainer;
@@ -45,7 +47,7 @@ class CLIPage extends Component
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/", "name": "app.cli" }
+	@Route{ "uri": "/cli/", "name": "app.cli" }
 	static async RenderContainer actionIndex(RenderContainer container)
 	{
 		/* Set title */
@@ -56,6 +58,8 @@ class CLIPage extends Component
 		container <= layout <= page_class <= classof CLIPage;
 		container <= layout <= page_model <=
 		{
+			"result": "",
+			"text": "",
 		};
 		
 		return container;
@@ -64,12 +68,92 @@ class CLIPage extends Component
 	
 	
 	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) => 
+		@css{
+			%output{
+				position: relative;
+				width: 100%;
+				height: calc(100% - 30px);
+				padding-bottom: 5px;
+				overflow-y: scroll;
+				overflow-x: hidden;
+				overflow-wrap: anywhere;
+				white-space: pre-wrap;
+				font-family: "Courier New";
+				font-size: 16px;
+			}
+			%input{
+				padding: 6px 12px;
+				width: 100%;
+			}
+		}
+	;
+	
+	
+	
+	/**
 	 * Component render
 	 */
 	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
-		<div>
-			Command Line Interface
+		<div @class='output' @ref='div_output'>
+			@raw{ model["result"] }
 		</div>
+		<input @class='input' @bind="text" @eventAsync:KeyDownEvent="onKeyDown" />
 	;
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	void onUpdate(bool created)
+	{
+		this.div_output.scrollTop = this.div_output.scrollHeight;
+	}
+	
+	
+	
+	/**
+	 * Click event
+	 */
+	async void onKeyDown(KeyDownEvent e)
+	{
+		if (e.keyCode == 13)
+		{
+			string value = e.target.value;
+			
+			this.updateModel
+			{
+				"text": "",
+			};
+			
+			MessageRPC msg = await this.sendMessage
+			{
+				"api_name": "App.Dashboard",
+				"space_name": "default",
+				"method_name": "exec",
+				"data":
+				{
+					"cmd": value,
+				},
+			};
+			
+			if (msg -> method isSuccess)
+			{
+				string content = this.model(["result"], "");
+				if (content != "") content ~= "\n";
+				this.updateModel
+				{
+					"result": content ~
+						"> " ~ value ~ "\n" ~ msg["response"]["content"],
+					"text": "",
+				};
+			}
+			
+		}
+	}
+	
+	#endif
 	
 }

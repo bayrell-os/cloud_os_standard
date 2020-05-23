@@ -47,6 +47,23 @@ struct UserPageModel extends CrudModel
 			}
 		)
 		
+		/* Banned */
+		-> static::addField
+		(
+			new FieldInfo
+			{
+				"api_name": "banned",
+				"label": _("App", "Banned"),
+				"form": classof Select,
+				"select":
+				[
+					{ "id": 0, "value": _("App", "No") },
+					{ "id": 1, "value": _("App", "Yes") },
+				],
+				"default_value": 0,
+			}
+		)
+		
 		/* Password */
 		-> static::addField
 		(
@@ -80,6 +97,7 @@ struct UserPageModel extends CrudModel
 	pure Collection<string> getDefaultFormFields() =>
 	[
 		"name",
+		"banned",
 		"password1",
 		"password2",
 	];
