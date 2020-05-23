@@ -1,0 +1,234 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace App;
+
+use Runtime.lib;
+use Runtime.MessageRPC;
+use Runtime.RuntimeConstant;
+use Runtime.RuntimeUtils;
+use Runtime.Web.Frontend.Component;
+use Runtime.Web.Frontend.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.Template;
+use Runtime.Web.Events.MouseClickEvent;
+
+
+@RouteList{}
+class InstallPage extends Component
+{
+	
+	/**
+	 * Returns module name
+	 */
+	pure string moduleName() => "App";
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/install/" }
+	static async RenderContainer InstallPage(RenderContainer container)
+	{	
+		/* Set title */
+		container <= layout <= title <= "Add admin";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof InstallPage;
+		container <= layout <= page_model <=
+		{
+			"username": "",
+			"password1": "",
+			"password2": "",
+			"message": "",
+			"success": "",
+			"error": "",
+		};
+		
+		return container;
+	}
+	
+	
+	
+	/**
+	 * Returns required components
+	 */
+	pure Collection<string> components() =>
+	[
+	];
+	
+	
+	
+	/**
+	 * Component css
+	 */
+	pure string css(Dict<string> vars) =>
+		@css{
+			%content{
+				text-align: center;
+				padding-top: 50px;
+				width: 500px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			%row{
+				text-align: left;
+			}
+			%head{
+				font-weight: bold;
+			}
+			%wrap{
+				padding-bottom: 20px;
+			}
+			%label{
+				padding-bottom: 5px;
+			}
+			%label label{
+			}
+			%input input{
+				padding: 5px 10px;
+				width: 100%;
+			}
+			%button{
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+			%message{
+			}
+			%result.success{
+				color: green;
+			}
+			%result.error{
+				color: red;
+			}
+		}
+	;
+	
+	
+	
+	/**
+	 * Component render
+	 */
+	pure html render(LayoutModel layout, Dict model, Dict params, html content) =>
+	
+		<div @class='content' @key='content'>
+			
+			<div @class='wrap head'>
+				Add admin
+			</div>
+			
+			<div @class='wrap'>
+				<div @class='row label'>
+					<label for='auth-username'>Username</label>
+				</div>
+				<div @class='row input'>
+					<input @bind="username" id='auth-username' />
+				</div>
+			</div>
+			
+			<div @class='wrap'>
+				<div @class='row label'>
+					<label for='auth-password'>Password</label>
+				</div>
+				<div @class='row input'>
+					<input type='password' @bind="password1" id='auth-password1' />
+				</div>
+			</div>
+			
+			<div @class='wrap'>
+				<div @class='row label'>
+					<label for='auth-password'>Repeat password</label>
+				</div>
+				<div @class='row input'>
+					<input type='password' @bind="password2" id='auth-password2' />
+				</div>
+			</div>
+			
+			<div @class='wrap'>
+				<button @class='button button-login' @eventAsync:MouseClickEvent='onClick'>Install</button>
+			</div>
+			
+			<div @class='wrap result' class={ static::getResultClass(model) }>
+				{ model["message"] }
+				{ model["success"] }
+				{ model["error"] }
+			</div>
+			
+		</div>
+		
+	;
+	
+	
+	
+	/**
+	 * Returns result class
+	 */
+	pure string getResultClass(Dict model)
+	{
+		if (model["success"] != "") return "success";
+		if (model["error"] != "") return "error";
+		return "";
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	/**
+	 * Mouse click event
+	 */
+	async void onClick(MouseClickEvent e)
+	{
+		Dict model = this.model();
+		
+		this.updateModel
+		{
+			"message": "Please wait ...",
+			"error": "",
+			"success": "",
+		};
+		
+		/* Login */
+		MessageRPC msg = await this.sendMessage
+		{
+			"api_name": "App.Auth",
+			"space_name": "default",
+			"method_name": "install",
+			"data":
+			{
+				"username": model["username"],
+				"password1": model["password1"],
+				"password2": model["password2"],
+			},
+		};
+		
+		this.updateModel
+		{
+			"message": "",
+			"error": msg -> attr "error",
+			"success": msg -> attr "success_message",
+		};
+	}
+	
+	#endif
+}

@@ -20,7 +20,9 @@ namespace App.User;
 
 use Runtime.lib;
 use Runtime.MessageRPC;
+use Runtime.RuntimeConstant;
 use Runtime.RuntimeUtils;
+use Runtime.Exceptions.ApiException;
 use Runtime.Crypt.Password;
 use Runtime.ORM.Cursor;
 use Runtime.ORM.ORMProviderInterface;
@@ -35,6 +37,7 @@ use Runtime.Web.Response;
 use App.User.AuthToken;
 
 
+@ApiList{ "api_name": "App.Auth" }
 @RouteList{}
 class AuthApi
 {
@@ -161,6 +164,82 @@ class AuthApi
 		return container;
 	}
 	
+	
+	
+	/**
+	 * Logout
+	 */
+	@ApiMethod{ "method_name": "install", "space_name": "default" }
+	static async MessageRPC actionInstall(MessageRPC msg)
+	{
+		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		
+		/* Select count users */
+		Dict item = p -> await method query
+		(
+			"select count(*) as c from " ~ p.prefix ~ "docker_users as u",
+			{
+			}
+		)
+		-> await method getOne;
+		
+		int count = item["c"];
+		if (count > 0)
+		{
+			throw new ApiException(_("App", "Admins is allready exists"), RuntimeConstant::ERROR_VALIDATION);
+		}
+		
+		string username = msg["data"]["username"];
+		string password1 = msg["data"]["password1"];
+		string password2 = msg["data"]["password2"];
+		
+		if (username == "")
+		{
+			throw new ApiException(_("App", "Username is empty"), RuntimeConstant::ERROR_VALIDATION);
+		}
+		
+		if (password1 == "")
+		{
+			throw new ApiException(_("App", "Password is empty"), RuntimeConstant::ERROR_VALIDATION);
+		}
+		
+		if (password1 != password2)
+		{
+			throw new ApiException(_("App", "Passwords mistmatch"), RuntimeConstant::ERROR_VALIDATION);
+		}
+		
+		
+		/* Create query */
+		int user_id = p
+			-> await method insert
+			(
+				p.prefix ~ "docker_users",
+				{
+					"name": username,
+				}
+			)
+			-> await method end
+		;
+		
+		/* Insert password */
+		p
+			/* -> lib::set("log_query", true) */
+			-> await method insert_or_update
+			(
+				p.prefix ~ "docker_users_auth",
+				{
+					"user_id": user_id,
+					"type": "password",
+				},
+				{
+					"value": Password::createHash(password1),
+				}
+			)
+			-> await method end
+		;
+		
+		return msg -> method success(null, _("App", "Ok"));
+	}
 	
 	#endif
 }

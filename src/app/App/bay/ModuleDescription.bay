@@ -86,6 +86,7 @@ class ModuleDescription implements
 		"App/AdminerPage",
 		"App/AdminLayout",
 		"App/CLIPage",
+		"App/InstallPage",
 		"App/Dashboard/MainPage",
 		"App/Dashboard/MainPageModel",
 		"App/Dashboard/NodesPage",
@@ -116,6 +117,7 @@ class ModuleDescription implements
 	[
 		/* Pages */
 		new Entity{ "name": "App.CLIPage" },
+		new Entity{ "name": "App.InstallPage" },
 		new Entity{ "name": "App.Dashboard.MainPage" },
 		new Entity{ "name": "App.Dashboard.NodesPage" },
 		new Entity{ "name": "App.Nginx.NginxPage" },
