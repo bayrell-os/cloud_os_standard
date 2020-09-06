@@ -1,7 +1,83 @@
 {
 	"name": "Cloud Web Panel",
-	"modules": [
-		"/app",
-		"/lib"
-	]
+	"cache": "var/bundler",
+	"bundles":
+	[
+		{
+			"dest": "web/js/runtime.js",
+			"lang": "es6",
+			"modules":
+			[
+				"Runtime",
+				"Runtime.Core",
+				"Runtime.Web"
+			]
+		},
+		{
+			"dest": "web/js/components.js",
+			"lang": "es6",
+			"modules":
+			[
+				"Runtime.Web.Button",
+				"Runtime.Web.Dialog",
+				"Runtime.Web.Form",
+				"Runtime.Web.Input",
+				"Runtime.Web.Table",
+				"Runtime.Web.CRUD"
+			]
+		},
+		{
+			"dest": "web/js/app.js",
+			"lang": "es6",
+			"modules":
+			[
+				"Bayrell.CloudOS"
+			],
+			"websocket": true
+		}
+	],
+	"modules":
+	[
+		"lib",
+		"src"
+	],
+	"plugins":
+	[
+		"Bayrell.Bundler.Plugins.BayLang",
+		"Bayrell.Bundler.Plugins.Bundle",
+		"Bayrell.Bundler.Plugins.FilesPHP",
+		"Bayrell.Bundler.Plugins.FilesES6",
+		"Bayrell.Bundler.Plugins.FilesJS"
+	],
+	"options":
+	{
+		"Bayrell.Bundler.Plugins.BayLang":
+		{
+			"es6":
+			{
+				"use_module_name": false,
+				"use_strict": true,
+				"enable_async_await": true,
+				"emulate_async_await": false
+			},
+			"nodejs":
+			{
+				"use_module_name": true,
+				"use_strict": true,
+				"enable_async_await": true,
+				"emulate_async_await": false
+			}
+		}
+	},
+	"languages": [ "es6", "php" ],
+	"watch":
+	{
+		"dir":
+		[
+			"lib",
+			"src"
+		],
+		"timeout": 500,
+		"websocket": true
+	}
 }

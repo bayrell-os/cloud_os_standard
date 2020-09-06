@@ -9,11 +9,11 @@ secrets:
 
 services:
 
-    web_panel:
-        image: bayrell/cloud_web_panel:20200519_084656
+    cloud_web_panel:
+        image: bayrell/cloud_web_panel:20200906_104422
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
-            - "web_panel_data:/data"
+            - "cloud_web_panel_data:/data"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "../src:/var/www"
         secrets:
@@ -49,7 +49,7 @@ services:
             driver: journald
 
 volumes:
-    web_panel_data:
+    cloud_web_panel_data:
 
 networks:
 

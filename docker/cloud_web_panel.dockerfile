@@ -8,7 +8,7 @@ RUN apk add sudo docker curl; \
 	adduser www www-data; \
 	echo "Ok"
 
-ADD web_panel /src/files
+ADD files /src/files
 RUN cd ~; \
 	cp -rf /src/files/etc/* /etc/; \
 	rm -rf /src/files; \
