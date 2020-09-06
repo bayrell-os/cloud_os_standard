@@ -6,6 +6,9 @@
 		"Routes",
 		"Dashboard/MainPage",
 		"Dashboard/MainPageModel",
+		"Other/AdminerPage",
+		"User/UsersPage",
+		"User/UsersPageModel",
 		"ModuleDescription"
 	]
 }

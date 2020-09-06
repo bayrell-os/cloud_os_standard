@@ -1465,12 +1465,15 @@ Object.assign(Runtime.Web.Form.Form,
 			if (field != null)
 			{
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name = __v0.value(ctx);
 				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name_form"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name_form = __v0.value(ctx);
 				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_settings"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Dict", Runtime.Dict.from({})));
 				var class_settings = __v0.value(ctx);
 				
 				var model_path = this.getBindPath(ctx, field);
@@ -3118,12 +3121,15 @@ Object.assign(Runtime.Web.Table.Table,
 			if (field != null)
 			{
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name = __v0.value(ctx);
 				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name_table"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name_table = __v0.value(ctx);
 				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_settings"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Dict", Runtime.Dict.from({})));
 				var class_settings = __v0.value(ctx);
 				
 				if (!Runtime.rtl.isEmpty(ctx, class_name_table))
@@ -4056,3 +4062,126 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 Runtime.rtl.defClass(Runtime.Web.CRUD.CrudPageModel);
 window["Runtime.Web.CRUD.CrudPageModel"] = Runtime.Web.CRUD.CrudPageModel;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.CRUD.CrudPageModel;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.CRUD == 'undefined') Runtime.Web.CRUD = {};
+Runtime.Web.CRUD.ModuleDescription = function(ctx)
+{
+};
+Object.assign(Runtime.Web.CRUD.ModuleDescription.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.CRUD.ModuleDescription)
+		{
+		}
+	},
+	assignValue: function(ctx,k,v)
+	{
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.CRUD.ModuleDescription";
+	},
+});
+Object.assign(Runtime.Web.CRUD.ModuleDescription,
+{
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleName: function(ctx)
+	{
+		return "Runtime.Web.CRUD";
+	},
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleVersion: function(ctx)
+	{
+		return "0.0.1";
+	},
+	/**
+	 * Returns required modules
+	 * @return Map<string>
+	 */
+	requiredModules: function(ctx)
+	{
+		return Runtime.Dict.from({});
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.CRUD";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.CRUD.ModuleDescription";
+	},
+	getParentClassName: function()
+	{
+		return "";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.CRUD.ModuleDescription",
+			"name": "Runtime.Web.CRUD.ModuleDescription",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.CRUD.ModuleDescription);
+window["Runtime.Web.CRUD.ModuleDescription"] = Runtime.Web.CRUD.ModuleDescription;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.CRUD.ModuleDescription;

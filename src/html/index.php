@@ -16,8 +16,8 @@ $env = include ROOT_PATH . "/env.php";
 
 /* Run app */
 $loader = ( new Loader() )
+	->addIncludePath( ROOT_PATH . "/app" )
 	->addIncludePath( ROOT_PATH . "/lib" )
-	->addIncludePath( ROOT_PATH . "/src" )
 	->setEnv($env)
 	->setMainModule("Bayrell.CloudOS")
 	->setEntryPoint("Runtime.Web.Backend.CGI")

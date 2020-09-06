@@ -19,16 +19,25 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.Core.RemoteCallAnswer;
+use Runtime.ORM.MySQL.Driver as MySQLDriver;
+use Runtime.ORM.MySQL.Settings as MySQLSettings;
 use Runtime.Web.Layout;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderDriver;
+use Runtime.Web.Response;
 use Runtime.Web.Route;
 use Runtime.Web.RouteList;
 use Runtime.Web.CRUD.CrudPageModel;
 use Runtime.Web.Table.TableModel;
+use Bayrell.CloudOS.AdminLayout;
+use Bayrell.CloudOS.Page404;
+use Bayrell.CloudOS.Pattern;
 use Bayrell.CloudOS.Dashboard.MainPage;
 use Bayrell.CloudOS.Dashboard.MainPageModel;
+use Bayrell.CloudOS.Other.AdminerPage;
+use Bayrell.CloudOS.User.UsersPage;
+use Bayrell.CloudOS.User.UsersPageModel;
 
 
 @RouteList{}
@@ -40,7 +49,7 @@ static class Routes
 	 */
 	pure LayoutModel layoutChain(LayoutModel layout)
 	{
-		if (layout.layout_name == "default") layout <= layout_class <= classof AppLayout;
+		if (layout.layout_name == "default") layout <= layout_class <= classof AdminLayout;
 		return [ layout ];
 	}
 	
@@ -80,6 +89,7 @@ static class Routes
 	@Route{ "uri": "/", "name": "site:index" }
 	static async RenderContainer MainPage(RenderContainer container)
 	{
+		/*
 		RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 		(
 			{
@@ -88,10 +98,10 @@ static class Routes
 			},
 			container
 		);
-		
+		*/
 		MainPageModel page_model = new MainPageModel
 		{
-			"services": answer.isSuccess() ? msg["response"]["services"] : null,
+			/*"services": answer.isSuccess() ? msg["response"]["services"] : null,*/
 		};
 		
 		/* Set title */
@@ -108,6 +118,55 @@ static class Routes
 	
 	
 	/**
+	 * Route Action
+	 * @return RenderContainer
+	 */
+	@Route{ "uri": "/users/", "name": "site:users" }
+	static async RenderContainer UsersPage(RenderContainer container)
+	{
+		/* Create model */
+		UsersPageModel page_model = new UsersPageModel
+		{
+			"crud": new CrudPageModel
+			{
+			},
+		};
+		
+		/* Remote call */
+		Dict search_params = RenderDriver::getCrudSearchParams(container.request);
+		RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+		(
+			{
+				"object_name": "Bayrell.CloudOS.Users",
+				"interface_name": "core.crud",
+				"method_name": "search",
+				"data": search_params,
+			},
+			container
+		);
+		
+		/* Answer */
+		if (answer.isSuccess())
+		{
+			page_model <= crud <= table <= rows <= answer.response["items"];
+			page_model <= crud <= table <= page <= answer.response["page"];
+			page_model <= crud <= table <= pages <= answer.response["pages"];
+		}
+		
+		/* Set title */
+		container <= layout <= title <= "Users page";
+		container <= layout <= layout_name <= "default";
+		
+		/* Set model */
+		container <= layout <= page_class <= classof UsersPage;
+		container <= layout <= page_model <= page_model;
+		
+		return [ container ];
+	}
+	
+	
+	
+	/**
 	 * Render chain
 	 * Page not found
 	 * @return RenderContainer
@@ -116,17 +175,13 @@ static class Routes
 	{
 		if (container == null or container.isResponseExists() or container.isPageExists()) return [ container ];
 		
-		IndexPageModel page_model = new IndexPageModel
-		{
-		};
-		
 		/* Set title */
 		container <= layout <= title <= "Page not found";
 		container <= layout <= layout_name <= "default";
 		
 		/* Set model */
 		container <= layout <= page_class <= classof Page404;
-		container <= layout <= page_model <= page_model;
+		container <= layout <= page_model <= null;
 		
 		/* Set 404 code */
 		container <= new_http_code <= 404;
@@ -134,4 +189,56 @@ static class Routes
 		return [ container ];
 	}
 	
+	
+	
+	#ifdef BACKEND then
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
+	static async RenderContainer adminerPage(RenderContainer container)
+	{
+		MySQLSettings settings = @.config(["Runtime.ORM.MySQL", "default"]);
+		
+		/* Set title */
+		container <= layout <= title <= "Adminer page";
+		
+		/* Create model */
+		container <= layout <= page_class <= classof AdminerPage;
+		container <= layout <= page_model <= new Dict
+		{
+			"db": settings,
+		};
+		
+		return [ container ];
+	}
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
+	static async RenderContainer adminerVersionPage(RenderContainer container)
+	{
+		string content = "";
+		string version = container.route_params.get("version", "");
+		
+		#ifcode PHP then
+		$file_path = \Runtime\rtl::getModulePath($ctx, "Bayrell.CloudOS") . "/data/adminer-4.7.6.php";
+		@ob_start();
+		include $file_path;
+		$content = ob_get_contents();
+		@ob_end_clean();
+		#endif
+		
+		container <= response <= new Response{ "content": content };
+		
+		return [ container ];
+	}
+	
+	#endif
 }

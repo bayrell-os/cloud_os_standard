@@ -16,13 +16,14 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Dashboard;
+namespace Bayrell.CloudOS.User;
 
+use Runtime.lib;
 use Runtime.BaseStruct;
+use Runtime.Web.CRUD.CrudPageModel;
 
 
-struct MainPageModel extends BaseStruct
-{
-	Collection services = null;
-	int active = -1;
+struct UsersPageModel extends BaseStruct
+{	
+	CrudPageModel crud = null;
 }

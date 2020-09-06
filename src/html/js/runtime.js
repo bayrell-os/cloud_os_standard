@@ -7791,6 +7791,3376 @@ if (typeof module != "undefined" && typeof module.exports != "undefined") module
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.ApiException = function(ctx, message, code, response, prev)
+{
+	if (message == undefined) message = "";
+	if (code == undefined) code = -1;
+	if (response == undefined) response = null;
+	if (prev == undefined) prev = null;
+	Runtime.Exceptions.RuntimeException.call(this, ctx, message, code, prev);
+	this.response = response;
+};
+Runtime.Core.ApiException.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
+Runtime.Core.ApiException.prototype.constructor = Runtime.Core.ApiException;
+Object.assign(Runtime.Core.ApiException.prototype,
+{
+	_init: function(ctx)
+	{
+		this.response = null;
+		Runtime.Exceptions.RuntimeException.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.ApiException)
+		{
+			this.response = o.response;
+		}
+		Runtime.Exceptions.RuntimeException.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "response")this.response = v;
+		else Runtime.Exceptions.RuntimeException.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "response")return this.response;
+		return Runtime.Exceptions.RuntimeException.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.ApiException";
+	},
+});
+Object.assign(Runtime.Core.ApiException, Runtime.Exceptions.RuntimeException);
+Object.assign(Runtime.Core.ApiException,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.ApiException";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Exceptions.RuntimeException";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.ApiException",
+			"name": "Runtime.Core.ApiException",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("response");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "response") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ApiException",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.ApiException);
+window["Runtime.Core.ApiException"] = Runtime.Core.ApiException;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.ApiException;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.BusDriverInterface = function(ctx)
+{
+};
+Object.assign(Runtime.Core.BusDriverInterface.prototype,
+{
+	/**
+	 * Send message
+	 * @return string
+	 */
+	sendMessage: async function(ctx, msg)
+	{
+	},
+	/**
+	 * Send message
+	 * @return string
+	 */
+	remoteBusCall: async function(ctx, request)
+	{
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.BusDriverInterface";
+	},
+});
+Object.assign(Runtime.Core.BusDriverInterface,
+{
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.BusDriverInterface";
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.BusDriverInterface);
+window["Runtime.Core.BusDriverInterface"] = Runtime.Core.BusDriverInterface;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.BusDriverInterface;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.Context = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.Context.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.Context.prototype.constructor = Runtime.Core.Context;
+Object.assign(Runtime.Core.Context.prototype,
+{
+	/**
+	 * Returns enviroment by eky
+	 */
+	env: function(ctx, key, def_value)
+	{
+		if (def_value == undefined) def_value = "";
+		var __v0 = new Runtime.Monad(ctx, this);
+		__v0 = __v0.attr(ctx, "enviroments");
+		__v0 = __v0.call(ctx, Runtime.lib.get(ctx, key, def_value));
+		return __v0.value(ctx);
+	},
+	/**
+	 * Returns settings
+	 * @return Dict<string>
+	 */
+	config: function(ctx, items, d)
+	{
+		if (d == undefined) d = null;
+		var __v0 = new Runtime.Monad(ctx, this);
+		__v0 = __v0.attr(ctx, "settings");
+		__v0 = __v0.call(ctx, Runtime.lib.get(ctx, "config", null));
+		__v0 = __v0.call(ctx, Runtime.lib.attr(ctx, items, d));
+		return __v0.value(ctx);
+	},
+	/**
+	 * Returns docker secret key
+	 */
+	secret: function(ctx, key)
+	{
+		var __v0 = new Runtime.Monad(ctx, this);
+		__v0 = __v0.attr(ctx, "settings");
+		__v0 = __v0.call(ctx, Runtime.lib.get(ctx, key, ""));
+		return __v0.value(ctx);
+	},
+	/* ------------------ Object Manager ---------------- */
+	/**
+	 * Add object
+	 */
+	addObject: function(ctx, obj, object_name)
+	{
+		if (object_name == undefined) object_name = "";
+		this.object_manager.addObject(ctx, obj, object_name);
+		return this;
+	},
+	/**
+	 * Register listener
+	 */
+	registerListener: function(ctx, from, event_class_name, object_name, method_name)
+	{
+		if (method_name == undefined) method_name = "";
+		return this.object_manager.registerListener(ctx, from, event_class_name, object_name, method_name);
+	},
+	/**
+	 * Find listeners
+	 */
+	findListeners: function(ctx, from, event_class_name)
+	{
+		if (event_class_name == undefined) event_class_name = "";
+		return this.object_manager.findListeners(ctx, from, event_class_name);
+	},
+	/**
+	 * Get object
+	 */
+	getObject: function(ctx, object_name)
+	{
+		return this.object_manager.getObject(ctx, object_name);
+	},
+	/**
+	 * Get objects
+	 */
+	getObjects: function(ctx, object_name)
+	{
+		return this.object_manager.getObjects(ctx, object_name);
+	},
+	/**
+	 * Get driver
+	 */
+	getDriver: function(ctx, driver_name)
+	{
+		return this.object_manager.getDriver(ctx, driver_name);
+	},
+	/**
+	 * Get drivers
+	 */
+	getDrivers: function(ctx, class_name)
+	{
+		return this.object_manager.getDrivers(ctx, class_name);
+	},
+	/**
+	 * Remove object
+	 */
+	removeObject: function(ctx, object_name)
+	{
+		this.object_manager.removeObject(ctx, object_name);
+		return this;
+	},
+	/**
+	 * Send message
+	 * @param Message msg
+	 * @return Message
+	 */
+	sendLocalMessage: async function(ctx, msg)
+	{
+		await this.object_manager.sendMessage(ctx, msg);
+	},
+	/**
+	 * Remote call
+	 * @param Dict items
+	 * @return RemoteCallAnswer
+	 */
+	remoteLocalCall: async function(ctx, items)
+	{
+		return await this.object_manager.remoteCall(ctx, items);
+	},
+	/**
+	 * Send message
+	 * @param Message msg
+	 * @return Message
+	 */
+	sendBusMessage: async function(ctx, msg)
+	{
+		var driver = this.getDriver(ctx, "default:external_bus");
+		await driver.sendMessage(ctx, msg);
+	},
+	/**
+	 * Remote call
+	 * @param Dict items
+	 * @return RemoteCallAnswer
+	 */
+	remoteBusCall: async function(ctx, items)
+	{
+		var driver = this.getDriver(ctx, "default:external_bus");
+		return Promise.resolve(await driver.remoteCall(ctx, items));
+	},
+	/* ---------------------- Chain --------------------- */
+	/**
+	 * Apply Lambda Chain
+	 */
+	chain: function(ctx, chain_name, args)
+	{
+		var entities = this.entities.filter(ctx, (ctx, item) => 
+		{
+			return item instanceof Runtime.Core.LambdaChain && item.name == chain_name && item.is_async == false;
+		});
+		entities = entities.sortIm(ctx, (ctx, a, b) => 
+		{
+			return a.pos > b.pos;
+		});
+		for (var i = 0;i < entities.count(ctx);i++)
+		{
+			var item = entities.item(ctx, i);
+			var item_chain_name = item.chain;
+			if (item_chain_name != "")
+			{
+				args = this.chain(ctx, item_chain_name, args);
+			}
+			else
+			{
+				var arr = Runtime.rs.split(ctx, "::", item.value);
+				var class_name = arr.get(ctx, 0, "");
+				var method_name = arr.get(ctx, 1, "");
+				var f = Runtime.rtl.method(ctx, class_name, method_name);
+				args = Runtime.rtl.apply(ctx, f, args);
+			}
+		}
+		return args;
+	},
+	/**
+	 * Apply Lambda Chain Await
+	 */
+	chainAsync: async function(ctx, chain_name, args)
+	{
+		var entities = this.entities.filter(ctx, (ctx, item) => 
+		{
+			return item instanceof Runtime.Core.LambdaChain && item.name == chain_name;
+		});
+		entities = entities.sortIm(ctx, (ctx, a, b) => 
+		{
+			return a.pos > b.pos;
+		});
+		for (var i = 0;i < entities.count(ctx);i++)
+		{
+			var item = entities.item(ctx, i);
+			var item_chain_name = item.chain;
+			if (item_chain_name != "")
+			{
+				args = await this.chainAsync(ctx, item_chain_name, args);
+			}
+			else
+			{
+				var arr = Runtime.rs.split(ctx, "::", item.value);
+				var class_name = arr.get(ctx, 0, "");
+				var method_name = arr.get(ctx, 1, "");
+				var f = Runtime.rtl.method(ctx, class_name, method_name);
+				if (item.is_async)
+				{
+					args = await Runtime.rtl.apply(ctx, f, args);
+				}
+				else
+				{
+					args = Runtime.rtl.apply(ctx, f, args);
+				}
+			}
+		}
+		return Promise.resolve(args);
+	},
+	/**
+	 * Translate message
+	 * @params string space - message space
+	 * @params string message - message need to be translated
+	 * @params Map params - Messages params. Default null.
+	 * @params string locale - Different locale. Default "".
+	 * @return string - translated string
+	 */
+	translate: function(ctx, space, message, params, locale)
+	{
+		if (params == undefined) params = null;
+		if (locale == undefined) locale = "";
+		message = (params == null) ? (message) : (params.reduce(ctx, (ctx, message, value, key) => 
+		{
+			return Runtime.rs.replace(ctx, "%" + Runtime.rtl.toStr(key) + Runtime.rtl.toStr("%"), value, message);
+		}, message));
+		return message;
+	},
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.base_path = null;
+		this.enviroments = null;
+		this.settings = null;
+		this.modules = null;
+		this.entities = null;
+		this.cli_args = null;
+		this.initialized = false;
+		this.started = false;
+		this.start_time = 0;
+		this.entry_point = "";
+		this.main_module = "";
+		this.main_class = "";
+		this.object_manager = null;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.Context)
+		{
+			this.base_path = o.base_path;
+			this.enviroments = o.enviroments;
+			this.settings = o.settings;
+			this.modules = o.modules;
+			this.entities = o.entities;
+			this.cli_args = o.cli_args;
+			this.initialized = o.initialized;
+			this.started = o.started;
+			this.start_time = o.start_time;
+			this.entry_point = o.entry_point;
+			this.main_module = o.main_module;
+			this.main_class = o.main_class;
+			this.object_manager = o.object_manager;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "base_path")this.base_path = v;
+		else if (k == "enviroments")this.enviroments = v;
+		else if (k == "settings")this.settings = v;
+		else if (k == "modules")this.modules = v;
+		else if (k == "entities")this.entities = v;
+		else if (k == "cli_args")this.cli_args = v;
+		else if (k == "initialized")this.initialized = v;
+		else if (k == "started")this.started = v;
+		else if (k == "start_time")this.start_time = v;
+		else if (k == "entry_point")this.entry_point = v;
+		else if (k == "main_module")this.main_module = v;
+		else if (k == "main_class")this.main_class = v;
+		else if (k == "object_manager")this.object_manager = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "base_path")return this.base_path;
+		else if (k == "enviroments")return this.enviroments;
+		else if (k == "settings")return this.settings;
+		else if (k == "modules")return this.modules;
+		else if (k == "entities")return this.entities;
+		else if (k == "cli_args")return this.cli_args;
+		else if (k == "initialized")return this.initialized;
+		else if (k == "started")return this.started;
+		else if (k == "start_time")return this.start_time;
+		else if (k == "entry_point")return this.entry_point;
+		else if (k == "main_module")return this.main_module;
+		else if (k == "main_class")return this.main_class;
+		else if (k == "object_manager")return this.object_manager;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.Context";
+	},
+});
+Object.assign(Runtime.Core.Context, Runtime.BaseStruct);
+Object.assign(Runtime.Core.Context,
+{
+	/**
+	 * Returns app name
+	 * @return string
+	 */
+	appName: function(ctx)
+	{
+		return "";
+	},
+	/**
+	 * Returns context settings
+	 * @return Dict<string>
+	 */
+	getSettings: function(ctx, env)
+	{
+		return null;
+	},
+	/**
+	 * Extends entities
+	 */
+	getEntities: function(ctx, entities)
+	{
+		return null;
+	},
+	/**
+	 * Create context
+	 *
+	 * @params Dict env
+	 * @params Collection<string> modules
+	 * @params Dict settings
+	 * @return Context
+	 */
+	create: function(ctx, env)
+	{
+		if (env == undefined) env = null;
+		var settings = Runtime.Dict.from({});
+		/* Context data */
+		var obj = Runtime.Dict.from({"enviroments":env,"settings":settings,"modules":Runtime.Collection.from([]),"object_manager":new Runtime.Core.ObjectManager(ctx)});
+		/* Create context */
+		var ctx = this.newInstance(ctx, obj);
+		return ctx;
+	},
+	/**
+	 * Set main module
+	 */
+	setMainModule: function(ctx, c, main_module)
+	{
+		var settings = Runtime.Dict.from({});
+		var main_module_class_name = "";
+		/* Get settings */
+		if (main_module)
+		{
+			main_module_class_name = main_module + Runtime.rtl.toStr(".ModuleDescription");
+			if (Runtime.rtl.method_exists(ctx, main_module_class_name, "appSettings"))
+			{
+				var f = Runtime.rtl.method(ctx, main_module_class_name, "appSettings");
+				settings = f(ctx, c.enviroments);
+			}
+		}
+		/* Add main module */
+		if (main_module)
+		{
+			c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["modules"]), c.modules.pushIm(ctx, main_module));
+		}
+		/* Set main module */
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["main_module"]), main_module);
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["main_class"]), main_module_class_name);
+		/* Set entry point */
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["entry_point"]), main_module_class_name);
+		/* Set new settings */
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["settings"]), settings);
+		return c;
+	},
+	/**
+	 * Set entry point
+	 */
+	setEntryPoint: function(ctx, c, entry_point)
+	{
+		return c.copy(ctx, Runtime.Dict.from({"entry_point":entry_point}));
+	},
+	/**
+	 * Init context
+	 */
+	init: function(ctx, c)
+	{
+		ctx = c;
+		if (c.initialized)
+		{
+			return c;
+		}
+		/* Extends modules */
+		var modules = this.getRequiredModules(ctx, c.modules);
+		/* Get modules entities */
+		var entities = this.getEntitiesFromModules(ctx, modules);
+		entities = entities.prependCollectionIm(ctx, this.getEntities(ctx, c.env));
+		/* Base path */
+		var base_path = (c.base_path != "") ? (c.base_path) : (Runtime.rtl.attr(ctx, c.env, Runtime.Collection.from(["BASE_PATH"]), "", "string"));
+		/* Add entities */
+		if (c.entities != null)
+		{
+			entities = entities.appendCollectionIm(ctx, c.entities);
+		}
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["entities"]), entities);
+		/* Extend entities */
+		var __v0 = new Runtime.Monad(ctx, c.chain(ctx, "Runtime.Entities", Runtime.Collection.from([c,entities])));
+		__v0 = __v0.attr(ctx, 1);
+		entities = __v0.value(ctx);
+		entities = this.extendEntities(ctx, c, entities);
+		entities = this.getRequiredEntities(ctx, entities);
+		return c.copy(ctx, Runtime.Dict.from({"modules":modules,"entities":entities,"base_path":base_path,"initialized":true}));
+	},
+	/**
+	 * Start context
+	 */
+	start: async function(ctx, c)
+	{
+		ctx = c;
+		if (c.started)
+		{
+			return Promise.resolve(c);
+		}
+		/* Start Object Manager */
+		await c.object_manager.startManager(ctx, c.entities);
+		return Promise.resolve(c.copy(ctx, Runtime.Dict.from({"started":true})));
+	},
+	/**
+	 * Init
+	 */
+	appInit: async function(ctx, c)
+	{
+		var main_class = c.main_class;
+		/* Init app */
+		if (main_class != "" && Runtime.rtl.method_exists(ctx, main_class, "appInit"))
+		{
+			var init = Runtime.rtl.method(ctx, main_class, "appInit");
+			c = init(ctx, c);
+		}
+		else
+		{
+			c = c.constructor.init(ctx, c);
+		}
+		return Promise.resolve(c);
+	},
+	/**
+	 * Start
+	 */
+	appStart: async function(ctx, c)
+	{
+		var main_class = c.main_class;
+		/* Start app */
+		if (main_class != "" && Runtime.rtl.method_exists(ctx, main_class, "appStart"))
+		{
+			var start = Runtime.rtl.method(ctx, main_class, "appStart");
+			c = await start(ctx, c);
+		}
+		else
+		{
+			c = await c.constructor.start(ctx, c);
+		}
+		return Promise.resolve(c);
+	},
+	/**
+	 * Run entry point
+	 */
+	appRun: async function(ctx, c)
+	{
+		ctx = c;
+		var entry_point = c.entry_point;
+		/* Run entrypoint */
+		if (entry_point != "")
+		{
+			var run = Runtime.rtl.method(ctx, entry_point, "appRun");
+			await run(c);
+		}
+		return Promise.resolve(c);
+	},
+	/**
+	 * Run application
+	 */
+	run: async function(ctx, c, f1, f2)
+	{
+		if (f1 == undefined) f1 = null;
+		if (f2 == undefined) f2 = null;
+		c = await this.appInit(ctx, c);
+		if (f1 != null)
+		{
+			c = await f1(ctx, c);
+		}
+		c = await this.appStart(ctx, c);
+		if (f2 != null)
+		{
+			c = await f2(ctx, c);
+		}
+		c = await this.appRun(ctx, c);
+		return Promise.resolve(c);
+	},
+	/* -------------------- Functions ------------------- */
+	/**
+	 * Returns required modules
+	 * @param string class_name
+	 * @return Collection<string>
+	 */
+	_getRequiredModules: function(ctx, res, cache, modules, filter)
+	{
+		if (filter == undefined) filter = null;
+		if (modules == null)
+		{
+			return ;
+		}
+		if (filter)
+		{
+			modules = modules.filter(ctx, filter);
+		}
+		for (var i = 0;i < modules.count(ctx);i++)
+		{
+			var module_name = modules.item(ctx, i);
+			if (cache.get(ctx, module_name, false) == false)
+			{
+				cache.set(ctx, module_name, true);
+				var f = Runtime.rtl.method(ctx, module_name + Runtime.rtl.toStr(".ModuleDescription"), "requiredModules");
+				var sub_modules = f(ctx);
+				if (sub_modules != null)
+				{
+					var sub_modules = sub_modules.keys(ctx);
+					this._getRequiredModules(ctx, res, cache, sub_modules);
+				}
+				res.push(ctx, module_name);
+			}
+		}
+	},
+	/**
+	 * Returns all modules
+	 * @param Collection<string> modules
+	 * @return Collection<string>
+	 */
+	getRequiredModules: function(ctx, modules)
+	{
+		var res = new Runtime.Vector(ctx);
+		var cache = new Runtime.Map(ctx);
+		this._getRequiredModules(ctx, res, cache, modules);
+		res = res.removeDublicatesIm(ctx);
+		return res.toCollection(ctx);
+	},
+	/**
+	 * Returns modules entities
+	 */
+	getEntitiesFromModules: function(ctx, modules)
+	{
+		var entities = new Runtime.Vector(ctx);
+		for (var i = 0;i < modules.count(ctx);i++)
+		{
+			var module_class_name = modules.item(ctx, i) + Runtime.rtl.toStr(".ModuleDescription");
+			if (Runtime.rtl.method_exists(ctx, module_class_name, "entities"))
+			{
+				var f = Runtime.rtl.method(ctx, module_class_name, "entities");
+				var arr = f(ctx);
+				entities.appendVector(ctx, arr);
+			}
+		}
+		return entities.toCollection(ctx);
+	},
+	/**
+	 * Extend entities
+	 */
+	getRequiredEntities: function(ctx, entities)
+	{
+		var e = entities.toVector(ctx);
+		for (var i = 0;i < entities.count(ctx);i++)
+		{
+			var item1 = entities.item(ctx, i);
+			var item1_class_name = item1.getClassName(ctx);
+			if (item1_class_name == "Runtime.Core.Entity")
+			{
+				var class_name = (item1.value != "") ? (item1.value) : (item1.name);
+				var info = Runtime.RuntimeUtils.getClassIntrospection(ctx, class_name);
+				if (info != null && info.class_info)
+				{
+					for (var j = 0;j < info.class_info.count(ctx);j++)
+					{
+						var item2 = info.class_info.item(ctx, j);
+						var item2_class_name = item2.getClassName(ctx);
+						if (item2 instanceof Runtime.Core.Entity && item2_class_name != "Runtime.Core.Entity")
+						{
+							item2 = item2.copy(ctx, Runtime.Dict.from({"name":class_name}));
+							e.push(ctx, item2);
+						}
+					}
+				}
+			}
+		}
+		return e.toCollection(ctx);
+	},
+	/**
+	 * Extends entities
+	 */
+	extendEntities: function(ctx, c, entities)
+	{
+		return entities;
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.Context";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.Context",
+			"name": "Runtime.Core.Context",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("base_path");
+			a.push("enviroments");
+			a.push("settings");
+			a.push("modules");
+			a.push("entities");
+			a.push("cli_args");
+			a.push("initialized");
+			a.push("started");
+			a.push("start_time");
+			a.push("entry_point");
+			a.push("main_module");
+			a.push("main_class");
+			a.push("object_manager");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "base_path") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "enviroments") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "settings") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "modules") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "entities") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "cli_args") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "initialized") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "started") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "start_time") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "entry_point") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "main_module") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "main_class") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "object_manager") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.Context);
+window["Runtime.Core.Context"] = Runtime.Core.Context;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.Context;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.CoreObject = function(ctx, object_name, entity)
+{
+	if (object_name == undefined) object_name = "";
+	if (entity == undefined) entity = null;
+	/* Init object */
+	this._init(ctx);
+	/* Set object name */
+	this.object_name = (object_name != "") ? (object_name) : (this.getClassName(ctx) + Runtime.rtl.toStr(".") + Runtime.rtl.toStr(Runtime.rtl.unique(ctx)));
+	this.childs = new Runtime.Vector(ctx);
+	this.entity = entity;
+};
+Runtime.Core.CoreObject.prototype = Object.create(Runtime.BaseObject.prototype);
+Runtime.Core.CoreObject.prototype.constructor = Runtime.Core.CoreObject;
+Object.assign(Runtime.Core.CoreObject.prototype,
+{
+	/**
+	 * Returns object name
+	 */
+	getObjectName: function(ctx)
+	{
+		return this.object_name;
+	},
+	/**
+	 * Returns entity
+	 */
+	getEntity: function(ctx)
+	{
+		return this.entity;
+	},
+	/**
+	 * Handle message
+	 */
+	handleMessage: async function(ctx, msg)
+	{
+	},
+	/**
+	 * Set parent
+	 */
+	setParent: function(ctx, parent_obj)
+	{
+		this.manager.changeParent(ctx, this, parent_obj);
+	},
+	_init: function(ctx)
+	{
+		this.object_name = "";
+		this.parent = null;
+		this.childs = null;
+		this.manager = null;
+		this.entity = null;
+		Runtime.BaseObject.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.CoreObject)
+		{
+			this.object_name = o.object_name;
+			this.parent = o.parent;
+			this.childs = o.childs;
+			this.manager = o.manager;
+			this.entity = o.entity;
+		}
+		Runtime.BaseObject.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "object_name")this.object_name = v;
+		else if (k == "parent")this.parent = v;
+		else if (k == "childs")this.childs = v;
+		else if (k == "manager")this.manager = v;
+		else if (k == "entity")this.entity = v;
+		else Runtime.BaseObject.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "object_name")return this.object_name;
+		else if (k == "parent")return this.parent;
+		else if (k == "childs")return this.childs;
+		else if (k == "manager")return this.manager;
+		else if (k == "entity")return this.entity;
+		return Runtime.BaseObject.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.CoreObject";
+	},
+});
+Object.assign(Runtime.Core.CoreObject, Runtime.BaseObject);
+Object.assign(Runtime.Core.CoreObject,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.CoreObject";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseObject";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": "Runtime.Core.CoreObject",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("object_name");
+			a.push("parent");
+			a.push("childs");
+			a.push("manager");
+			a.push("entity");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "object_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "parent") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "childs") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "manager") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "entity") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.CoreObject",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.CoreObject);
+window["Runtime.Core.CoreObject"] = Runtime.Core.CoreObject;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.CoreObject;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.CoreDriver = function(ctx)
+{
+	Runtime.Core.CoreObject.apply(this, arguments);
+};
+Runtime.Core.CoreDriver.prototype = Object.create(Runtime.Core.CoreObject.prototype);
+Runtime.Core.CoreDriver.prototype.constructor = Runtime.Core.CoreDriver;
+Object.assign(Runtime.Core.CoreDriver.prototype,
+{
+	/**
+	 * Start driver
+	 */
+	startDriver: async function(ctx)
+	{
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.CoreDriver)
+		{
+		}
+		Runtime.Core.CoreObject.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Core.CoreObject.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Core.CoreObject.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.CoreDriver";
+	},
+});
+Object.assign(Runtime.Core.CoreDriver, Runtime.Core.CoreObject);
+Object.assign(Runtime.Core.CoreDriver,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.CoreDriver";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Core.CoreObject";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.CoreDriver",
+			"name": "Runtime.Core.CoreDriver",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.CoreDriver);
+window["Runtime.Core.CoreDriver"] = Runtime.Core.CoreDriver;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.CoreDriver;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.CoreEvent = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.CoreEvent.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.CoreEvent.prototype.constructor = Runtime.Core.CoreEvent;
+Object.assign(Runtime.Core.CoreEvent.prototype,
+{
+	/**
+	 * Check if event is cancel
+	 */
+	isCancel: function(ctx)
+	{
+		return false;
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.CoreEvent)
+		{
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.CoreEvent";
+	},
+});
+Object.assign(Runtime.Core.CoreEvent, Runtime.BaseStruct);
+Object.assign(Runtime.Core.CoreEvent,
+{
+	/**
+	 * Cancel event
+	 */
+	cancel: function(ctx, event)
+	{
+		return event;
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.CoreEvent";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.CoreEvent",
+			"name": "Runtime.Core.CoreEvent",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.CoreEvent);
+window["Runtime.Core.CoreEvent"] = Runtime.Core.CoreEvent;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.CoreEvent;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.Entity = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.Entity.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.Entity.prototype.constructor = Runtime.Core.Entity;
+Object.assign(Runtime.Core.Entity.prototype,
+{
+	/* Functions */
+	className: function(ctx)
+	{
+		return (this.name != "") ? ((this.value != "") ? (this.value) : (this.name)) : ("");
+	},
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(((this.value != "") ? (this.name + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(this.value)) : (this.name)));
+	},
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.name = "";
+		this.value = "";
+		this.params = Runtime.Dict.from({});
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.Entity)
+		{
+			this.name = o.name;
+			this.value = o.value;
+			this.params = o.params;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "name")this.name = v;
+		else if (k == "value")this.value = v;
+		else if (k == "params")this.params = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "name")return this.name;
+		else if (k == "value")return this.value;
+		else if (k == "params")return this.params;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.Entity";
+	},
+});
+Object.assign(Runtime.Core.Entity, Runtime.BaseStruct);
+Object.assign(Runtime.Core.Entity,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.Entity";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.Entity",
+			"name": "Runtime.Core.Entity",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("name");
+			a.push("value");
+			a.push("params");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Entity",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "value") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Entity",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "params") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Entity",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.Entity);
+window["Runtime.Core.Entity"] = Runtime.Core.Entity;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.Entity;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.Driver = function(ctx)
+{
+	Runtime.Core.Entity.apply(this, arguments);
+};
+Runtime.Core.Driver.prototype = Object.create(Runtime.Core.Entity.prototype);
+Runtime.Core.Driver.prototype.constructor = Runtime.Core.Driver;
+Object.assign(Runtime.Core.Driver.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.Driver)
+		{
+		}
+		Runtime.Core.Entity.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Core.Entity.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Core.Entity.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.Driver";
+	},
+});
+Object.assign(Runtime.Core.Driver, Runtime.Core.Entity);
+Object.assign(Runtime.Core.Driver,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.Driver";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Core.Entity";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.Driver",
+			"name": "Runtime.Core.Driver",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.Driver);
+window["Runtime.Core.Driver"] = Runtime.Core.Driver;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.Driver;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.LambdaChain = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.LambdaChain.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.LambdaChain.prototype.constructor = Runtime.Core.LambdaChain;
+Object.assign(Runtime.Core.LambdaChain.prototype,
+{
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(this.name) + Runtime.rtl.toStr(" -> [") + Runtime.rtl.toStr(this.pos) + Runtime.rtl.toStr("] ") + Runtime.rtl.toStr(this.value);
+	},
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.name = "";
+		this.value = "";
+		this.chain = "";
+		this.pos = 0;
+		this.is_async = false;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.LambdaChain)
+		{
+			this.name = o.name;
+			this.value = o.value;
+			this.chain = o.chain;
+			this.pos = o.pos;
+			this.is_async = o.is_async;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "name")this.name = v;
+		else if (k == "value")this.value = v;
+		else if (k == "chain")this.chain = v;
+		else if (k == "pos")this.pos = v;
+		else if (k == "is_async")this.is_async = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "name")return this.name;
+		else if (k == "value")return this.value;
+		else if (k == "chain")return this.chain;
+		else if (k == "pos")return this.pos;
+		else if (k == "is_async")return this.is_async;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.LambdaChain";
+	},
+});
+Object.assign(Runtime.Core.LambdaChain, Runtime.BaseStruct);
+Object.assign(Runtime.Core.LambdaChain,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.LambdaChain";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": "Runtime.Core.LambdaChain",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("name");
+			a.push("value");
+			a.push("chain");
+			a.push("pos");
+			a.push("is_async");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "value") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "chain") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "pos") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "is_async") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChain",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.LambdaChain);
+window["Runtime.Core.LambdaChain"] = Runtime.Core.LambdaChain;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.LambdaChain;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.LambdaChainDeclare = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.LambdaChainDeclare.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.LambdaChainDeclare.prototype.constructor = Runtime.Core.LambdaChainDeclare;
+Object.assign(Runtime.Core.LambdaChainDeclare.prototype,
+{
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(this.name);
+	},
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.name = "";
+		this.is_await = false;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.LambdaChainDeclare)
+		{
+			this.name = o.name;
+			this.is_await = o.is_await;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "name")this.name = v;
+		else if (k == "is_await")this.is_await = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "name")return this.name;
+		else if (k == "is_await")return this.is_await;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.LambdaChainDeclare";
+	},
+});
+Object.assign(Runtime.Core.LambdaChainDeclare, Runtime.BaseStruct);
+Object.assign(Runtime.Core.LambdaChainDeclare,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.LambdaChainDeclare";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.LambdaChainDeclare",
+			"name": "Runtime.Core.LambdaChainDeclare",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("name");
+			a.push("is_await");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChainDeclare",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "is_await") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.LambdaChainDeclare",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.LambdaChainDeclare);
+window["Runtime.Core.LambdaChainDeclare"] = Runtime.Core.LambdaChainDeclare;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.LambdaChainDeclare;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.Message = function(ctx, data, from, message_id)
+{
+	if (from == undefined) from = "";
+	if (message_id == undefined) message_id = "";
+	Runtime.BaseObject.call(this, ctx);
+	/* Set property */
+	this.data = data;
+	this.from = from;
+	this.message_id = (message_id != "") ? (message_id) : (Runtime.rtl.unique(ctx));
+	this.tags = new Runtime.Map(ctx);
+};
+Runtime.Core.Message.prototype = Object.create(Runtime.BaseObject.prototype);
+Runtime.Core.Message.prototype.constructor = Runtime.Core.Message;
+Object.assign(Runtime.Core.Message.prototype,
+{
+	/**
+	 * Read property
+	 */
+	getMessageID: function(ctx)
+	{
+		return this.message_id;
+	},
+	getFrom: function(ctx)
+	{
+		return this.from;
+	},
+	isCancel: function(ctx)
+	{
+		return this.is_cancel;
+	},
+	getData: function(ctx)
+	{
+		return this.data;
+	},
+	/**
+	 * Cancel Message
+	 */
+	cancel: function(ctx)
+	{
+		this.is_cancel = true;
+		if (this.data instanceof Runtime.Core.CoreEvent)
+		{
+			this.data = this.data.constructor.cancel(ctx, this.data);
+		}
+	},
+	_init: function(ctx)
+	{
+		this.sender = null;
+		this.from = "";
+		this.message_id = "";
+		this.is_cancel = false;
+		this.data = null;
+		this.tags = new Runtime.Map(ctx);
+		Runtime.BaseObject.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.Message)
+		{
+			this.sender = o.sender;
+			this.from = o.from;
+			this.message_id = o.message_id;
+			this.is_cancel = o.is_cancel;
+			this.data = o.data;
+			this.tags = o.tags;
+		}
+		Runtime.BaseObject.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "sender")this.sender = v;
+		else if (k == "from")this.from = v;
+		else if (k == "message_id")this.message_id = v;
+		else if (k == "is_cancel")this.is_cancel = v;
+		else if (k == "data")this.data = v;
+		else if (k == "tags")this.tags = v;
+		else Runtime.BaseObject.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "sender")return this.sender;
+		else if (k == "from")return this.from;
+		else if (k == "message_id")return this.message_id;
+		else if (k == "is_cancel")return this.is_cancel;
+		else if (k == "data")return this.data;
+		else if (k == "tags")return this.tags;
+		return Runtime.BaseObject.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.Message";
+	},
+});
+Object.assign(Runtime.Core.Message, Runtime.BaseObject);
+Object.assign(Runtime.Core.Message,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.Message";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseObject";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.Message",
+			"name": "Runtime.Core.Message",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("sender");
+			a.push("from");
+			a.push("message_id");
+			a.push("is_cancel");
+			a.push("data");
+			a.push("tags");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "sender") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "from") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "message_id") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "is_cancel") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "data") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "tags") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.Message);
+window["Runtime.Core.Message"] = Runtime.Core.Message;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.Message;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.ObjectManager = function(ctx)
+{
+	Runtime.Core.CoreDriver.call(this, ctx);
+	/* Create object */
+	this.objects = new Runtime.Map(ctx);
+	this.drivers = new Runtime.Map(ctx);
+	this.messages = new Runtime.Vector(ctx);
+	this.mutex_messages = new Runtime.Mutex(ctx);
+	this.mutex_objects = new Runtime.Mutex(ctx);
+	this.mutex_process = new Runtime.Mutex(ctx);
+	/* Register self */
+	this.objects.set(ctx, this.getClassName(ctx), this);
+	this.drivers.set(ctx, this.getClassName(ctx), this);
+	this.objects.set(ctx, "default:object_manager", this);
+	this.drivers.set(ctx, "default:object_manager", this);
+	this.listeners = new Runtime.Vector(ctx);
+	this.manager = this;
+};
+Runtime.Core.ObjectManager.prototype = Object.create(Runtime.Core.CoreDriver.prototype);
+Runtime.Core.ObjectManager.prototype.constructor = Runtime.Core.ObjectManager;
+Object.assign(Runtime.Core.ObjectManager.prototype,
+{
+	/**
+	 * Add object
+	 */
+	addObject: function(ctx, obj, object_name)
+	{
+		if (object_name == undefined) object_name = "";
+		if (obj instanceof Runtime.Core.CoreObject)
+		{
+			if (object_name == "")
+			{
+				object_name = obj.getObjectName(ctx);
+			}
+			if (!this.drivers.has(ctx, object_name))
+			{
+				this.objects.set(ctx, object_name, obj);
+				obj.manager = this;
+			}
+		}
+	},
+	/**
+	 * Get object
+	 */
+	getObject: function(ctx, object_name)
+	{
+		var obj = null;
+		obj = this.objects.get(ctx, object_name, null);
+		return obj;
+	},
+	/**
+	 * Get objects
+	 */
+	getObjects: function(ctx, class_name)
+	{
+		var objects = new Runtime.Vector(ctx);
+		this.objects.each(ctx, (ctx, obj) => 
+		{
+			if (Runtime.rtl.is_instanceof(ctx, obj, class_name))
+			{
+				objects.push(ctx, obj);
+			}
+		});
+		return objects.toCollection(ctx);
+	},
+	/**
+	 * Get driver
+	 */
+	getDriver: function(ctx, driver_name)
+	{
+		var obj = null;
+		obj = this.drivers.get(ctx, driver_name, null);
+		return obj;
+	},
+	/**
+	 * Get drivers
+	 */
+	getDrivers: function(ctx, class_name)
+	{
+		var drivers = new Runtime.Vector(ctx);
+		this.drivers.each(ctx, (ctx, obj) => 
+		{
+			if (Runtime.rtl.is_instanceof(ctx, obj, class_name))
+			{
+				drivers.push(ctx, obj);
+			}
+		});
+		return drivers.toCollection(ctx);
+	},
+	/**
+	 * Remove object
+	 */
+	removeObject: function(ctx, object_name)
+	{
+		if (!this.drivers.has(ctx, object_name))
+		{
+			var obj = this.objects.get(ctx, object_name, null);
+			if (obj != null && obj.parent != null)
+			{
+				obj.parent.childs.remove(ctx, obj);
+				obj.parent = null;
+			}
+			this.objects.remove(ctx, object_name);
+		}
+	},
+	/**
+	 * Remove object
+	 */
+	removeObjectRecursive: function(ctx, object_name)
+	{
+		var keys = null;
+		keys = this.objects.keys(ctx);
+		keys = keys.filter(ctx, (ctx, item_name) => 
+		{
+			return Runtime.rs.strpos(ctx, item_name, object_name) == 0;
+		}).sortIm(ctx, Runtime.lib.sortDesc);
+		for (var i = 0;i < keys.count(ctx);i++)
+		{
+			var name = Runtime.rtl.get(ctx, keys, i);
+			this.removeObject(ctx, name);
+		}
+		/* Remove listeners */
+		for (var i = this.listeners.count(ctx) - 1;i >= 0;i--)
+		{
+			var item = Runtime.rtl.get(ctx, this.listeners, i);
+			if (Runtime.rs.strpos(ctx, Runtime.rtl.get(ctx, item, "from"), object_name) == 0 || Runtime.rs.strpos(ctx, Runtime.rtl.get(ctx, item, "object_name"), object_name) == 0)
+			{
+				this.listeners.remove(ctx, i);
+			}
+		}
+	},
+	/**
+	 * Register listener
+	 */
+	registerListener: function(ctx, from, event_class_name, object_name, method_name)
+	{
+		if (method_name == undefined) method_name = "";
+		for (var i = 0;i < this.listeners.count(ctx);i++)
+		{
+			var item = Runtime.rtl.get(ctx, this.listeners, i);
+			if (Runtime.rtl.get(ctx, item, "from") == from && Runtime.rtl.get(ctx, item, "object_name") == object_name && Runtime.rtl.get(ctx, item, "method_name") == method_name && Runtime.rtl.get(ctx, item, "event_class_name") == event_class_name)
+			{
+				return ;
+			}
+		}
+		this.listeners.push(ctx, Runtime.Dict.from({"from":from,"object_name":object_name,"event_class_name":event_class_name,"method_name":method_name}));
+	},
+	/**
+	 * Find callback
+	 */
+	findListeners: function(ctx, from, event_class_name)
+	{
+		if (event_class_name == undefined) event_class_name = "";
+		var items = new Runtime.Vector(ctx);
+		for (var i = 0;i < this.listeners.count(ctx);i++)
+		{
+			var item = Runtime.rtl.get(ctx, this.listeners, i);
+			if (Runtime.rtl.get(ctx, item, "from") == from && (event_class_name == "" || Runtime.rtl.get(ctx, item, "event_class_name") == event_class_name))
+			{
+				items.push(ctx, item);
+			}
+		}
+		return items.toCollection(ctx);
+	},
+	/**
+	 * Start object manager
+	 */
+	startManager: async function(ctx, entities)
+	{
+		var drivers_created = new Runtime.Vector(ctx);
+		var drivers = entities.filter(ctx, (ctx, item) => 
+		{
+			return item instanceof Runtime.Core.Driver;
+		});
+		for (var i = 0;i < drivers.count(ctx);i++)
+		{
+			var driver_entity = drivers.item(ctx, i);
+			var driver_name = driver_entity.name;
+			var class_name = driver_entity.value;
+			if (class_name == "")
+			{
+				class_name = driver_entity.name;
+			}
+			var driver = Runtime.rtl.newInstance(ctx, class_name, Runtime.Collection.from([driver_name,driver_entity]));
+			var __v0 = new Runtime.Monad(ctx, ctx.chain(ctx, class_name, Runtime.Collection.from([driver])));
+			__v0 = __v0.attr(ctx, 0);
+			driver = __v0.value(ctx);
+			if (class_name != driver_name)
+			{
+				var __v1 = new Runtime.Monad(ctx, ctx.chain(ctx, driver_name, Runtime.Collection.from([driver])));
+				__v1 = __v1.attr(ctx, 0);
+				driver = __v1.value(ctx);
+			}
+			if (driver == null)
+			{
+				throw new Runtime.Exceptions.RuntimeException(ctx, "Driver not found " + Runtime.rtl.toStr(class_name))
+			}
+			this.objects.set(ctx, driver_name, driver);
+			this.drivers.set(ctx, driver_name, driver);
+			driver.manager = this;
+			drivers_created.push(ctx, driver);
+		}
+		/* Start drivers */
+		for (var i = 0;i < drivers_created.count(ctx);i++)
+		{
+			var driver = drivers_created.item(ctx, i);
+			await driver.startDriver(ctx);
+		}
+		/*rtl::runThread( method this.processMessages );*/
+	},
+	/**
+	 * Send message
+	 * @param Message msg
+	 * @return Message
+	 */
+	sendMessage: async function(ctx, msg)
+	{
+		this.messages.push(ctx, msg);
+		this.mutex_process.unLock(ctx);
+		/* Handle messages */
+		await this.handleMessages(ctx);
+	},
+	/**
+	 * Send message
+	 * @param Message msg
+	 * @return Message
+	 */
+	remoteCall: async function(ctx, items)
+	{
+		/* Create message */
+		var event = Runtime.Core.RemoteCallEvent.create(ctx, items);
+		var msg = new Runtime.Core.Message(ctx, event, event.object_name);
+		/* Send message */
+		await this.sendMessage(ctx, msg);
+		/* Wait message */
+		var response = await this.waitResponse(ctx, msg);
+		/* Return response */
+		return Promise.resolve(response);
+	},
+	/**
+	 * Process messages
+	 */
+	processMessages: async function(ctx)
+	{
+		var is_run = ctx.getRun(ctx);
+		while (is_run)
+		{
+			if (this.message.count(ctx) == 0)
+			{
+				await this.mutex_process.waitAsync(ctx);
+			}
+			await this.handleMessages(ctx);
+			this.mutex_process.lock(ctx);
+		}
+	},
+	/**
+	 * Handle messages
+	 */
+	handleMessages: async function(ctx)
+	{
+		while (this.messages.count(ctx) > 0)
+		{
+			var msg = null;
+			msg = this.messages.pop(ctx);
+			if (msg == null)
+			{
+				return Promise.resolve();
+			}
+			await this.handleMessage(ctx, msg);
+		}
+	},
+	/**
+	 * Handle messages
+	 */
+	handleMessage: async function(ctx, msg)
+	{
+		if (msg.data == null)
+		{
+			return Promise.resolve();
+		}
+		var hash = new Runtime.Map(ctx);
+		var items = this.findListeners(ctx, msg.from, msg.data.getClassName(ctx));
+		for (var i = 0;i < items.count(ctx);i++)
+		{
+			var item = Runtime.rtl.get(ctx, items, i);
+			var object_name = Runtime.rtl.get(ctx, item, "object_name");
+			var method_name = Runtime.rtl.get(ctx, item, "method_name");
+			var obj = this.getObject(ctx, object_name);
+			if (obj != null)
+			{
+				if (Runtime.rtl.method_exists(ctx, obj, method_name))
+				{
+					var f = Runtime.rtl.method(ctx, obj, method_name);
+					await f(ctx, msg);
+				}
+			}
+			if (!hash.has(ctx, object_name))
+			{
+				while (obj != null)
+				{
+					await obj.handleMessage(ctx, msg);
+					obj = obj.parent;
+				}
+				hash.set(ctx, object_name, true);
+			}
+		}
+	},
+	/**
+	 * Set parent
+	 */
+	changeParent: function(ctx, child_obj, parent_obj)
+	{
+		if (child_obj.parent != null)
+		{
+			child_obj.parent.childs.remove(ctx, child_obj);
+		}
+		child_obj.parent = parent_obj;
+		if (parent_obj != null)
+		{
+			if (parent_obj.childs.indexOf(ctx, child_obj) == -1)
+			{
+				parent_obj.childs.push(ctx, child_obj);
+			}
+		}
+	},
+	_init: function(ctx)
+	{
+		this.objects = null;
+		this.drivers = null;
+		this.messages = null;
+		this.mutex_messages = null;
+		this.mutex_objects = null;
+		this.mutex_process = null;
+		this.listeners = null;
+		Runtime.Core.CoreDriver.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.ObjectManager)
+		{
+			this.objects = o.objects;
+			this.drivers = o.drivers;
+			this.messages = o.messages;
+			this.mutex_messages = o.mutex_messages;
+			this.mutex_objects = o.mutex_objects;
+			this.mutex_process = o.mutex_process;
+			this.listeners = o.listeners;
+		}
+		Runtime.Core.CoreDriver.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "objects")this.objects = v;
+		else if (k == "drivers")this.drivers = v;
+		else if (k == "messages")this.messages = v;
+		else if (k == "mutex_messages")this.mutex_messages = v;
+		else if (k == "mutex_objects")this.mutex_objects = v;
+		else if (k == "mutex_process")this.mutex_process = v;
+		else if (k == "listeners")this.listeners = v;
+		else Runtime.Core.CoreDriver.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "objects")return this.objects;
+		else if (k == "drivers")return this.drivers;
+		else if (k == "messages")return this.messages;
+		else if (k == "mutex_messages")return this.mutex_messages;
+		else if (k == "mutex_objects")return this.mutex_objects;
+		else if (k == "mutex_process")return this.mutex_process;
+		else if (k == "listeners")return this.listeners;
+		return Runtime.Core.CoreDriver.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.ObjectManager";
+	},
+});
+Object.assign(Runtime.Core.ObjectManager, Runtime.Core.CoreDriver);
+Object.assign(Runtime.Core.ObjectManager,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.ObjectManager";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Core.CoreDriver";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": "Runtime.Core.ObjectManager",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("objects");
+			a.push("drivers");
+			a.push("messages");
+			a.push("mutex_messages");
+			a.push("mutex_objects");
+			a.push("mutex_process");
+			a.push("listeners");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "objects") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "drivers") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "messages") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "mutex_messages") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "mutex_objects") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "mutex_process") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "listeners") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.ObjectManager",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.ObjectManager);
+window["Runtime.Core.ObjectManager"] = Runtime.Core.ObjectManager;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.ObjectManager;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.RemoteCallAnswer = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.RemoteCallAnswer.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.RemoteCallAnswer.prototype.constructor = Runtime.Core.RemoteCallAnswer;
+Object.assign(Runtime.Core.RemoteCallAnswer.prototype,
+{
+	/**
+	 * Returns true if success
+	 * @return bool
+	 */
+	isSuccess: function(ctx)
+	{
+		return this.have_answer && this.code >= Runtime.rtl.ERROR_OK;
+	},
+	/**
+	 * Returns true if success
+	 * @return bool
+	 */
+	getMessage: function(ctx)
+	{
+		return (this.isSuccess(ctx)) ? (this.success_message) : (this.error_message);
+	},
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.app_name = "self";
+		this.object_name = "";
+		this.interface_name = "default";
+		this.method_name = "";
+		this.code = 0;
+		this.success_message = "";
+		this.error_message = "";
+		this.error_name = "";
+		this.error_trace = "";
+		this.logs = null;
+		this.have_answer = false;
+		this.response = null;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.RemoteCallAnswer)
+		{
+			this.app_name = o.app_name;
+			this.object_name = o.object_name;
+			this.interface_name = o.interface_name;
+			this.method_name = o.method_name;
+			this.code = o.code;
+			this.success_message = o.success_message;
+			this.error_message = o.error_message;
+			this.error_name = o.error_name;
+			this.error_trace = o.error_trace;
+			this.logs = o.logs;
+			this.have_answer = o.have_answer;
+			this.response = o.response;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "app_name")this.app_name = v;
+		else if (k == "object_name")this.object_name = v;
+		else if (k == "interface_name")this.interface_name = v;
+		else if (k == "method_name")this.method_name = v;
+		else if (k == "code")this.code = v;
+		else if (k == "success_message")this.success_message = v;
+		else if (k == "error_message")this.error_message = v;
+		else if (k == "error_name")this.error_name = v;
+		else if (k == "error_trace")this.error_trace = v;
+		else if (k == "logs")this.logs = v;
+		else if (k == "have_answer")this.have_answer = v;
+		else if (k == "response")this.response = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "app_name")return this.app_name;
+		else if (k == "object_name")return this.object_name;
+		else if (k == "interface_name")return this.interface_name;
+		else if (k == "method_name")return this.method_name;
+		else if (k == "code")return this.code;
+		else if (k == "success_message")return this.success_message;
+		else if (k == "error_message")return this.error_message;
+		else if (k == "error_name")return this.error_name;
+		else if (k == "error_trace")return this.error_trace;
+		else if (k == "logs")return this.logs;
+		else if (k == "have_answer")return this.have_answer;
+		else if (k == "response")return this.response;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.RemoteCallAnswer";
+	},
+});
+Object.assign(Runtime.Core.RemoteCallAnswer, Runtime.BaseStruct);
+Object.assign(Runtime.Core.RemoteCallAnswer,
+{
+	/**
+	 * Set success result
+	 * @param primitive res
+	 * @return Message
+	 */
+	success: function(ctx, msg, response, message, code)
+	{
+		if (message == undefined) message = "";
+		if (code == undefined) code = 1;
+		return msg.copy(ctx, Runtime.Dict.from({"code":code,"error_message":"","success_message":message,"response":response,"have_answer":true}));
+	},
+	/**
+	 * Set fail result
+	 * @param primitive res
+	 * @return Message
+	 */
+	fail: function(ctx, msg, response, error, code, error_name)
+	{
+		if (error == undefined) error = "";
+		if (code == undefined) code = -1;
+		if (error_name == undefined) error_name = "";
+		return msg.copy(ctx, Runtime.Dict.from({"code":code,"error_message":error,"error_name":error_name,"response":response,"have_answer":true}));
+	},
+	/**
+	 * Set exception
+	 * @param primitive res
+	 * @return Message
+	 */
+	exception: function(ctx, msg, e)
+	{
+		msg = msg.copy(ctx, Runtime.Dict.from({"code":e.getErrorCode(ctx),"error_message":e.getErrorMessage(ctx),"error_name":e.getClassName(ctx),"response":null,"have_answer":true}));
+		if (e instanceof Runtime.Core.ApiException)
+		{
+			msg = Runtime.rtl.setAttr(ctx, msg, Runtime.Collection.from(["response"]), e.response);
+		}
+		return msg;
+	},
+	/**
+	 * End pipe
+	 */
+	end: function(ctx, m)
+	{
+		if (m.err == null)
+		{
+			return m;
+		}
+		return new Runtime.Monad(ctx, new Runtime.Core.Message(ctx, Runtime.Dict.from({"error_message":m.err.getErrorMessage(ctx),"error_name":m.err.getClassName(ctx),"code":m.err.getErrorCode(ctx),"response":m.err})));
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.RemoteCallAnswer";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": "Runtime.Core.RemoteCallAnswer",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("app_name");
+			a.push("object_name");
+			a.push("interface_name");
+			a.push("method_name");
+			a.push("code");
+			a.push("success_message");
+			a.push("error_message");
+			a.push("error_name");
+			a.push("error_trace");
+			a.push("logs");
+			a.push("have_answer");
+			a.push("response");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "app_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "object_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "interface_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "method_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "code") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "success_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_trace") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "logs") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "have_answer") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "response") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.RemoteCallAnswer);
+window["Runtime.Core.RemoteCallAnswer"] = Runtime.Core.RemoteCallAnswer;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.RemoteCallAnswer;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.RemoteCallRequest = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Core.RemoteCallRequest.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Core.RemoteCallRequest.prototype.constructor = Runtime.Core.RemoteCallRequest;
+Object.assign(Runtime.Core.RemoteCallRequest.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.app_name = "self";
+		this.object_name = "";
+		this.interface_name = "default";
+		this.method_name = "";
+		this.data = null;
+		this.storage = null;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.RemoteCallRequest)
+		{
+			this.app_name = o.app_name;
+			this.object_name = o.object_name;
+			this.interface_name = o.interface_name;
+			this.method_name = o.method_name;
+			this.data = o.data;
+			this.storage = o.storage;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "app_name")this.app_name = v;
+		else if (k == "object_name")this.object_name = v;
+		else if (k == "interface_name")this.interface_name = v;
+		else if (k == "method_name")this.method_name = v;
+		else if (k == "data")this.data = v;
+		else if (k == "storage")this.storage = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "app_name")return this.app_name;
+		else if (k == "object_name")return this.object_name;
+		else if (k == "interface_name")return this.interface_name;
+		else if (k == "method_name")return this.method_name;
+		else if (k == "data")return this.data;
+		else if (k == "storage")return this.storage;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.RemoteCallRequest";
+	},
+});
+Object.assign(Runtime.Core.RemoteCallRequest, Runtime.BaseStruct);
+Object.assign(Runtime.Core.RemoteCallRequest,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.RemoteCallRequest";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": "Runtime.Core.RemoteCallRequest",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("app_name");
+			a.push("object_name");
+			a.push("interface_name");
+			a.push("method_name");
+			a.push("data");
+			a.push("storage");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "app_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "object_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "interface_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "method_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "data") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "storage") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallRequest",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.RemoteCallRequest);
+window["Runtime.Core.RemoteCallRequest"] = Runtime.Core.RemoteCallRequest;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.RemoteCallRequest;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Core == 'undefined') Runtime.Core = {};
+Runtime.Core.ModuleDescription = function(ctx)
+{
+};
+Object.assign(Runtime.Core.ModuleDescription.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Core.ModuleDescription)
+		{
+		}
+	},
+	assignValue: function(ctx,k,v)
+	{
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Core.ModuleDescription";
+	},
+});
+Object.assign(Runtime.Core.ModuleDescription,
+{
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleName: function(ctx)
+	{
+		return "Runtime.Web";
+	},
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleVersion: function(ctx)
+	{
+		return "0.10.3";
+	},
+	/**
+	 * Returns required modules
+	 * @return Dict<string>
+	 */
+	requiredModules: function(ctx)
+	{
+		return Runtime.Dict.from({"Runtime":">=0.3"});
+	},
+	/**
+	 * Returns enities
+	 */
+	entities: function(ctx)
+	{
+		return Runtime.Collection.from([]);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Core";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Core.ModuleDescription";
+	},
+	getParentClassName: function()
+	{
+		return "";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Core.ModuleDescription",
+			"name": "Runtime.Core.ModuleDescription",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Core.ModuleDescription);
+window["Runtime.Core.ModuleDescription"] = Runtime.Core.ModuleDescription;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Core.ModuleDescription;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
 Runtime.Web.Component = function(ctx, path_id, controller)
 {
@@ -9914,16 +13284,20 @@ Object.assign(Runtime.Web.RenderController.prototype,
 	{
 		this.setParent(ctx, ctx.getDriver(ctx, "Runtime.Web.RenderDriver"));
 		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, this.entity, ["params", "selector"]));
+		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 		this.selector = __v0.value(ctx);
 		var __v1 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, this.entity, ["params", "main_controller"]));
+		__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "bool", false));
 		this.is_main_controller = __v1.value(ctx);
 		var __v2 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, this.entity, ["params", "selector_model"]));
+		__v2 = __v2.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 		var selector_model = __v2.value(ctx);
 		if (selector_model == null || selector_model == "")
 		{
 			selector_model = this.selector + Runtime.rtl.toStr("_model");
 		}
 		var __v3 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, this.entity, ["params", "window"]));
+		__v3 = __v3.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 		var window_name = __v3.value(ctx);
 		if (window_name != "") window[window_name] = this;
 		if (this.selector != "") this.root_elem = document.querySelector(this.selector);
@@ -16833,7 +20207,7 @@ Object.assign(Runtime.Web.ModuleDescription,
 Runtime.rtl.defClass(Runtime.Web.ModuleDescription);
 window["Runtime.Web.ModuleDescription"] = Runtime.Web.ModuleDescription;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.ModuleDescription;
-function runWebApp(env)
+function runWebApp(main_module, env)
 {
 	/* Create context */
 	var context = Runtime.Core.Context.create(null, Runtime.Dict.from(env));
@@ -16844,7 +20218,7 @@ function runWebApp(env)
 	});
 
 	/* Set entry point */
-	context = context.constructor.setMainModule(context, context, "App");
+	context = context.constructor.setMainModule(context, context, main_module);
 	
 	/* Set global context */
 	Runtime.RuntimeUtils.setContext(context);

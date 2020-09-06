@@ -7,4 +7,5 @@
 /src/app/[^\\]*/nodejs
 /src/app/[^\\]*/php
 /src/compiler.new
+/src/html/assets
 /src/web/assets

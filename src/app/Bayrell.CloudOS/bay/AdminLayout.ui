@@ -1,8 +1,29 @@
+<!--
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
 <class version="1.0"
-	name="Bayrell.CloudOS.AppLayout" extends="Runtime.Web.Component" 
+	name="Bayrell.CloudOS.AdminLayout" extends="Runtime.Web.Component" 
 	module="Bayrell.CloudOS" model="Runtime.Web.LayoutModel"
 >
 
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Button.Button" component="true" />
 
 
@@ -126,19 +147,19 @@ span.lpad5{
 <template name="render">
 	%var string class_name = model.page_class;
 	
-	<div @class='layout'>
-		<div @class='layout_wrap'>
-			<div @class='layout_menu_wrap'>
+	<div class='layout'>
+		<div class='layout_wrap'>
+			<div class='layout_menu_wrap'>
 				
-				<div @class='layout_site_name'>
+				<div class='layout_site_name'>
 					<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Docker web panel") }</a>
 				</div>
 				
-				<div @class='layout_menu'>
-					<div @class='layout_menu_label'>
+				<div class='layout_menu'>
+					<div class='layout_menu_label'>
 						{ _("Bayrell.CloudOS", "Dashboard") }
 					</div>
-					<div @class='layout_menu_items'>
+					<div class='layout_menu_items'>
 						<ul>
 							<li class={ rs::start(model.route.name, "app.dashboard.main") ? "active": "" }>
 								<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Main") }</a>
@@ -149,10 +170,10 @@ span.lpad5{
 						</ul>
 					</div>
 					
-					<div @class='layout_menu_label'>
+					<div class='layout_menu_label'>
 						{ _("Bayrell.CloudOS", "Cluster") }
 					</div>
-					<div @class='layout_menu_items'>
+					<div class='layout_menu_items'>
 						<ul>
 							<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
 								<a class='nolink' href='/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
@@ -172,10 +193,10 @@ span.lpad5{
 						</ul>
 					</div>
 					
-					<div @class='layout_menu_label'>
+					<div class='layout_menu_label'>
 						{ _("Bayrell.CloudOS", "Admin") }
 					</div>
-					<div @class='layout_menu_items'>
+					<div class='layout_menu_items'>
 						<ul>
 							<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
 								<a class='nolink' href='/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
@@ -189,17 +210,17 @@ span.lpad5{
 						</ul>
 					</div>
 					
-					<div @class='layout_menu_logout'>
+					<div class='layout_menu_logout'>
 						
 					</div>
 					
 				</div>
 				
 			</div>
-			<div @class='layout_content_wrap'>
-				<div @class='layout_title_wrap'>
-					<div @class='layout_title'>{ model.title }</div>
-					<div @class='layout_top_buttons'>
+			<div class='layout_content_wrap'>
+				<div class='layout_title_wrap'>
+					<div class='layout_title'>{ model.title }</div>
+					<div class='layout_top_buttons'>
 						%var Collection<Dict> top_buttons = layout
 							|> attr "data", "Bayrell.CloudOS.Layout.TopButtons"
 							|> default Collection []
@@ -208,6 +229,7 @@ span.lpad5{
 						{
 							%for (int i=0; i<top_buttons.count(); i++)
 							{
+								%var Dict button = top_buttons[i];
 								<Button @event:MouseClickEvent="onTopButtonClick" @tag={ button }>
 									{ button["label"] }
 								</Button>
@@ -215,7 +237,7 @@ span.lpad5{
 						}
 					</div>
 				</div>
-				<div @class='layout_content'>
+				<div class='layout_content'>
 					%if (not rtl::isEmpty(class_name))
 					{
 						<{class_name} @bind="page_model" @key="view"></{class_name}>
@@ -223,7 +245,7 @@ span.lpad5{
 				</div>
 			</div>
 		</div>
-		<div @class='layout_footer'>
+		<div class='layout_footer'>
 			<div class='b_out'><div class='b_in'>
 				{ "(c) BAYRELL Cloud OS 2020 \"Ildar Bikmamatov\" <support@bayrell.org>" }
 			</div></div>
@@ -237,7 +259,7 @@ span.lpad5{
 /**
  * Top button click
  */
-async void onTopButtonClick(MouseClickEvent e)
+async void onTopButtonClick(Message<MouseClickEvent> msg)
 {
 	/*
 	Dict tag = e["target"]["params"]["@tag"];
@@ -254,7 +276,7 @@ async void onTopButtonClick(MouseClickEvent e)
 /**
  * Log out click
  */
-async void onLogoutClick(MouseClickEvent e)
+async void onLogoutClick(Message<MouseClickEvent> msg)
 {
 	/*
 	this.driver.updateModelValue

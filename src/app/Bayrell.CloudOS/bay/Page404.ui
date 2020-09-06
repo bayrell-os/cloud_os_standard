@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud Web Panel
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,15 +14,29 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-namespace Bayrell.CloudOS.Dashboard;
+<class version="1.0"
+	name="Bayrell.CloudOS.Page404" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" 
+>
 
-use Runtime.BaseStruct;
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+
+<style>
+</style>
 
 
-struct MainPageModel extends BaseStruct
-{
-	Collection services = null;
-	int active = -1;
-}
+<template name="render">
+	{ _("Bayrell.CloudOS", "Page not found") }
+</template>
+
+
+<script type="frontend">
+
+
+</script>
+
+</class>

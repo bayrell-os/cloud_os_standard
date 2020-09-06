@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Api;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.Core.Context;
 use Runtime.Core.Entity;
@@ -29,7 +29,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "App.Api";
+	pure string getModuleName() => "Bayrell.CloudOS.API";
 	
 	
 	
@@ -61,7 +61,7 @@ static class ModuleDescription
 	pure Collection<Dict> entities() => 
 	[
 		/* Register api */
-		/*new Entity{ "value": classof AppUsersCrud },*/
+		new Entity{ "name": "Bayrell.CloudOS.API.CrudUsers" },
 	];
 	
 	

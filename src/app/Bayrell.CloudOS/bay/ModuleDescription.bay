@@ -32,7 +32,7 @@ use Runtime.Web.RouteController;
 use Bayrell.CloudOS.Routes;
 
 
-class ModuleDescription implements
+static class ModuleDescription
 {
 
 	
@@ -66,7 +66,7 @@ class ModuleDescription implements
 		#ifdef BACKEND then
 		'Runtime.Task': '*',
 		'Runtime.Web.Backend': '*',
-		'Bayrell.CloudOS.Api': '*',
+		'Bayrell.CloudOS.API': '*',
 		#endif
 	};
 	
@@ -94,14 +94,14 @@ class ModuleDescription implements
 		{
 			"name": RenderDriver::LAYOUT_CHAIN,
 			"pos": 10,
-			"value": "App.Routes::layoutChain",
+			"value": "Bayrell.CloudOS.Routes::layoutChain",
 		},
 		
 		/* Render Chain. Page not found */
 		new LambdaChain
 		{
 			"name": RenderDriver::RENDER_CHAIN,
-			"value": "App.Routes::Page404",
+			"value": "Bayrell.CloudOS.Routes::Page404",
 			"pos": RenderDriver::RENDER_CHAIN_CALL_PAGE_NOT_FOUND,
 			"is_async": true,
 		},
@@ -110,13 +110,13 @@ class ModuleDescription implements
 		new LambdaChain
 		{
 			"name": RenderDriver::RENDER_CHAIN,
-			"value": "App.Routes::renderChainRouteAfter",
+			"value": "Bayrell.CloudOS.Routes::renderChainRouteAfter",
 			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
 			"is_async": true,
 		},
 		
 		/* Register routes */
-		new Entity{ "value": classof Routes },
+		new Entity{ "name": classof Routes },
 		
 		
 		
@@ -126,7 +126,7 @@ class ModuleDescription implements
 		new LambdaChain
 		{
 			"name": RenderDriver::RENDER_CHAIN,
-			"value": "App.Routes::renderChainPatternDefault",
+			"value": "Bayrell.CloudOS.Routes::renderChainPatternDefault",
 			"pos": RenderDriver::RENDER_CHAIN_RESPONSE_BEFORE,
 		},
 		

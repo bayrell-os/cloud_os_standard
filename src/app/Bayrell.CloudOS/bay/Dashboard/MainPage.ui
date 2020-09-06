@@ -1,0 +1,216 @@
+<!--
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.Dashboard.MainPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Dashboard.MainPageModel"
+>
+
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+
+<style>
+%content{
+	height: 100%;
+	display: flex;
+	align-items: stretch;
+}
+%left, %right{
+	width: 50%;
+	position: relative;
+	overflow-y: auto;
+}
+%left{
+	padding-right: 10px;
+}
+%right{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+%services{
+	display: table;
+	border-left: 1px #ccc solid;
+	border-top: 1px #ccc solid;
+	width: 100%;
+}
+%service{
+	display: table-row;
+	cursor: pointer;
+}
+%service:hover{
+	background: #eee;
+}
+%service.active{
+	background-color: #337ab7;
+	border-color: #337ab7;
+	color: white;
+}
+%service_item{
+	display: table-cell;
+	padding: 5px;
+	border-bottom: 1px #ccc solid;
+	border-right: 1px #ccc solid;
+}
+%label{
+	font-weight: bold;
+}
+%info_item{
+	overflow-wrap: anywhere;
+	padding-bottom: 10px;
+}
+%info_item:last-child{
+	padding-bottom: 0px;
+}
+%info_actions > .label{
+	padding-bottom: 5px;
+}
+%info_item_action{
+	padding-bottom: 5px;
+}
+%info_item_action:last-child{
+	padding-bottom: 0px;
+}
+%info_item_action.state-ready .state{
+	color: #00aa00;
+	font-weight: bold;
+}
+%info_item_action.state-failed .state, %info_item_action.state-rejected .state{
+	color: red;
+	font-weight: bold;
+}
+%info_item_action_error{
+	color: red;
+}
+</style>
+
+
+<template name="render">
+	<div class="content">
+		<div class="left">
+			{ static::renderServices(layout, model, params) }
+		</div>
+		<div class="right">
+			{ static::renderInfo(layout, model, params) }
+		</div>
+	</div>
+</template>
+
+
+<template name="renderServices" args="LayoutModel layout, MainPageModel model, Dict params">
+	%var Collection<Dict> services = model["services"] |> default Dict [];
+	<div class="services">
+		<div class="service">
+			<div class="service_item label service_item--name">{ _("Bayrell.CloudOS", "Name") }</div>
+			<div class="service_item label service_item--image">{ _("Bayrell.CloudOS", "Image") }</div>
+			<div class="service_item label service_item--status">{ _("Bayrell.CloudOS", "Status") }</div>
+		</div>
+		%for (int i=0; i<services.count(); i++)
+		{
+			%var Dict service = services[i];
+			<div class="service" class={ model.active == i ? "active" : "" }
+				@event:MouseClickEvent="onClick" data-index={ i }
+			>
+				<div class="service_item service_item--name">{ service["_name"] }</div>
+				<div class="service_item service_item--image">{ static::trimImageName(service["_image"]) }</div>
+				<div class="service_item service_item--status">
+					{ service["balancer", "State", "Work"] } / { service["balancer", "State", "Total"] }
+				</div>
+			</div>
+		}
+</div>
+</template>
+
+
+<template name="renderInfo" args="LayoutModel layout, MainPageModel model, Dict params">
+	
+	%var Dict service = model["services", model.active];
+	%if (service != null)
+	{
+		%var Collection tasks = service["balancer"]["Tasks"];
+		%var Collection errors = service["balancer"]["Tasks"].filter
+		(
+			bool (Dict task) =>
+				task["Status"]["State"] == "rejected" or
+				task["Status"]["State"] == "failed" or
+				task["Status"]["State"] == "running"
+		);
+		
+		<div class="info">
+			<div class="info_item info_item--name"><b>{ _("Bayrell.CloudOS", "Name") }:</b> { service["_name"] }</div>
+			<div class="info_item info_item--image"><b>{ _("Bayrell.CloudOS", "Image") }:</b> { service["_image"] }</div>
+			<div class="info_item info_item--status">
+				<b>{ _("Bayrell.CloudOS", "Status") }:</b>&nbsp;
+				{ service["balancer", "State", "Work"] } / { service["balancer", "State", "Total"] }
+			</div>
+			
+			%if (tasks.count() > 0)
+			{
+				<div class="info_item info_actions">
+					<div class='label bold' @key='label'>
+						{ _("Bayrell.CloudOS", "Last actions") }:
+					</div>
+					%for (int i=0; i<tasks.count(); i++)
+					{
+						%var Dict task = tasks[i];
+						<div class="info_item_action" class={ "state-" ~ task["Status"]["State"] }>
+							{ rs::substr(task["Status"]["Timestamp"], 0, 19) }&nbsp;
+							<span class="state">{ rs::strtoupper(task["Status", "State"]) }</span>&nbsp;
+							on { task["Node"]["Hostname"] }, id={ task["ID"] }
+							
+							%if (task["Status", "State"] == "rejected" or task["Status", "State"] == "failed")
+							{
+								<div class="info_item_action_error">{ task["Status", "Err"] }</div>
+							}
+							
+						</div>
+					}
+				</div>
+			}
+			
+		</div>
+	}
+</template>
+
+
+
+<script type="frontend">
+
+/**
+ * Trim name
+ */
+pure string trimImageName(string name)
+{
+	int pos = rs::search(name, "@");
+	if (pos != -1) name = rs::substr(name, 0, pos);
+	return name;
+}
+
+
+/**
+ * On click
+ */
+public void onClick(MouseClickEvent e)
+{
+	int pos = e.sender.params["data-index"];
+	this.update("setAttr", "active", "pos");
+}
+
+</script>
+
+</class>
