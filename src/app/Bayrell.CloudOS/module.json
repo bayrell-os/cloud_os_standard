@@ -1,0 +1,11 @@
+{
+	"name": "Bayrell.CloudOS",
+	"assets":
+	[
+		"AdminLayout",
+		"Routes",
+		"Dashboard/MainPage",
+		"Dashboard/MainPageModel",
+		"ModuleDescription"
+	]
+}

@@ -38,8 +38,8 @@
 	],
 	"modules":
 	[
-		"lib",
-		"src"
+		"app",
+		"lib"
 	],
 	"plugins":
 	[
@@ -74,8 +74,8 @@
 	{
 		"dir":
 		[
-			"lib",
-			"src"
+			"app",
+			"lib"
 		],
 		"timeout": 500,
 		"websocket": true

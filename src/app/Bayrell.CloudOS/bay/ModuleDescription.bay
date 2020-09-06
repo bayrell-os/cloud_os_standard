@@ -1,0 +1,228 @@
+/*!
+ *  Bayrell Cloud Web Panel
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS;
+
+use Runtime.Core.Context;
+use Runtime.Core.Driver;
+use Runtime.Core.Entity;
+use Runtime.Core.LambdaChain;
+use Runtime.ORM.MySQL.Driver as MySQLDriver;
+use Runtime.ORM.MySQL.Settings as MySQLSettings;
+use Runtime.Web.Layout;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderController;
+use Runtime.Web.RenderDriver;
+use Runtime.Web.RouteController;
+use Bayrell.CloudOS.Routes;
+
+
+class ModuleDescription implements
+{
+
+	
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	pure string getModuleName() => "Bayrell.CloudOS";
+	
+	
+	
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	pure string getModuleVersion() => "0.1.0";
+	
+	
+	
+	/**
+	 * Returns required modules
+	 * @return Dict<string>
+	 */
+	pure Dict<string> requiredModules() =>
+	{
+		'Runtime': '>=0.3',
+		'Runtime.Web': '*',
+		'Runtime.Web.CRUD': '*',
+		
+		/* Backend */
+		#ifdef BACKEND then
+		'Runtime.Task': '*',
+		'Runtime.Web.Backend': '*',
+		'Bayrell.CloudOS.Api': '*',
+		#endif
+	};
+	
+	
+	/**
+	 * Returns enities
+	 */
+	pure Collection<Dict> entities() =>
+	[
+		/* Register RenderController */
+		new Driver
+		{
+			"name": "root-controller",
+			"value": classof RenderController,
+			"params":
+			{
+				"selector": "#root",
+				"main_controller": true,
+				"window": "RootController",
+			}
+		},
+		
+		/* Layout chain */
+		new LambdaChain
+		{
+			"name": RenderDriver::LAYOUT_CHAIN,
+			"pos": 10,
+			"value": "App.Routes::layoutChain",
+		},
+		
+		/* Render Chain. Page not found */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "App.Routes::Page404",
+			"pos": RenderDriver::RENDER_CHAIN_CALL_PAGE_NOT_FOUND,
+			"is_async": true,
+		},
+		
+		/* Render Chain. Route after */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "App.Routes::renderChainRouteAfter",
+			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
+			"is_async": true,
+		},
+		
+		/* Register routes */
+		new Entity{ "value": classof Routes },
+		
+		
+		
+		#ifdef BACKEND then
+		
+		/* Render Chain. Pattern */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "App.Routes::renderChainPatternDefault",
+			"pos": RenderDriver::RENDER_CHAIN_RESPONSE_BEFORE,
+		},
+		
+		/* Register MySQL Driver */
+		new Driver
+		{
+			"name": "Runtime.ORM.DriverInterface",
+			"value": classof MySQLDriver,
+		},
+		
+		#endif
+	];
+	
+	
+	
+	/**
+	 * Returns context settings
+	 * @return Dict<string>
+	 */
+	pure Dict<string> appSettings(Dict env) => 
+	{
+		"config":
+		{
+			"Runtime.Web":
+			{
+				/*"f_inc": (@.env("APP_MODE", "prod") == "prod") ? 1 : rtl::utime(),*/
+				"f_inc": "1",
+			},
+			
+			#ifdef BACKEND then
+			
+			/* Web Backend settings */
+			"Runtime.Web.Backend":
+			{
+				"api": true,
+				"external_bus_class": "",
+				"external_bus_default": true,
+			},
+			
+			/* MySQL Settings */
+			"Runtime.ORM.MySQL":
+			{
+				"default": new MySQLSettings
+				{
+					"host": env.get("MYSQL_HOST", ""),
+					"username": env.get("MYSQL_USERNAME", ""),
+					"password": env.get("MYSQL_PASSWORD", ""),
+					"db": env.get("MYSQL_DB", ""),
+				},
+			},
+			
+			#endif
+		},
+		"secrets":
+		{
+		},
+		"providers":
+		{
+		}
+	};
+	
+	
+	
+	/**
+	 * Init app
+	 */
+	static Context appInit(Context c)
+	{
+		return c::init(c);
+	}
+	
+	
+	
+	/**
+	 * Start app
+	 */
+	static async Context appStart(Context c)
+	{
+		return await c::start(c);
+	}
+	
+	
+	
+	#ifdef FRONTEND then
+	
+	
+	/**
+	 * Run app
+	 */
+	static async void appRun()
+	{
+		RenderController controller = @.getDriver(classof RouteController);
+		await controller.renderFirst();
+	}
+	
+	
+	#endif	
+	
+}
