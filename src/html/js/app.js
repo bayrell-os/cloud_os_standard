@@ -1,6 +1,6 @@
 "use strict;"
 /*
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -100,7 +100,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 {
 	css: function(ctx, vars)
 	{
-		return "\n*{box-sizing: border-box;}body{margin:0;padding:0;}\na { text-decoration: inherit; color: #0000d0; cursor: pointer; }\na:hover, a:visited:hover { text-decoration: underline; color: red; }\na:visited { text-decoration: inherit; color: #0000d0; }\na.link { text-decoration: none; color: #0000d0; cursor: pointer; }\na.link:hover, a.link:visited:hover { text-decoration: underline; color: red; }\na.link:visited { text-decoration: none; color: #0000d0; }\nbody, html{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n\twidth: 100%;\n\theight: 100vh;\n\tpadding: 0;\n\tmargin: 0;\n}\ntd{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n}\nspan.lpad5{\n\tdisplay: inline-block;\n\tpadding-right: 5px;\n}\n.layout.h-d6df{\n\theight: 100%;\n}\n.layout_wrap.h-d6df{\n\tposition: relative;\n\theight: 100vh;\n\tpadding-bottom: 20px;\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_footer.h-d6df{\n\tposition: relative;\n\tfont-size: 12px;\n\theight: 24px;\n\tmargin-top: -24px;\n}\n.layout_footer.h-d6df .b_in{\n}\n.layout_menu_wrap.h-d6df{\n\tposition: relative;\n\twidth: 200px;\n}\n.layout_content_wrap.h-d6df{\n\tposition: relative;\n\twidth: calc(100% - 200px);\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df{\n\tfont-size: 16px;\n\theight: 40px;\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df, .layout_page.h-d6df, .layout_content.h-d6df{\n\tpadding: 10px;\n}\n.layout_site_name.h-d6df{\n\tborder-right: 1px #ccc solid;\n}\n.layout_title_wrap.h-d6df{\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_title.h-d6df{\n\twidth: 350px;\n}\n.layout_top_buttons.h-d6df{\n\twidth: calc(100% - 350px);\n\tpadding-left: 10px;\n}\n.layout_content.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 45px);\n\tpadding-bottom: 0;\n\tpadding-right: 0;\n}\n.layout_menu_label.h-d6df{\n\tfont-size: 14px;\n\tfont-weight: bold;\n\tpadding: 10px;\n}\n.layout_menu.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 40px);\n\toverflow-y: auto;\n\tborder-right: 1px #ccc solid;\n}\n.layout_menu_items.h-d6df{}\n.layout_menu_items.h-d6df ul, .layout_menu_items.h-d6df li{\n\tpadding: 0; margin: 0;\n\tlist-style: none;\n}\n.layout_menu_items.h-d6df ul{}\n.layout_menu_items.h-d6df li{\n\tbackground-color: white;\n}\n.layout_menu_items.h-d6df li a{\n\tdisplay: block;\n\tpadding: 10px 15px;\n\tborder-bottom: 1px solid #e7e7e7;\n}\n.layout_menu_items.h-d6df li.active > a, .layout_menu_items.h-d6df li.active > a:hover{\n\tbackground-color: #337ab7;\n\tborder-color: #337ab7;\n\tcolor: white;\n}\n.layout_menu_logout.h-d6df{\n\ttext-align: center;\n\tpadding-top: 100px;\n}\n.layout_menu_logout.h-d6df > div{\n\tpadding-top: 5px;\n}\n";
+		return "\n*{box-sizing: border-box;}body{margin:0;padding:0;}\na { text-decoration: inherit; color: #0000d0; cursor: pointer; }\na:hover, a:visited:hover { text-decoration: underline; color: red; }\na:visited { text-decoration: inherit; color: #0000d0; }\na.link { text-decoration: none; color: #0000d0; cursor: pointer; }\na.link:hover, a.link:visited:hover { text-decoration: underline; color: red; }\na.link:visited { text-decoration: none; color: #0000d0; }\nbody, html{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n\twidth: 100%;\n\theight: 100vh;\n\tpadding: 0;\n\tmargin: 0;\n}\ntd, th{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n}\nspan.lpad5{\n\tdisplay: inline-block;\n\tpadding-right: 5px;\n}\n.layout.h-d6df{\n\theight: 100%;\n}\n.layout_wrap.h-d6df{\n\tposition: relative;\n\theight: 100vh;\n\tpadding-bottom: 20px;\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_footer.h-d6df{\n\tposition: relative;\n\tfont-size: 12px;\n\theight: 24px;\n\tmargin-top: -24px;\n}\n.layout_footer.h-d6df .b_in{\n}\n.layout_menu_wrap.h-d6df{\n\tposition: relative;\n\twidth: 200px;\n}\n.layout_content_wrap.h-d6df{\n\tposition: relative;\n\twidth: calc(100% - 200px);\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df{\n\tfont-size: 16px;\n\theight: 40px;\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df, .layout_page.h-d6df, .layout_content.h-d6df{\n\tpadding: 10px;\n}\n.layout_site_name.h-d6df{\n\tborder-right: 1px #ccc solid;\n}\n.layout_title_wrap.h-d6df{\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_title.h-d6df{\n\twidth: 350px;\n}\n.layout_top_buttons.h-d6df{\n\twidth: calc(100% - 350px);\n\tpadding-left: 10px;\n}\n.layout_content.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 45px);\n\tpadding-bottom: 0;\n\tpadding-right: 0;\n}\n.layout_menu_label.h-d6df{\n\tfont-size: 14px;\n\tfont-weight: bold;\n\tpadding: 10px;\n}\n.layout_menu.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 40px);\n\toverflow-y: auto;\n\tborder-right: 1px #ccc solid;\n}\n.layout_menu_items.h-d6df{}\n.layout_menu_items.h-d6df ul, .layout_menu_items.h-d6df li{\n\tpadding: 0; margin: 0;\n\tlist-style: none;\n}\n.layout_menu_items.h-d6df ul{}\n.layout_menu_items.h-d6df li{\n\tbackground-color: white;\n}\n.layout_menu_items.h-d6df li a{\n\tdisplay: block;\n\tpadding: 10px 15px;\n\tborder-bottom: 1px solid #e7e7e7;\n}\n.layout_menu_items.h-d6df li.active > a, .layout_menu_items.h-d6df li.active > a:hover{\n\tbackground-color: #337ab7;\n\tborder-color: #337ab7;\n\tcolor: white;\n}\n.layout_menu_logout.h-d6df{\n\ttext-align: center;\n\tpadding-top: 100px;\n}\n.layout_menu_logout.h-d6df > div{\n\tpadding-top: 5px;\n}\n";
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -469,7 +469,7 @@ window["Bayrell.CloudOS.AdminLayout"] = Bayrell.CloudOS.AdminLayout;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.AdminLayout;
 "use strict;"
 /*!
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1400,7 +1400,7 @@ window["Bayrell.CloudOS.Other.AdminerPage"] = Bayrell.CloudOS.Other.AdminerPage;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Other.AdminerPage;
 "use strict;"
 /*
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1462,13 +1462,27 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
-			var crud_settings = Runtime.Dict.from({"name":Runtime.Dict.from({"api_name":"name","label":"Name","class_name":"Runtime.Web.Input.Input","class_name_table":"Runtime.Web.Input.Label"}),"banned":Runtime.Dict.from({"api_name":"banned","label":"Banned","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])})})});
+			var crud_settings = Runtime.Dict.from({"number":Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
+			{
+				var table_model = Runtime.rtl.get(ctx, params, "table-model");
+				var index = Runtime.rtl.get(ctx, params, "row-index");
+				if (table_model)
+				{
+					return index + 1;
+				}
+				return "";
+			}})}),"name":Runtime.Dict.from({"api_name":"name","label":"Name","class_name":"Runtime.Web.Input.Input","class_name_table":"Runtime.Web.Input.Label"}),"banned":Runtime.Dict.from({"api_name":"banned","label":"Banned","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])})}),"edit-buttons":Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
+			{
+				return Runtime.Collection.from([Runtime.Web.CRUD.CrudPage.buttonEdit(ctx, layout, model, params, content),Runtime.Web.CRUD.CrudPage.buttonDelete(ctx, layout, model, params, content)]);
+			}})}),"password1":Runtime.Dict.from({"api_name":"password1","label":"Password","class_name":"Runtime.Web.Input.Input","class_settings":Runtime.Dict.from({"type":"password"})}),"password2":Runtime.Dict.from({"api_name":"password2","label":"Password","class_name":"Runtime.Web.Input.Input","class_settings":Runtime.Dict.from({"type":"password"})})});
 			
-			var form_fields = Runtime.Collection.from(["name","banned"]);
+			var form_fields = Runtime.Collection.from(["name","banned","password1","password2"]);
 			
-			var table_fields = Runtime.Collection.from(["number","name","banned","edit"]);
+			var table_fields = Runtime.Collection.from(["number","name","banned","edit-buttons"]);
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.User.UsersPage","crud"],"object_name":"Bayrell.CloudOS.Users","crud_settings":crud_settings,"form_fields":form_fields,"table_fields":table_fields}, "layout": layout});
+			var messages = Runtime.Dict.from({"add":ctx.translate(ctx, "Bayrell.CloudOS", "Add user")});
+			
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.User.UsersPage","crud"],"object_name":"Bayrell.CloudOS.Users","crud_settings":crud_settings,"form_fields":form_fields,"table_fields":table_fields,"messages":messages}, "layout": layout});
 			
 			return __control_childs;
 		};

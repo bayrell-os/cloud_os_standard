@@ -1,5 +1,5 @@
 /*!
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -19,8 +19,13 @@
 namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
+
+use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
+use Runtime.Crypt.Password;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
@@ -34,7 +39,35 @@ static class CrudUsers extends CrudApi
 	/**
 	 * Returns crud table name
 	 */
-	string getTableName() => "docker_users";
+	pure string getTableName() => "docker_users";
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	Collection<Dict> settings() =>
+	{
+		"id":
+		{
+			"api_name": "name",
+			"dbtype": "bigint",
+			"readonly": true,
+		},
+		"name":
+		{
+			"api_name": "name",
+			"dbtype": "string",
+			"default": "",
+			"required": true,
+		},
+		"banned":
+		{
+			"api_name": "banned",
+			"dbtype": "int",
+			"default": "0",
+		},
+	};
 	
 	
 	
@@ -49,43 +82,11 @@ static class CrudUsers extends CrudApi
 	
 	
 	/**
-	 * Process item from database
+	 * Init request
 	 */
-	async Dict fromDatabase(Dict item)
+	async void init()
 	{
-		return item;
-	}
-	
-	
-	
-	/**
-	 * Process item to database
-	 */
-	async Dict toDatabase(Dict item)
-	{
-		return item;
-	}
-	
-	
-	
-	/**
-	 * Process items
-	 */
-	async Collection<Dict> processItems(Collection<Dict> items)
-	{
-		items = await parent::processItems(items);
-		return items;
-	}
-	
-	
-	
-	/**
-	 * Process item
-	 */
-	async Collection<Dict> processItem(Collection<Dict> item)
-	{
-		item = await parent::processItem(item);
-		return item;
+		await parent::init();
 	}
 	
 	
@@ -93,9 +94,29 @@ static class CrudUsers extends CrudApi
 	/**
 	 * Validate
 	 */
-	list<bool, RemoteCallAnswer> validate(RemoteCallAnswer answer)
+	async bool validate()
 	{
-		return [true, answer];
+		await parent::validate();
+		
+		if (this.action == "search")
+		{
+		}
+		
+		else if (this.action == "add" or this.action == "update")
+		{
+			/* Check password */
+			string password1 = this.item["password1"];
+			string password2 = this.item["password2"];
+			
+			if (password1 != "" and password1 != password2)
+			{
+				throw new ApiException( _("Bayrell.CloudOS", "Password mismatch") );
+			}
+		}
+		
+		else if (this.action == "delete")
+		{
+		}
 	}
 	
 	
@@ -107,6 +128,132 @@ static class CrudUsers extends CrudApi
 	{
 		QueryBuilder q = parent::buildSearchQuery();
 		return q;
+	}
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		item = await parent::convertItem(item);
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Process item before response
+	 */
+	async Dict processItem(Dict item)
+	{
+		item = await parent::processItem(item);
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Process items
+	 */
+	async void processItems()
+	{
+		await parent::processItems();
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async bool after()
+	{
+		await parent::after();
+		
+		if (this.action == "add" or this.action == "update")
+		{
+			string user_id = this.pk["id"];
+			string password1 = this.item["password1"];
+			
+			/* Set up password */
+			if (password1 != "")
+			{
+				/* Get ORM driver */
+				ORMDriver orm = @.getDriver(classof ORMDriver);
+				
+				await orm.insert_or_update
+				(
+					"docker_users_auth",
+					{
+						"user_id": user_id,
+						"type": "password",
+					},
+					{
+						"value": Password::createHash(password1),
+					}
+				);
+				
+			}
+			
+			/* Generate nginx password */
+			await static::nginxPasswdCreate();
+		}
+	}
+	
+	
+	
+	/**
+	 * Nginx password
+	 */
+	static async void nginxPasswdCreate()
+	{
+		string htpasswd = "";
+		
+		/* Get ORM driver */
+		ORMDriver orm = @.getDriver(classof ORMDriver);
+		
+		string table_name = static::getTableName();
+		Cursor cursor = await orm.query
+		(
+			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
+			"left join docker_users_auth as a on (u.id = a.user_id and a.type='password')",
+		);
+		
+		while (true)
+		{
+			Dict row = await cursor.fetch();
+			if (row == null)
+			{
+				break;
+			}
+			
+			string banned = row["banned"];
+			string name = row["name"];
+			string password = row["password"];
+			
+			if (banned == "0" and not rtl::isEmpty(password))
+			{
+				htpasswd ~= name ~ ":" ~ password ~ "\n";
+			}
+		}
+		
+		await cursor.close();
+		
+		/* Insert or update nginx file */
+		await orm.insert_or_update
+		(
+			"docker_nginx",
+			{
+				"name": "inc/htpasswd.inc",
+			},
+			{
+				"enable": 1,
+				"content": htpasswd,
+				"timestamp": rtl::time(),
+				"is_deleted": 0,
+			}
+		);
 	}
 	
 	

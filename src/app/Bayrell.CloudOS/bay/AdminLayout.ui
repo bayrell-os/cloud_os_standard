@@ -1,5 +1,5 @@
 <!--
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -43,7 +43,7 @@ body, html{
 	padding: 0;
 	margin: 0;
 }
-td{
+td, th{
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 14px;
 }

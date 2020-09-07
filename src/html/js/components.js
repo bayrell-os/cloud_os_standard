@@ -1528,7 +1528,7 @@ Object.assign(Runtime.Web.Form.Form,
 			var __vnull = null;
 			var __control_childs = [];
 			
-			var errors = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, model, "validate"), field_name);
+			var errors = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, model, "fields_errors"), field_name);
 			
 			if (errors != null)
 			{
@@ -1965,6 +1965,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
+		this.fields_errors = null;
 		this.item = null;
 		this.message = "";
 		this.success_message = "";
@@ -1975,6 +1976,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 	{
 		if (o instanceof Runtime.Web.Form.FormModel)
 		{
+			this.fields_errors = o.fields_errors;
 			this.item = o.item;
 			this.message = o.message;
 			this.success_message = o.success_message;
@@ -1984,7 +1986,8 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "item")this.item = v;
+		if (k == "fields_errors")this.fields_errors = v;
+		else if (k == "item")this.item = v;
 		else if (k == "message")this.message = v;
 		else if (k == "success_message")this.success_message = v;
 		else if (k == "error_message")this.error_message = v;
@@ -1993,7 +1996,8 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "item")return this.item;
+		if (k == "fields_errors")return this.fields_errors;
+		else if (k == "item")return this.item;
 		else if (k == "message")return this.message;
 		else if (k == "success_message")return this.success_message;
 		else if (k == "error_message")return this.error_message;
@@ -2034,11 +2038,18 @@ Object.assign(Runtime.Web.Form.FormModel,
 	 */
 	setAnswer: function(ctx, model, answer)
 	{
+		model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["fields_errors"]), null);
 		if (answer.isSuccess(ctx))
 		{
 			return this.setSuccess(ctx, model, answer.success_message);
 		}
-		return this.setError(ctx, model, answer.error_message);
+		model = this.setError(ctx, model, answer.error_message);
+		/* Set field errors */
+		if (answer.code == Runtime.rtl.ERROR_VALIDATION)
+		{
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["fields_errors"]), Runtime.rtl.get(ctx, answer.response, "fields_errors"));
+		}
+		return model;
 	},
 	/**
 	 * Success
@@ -2059,7 +2070,7 @@ Object.assign(Runtime.Web.Form.FormModel,
 	 */
 	clear: function(ctx, model)
 	{
-		return model.copy(ctx, Runtime.Dict.from({"item":new Runtime.Dict(ctx),"message":"","success_message":"","error_message":""}));
+		return new Runtime.Web.Form.FormModel(ctx, Runtime.Dict.from({"item":new Runtime.Dict(ctx),"fields_errors":null,"message":"","success_message":"","error_message":""}));
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -2093,6 +2104,7 @@ Object.assign(Runtime.Web.Form.FormModel,
 		if (f==undefined) f=0;
 		if ((f|3)==3)
 		{
+			a.push("fields_errors");
 			a.push("item");
 			a.push("message");
 			a.push("success_message");
@@ -2105,6 +2117,13 @@ Object.assign(Runtime.Web.Form.FormModel,
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "fields_errors") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Form.FormModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		if (field_name == "item") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.Form.FormModel",
@@ -2347,13 +2366,13 @@ Object.assign(Runtime.Web.Input.Input,
 			
 			var name = (params != null) ? (params.get(ctx, "name", "")) : ("");
 			
-			var kind = (params != null) ? (params.get(ctx, "type", "input")) : ("");
+			var type = (params != null) ? (params.get(ctx, "type", "input")) : ("");
 			
 			var tag = (params != null) ? (params.get(ctx, "@tag", "")) : ("");
 			
 			/* Element 'input.input' */
 			var __v0; var __v0_childs = [];
-			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "input","attrs": {"@tag":tag,"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Input","onChange"],"name":name,"type":kind,"value":model,"class":["input", this.getCssHash(ctx)].join(" "),"@elem_name":"input"}});
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "input","attrs": {"@tag":tag,"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Input","onChange"],"name":name,"type":type,"value":model,"class":["input", this.getCssHash(ctx)].join(" "),"@elem_name":"input"}});
 			
 			/* Text */
 			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": content});
@@ -3045,9 +3064,12 @@ Object.assign(Runtime.Web.Table.Table,
 			var __vnull = null;
 			var __control_childs = [];
 			
-			/* Element 'table' */
+			/* Element 'table.table' */
 			var __v0; var __v0_childs = [];
-			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "table","attrs": {}});
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "table","attrs": {"class":["table", this.getCssHash(ctx)].join(" "),"@elem_name":"table"}});
+			
+			/* Text */
+			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": this.renderHeader(ctx, layout, model, params, content)});
 			
 			/* Text */
 			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": this.renderRows(ctx, layout, model, params, content)});
@@ -3075,6 +3097,38 @@ Object.assign(Runtime.Web.Table.Table,
 			return __control_childs;
 		};
 	},
+	renderHeader: function(ctx, layout, model, params)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			var fields = Runtime.rtl.get(ctx, params, "fields");
+			
+			/* Element 'tr.header' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "tr","attrs": {"class":["header", this.getCssHash(ctx)].join(" "),"@elem_name":"header"}});
+			
+			for (var i = 0;i < fields.count(ctx);i++)
+			{
+				var field_name = Runtime.rtl.get(ctx, fields, i);
+				
+				var field = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, params, "struct"), field_name);
+				
+				/* Element 'th.th' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "th","attrs": {"data-name":field_name,"class":["th", "th-" + Runtime.rtl.toStr(field_name), this.getCssHash(ctx)].join(" "),"@key":"th-" + Runtime.rtl.toStr(field_name),"@elem_name":"th"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.get(ctx, field, "label")});
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
 	renderRow: function(ctx, layout, model, params, index)
 	{
 		return (__control) =>
@@ -3086,17 +3140,17 @@ Object.assign(Runtime.Web.Table.Table,
 			
 			var fields = Runtime.rtl.get(ctx, params, "fields");
 			
-			/* Element 'tr' */
+			/* Element 'tr.row' */
 			var __v0; var __v0_childs = [];
-			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "tr","attrs": {"data-index":index,"@key":"td-" + Runtime.rtl.toStr(index)}});
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "tr","attrs": {"data-index":index,"class":["row", this.getCssHash(ctx)].join(" "),"@key":"tr-" + Runtime.rtl.toStr(index),"@elem_name":"row"}});
 			
 			for (var i = 0;i < fields.count(ctx);i++)
 			{
 				var field_name = Runtime.rtl.get(ctx, fields, i);
 				
-				/* Element 'td' */
+				/* Element 'td.td' */
 				var __v1; var __v1_childs = [];
-				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "td","attrs": {"data-name":field_name}});
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "td","attrs": {"data-name":field_name,"class":["td", "td-" + Runtime.rtl.toStr(field_name), this.getCssHash(ctx)].join(" "),"@key":"td-" + Runtime.rtl.toStr(field_name),"@elem_name":"td"}});
 				
 				/* Text */
 				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": this.renderCell(ctx, layout, model, params, row, field_name, index)});
@@ -3621,7 +3675,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
 		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"add","data":Runtime.Dict.from({"item":item})}));
 		if (answer.isSuccess(ctx))
 		{
-			this.table.update(ctx, "prependItem", Runtime.rtl.get(ctx, answer.response, "item"));
+			this.table.update(ctx, "prependItem", Runtime.rtl.get(ctx, answer.response, "new_item"));
 			this.dialog_add.update(ctx, "hide");
 		}
 		else
@@ -3640,7 +3694,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
 		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"update","data":Runtime.Dict.from({"pk":Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "id")}),"item":item})}));
 		if (answer.isSuccess(ctx))
 		{
-			this.table.update(ctx, "setItem", Runtime.rtl.get(ctx, item, "id"), Runtime.rtl.get(ctx, answer.response, "item"));
+			this.table.update(ctx, "setItem", Runtime.rtl.get(ctx, item, "id"), Runtime.rtl.get(ctx, answer.response, "new_item"));
 			this.dialog_edit.update(ctx, "hide");
 		}
 		else
@@ -3692,7 +3746,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 {
 	css: function(ctx, vars)
 	{
-		return "\n";
+		return "\n.crud.h-2873 .table.h-11df{\n\tborder-collapse: collapse;\n\tborder: 1px #ccc solid;\n\tmargin-top: 10px;\n}\n.crud.h-2873 .td.h-11df, .crud.h-2873 .th.h-11df{\n\tborder: 1px #ccc solid;\n\tpadding: 5px;\n}\n.crud.h-2873 .row.h-11df:hover td{\n\tbackground: #eee;\n}\n.crud.h-2873 .td-edit-buttons.h-11df{\n\tmargin-left: -2px;\n\tmargin-right: -2px;\n}\n.crud.h-2873 .td-edit-buttons.h-11df .button{\n\tmargin-left: 2px;\n\tmargin-right: 2px;\n}\n";
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3701,61 +3755,13 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			var messages = Runtime.rtl.get(ctx, params, "messages");
+			
 			var crud_settings = Runtime.rtl.get(ctx, params, "crud_settings");
 			
 			var form_fields = Runtime.rtl.get(ctx, params, "form_fields");
 			
 			var table_fields = Runtime.rtl.get(ctx, params, "table_fields");
-			
-			/* Extend settings */
-			crud_settings = crud_settings.setIm(ctx, "number", Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
-			{
-				var model = Runtime.rtl.get(ctx, params, "table-model");
-				var index = Runtime.rtl.get(ctx, params, "row-index");
-				if (model)
-				{
-					return index + 1;
-				}
-				return "";
-			}})})).setIm(ctx, "edit", Runtime.Dict.from({"api_name":"edit","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
-			{
-				var model = Runtime.rtl.get(ctx, params, "table-model");
-				var item = Runtime.rtl.get(ctx, params, "row-data");
-				var index = Runtime.rtl.get(ctx, params, "row-index");
-				return (__control) =>
-				{
-					var __vnull = null;
-					var __control_childs = [];
-					
-					/* Component 'Button' */
-					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"]}, "layout": layout, "content": (__control) =>
-					{
-						var __vnull = null;
-						var __control_childs = [];
-						
-						/* Text */
-						[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Edit"});
-						
-						return __control_childs;
-					}});
-					
-					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "span","attrs": {"class":["lpad5", this.getCssHash(ctx)].join(" "),"@elem_name":"lpad5"}});
-					
-					/* Component 'Button' */
-					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"]}, "layout": layout, "content": (__control) =>
-					{
-						var __vnull = null;
-						var __control_childs = [];
-						
-						/* Text */
-						[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Delete"});
-						
-						return __control_childs;
-					}});
-					
-					return __control_childs;
-				};
-			}})}));
 			
 			/* Element 'div.crud' */
 			var __v0; var __v0_childs = [];
@@ -3772,7 +3778,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __control_childs = [];
 				
 				/* Text */
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Add user"});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": Runtime.rtl.get(ctx, messages, "add")});
 				
 				return __control_childs;
 			}});
@@ -3814,6 +3820,62 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Dialog.Dialog","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","dialog_delete"],"style":Runtime.Web.Dialog.DialogModel.STYLE_CONFIRM,"auto_hide":false,"@event:Runtime.Web.Dialog.DialogEvent":["Runtime.Web.CRUD.CrudPage","onDialogEvent"]}, "layout": layout});
 			RenderDriver.p(__v1, __v1_childs);
 			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	buttonEdit: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			var table_model = Runtime.rtl.get(ctx, params, "table-model");
+			
+			var item = Runtime.rtl.get(ctx, params, "row-data");
+			
+			var index = Runtime.rtl.get(ctx, params, "row-index");
+			
+			/* Component 'Button' */
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"],"@key":"edit"}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Text */
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.CRUD", "Edit")});
+				
+				return __control_childs;
+			}});
+			
+			return __control_childs;
+		};
+	},
+	buttonDelete: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			var table_model = Runtime.rtl.get(ctx, params, "table-model");
+			
+			var item = Runtime.rtl.get(ctx, params, "row-data");
+			
+			var index = Runtime.rtl.get(ctx, params, "row-index");
+			
+			/* Component 'Button' */
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"],"@key":"delete"}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Text */
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.CRUD", "Delete")});
+				
+				return __control_childs;
+			}});
 			
 			return __control_childs;
 		};
