@@ -2211,7 +2211,6 @@ Object.assign(Runtime.rs,
 	htmlEscape: function(ctx, s)
 	{
 		if (s instanceof Runtime.Collection) return s;
-		if (s instanceof Runtime.UIStruct) return s;
 		var obj = {
 			"<":"&lt;",
 			">": "&gt;", 
@@ -2469,6 +2468,47 @@ Object.assign(Runtime.rs,
 			.replace(new RegExp('_', 'g'), '/')
 		;
 		return this.base64_decode(ctx, s);
+	},
+	/**
+	 * Returns string lenght
+	 * @param string s The string
+	 * @return int
+	 */
+	url_get_add: function(ctx, s, key, value)
+	{
+		var pos = this.strpos(ctx, s, "?");
+		var s1 = this.substr(ctx, s, 0, pos);
+		var s2 = (pos >= 0) ? (this.substr(ctx, s, pos + 1)) : ("");
+		var find = false;
+		var arr = this.explode(ctx, "&", s2);
+		arr = arr.map(ctx, (ctx, s) => 
+		{
+			var arr = this.explode(ctx, "=", s);
+			if (value == "")
+			{
+				return "";
+			}
+			if (Runtime.rtl.get(ctx, arr, 0) == key)
+			{
+				find = true;
+				return key + Runtime.rtl.toStr("=") + Runtime.rtl.toStr(this.htmlEscape(ctx, value));
+			}
+			return s;
+		}).filter(ctx, (ctx, s) => 
+		{
+			return s != "";
+		});
+		if (!find && value != "")
+		{
+			arr = arr.appendIm(ctx, key + Runtime.rtl.toStr("=") + Runtime.rtl.toStr(this.htmlEscape(ctx, value)));
+		}
+		s = s1;
+		s2 = this.join(ctx, "&", arr);
+		if (s2 != "")
+		{
+			s = s + Runtime.rtl.toStr("?") + Runtime.rtl.toStr(s2);
+		}
+		return s;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -12306,7 +12346,7 @@ Object.assign(Runtime.Web.Layout,
 {
 	css: function(ctx, vars)
 	{
-		return "\n*{box-sizing: border-box;}body{margin:0;padding:0;}\n";
+		return "*{" + Runtime.rtl.toStr("box-sizing: border-box;") + Runtime.rtl.toStr("}body{") + Runtime.rtl.toStr("margin:0;padding:0;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -13501,7 +13541,7 @@ Object.assign(Runtime.Web.RenderController.prototype,
 			for (var i=elem.attributes.length - 1; i>=0; i--)
 			{
 				var attr = elem.attributes[i];
-				if (attrs[attr.name] == undefined && attr.name != "data-path")
+				if (attrs[attr.name] == undefined/* && attr.name != "data-path"*/)
 				{
 					elem.removeAttribute(attr.name);
 				}
@@ -13512,7 +13552,7 @@ Object.assign(Runtime.Web.RenderController.prototype,
 		this.bindEvents(ctx, control, elem, attrs, is_new_elem);
 		
 		/* Set data-path attribute */
-		elem.setAttribute("data-path", path_id);
+		/*elem.setAttribute("data-path", path_id);*/
 	},
 	/**
 	 * Bind element events
@@ -14101,6 +14141,7 @@ Object.assign(Runtime.Web.RenderDriver,
 	API_PREPARE_CHAIN: "Runtime.Web.RenderDriver::API_PREPARE_CHAIN",
 	RENDER_CHAIN_START: 500,
 	RENDER_CHAIN_CREATE_LAYOUT_MODEL: 1000,
+	RENDER_CHAIN_CHANGE_LAYOUT_MODEL: 1050,
 	RENDER_CHAIN_SET_FRONTEND_ENVIROMENTS: 1500,
 	RENDER_CHAIN_CALL_ROUTE_BEFORE: 2000,
 	RENDER_CHAIN_CALL_ROUTE_MIDDLEWARE: 2500,
@@ -14315,7 +14356,10 @@ Object.assign(Runtime.Web.RenderDriver,
 				{
 					var f = Runtime.rtl.method(ctx, component_name, "css");
 					var css = f(ctx, css_vars);
-					res.push(ctx, css);
+					if (!Runtime.rtl.isEmpty(ctx, css))
+					{
+						res.push(ctx, css);
+					}
 				}
 			}
 		}
@@ -14411,7 +14455,7 @@ Object.assign(Runtime.Web.RenderDriver,
 			}
 		}
 		/* Create LayoutModel */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout"]), new Runtime.Web.LayoutModel(ctx, Runtime.Dict.from({"uri":this.splitRoutePrefix(ctx, container.request.uri, container.request.route_prefix),"f_inc":ctx.config(ctx, Runtime.Collection.from(["Runtime.Web","f_inc"]), "1"),"full_uri":container.request.uri,"route":container.route,"route_prefix":container.request.route_prefix,"route_params":container.route_params,"keep_data":frontend_keep_data})));
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout"]), new Runtime.Web.LayoutModel(ctx, Runtime.Dict.from({"uri":this.splitRoutePrefix(ctx, container.request.uri, container.request.route_prefix),"f_inc":ctx.config(ctx, Runtime.Collection.from(["Runtime.Web","f_inc"]), "1"),"full_uri":container.request.uri,"route":container.route,"route_prefix":container.request.route_prefix,"route_params":container.route_params,"keep_data":frontend_keep_data,"css_vars":Runtime.Dict.from({"colors":Runtime.Dict.from({"default":Runtime.Dict.from({"background":"#fff","border":"#ccc","text":"#000","hover-background":"#eee","hover-text":"inherit"}),"active":Runtime.Dict.from({"background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#337ab7","hover-text":"#fff"}),"primary":Runtime.Dict.from({"background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#286090","hover-text":"#fff","active-background":"#286090","active-tet":"#fff"}),"danger":Runtime.Dict.from({"background":"#d14b42","border":"#a02e27","text":"#fff","hover-background":"#e60000","hover-text":"#fff","active-background":"#e60000","active-tet":"#fff"}),"success":Runtime.Dict.from({"background":"green","border":"green","text":"#fff","hover":"green","hover-text":"#fff","active":"green","active-tet":"#fff"}),"warning":Runtime.Dict.from({"background":"yellow","border":"yellow","text":"#fff","hover":"yellow","hover-text":"#fff","active":"yellow","active-tet":"#fff"})}),"font":Runtime.Dict.from({"size":"14px"})})})));
 		return Runtime.Collection.from([container]);
 	},
 	/**
@@ -14522,20 +14566,6 @@ Object.assign(Runtime.Web.RenderDriver,
 		var answer = await bus.remoteBusCall(ctx, request);
 		return Promise.resolve(answer);
 	},
-	/**
-	 * Crud search
-	 */
-	getCrudSearchParams: function(ctx, request)
-	{
-		var data = new Runtime.Map(ctx);
-		if (Runtime.rtl.exists(ctx, request.query))
-		{
-			var page = request.query.get(ctx, "page", "0");
-			data.set(ctx, "page", page);
-			data.set(ctx, "limit", 100);
-		}
-		return data.toDict(ctx);
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -14613,6 +14643,13 @@ Object.assign(Runtime.Web.RenderDriver,
 			]),
 		});
 		if (field_name == "RENDER_CHAIN_CREATE_LAYOUT_MODEL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderDriver",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "RENDER_CHAIN_CHANGE_LAYOUT_MODEL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.RenderDriver",
 			"name": field_name,
@@ -16202,15 +16239,30 @@ Object.assign(Runtime.Web.RouteController.prototype,
 	/**
 	 * Render page
 	 */
-	renderPage: async function(ctx, uri)
+	renderPage: async function(ctx, url)
 	{
-		if (uri == undefined) uri = "/";
+		if (url == undefined) url = "/";
 		var host = "";
 		var method = "";
 		var protocol = "";
 		host = window.location.hostname;
 		protocol = window.location.protocol.substr(0, window.location.protocol.length - 1);
-		var request = new Runtime.Web.Request(ctx, Runtime.Dict.from({"uri":uri,"host":host,"protocol":protocol,"route_prefix":this.route_prefix}));
+		var pos = Runtime.rs.strpos(ctx, url, "?");
+		var uri = Runtime.rs.substr(ctx, url, 0, pos);
+		var get = (pos >= 0) ? (Runtime.rs.substr(ctx, url, pos + 1)) : ("");
+		var query = new Runtime.Map(ctx);
+		if (get != "")
+		{
+			var arr = Runtime.rs.explode(ctx, "&", get);
+			arr.each(ctx, (ctx, s) => 
+			{
+				var arr = Runtime.rs.explode(ctx, "=", s);
+				var key = Runtime.rtl.get(ctx, arr, 0);
+				var value = Runtime.rtl.get(ctx, arr, 1);
+				query.set(ctx, key, value);
+			});
+		}
+		var request = new Runtime.Web.Request(ctx, Runtime.Dict.from({"uri":uri,"host":host,"protocol":protocol,"query":query.toDict(ctx),"route_prefix":this.route_prefix}));
 		/* Find main controller name */
 		var frontend_controller_name = "";
 		var controller = Runtime.Web.RenderDriver.getMainController(ctx);

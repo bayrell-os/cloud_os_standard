@@ -60,7 +60,7 @@ Object.assign(Runtime.Web.Button.Button,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.button.h-2911{\n\tpadding: 6px 12px;\n\tcursor: pointer;\n}\n.button.h-2911.small{\n\tpadding: 3px 6px;\n}\n";
+		return ".button.h-2911{" + Runtime.rtl.toStr("padding: 6px 12px;cursor: pointer;background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "text"])) + Runtime.rtl.toStr(";/*box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);*/outline: 0;")) + Runtime.rtl.toStr("}.button.h-2911:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911:active{") + Runtime.rtl.toStr("box-shadow: inset 0px 2px 5px 0px rgba(0,0,0,0.25);") + Runtime.rtl.toStr("}.button.h-2911.primary{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.primary:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "hover-background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.danger{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.danger:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "hover-background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "danger", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.success{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.success:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "hover-background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.button.h-2911.small{") + Runtime.rtl.toStr("padding: 3px 6px;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -376,7 +376,7 @@ Object.assign(Runtime.Web.Dialog.Dialog,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.dialog_box.h-9e54, .dialog_shadow.h-9e54{\n\tposition: fixed;\n\ttop: 0; left: 0;\n\twidth: 100%; height: 100%;\n\tz-index: 1001;\n}\n.dialog_box.h-9e54{\n\toverflow: auto;\n\toverflow-y: scroll;\n\tdisplay: none;\n}\n.dialog_box.h-9e54.open{\n\tdisplay: block;\n}\n.dialog_shadow.h-9e54{\n\tbackground-color: #000;\n\topacity: 0.2;\n\toverflow: hidden;\n}\n.dialog_wrap.h-9e54{\n\twidth: 100%;\n\tmin-height: 100%;\n}\n.dialog_wrap.h-9e54 > tr > td{\n\tpadding: 20px;\n}\n.dialog.h-9e54{\n\tposition: relative;\n\tpadding: 20px;\n\tbackground-color: white;\n\tmax-width: 350px;\n\tmargin: 0 auto;\n\twidth: auto;\n\tz-index: 1002;\n\tbox-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5)\n}\n.dialog_title.h-9e54, .dialog_text.h-9e54, .dialog_promt.h-9e54{\n\ttext-align: center;\n\tpadding-bottom: 12px;\n}\n.dialog_title.h-9e54{\n\tfont-weight: bold;\n}\n.dialog_promt_input.h-9e54{\n\tpadding: 6px 12px;\n\twidth: 100%;\n}\n.dialog_buttons.h-9e54{\n\tpadding-top: 12px;\n\ttext-align: center;\n}\n.dialog_buttons.h-9e54 .button.h-2911{\n\tmargin: 0 5px;\n}\n.dialog_row.h-9e54{\n\tpadding-bottom: 6px;\n}\n.dialog_row.h-9e54:last-child{\n\tpadding-bottom: 0px;\n}\n.dialog_result.h-9e54{\n\ttext-align: center;\n\tpadding-top: 12px;\n}\n.dialog_result.h-9e54.success{\n\tcolor: green;\n}\n.dialog_result.h-9e54.error{\n\tcolor: red;\n}\n";
+		return ".dialog_box.h-9e54, .dialog_shadow.h-9e54{" + Runtime.rtl.toStr("position: fixed;top: 0; left: 0;width: 100%; height: 100%;z-index: 1001;") + Runtime.rtl.toStr("}.dialog_box.h-9e54{") + Runtime.rtl.toStr("overflow: auto;overflow-y: scroll;display: none;") + Runtime.rtl.toStr("}.dialog_box.h-9e54.open{") + Runtime.rtl.toStr("display: block;") + Runtime.rtl.toStr("}.dialog_shadow.h-9e54{") + Runtime.rtl.toStr("background-color: #000;opacity: 0.2;overflow: hidden;") + Runtime.rtl.toStr("}.dialog_wrap.h-9e54{") + Runtime.rtl.toStr("width: 100%;min-height: 100%;") + Runtime.rtl.toStr("}.dialog_wrap.h-9e54 > tr > td{") + Runtime.rtl.toStr("padding: 20px;") + Runtime.rtl.toStr("}.dialog.h-9e54{") + Runtime.rtl.toStr("position: relative;padding: 20px;background-color: white;max-width: 350px;margin: 0 auto;width: auto;z-index: 1002;box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5)") + Runtime.rtl.toStr("}.dialog_title.h-9e54, .dialog_text.h-9e54, .dialog_promt.h-9e54{") + Runtime.rtl.toStr("text-align: center;padding-bottom: 12px;") + Runtime.rtl.toStr("}.dialog_title.h-9e54{") + Runtime.rtl.toStr("font-weight: bold;") + Runtime.rtl.toStr("}.dialog_promt_input.h-9e54{") + Runtime.rtl.toStr("padding: 6px 12px;width: 100%;") + Runtime.rtl.toStr("}.dialog_buttons.h-9e54{") + Runtime.rtl.toStr("padding-top: 12px;text-align: center;") + Runtime.rtl.toStr("}.dialog_buttons.h-9e54 .button.h-2911{") + Runtime.rtl.toStr("margin: 0 5px;") + Runtime.rtl.toStr("}.dialog_row.h-9e54{") + Runtime.rtl.toStr("padding-bottom: 6px;") + Runtime.rtl.toStr("}.dialog_row.h-9e54:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.dialog_result.h-9e54{") + Runtime.rtl.toStr("text-align: center;padding-top: 12px;") + Runtime.rtl.toStr("}.dialog_result.h-9e54.success{") + Runtime.rtl.toStr("color: green;") + Runtime.rtl.toStr("}.dialog_result.h-9e54.error{") + Runtime.rtl.toStr("color: red;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -1406,7 +1406,7 @@ Object.assign(Runtime.Web.Form.Form,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.form.h-5a52{\n}\n.form_row.h-5a52{\n\tpadding-bottom: 15px;\n}\n.form_row.h-5a52:last-child{\n\tpadding-bottom: 0px;\n}\n.form_label.h-5a52{\n\tfont-weight: bold;\n\tpadding-bottom: 5px;\n}\n.form_value.h-5a52{}\n.form_value.h-5a52 input, .form_value.h-5a52 textarea, .form_value.h-5a52 select{\n\twidth: 100%;\n\tpadding: 5px 10px;\n}\n.form_value.h-5a52 textarea{\n\theight: 400px;\n}\n.form_buttons.h-5a52{\n\ttext-align: center;\n}\n.form_buttons.h-5a52 .button.h-2911{\n\tmargin-left: 10px;\n\tmargin-right: 10px;\n}\n.form_error.h-5a52{\n\ttext-align: center;\n\tpadding-top: 5px;\n\tcolor: red;\n}\n.form_result.h-5a52{\n\tpadding-top: 10px;\n\ttext-align: center;\n}\n.form_result.h-5a52.success{\n\tcolor: green;\n}\n.form_result.h-5a52.error{\n\tcolor: red;\n}\n";
+		return ".form.h-5a52{" + Runtime.rtl.toStr("}.form_row.h-5a52{") + Runtime.rtl.toStr("padding-bottom: 15px;") + Runtime.rtl.toStr("}.form_row.h-5a52:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.form_label.h-5a52{") + Runtime.rtl.toStr("font-weight: bold;padding-bottom: 5px;") + Runtime.rtl.toStr("}.form_value.h-5a52{") + Runtime.rtl.toStr("}.form_value.h-5a52 input, .form_value.h-5a52 textarea, .form_value.h-5a52 select{") + Runtime.rtl.toStr("width: 100%;padding: 5px 10px;") + Runtime.rtl.toStr("}.form_value.h-5a52 textarea{") + Runtime.rtl.toStr("height: 400px;") + Runtime.rtl.toStr("}.form_buttons.h-5a52{") + Runtime.rtl.toStr("text-align: center;margin-top: 10px;") + Runtime.rtl.toStr("}.form_buttons.h-5a52 .button.h-2911{") + Runtime.rtl.toStr("margin-left: 10px;margin-right: 10px;") + Runtime.rtl.toStr("}.form_error.h-5a52{") + Runtime.rtl.toStr("text-align: center;padding-top: 5px;color: red;") + Runtime.rtl.toStr("}.form_result.h-5a52{") + Runtime.rtl.toStr("padding-top: 10px;text-align: center;") + Runtime.rtl.toStr("}.form_result.h-5a52.success{") + Runtime.rtl.toStr("color: green;") + Runtime.rtl.toStr("}.form_result.h-5a52.error{") + Runtime.rtl.toStr("color: red;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -1440,6 +1440,10 @@ Object.assign(Runtime.Web.Form.Form,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			/* Element 'div.form_rows' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_rows", this.getCssHash(ctx)].join(" "),"@key":"rows","@elem_name":"form_rows"}});
+			
 			var fields = Runtime.rtl.get(ctx, params, "fields");
 			
 			for (var i = 0;i < fields.count(ctx);i++)
@@ -1447,8 +1451,9 @@ Object.assign(Runtime.Web.Form.Form,
 				var field_name = Runtime.rtl.get(ctx, fields, i);
 				
 				/* Text */
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": this.renderRow(ctx, layout, model, params, field_name)});
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": this.renderRow(ctx, layout, model, params, field_name)});
 			}
+			RenderDriver.p(__v0, __v0_childs);
 			
 			return __control_childs;
 		};
@@ -1464,6 +1469,9 @@ Object.assign(Runtime.Web.Form.Form,
 			
 			if (field != null)
 			{
+				/* Patch field settings */
+				field = this.patchField(ctx, layout, field, model, params);
+				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name"));
 				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name = __v0.value(ctx);
@@ -1476,7 +1484,15 @@ Object.assign(Runtime.Web.Form.Form,
 				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Dict", Runtime.Dict.from({})));
 				var class_settings = __v0.value(ctx);
 				
+				if (!Runtime.rtl.isEmpty(ctx, class_name_form))
+				{
+					class_name = class_name_form;
+				}
+				
 				var model_path = this.getBindPath(ctx, field);
+				
+				/* Patch class settings */
+				class_settings = this.patchSettings(ctx, layout, field, class_settings, model, params);
 				
 				/* Element 'div.form_row' */
 				var __v0; var __v0_childs = [];
@@ -1497,24 +1513,14 @@ Object.assign(Runtime.Web.Form.Form,
 				var __v1; var __v1_childs = [];
 				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["form_value", this.getCssHash(ctx)].join(" "),"@elem_name":"form_value"}});
 				
-				if (!Runtime.rtl.isEmpty(ctx, class_name_form))
-				{
-					class_name = class_name_form;
-				}
-				
 				if (!Runtime.rtl.isEmpty(ctx, class_name))
 				{
 					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Form.Form",model_path],"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Form.Form","onItemChange"],"used-by":"form","name":field_name,"form-item":Runtime.rtl.get(ctx, model, "item"),"model-path":model_path},class_settings), "layout": layout});
 				}
 				RenderDriver.p(__v1, __v1_childs);
 				
-				/* Element 'div.form_error' */
-				var __v1; var __v1_childs = [];
-				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["form_error", this.getCssHash(ctx)].join(" "),"@elem_name":"form_error"}});
-				
 				/* Text */
-				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": this.renderFieldError(ctx, model, field_name)});
-				RenderDriver.p(__v1, __v1_childs);
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": this.renderFieldError(ctx, model, field_name)});
 				RenderDriver.p(__v0, __v0_childs);
 			}
 			
@@ -1528,6 +1534,10 @@ Object.assign(Runtime.Web.Form.Form,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			/* Element 'div.form_error' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_error", this.getCssHash(ctx)].join(" "),"@elem_name":"form_error"}});
+			
 			var errors = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, model, "fields_errors"), field_name);
 			
 			if (errors != null)
@@ -1537,14 +1547,15 @@ Object.assign(Runtime.Web.Form.Form,
 					var s = Runtime.rtl.get(ctx, errors, i);
 					
 					/* Element 'div.form_error_line' */
-					var __v0; var __v0_childs = [];
-					[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_error_line", this.getCssHash(ctx)].join(" "),"@elem_name":"form_error_line"}});
+					var __v1; var __v1_childs = [];
+					[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["form_error_line", this.getCssHash(ctx)].join(" "),"@elem_name":"form_error_line"}});
 					
 					/* Text */
-					[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": s});
-					RenderDriver.p(__v0, __v0_childs);
+					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": s});
+					RenderDriver.p(__v1, __v1_childs);
 				}
 			}
+			RenderDriver.p(__v0, __v0_childs);
 			
 			return __control_childs;
 		};
@@ -1645,6 +1656,20 @@ Object.assign(Runtime.Web.Form.Form,
 	renderFooter: function(ctx, layout, model, params, content)
 	{
 		return ;
+	},
+	/**
+ * Patch field
+ */
+	patchField: function(ctx, layout, field, model, params)
+	{
+		return field;
+	},
+	/**
+ * Patch class settings
+ */
+	patchSettings: function(ctx, layout, field, class_settings, model, params)
+	{
+		return class_settings;
 	},
 	/**
  * Returns result class
@@ -1808,6 +1833,7 @@ Object.assign(Runtime.Web.Form.FormEvent,
 	ACTION_UPDATE: "update",
 	ACTION_CANCEL: "cancel",
 	ACTION_CHANGE: "change",
+	ACTION_SEARCH: "search",
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -1875,6 +1901,13 @@ Object.assign(Runtime.Web.Form.FormEvent,
 			]),
 		});
 		if (field_name == "ACTION_CHANGE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Form.FormEvent",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ACTION_SEARCH") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.Form.FormEvent",
 			"name": field_name,
@@ -2353,7 +2386,7 @@ Object.assign(Runtime.Web.Input.Input,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.input.h-9e6e{\n\twidth: 100%;\n\tpadding: 6px 12px;\n}\n";
+		return ".input.h-9e6e{" + Runtime.rtl.toStr("width: 100%;padding: 6px 12px;background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;outline: transparent;")) + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -2489,7 +2522,6 @@ Object.assign(Runtime.Web.Input.Label,
 {
 	css: function(ctx, vars)
 	{
-		return "\n";
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -2629,7 +2661,7 @@ Object.assign(Runtime.Web.Input.Select,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.select.h-4d5b{\n\twidth: 100%;\n\tpadding: 6px 12px;\n}\n";
+		return ".select.h-4d5b{" + Runtime.rtl.toStr("width: 100%;padding: 6px 12px;background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;outline: transparent;")) + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -2642,17 +2674,24 @@ Object.assign(Runtime.Web.Input.Select,
 			
 			/* Element 'select.select' */
 			var __v0; var __v0_childs = [];
-			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "select","attrs": {"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Select","onChange"],"name":name,"value":model,"class":["select", this.getCssHash(ctx)].join(" "),"@elem_name":"select"}});
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "select","attrs": {"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Select","onChange"],"name":name,"value":((Runtime.rtl.isEmpty(ctx, model)) ? ("") : (model)),"class":["select", this.getCssHash(ctx)].join(" "),"@elem_name":"select"}});
 			
 			var options = Runtime.rtl.get(ctx, params, "options");
 			
 			if (Runtime.rtl.exists(ctx, options))
 			{
-				if (Runtime.rtl.get(ctx, params, "select_value") == true)
+				var selected = Runtime.Dict.from({});
+				
+				if (Runtime.rtl.get(ctx, params, "show_select_value") == true)
 				{
+					if (model === "" || model === null)
+					{
+						selected = Runtime.Dict.from({"selected":"selected"});
+					}
+					
 					/* Element 'option' */
 					var __v1; var __v1_childs = [];
-					[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "option","attrs": {"value":""}});
+					[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "option","attrs": this.mergeAttrs(ctx, {"value":""},selected)});
 					
 					/* Text */
 					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.Input", "Select value")});
@@ -2663,9 +2702,9 @@ Object.assign(Runtime.Web.Input.Select,
 				{
 					var item = Runtime.rtl.get(ctx, options, i);
 					
-					var selected = Runtime.Dict.from({});
+					selected = Runtime.Dict.from({});
 					
-					if (Runtime.rtl.get(ctx, item, "id") == model)
+					if (Runtime.rtl.get(ctx, item, "id") == model && model !== "" && model !== null)
 					{
 						selected = Runtime.Dict.from({"selected":"selected"});
 					}
@@ -2792,7 +2831,6 @@ Object.assign(Runtime.Web.Input.SelectText,
 {
 	css: function(ctx, vars)
 	{
-		return "\n";
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3021,6 +3059,269 @@ if (typeof module != "undefined" && typeof module.exports != "undefined") module
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
 if (typeof Runtime.Web.Table == 'undefined') Runtime.Web.Table = {};
+Runtime.Web.Table.Pagination = function(ctx)
+{
+	Runtime.Web.Component.apply(this, arguments);
+};
+Runtime.Web.Table.Pagination.prototype = Object.create(Runtime.Web.Component.prototype);
+Runtime.Web.Table.Pagination.prototype.constructor = Runtime.Web.Table.Pagination;
+Object.assign(Runtime.Web.Table.Pagination.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Table.Pagination)
+		{
+		}
+		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Table.Pagination";
+	},
+});
+Object.assign(Runtime.Web.Table.Pagination, Runtime.Web.Component);
+Object.assign(Runtime.Web.Table.Pagination,
+{
+	css: function(ctx, vars)
+	{
+		return ".pagination.h-f0eb{" + Runtime.rtl.toStr("text-align: center;padding: 10px 0;") + Runtime.rtl.toStr("}.pagination.h-f0eb ul{") + Runtime.rtl.toStr("padding: 0;margin: 0;") + Runtime.rtl.toStr("}.pagination.h-f0eb li{") + Runtime.rtl.toStr("display: inline-block;vertical-align: top;list-style: none;margin-left: 5px;margin-right: 5px;") + Runtime.rtl.toStr("}.pagination.h-f0eb li a, .pagination.h-f0eb li a:hover, .pagination.h-f0eb li span{") + Runtime.rtl.toStr("display: table-cell;vertical-align: middle;background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "text"])) + Runtime.rtl.toStr(";text-align: center;width: 30px;height: 30px;font-size: 14px;text-decoration: none;")) + Runtime.rtl.toStr("}.pagination.h-f0eb li a:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-background"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.pagination.h-f0eb li.active a, .pagination.h-f0eb li.active a:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "active", "background"])) + Runtime.rtl.toStr(";border: 1px ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "active", "border"])) + Runtime.rtl.toStr(" solid;color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "active", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}");
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			var min = (ctx, a, b) => 
+			{
+				return (a < b) ? (a) : (b);
+			};
+			
+			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, params, "page"));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "int", 0));
+			var page = __v0.value(ctx);
+			
+			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, params, "pages"));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "int", 0));
+			var pages = __v0.value(ctx);
+			
+			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, params, "delta"));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "int", 5));
+			var delta = __v0.value(ctx);
+			
+			var start = 2;
+			
+			var end = min(ctx, pages - 1, page + delta);
+			
+			var active = false;
+			
+			if (pages > 1)
+			{
+				/* Element 'nav.pagination' */
+				var __v0; var __v0_childs = [];
+				[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "nav","attrs": {"class":["pagination", this.getCssHash(ctx)].join(" "),"@elem_name":"pagination"}});
+				
+				/* Element 'ul' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "ul","attrs": {}});
+				
+				active = false;
+				
+				if (page == 1)
+				{
+					active = true;
+				}
+				
+				/* Element 'li.btn.page.first' */
+				var __v2; var __v2_childs = [];
+				[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "li","attrs": {"class":["btn page first", ((active) ? ("active") : ("")), this.getCssHash(ctx)].join(" "),"@key":"first","@elem_name":"btn"}});
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": "                    "});
+				
+				/* Element 'a' */
+				var __v3; var __v3_childs = [];
+				[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "a","attrs": {"href":Runtime.rs.url_get_add(ctx, layout.uri, "page", 1)}});
+				
+				/* Text */
+				[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": "1"});
+				RenderDriver.p(__v3, __v3_childs);
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": "                "});
+				RenderDriver.p(__v2, __v2_childs);
+				
+				if (pages - delta > 1)
+				{
+					/* Element 'li.btn.skip' */
+					var __v2; var __v2_childs = [];
+					[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "li","attrs": {"class":["btn skip", this.getCssHash(ctx)].join(" "),"@key":"skip_before","@elem_name":"btn"}});
+					
+					/* Element 'span' */
+					var __v3; var __v3_childs = [];
+					[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "span","attrs": {}});
+					
+					/* Text */
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": "..."});
+					RenderDriver.p(__v3, __v3_childs);
+					RenderDriver.p(__v2, __v2_childs);
+				}
+				
+				if (start <= end)
+				{
+					for (var i = start;i <= end;i++)
+					{
+						active = false;
+						
+						if (page == i)
+						{
+							active = true;
+						}
+						
+						/* Element 'li.btn.page' */
+						var __v2; var __v2_childs = [];
+						[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "li","attrs": {"class":["btn page", ((active) ? ("active") : ("")), this.getCssHash(ctx)].join(" "),"@key":"page" + Runtime.rtl.toStr(i),"@elem_name":"btn"}});
+						
+						/* Element 'a' */
+						var __v3; var __v3_childs = [];
+						[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "a","attrs": {"href":Runtime.rs.url_get_add(ctx, layout.uri, "page", i)}});
+						
+						/* Text */
+						[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": i});
+						RenderDriver.p(__v3, __v3_childs);
+						RenderDriver.p(__v2, __v2_childs);
+					}
+				}
+				
+				if (end < pages - 1)
+				{
+					/* Element 'li.btn.skip' */
+					var __v2; var __v2_childs = [];
+					[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "li","attrs": {"class":["btn skip", this.getCssHash(ctx)].join(" "),"@key":"skip_after","@elem_name":"btn"}});
+					
+					/* Element 'span' */
+					var __v3; var __v3_childs = [];
+					[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "span","attrs": {}});
+					
+					/* Text */
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": "..."});
+					RenderDriver.p(__v3, __v3_childs);
+					RenderDriver.p(__v2, __v2_childs);
+				}
+				
+				if (pages >= 2)
+				{
+					active = false;
+					
+					if (page == pages)
+					{
+						active = true;
+					}
+					
+					/* Element 'li.btn.page.last' */
+					var __v2; var __v2_childs = [];
+					[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "li","attrs": {"class":["btn page last", ((active) ? ("active") : ("")), this.getCssHash(ctx)].join(" "),"@key":"last","@elem_name":"btn"}});
+					
+					/* Element 'a' */
+					var __v3; var __v3_childs = [];
+					[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "a","attrs": {"href":Runtime.rs.url_get_add(ctx, layout.uri, "page", pages)}});
+					
+					/* Text */
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": pages});
+					RenderDriver.p(__v3, __v3_childs);
+					RenderDriver.p(__v2, __v2_childs);
+				}
+				RenderDriver.p(__v1, __v1_childs);
+				RenderDriver.p(__v0, __v0_childs);
+			}
+			
+			return __control_childs;
+		};
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Table";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Table.Pagination";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Component";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Table.Pagination",
+			"name": "Runtime.Web.Table.Pagination",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Table.Pagination);
+window["Runtime.Web.Table.Pagination"] = Runtime.Web.Table.Pagination;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Table.Pagination;
+"use strict;"
+/*
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Table == 'undefined') Runtime.Web.Table = {};
 Runtime.Web.Table.Table = function(ctx)
 {
 	Runtime.Web.Component.apply(this, arguments);
@@ -3055,7 +3356,7 @@ Object.assign(Runtime.Web.Table.Table,
 {
 	css: function(ctx, vars)
 	{
-		return "\n";
+		return ".table.h-11df{" + Runtime.rtl.toStr("border-collapse: collapse;border: 1px " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;margin-top: 10px;")) + Runtime.rtl.toStr("}.td.h-11df, .th.h-11df{") + Runtime.rtl.toStr("border: 1px " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "border"])) + Runtime.rtl.toStr(" solid;padding: 5px;")) + Runtime.rtl.toStr("}.row.h-11df:hover td{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-background"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.td-edit-buttons.h-11df{") + Runtime.rtl.toStr("margin-left: -2px;margin-right: -2px;") + Runtime.rtl.toStr("}.td-edit-buttons.h-11df .button{") + Runtime.rtl.toStr("margin-left: 2px;margin-right: 2px;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3174,6 +3475,9 @@ Object.assign(Runtime.Web.Table.Table,
 			
 			if (field != null)
 			{
+				/* Patch field settings */
+				field = this.patchField(ctx, layout, field, model, params);
+				
 				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, field, "class_name"));
 				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
 				var class_name = __v0.value(ctx);
@@ -3191,6 +3495,9 @@ Object.assign(Runtime.Web.Table.Table,
 					class_name = class_name_table;
 				}
 				
+				/* Patch class settings */
+				class_settings = this.patchSettings(ctx, layout, field, class_settings, model, params);
+				
 				if (!Runtime.rtl.isEmpty(ctx, class_name))
 				{
 					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Table.Table",Runtime.Collection.from(["rows",index,field_name])],"used-by":"table","name":field_name,"row-index":index,"row-data":row,"table-model":model,"@key":field_name},class_settings), "layout": layout});
@@ -3199,6 +3506,20 @@ Object.assign(Runtime.Web.Table.Table,
 			
 			return __control_childs;
 		};
+	},
+	/**
+ * Patch field
+ */
+	patchField: function(ctx, layout, field, model, params)
+	{
+		return field;
+	},
+	/**
+ * Patch class settings
+ */
+	patchSettings: function(ctx, layout, field, class_settings, model, params)
+	{
+		return class_settings;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -3287,6 +3608,10 @@ Object.assign(Runtime.Web.Table.TableModel.prototype,
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
 		this.rows = null;
+		this.page = 0;
+		this.pages = 0;
+		this.delta = 5;
+		this.limit = 100;
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -3294,18 +3619,30 @@ Object.assign(Runtime.Web.Table.TableModel.prototype,
 		if (o instanceof Runtime.Web.Table.TableModel)
 		{
 			this.rows = o.rows;
+			this.page = o.page;
+			this.pages = o.pages;
+			this.delta = o.delta;
+			this.limit = o.limit;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
 		if (k == "rows")this.rows = v;
+		else if (k == "page")this.page = v;
+		else if (k == "pages")this.pages = v;
+		else if (k == "delta")this.delta = v;
+		else if (k == "limit")this.limit = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "rows")return this.rows;
+		else if (k == "page")return this.page;
+		else if (k == "pages")return this.pages;
+		else if (k == "delta")return this.delta;
+		else if (k == "limit")return this.limit;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -3416,6 +3753,10 @@ Object.assign(Runtime.Web.Table.TableModel,
 		if ((f|3)==3)
 		{
 			a.push("rows");
+			a.push("page");
+			a.push("pages");
+			a.push("delta");
+			a.push("limit");
 		}
 		return Runtime.Collection.from(a);
 	},
@@ -3425,6 +3766,34 @@ Object.assign(Runtime.Web.Table.TableModel,
 		var Dict = Runtime.Dict;
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
 		if (field_name == "rows") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Table.TableModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "page") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Table.TableModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "pages") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Table.TableModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "delta") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Table.TableModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "limit") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.Table.TableModel",
 			"name": field_name,
@@ -3570,6 +3939,213 @@ Object.assign(Runtime.Web.Table.ModuleDescription,
 Runtime.rtl.defClass(Runtime.Web.Table.ModuleDescription);
 window["Runtime.Web.Table.ModuleDescription"] = Runtime.Web.Table.ModuleDescription;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Table.ModuleDescription;
+"use strict;"
+/*
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.CRUD == 'undefined') Runtime.Web.CRUD = {};
+Runtime.Web.CRUD.CrudFilter = function(ctx)
+{
+	Runtime.Web.Form.Form.apply(this, arguments);
+};
+Runtime.Web.CRUD.CrudFilter.prototype = Object.create(Runtime.Web.Form.Form.prototype);
+Runtime.Web.CRUD.CrudFilter.prototype.constructor = Runtime.Web.CRUD.CrudFilter;
+Object.assign(Runtime.Web.CRUD.CrudFilter.prototype,
+{
+	/**
+ * On mouse click
+ */
+	onSearchButtonClick: async function(ctx, msg)
+	{
+		var model = this.model(ctx);
+		var event = new Runtime.Web.Form.FormEvent(ctx, Runtime.Dict.from({"event":Runtime.Web.Form.FormEvent.ACTION_SEARCH,"item":model.item}));
+		await this.signal(ctx, event);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.CRUD.CrudFilter)
+		{
+		}
+		Runtime.Web.Form.Form.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Web.Form.Form.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Web.Form.Form.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.CRUD.CrudFilter";
+	},
+});
+Object.assign(Runtime.Web.CRUD.CrudFilter, Runtime.Web.Form.Form);
+Object.assign(Runtime.Web.CRUD.CrudFilter,
+{
+	css: function(ctx, vars)
+	{
+		return ".form.h-95b5{" + Runtime.rtl.toStr("width: 300px;margin-top: 10px;") + Runtime.rtl.toStr("}.form_title.h-95b5{") + Runtime.rtl.toStr("text-align: center;font-weight: bold;padding-bottom: 10px;") + Runtime.rtl.toStr("}.form_buttons.h-95b5{") + Runtime.rtl.toStr("text-align: center;margin-top: 10px;") + Runtime.rtl.toStr("}.form_error.h-95b5{") + Runtime.rtl.toStr("padding-top: 0px;") + Runtime.rtl.toStr("}");
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.form.filter' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form filter", this.getCssHash(ctx)].join(" "),"@key":"form","@elem_name":"form"}});
+			
+			if (model != null)
+			{
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Collection.from([this.renderHeader(ctx, layout, model, params, content),this.renderContent(ctx, layout, model, params, content),this.renderButtons(ctx, layout, model, params, content)])});
+			}
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	renderHeader: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.form_title' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_title", this.getCssHash(ctx)].join(" "),"@elem_name":"form_title"}});
+			
+			/* Text */
+			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.CRUD", "Filter")});
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	renderFieldError: function(ctx, model, field_name)
+	{
+		return ;
+	},
+	renderButtons: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.form_buttons' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_buttons", this.getCssHash(ctx)].join(" "),"@elem_name":"form_buttons"}});
+			
+			/* Component 'Button' */
+			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudFilter","onSearchButtonClick"]}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Text */
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.CRUD", "Search")});
+				
+				return __control_childs;
+			}});
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	/**
+ * Patch class settings
+ */
+	patchSettings: function(ctx, layout, field, class_settings, model, params)
+	{
+		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, class_settings, "filter_show_select_value"));
+		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "bool", false));
+		var filter_show_select_value = __v0.value(ctx);
+		if (filter_show_select_value)
+		{
+			class_settings = Runtime.rtl.setAttr(ctx, class_settings, Runtime.Collection.from(["show_select_value"]), true);
+		}
+		return class_settings;
+	},
+	components: function(ctx)
+	{
+		return Runtime.Collection.from(["Runtime.Web.Button.Button","Runtime.Web.Form.Form"]);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.CRUD";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.CRUD.CrudFilter";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Form.Form";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.CRUD.CrudFilter",
+			"name": "Runtime.Web.CRUD.CrudFilter",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.CRUD.CrudFilter);
+window["Runtime.Web.CRUD.CrudFilter"] = Runtime.Web.CRUD.CrudFilter;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.CRUD.CrudFilter;
 "use strict;"
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
@@ -3746,7 +4322,6 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.crud.h-2873 .table.h-11df{\n\tborder-collapse: collapse;\n\tborder: 1px #ccc solid;\n\tmargin-top: 10px;\n}\n.crud.h-2873 .td.h-11df, .crud.h-2873 .th.h-11df{\n\tborder: 1px #ccc solid;\n\tpadding: 5px;\n}\n.crud.h-2873 .row.h-11df:hover td{\n\tbackground: #eee;\n}\n.crud.h-2873 .td-edit-buttons.h-11df{\n\tmargin-left: -2px;\n\tmargin-right: -2px;\n}\n.crud.h-2873 .td-edit-buttons.h-11df .button{\n\tmargin-left: 2px;\n\tmargin-right: 2px;\n}\n";
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3761,6 +4336,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			
 			var form_fields = Runtime.rtl.get(ctx, params, "form_fields");
 			
+			var filter_fields = Runtime.rtl.get(ctx, params, "filter_fields");
+			
 			var table_fields = Runtime.rtl.get(ctx, params, "table_fields");
 			
 			/* Element 'div.crud' */
@@ -3772,7 +4349,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["buttons", this.getCssHash(ctx)].join(" "),"@elem_name":"buttons"}});
 			
 			/* Component 'Button' */
-			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onShowAddClick"]}, "layout": layout, "content": (__control) =>
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onShowAddClick"],"type":"primary"}, "layout": layout, "content": (__control) =>
 			{
 				var __vnull = null;
 				var __control_childs = [];
@@ -3784,11 +4361,23 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			}});
 			RenderDriver.p(__v1, __v1_childs);
 			
+			if (Runtime.rtl.exists(ctx, filter_fields))
+			{
+				/* Element 'div.filter' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["filter", this.getCssHash(ctx)].join(" "),"@elem_name":"filter"}});
+				
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.CRUD.CrudFilter","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","filter"],"struct":crud_settings,"fields":filter_fields}, "layout": layout});
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			
 			/* Element 'div.table' */
 			var __v1; var __v1_childs = [];
 			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["table", this.getCssHash(ctx)].join(" "),"@elem_name":"table"}});
 			
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Table.Table","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","table"],"struct":crud_settings,"fields":table_fields}, "layout": layout});
+			
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Table.Pagination","attrs": {"page":model.table.page + 1,"pages":model.table.pages,"delta":model.table.delta}, "layout": layout});
 			RenderDriver.p(__v1, __v1_childs);
 			
 			/* Element 'div.dialogs' */
@@ -3882,7 +4471,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.Button.Button","Runtime.Web.Dialog.Dialog","Runtime.Web.Form.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Table.Table"]);
+		return Runtime.Collection.from(["Runtime.Web.Button.Button","Runtime.Web.CRUD.CrudFilter","Runtime.Web.Dialog.Dialog","Runtime.Web.Form.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Table.Pagination","Runtime.Web.Table.Table"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -3972,6 +4561,7 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		var a = Object.getOwnPropertyNames(this);
 		this.form_add = new Runtime.Web.Form.FormModel(ctx);
 		this.form_edit = new Runtime.Web.Form.FormModel(ctx);
+		this.filter = new Runtime.Web.Form.FormModel(ctx);
 		this.table = new Runtime.Web.Table.TableModel(ctx);
 		this.dialog_add = new Runtime.Web.Dialog.DialogModel(ctx);
 		this.dialog_edit = new Runtime.Web.Dialog.DialogModel(ctx);
@@ -3984,6 +4574,7 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		{
 			this.form_add = o.form_add;
 			this.form_edit = o.form_edit;
+			this.filter = o.filter;
 			this.table = o.table;
 			this.dialog_add = o.dialog_add;
 			this.dialog_edit = o.dialog_edit;
@@ -3995,6 +4586,7 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 	{
 		if (k == "form_add")this.form_add = v;
 		else if (k == "form_edit")this.form_edit = v;
+		else if (k == "filter")this.filter = v;
 		else if (k == "table")this.table = v;
 		else if (k == "dialog_add")this.dialog_add = v;
 		else if (k == "dialog_edit")this.dialog_edit = v;
@@ -4006,6 +4598,7 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		if (d == undefined) d = null;
 		if (k == "form_add")return this.form_add;
 		else if (k == "form_edit")return this.form_edit;
+		else if (k == "filter")return this.filter;
 		else if (k == "table")return this.table;
 		else if (k == "dialog_add")return this.dialog_add;
 		else if (k == "dialog_edit")return this.dialog_edit;
@@ -4020,6 +4613,24 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 Object.assign(Runtime.Web.CRUD.CrudPageModel, Runtime.BaseStruct);
 Object.assign(Runtime.Web.CRUD.CrudPageModel,
 {
+	/**
+	 * Crud search
+	 */
+	getCrudSearchParams: function(ctx, request)
+	{
+		var data = new Runtime.Map(ctx);
+		if (Runtime.rtl.exists(ctx, request.query))
+		{
+			var page = request.query.get(ctx, "page", 1) - 1;
+			if (page < 0)
+			{
+				page = 0;
+			}
+			data.set(ctx, "page", page);
+			data.set(ctx, "limit", 20);
+		}
+		return data.toDict(ctx);
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -4054,6 +4665,7 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 		{
 			a.push("form_add");
 			a.push("form_edit");
+			a.push("filter");
 			a.push("table");
 			a.push("dialog_add");
 			a.push("dialog_edit");
@@ -4074,6 +4686,13 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 			]),
 		});
 		if (field_name == "form_edit") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.CrudPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "filter") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.CRUD.CrudPageModel",
 			"name": field_name,

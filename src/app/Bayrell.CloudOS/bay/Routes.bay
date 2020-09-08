@@ -118,55 +118,6 @@ static class Routes
 	
 	
 	/**
-	 * Route Action
-	 * @return RenderContainer
-	 */
-	@Route{ "uri": "/users/", "name": "site:users" }
-	static async RenderContainer UsersPage(RenderContainer container)
-	{
-		/* Create model */
-		UsersPageModel page_model = new UsersPageModel
-		{
-			"crud": new CrudPageModel
-			{
-			},
-		};
-		
-		/* Remote call */
-		Dict search_params = RenderDriver::getCrudSearchParams(container.request);
-		RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-		(
-			{
-				"object_name": "Bayrell.CloudOS.Users",
-				"interface_name": "core.crud",
-				"method_name": "search",
-				"data": search_params,
-			},
-			container
-		);
-		
-		/* Answer */
-		if (answer.isSuccess())
-		{
-			page_model <= crud <= table <= rows <= answer.response["items"];
-			page_model <= crud <= table <= page <= answer.response["page"];
-			page_model <= crud <= table <= pages <= answer.response["pages"];
-		}
-		
-		/* Set title */
-		container <= layout <= title <= "Users page";
-		container <= layout <= layout_name <= "default";
-		
-		/* Set model */
-		container <= layout <= page_class <= classof UsersPage;
-		container <= layout <= page_model <= page_model;
-		
-		return [ container ];
-	}
-	
-	
-	
-	/**
 	 * Render chain
 	 * Page not found
 	 * @return RenderContainer
@@ -221,6 +172,29 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
+	@Route{ "uri": "/adminer/info/", "name": "app.adminer.info" }
+	static async RenderContainer adminerInfoPage(RenderContainer container)
+	{
+		string content = "";
+		
+		#ifcode PHP then
+		@ob_start();
+		phpinfo();
+		$content = ob_get_contents();
+		@ob_end_clean();
+		#endif
+		
+		container <= response <= new Response{ "content": content };
+		
+		return [ container ];
+	}
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
 	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
 	static async RenderContainer adminerVersionPage(RenderContainer container)
 	{
@@ -239,6 +213,7 @@ static class Routes
 		
 		return [ container ];
 	}
+	
 	
 	#endif
 }

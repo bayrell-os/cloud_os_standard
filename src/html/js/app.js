@@ -100,7 +100,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 {
 	css: function(ctx, vars)
 	{
-		return "\n*{box-sizing: border-box;}body{margin:0;padding:0;}\na { text-decoration: inherit; color: #0000d0; cursor: pointer; }\na:hover, a:visited:hover { text-decoration: underline; color: red; }\na:visited { text-decoration: inherit; color: #0000d0; }\na.link { text-decoration: none; color: #0000d0; cursor: pointer; }\na.link:hover, a.link:visited:hover { text-decoration: underline; color: red; }\na.link:visited { text-decoration: none; color: #0000d0; }\nbody, html{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n\twidth: 100%;\n\theight: 100vh;\n\tpadding: 0;\n\tmargin: 0;\n}\ntd, th{\n\tfont-family: 'Ubuntu', sans-serif;\n\tfont-size: 14px;\n}\nspan.lpad5{\n\tdisplay: inline-block;\n\tpadding-right: 5px;\n}\n.layout.h-d6df{\n\theight: 100%;\n}\n.layout_wrap.h-d6df{\n\tposition: relative;\n\theight: 100vh;\n\tpadding-bottom: 20px;\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_footer.h-d6df{\n\tposition: relative;\n\tfont-size: 12px;\n\theight: 24px;\n\tmargin-top: -24px;\n}\n.layout_footer.h-d6df .b_in{\n}\n.layout_menu_wrap.h-d6df{\n\tposition: relative;\n\twidth: 200px;\n}\n.layout_content_wrap.h-d6df{\n\tposition: relative;\n\twidth: calc(100% - 200px);\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df{\n\tfont-size: 16px;\n\theight: 40px;\n}\n.layout_site_name.h-d6df, .layout_title_wrap.h-d6df, .layout_page.h-d6df, .layout_content.h-d6df{\n\tpadding: 10px;\n}\n.layout_site_name.h-d6df{\n\tborder-right: 1px #ccc solid;\n}\n.layout_title_wrap.h-d6df{\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.layout_title.h-d6df{\n\twidth: 350px;\n}\n.layout_top_buttons.h-d6df{\n\twidth: calc(100% - 350px);\n\tpadding-left: 10px;\n}\n.layout_content.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 45px);\n\tpadding-bottom: 0;\n\tpadding-right: 0;\n}\n.layout_menu_label.h-d6df{\n\tfont-size: 14px;\n\tfont-weight: bold;\n\tpadding: 10px;\n}\n.layout_menu.h-d6df{\n\tposition: relative;\n\theight: calc(100% - 40px);\n\toverflow-y: auto;\n\tborder-right: 1px #ccc solid;\n}\n.layout_menu_items.h-d6df{}\n.layout_menu_items.h-d6df ul, .layout_menu_items.h-d6df li{\n\tpadding: 0; margin: 0;\n\tlist-style: none;\n}\n.layout_menu_items.h-d6df ul{}\n.layout_menu_items.h-d6df li{\n\tbackground-color: white;\n}\n.layout_menu_items.h-d6df li a{\n\tdisplay: block;\n\tpadding: 10px 15px;\n\tborder-bottom: 1px solid #e7e7e7;\n}\n.layout_menu_items.h-d6df li.active > a, .layout_menu_items.h-d6df li.active > a:hover{\n\tbackground-color: #337ab7;\n\tborder-color: #337ab7;\n\tcolor: white;\n}\n.layout_menu_logout.h-d6df{\n\ttext-align: center;\n\tpadding-top: 100px;\n}\n.layout_menu_logout.h-d6df > div{\n\tpadding-top: 5px;\n}\n";
+		return "*{" + Runtime.rtl.toStr("box-sizing: border-box;") + Runtime.rtl.toStr("}body{") + Runtime.rtl.toStr("margin:0;padding:0;") + Runtime.rtl.toStr("}a {") + Runtime.rtl.toStr(" text-decoration: inherit; color: #0000d0; cursor: pointer; ") + Runtime.rtl.toStr("}a:hover, a:visited:hover {") + Runtime.rtl.toStr(" text-decoration: underline; color: red; ") + Runtime.rtl.toStr("}a:visited {") + Runtime.rtl.toStr(" text-decoration: inherit; color: #0000d0; ") + Runtime.rtl.toStr("}a.link {") + Runtime.rtl.toStr(" text-decoration: none; color: #0000d0; cursor: pointer; ") + Runtime.rtl.toStr("}a.link:hover, a.link:visited:hover {") + Runtime.rtl.toStr(" text-decoration: underline; color: red; ") + Runtime.rtl.toStr("}a.link:visited {") + Runtime.rtl.toStr(" text-decoration: none; color: #0000d0; ") + Runtime.rtl.toStr("}body, html{") + Runtime.rtl.toStr("font-family: 'Ubuntu', sans-serif;font-size: 14px;width: 100%;padding: 0;margin: 0;") + Runtime.rtl.toStr("}td, th{") + Runtime.rtl.toStr("font-family: 'Ubuntu', sans-serif;font-size: 14px;") + Runtime.rtl.toStr("}span.lpad5{") + Runtime.rtl.toStr("display: inline-block;padding-right: 5px;") + Runtime.rtl.toStr("}.layout.h-d6df{") + Runtime.rtl.toStr("height: 100%;") + Runtime.rtl.toStr("}.layout_wrap.h-d6df{") + Runtime.rtl.toStr("position: relative;display: flex;align-items: stretch;min-height: calc(100% - 25px);") + Runtime.rtl.toStr("}.layout_footer.h-d6df{") + Runtime.rtl.toStr("position: relative;width: 100%;height: 24px;border-top: 1px #ccc solid;background-color: white;font-size: 12px;") + Runtime.rtl.toStr("}.layout_footer.h-d6df .b_in{") + Runtime.rtl.toStr("}.layout_menu_wrap.h-d6df{") + Runtime.rtl.toStr("position: relative;width: 200px;") + Runtime.rtl.toStr("}.layout_content_wrap.h-d6df{") + Runtime.rtl.toStr("position: relative;width: calc(100% - 200px);padding-bottom: 10px;") + Runtime.rtl.toStr("}.layout_site_name.h-d6df, .layout_title_wrap.h-d6df{") + Runtime.rtl.toStr("font-size: 16px;height: 40px;") + Runtime.rtl.toStr("}.layout_site_name.h-d6df, .layout_title_wrap.h-d6df, .layout_page.h-d6df, .layout_content.h-d6df{") + Runtime.rtl.toStr("padding: 10px;") + Runtime.rtl.toStr("}.layout_site_name.h-d6df{") + Runtime.rtl.toStr("border-right: 1px #ccc solid;") + Runtime.rtl.toStr("}.layout_title_wrap.h-d6df{") + Runtime.rtl.toStr("display: flex;align-items: stretch;") + Runtime.rtl.toStr("}.layout_title.h-d6df{") + Runtime.rtl.toStr("width: 350px;") + Runtime.rtl.toStr("}.layout_top_buttons.h-d6df{") + Runtime.rtl.toStr("width: calc(100% - 350px);padding-left: 10px;") + Runtime.rtl.toStr("}.layout_content.h-d6df{") + Runtime.rtl.toStr("position: relative;height: calc(100% - 45px);padding-bottom: 0;padding-right: 0;") + Runtime.rtl.toStr("}.layout_menu_label.h-d6df{") + Runtime.rtl.toStr("font-size: 14px;font-weight: bold;padding: 10px;") + Runtime.rtl.toStr("}.layout_menu.h-d6df{") + Runtime.rtl.toStr("position: relative;height: calc(100% - 40px);overflow-y: auto;border-right: 1px #ccc solid;") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df{") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df ul, .layout_menu_items.h-d6df li{") + Runtime.rtl.toStr("padding: 0; margin: 0;list-style: none;") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df ul{") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df li{") + Runtime.rtl.toStr("background-color: white;") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df li:hover{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "default", "hover-background"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.layout_menu_items.h-d6df li a{") + Runtime.rtl.toStr("display: block;padding: 10px 15px;border-bottom: 1px solid #e7e7e7;") + Runtime.rtl.toStr("}.layout_menu_items.h-d6df li.active > a, .layout_menu_items.h-d6df li.active > a:hover{") + Runtime.rtl.toStr("background-color: #337ab7;border-color: #337ab7;color: white;") + Runtime.rtl.toStr("}.layout_menu_logout.h-d6df{") + Runtime.rtl.toStr("text-align: center;padding-top: 100px;") + Runtime.rtl.toStr("}.layout_menu_logout.h-d6df > div{") + Runtime.rtl.toStr("padding-top: 5px;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -158,7 +158,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.dashboard.main")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, layout.route.name, "app.dashboard.main")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -171,7 +171,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.dashboard.nodes")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.dashboard.nodes")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -202,7 +202,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.services")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.services")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -215,7 +215,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.yaml.index")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.yaml.index")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -228,7 +228,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.yaml.files")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.yaml.files")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -241,7 +241,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.nginx")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.nginx")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -254,7 +254,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.cli")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.cli")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -285,7 +285,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, model.route.name, "app.users")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.users")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
@@ -569,32 +569,6 @@ Object.assign(Bayrell.CloudOS.Routes,
 		return Promise.resolve(Runtime.Collection.from([container]));
 	},
 	/**
-	 * Route Action
-	 * @return RenderContainer
-	 */
-	UsersPage: async function(ctx, container)
-	{
-		/* Create model */
-		var page_model = new Bayrell.CloudOS.User.UsersPageModel(ctx, Runtime.Dict.from({"crud":new Runtime.Web.CRUD.CrudPageModel(ctx, Runtime.Dict.from({}))}));
-		/* Remote call */
-		var search_params = Runtime.Web.RenderDriver.getCrudSearchParams(ctx, container.request);
-		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.Users","interface_name":"core.crud","method_name":"search","data":search_params}), container);
-		/* Answer */
-		if (answer.isSuccess(ctx))
-		{
-			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "rows"]), Runtime.rtl.get(ctx, answer.response, "items"));
-			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "page"]), Runtime.rtl.get(ctx, answer.response, "page"));
-			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "pages"]), Runtime.rtl.get(ctx, answer.response, "pages"));
-		}
-		/* Set title */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Users page");
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
-		/* Set model */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.User.UsersPage");
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
-		return Promise.resolve(Runtime.Collection.from([container]));
-	},
-	/**
 	 * Render chain
 	 * Page not found
 	 * @return RenderContainer
@@ -659,7 +633,6 @@ Object.assign(Bayrell.CloudOS.Routes,
 	{
 		var a = [
 			"MainPage",
-			"UsersPage",
 		];
 		return Runtime.Collection.from(a);
 	},
@@ -679,20 +652,6 @@ Object.assign(Bayrell.CloudOS.Routes,
 				]),
 			});
 		}
-		if (field_name == "UsersPage")
-		{
-			var Collection = Runtime.Collection;
-			var Dict = Runtime.Dict;
-			var IntrospectionInfo = Runtime.IntrospectionInfo;
-			return new IntrospectionInfo(ctx, {
-				"kind": IntrospectionInfo.ITEM_METHOD,
-				"class_name": "Bayrell.CloudOS.Routes",
-				"name": "UsersPage",
-				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/users/","name":"site:users"})),
-				]),
-			});
-		}
 		return null;
 	},
 });
@@ -701,7 +660,7 @@ window["Bayrell.CloudOS.Routes"] = Bayrell.CloudOS.Routes;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Routes;
 "use strict;"
 /*
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -762,7 +721,7 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage,
 {
 	css: function(ctx, vars)
 	{
-		return "\n.content.h-e9f6{\n\theight: 100%;\n\tdisplay: flex;\n\talign-items: stretch;\n}\n.left.h-e9f6, .right.h-e9f6{\n\twidth: 50%;\n\tposition: relative;\n\toverflow-y: auto;\n}\n.left.h-e9f6{\n\tpadding-right: 10px;\n}\n.right.h-e9f6{\n\tpadding-left: 10px;\n\tpadding-right: 10px;\n}\n.services.h-e9f6{\n\tdisplay: table;\n\tborder-left: 1px #ccc solid;\n\tborder-top: 1px #ccc solid;\n\twidth: 100%;\n}\n.service.h-e9f6{\n\tdisplay: table-row;\n\tcursor: pointer;\n}\n.service.h-e9f6:hover{\n\tbackground: #eee;\n}\n.service.h-e9f6.active{\n\tbackground-color: #337ab7;\n\tborder-color: #337ab7;\n\tcolor: white;\n}\n.service_item.h-e9f6{\n\tdisplay: table-cell;\n\tpadding: 5px;\n\tborder-bottom: 1px #ccc solid;\n\tborder-right: 1px #ccc solid;\n}\n.label.h-e9f6{\n\tfont-weight: bold;\n}\n.info_item.h-e9f6{\n\toverflow-wrap: anywhere;\n\tpadding-bottom: 10px;\n}\n.info_item.h-e9f6:last-child{\n\tpadding-bottom: 0px;\n}\n.info_actions.h-e9f6 > .label{\n\tpadding-bottom: 5px;\n}\n.info_item_action.h-e9f6{\n\tpadding-bottom: 5px;\n}\n.info_item_action.h-e9f6:last-child{\n\tpadding-bottom: 0px;\n}\n.info_item_action.h-e9f6.state-ready .state{\n\tcolor: #00aa00;\n\tfont-weight: bold;\n}\n.info_item_action.h-e9f6.state-failed .state, .info_item_action.h-e9f6.state-rejected .state{\n\tcolor: red;\n\tfont-weight: bold;\n}\n.info_item_action_error.h-e9f6{\n\tcolor: red;\n}\n";
+		return ".content.h-e9f6{" + Runtime.rtl.toStr("height: 100%;display: flex;align-items: stretch;") + Runtime.rtl.toStr("}.left.h-e9f6, .right.h-e9f6{") + Runtime.rtl.toStr("width: 50%;position: relative;overflow-y: auto;") + Runtime.rtl.toStr("}.left.h-e9f6{") + Runtime.rtl.toStr("padding-right: 10px;") + Runtime.rtl.toStr("}.right.h-e9f6{") + Runtime.rtl.toStr("padding-left: 10px;padding-right: 10px;") + Runtime.rtl.toStr("}.services.h-e9f6{") + Runtime.rtl.toStr("display: table;border-left: 1px #ccc solid;border-top: 1px #ccc solid;width: 100%;") + Runtime.rtl.toStr("}.service.h-e9f6{") + Runtime.rtl.toStr("display: table-row;cursor: pointer;") + Runtime.rtl.toStr("}.service.h-e9f6:hover{") + Runtime.rtl.toStr("background: #eee;") + Runtime.rtl.toStr("}.service.h-e9f6.active{") + Runtime.rtl.toStr("background-color: #337ab7;border-color: #337ab7;color: white;") + Runtime.rtl.toStr("}.service_item.h-e9f6{") + Runtime.rtl.toStr("display: table-cell;padding: 5px;border-bottom: 1px #ccc solid;border-right: 1px #ccc solid;") + Runtime.rtl.toStr("}.label.h-e9f6{") + Runtime.rtl.toStr("font-weight: bold;") + Runtime.rtl.toStr("}.info_item.h-e9f6{") + Runtime.rtl.toStr("overflow-wrap: anywhere;padding-bottom: 10px;") + Runtime.rtl.toStr("}.info_item.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_actions.h-e9f6 > .label{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-ready .state{") + Runtime.rtl.toStr("color: #00aa00;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-failed .state, .info_item_action.h-e9f6.state-rejected .state{") + Runtime.rtl.toStr("color: red;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action_error.h-e9f6{") + Runtime.rtl.toStr("color: red;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -1115,7 +1074,7 @@ window["Bayrell.CloudOS.Dashboard.MainPage"] = Bayrell.CloudOS.Dashboard.MainPag
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.MainPage;
 "use strict;"
 /*!
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1254,7 +1213,7 @@ window["Bayrell.CloudOS.Dashboard.MainPageModel"] = Bayrell.CloudOS.Dashboard.Ma
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.MainPageModel;
 "use strict;"
 /*
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1453,7 +1412,33 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 {
 	css: function(ctx, vars)
 	{
-		return "\n";
+	},
+	/**
+ * Route Action
+ * @return RenderContainer
+ */
+	actionIndex: async function(ctx, container)
+	{
+		/* Create model */
+		var page_model = new Bayrell.CloudOS.User.UsersPageModel(ctx, Runtime.Dict.from({"crud":new Runtime.Web.CRUD.CrudPageModel(ctx, Runtime.Dict.from({}))}));
+		/* Remote call */
+		var search_params = Runtime.Web.CRUD.CrudPageModel.getCrudSearchParams(ctx, container.request);
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.Users","interface_name":"core.crud","method_name":"search","data":search_params}), container);
+		/* Answer */
+		if (answer.isSuccess(ctx))
+		{
+			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "rows"]), Runtime.rtl.get(ctx, answer.response, "items"));
+			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "page"]), Runtime.rtl.get(ctx, answer.response, "page"));
+			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "pages"]), Runtime.rtl.get(ctx, answer.response, "pages"));
+			page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["crud", "table", "limit"]), Runtime.rtl.get(ctx, answer.response, "limit"));
+		}
+		/* Set title */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Users page");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
+		/* Set model */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.User.UsersPage");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
+		return Promise.resolve(Runtime.Collection.from([container]));
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -1471,10 +1456,12 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 					return index + 1;
 				}
 				return "";
-			}})}),"name":Runtime.Dict.from({"api_name":"name","label":"Name","class_name":"Runtime.Web.Input.Input","class_name_table":"Runtime.Web.Input.Label"}),"banned":Runtime.Dict.from({"api_name":"banned","label":"Banned","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])})}),"edit-buttons":Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
+			}})}),"name":Runtime.Dict.from({"api_name":"name","label":"Name","class_name":"Runtime.Web.Input.Input","class_name_table":"Runtime.Web.Input.Label"}),"banned":Runtime.Dict.from({"api_name":"banned","label":"Banned","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"filter_show_select_value":true,"show_select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])})}),"edit-buttons":Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
 			{
 				return Runtime.Collection.from([Runtime.Web.CRUD.CrudPage.buttonEdit(ctx, layout, model, params, content),Runtime.Web.CRUD.CrudPage.buttonDelete(ctx, layout, model, params, content)]);
 			}})}),"password1":Runtime.Dict.from({"api_name":"password1","label":"Password","class_name":"Runtime.Web.Input.Input","class_settings":Runtime.Dict.from({"type":"password"})}),"password2":Runtime.Dict.from({"api_name":"password2","label":"Password","class_name":"Runtime.Web.Input.Input","class_settings":Runtime.Dict.from({"type":"password"})})});
+			
+			var filter_fields = Runtime.Collection.from(["name","banned"]);
 			
 			var form_fields = Runtime.Collection.from(["name","banned","password1","password2"]);
 			
@@ -1482,7 +1469,7 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 			
 			var messages = Runtime.Dict.from({"add":ctx.translate(ctx, "Bayrell.CloudOS", "Add user")});
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.User.UsersPage","crud"],"object_name":"Bayrell.CloudOS.Users","crud_settings":crud_settings,"form_fields":form_fields,"table_fields":table_fields,"messages":messages}, "layout": layout});
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.User.UsersPage","crud"],"object_name":"Bayrell.CloudOS.Users","crud_settings":crud_settings,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages}, "layout": layout});
 			
 			return __control_childs;
 		};
@@ -1533,11 +1520,26 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 	getMethodsList: function(ctx)
 	{
 		var a = [
+			"actionIndex",
 		];
 		return Runtime.Collection.from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{
+		if (field_name == "actionIndex")
+		{
+			var Collection = Runtime.Collection;
+			var Dict = Runtime.Dict;
+			var IntrospectionInfo = Runtime.IntrospectionInfo;
+			return new IntrospectionInfo(ctx, {
+				"kind": IntrospectionInfo.ITEM_METHOD,
+				"class_name": "Bayrell.CloudOS.User.UsersPage",
+				"name": "actionIndex",
+				"annotations": Collection.from([
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/users/","name":"app.users"})),
+				]),
+			});
+		}
 		return null;
 	},
 });
@@ -1546,7 +1548,7 @@ window["Bayrell.CloudOS.User.UsersPage"] = Bayrell.CloudOS.User.UsersPage;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.User.UsersPage;
 "use strict;"
 /*!
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1672,8 +1674,129 @@ Runtime.rtl.defClass(Bayrell.CloudOS.User.UsersPageModel);
 window["Bayrell.CloudOS.User.UsersPageModel"] = Bayrell.CloudOS.User.UsersPageModel;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.User.UsersPageModel;
 "use strict;"
+/*
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+Bayrell.CloudOS.Page404 = function(ctx)
+{
+	Runtime.Web.Component.apply(this, arguments);
+};
+Bayrell.CloudOS.Page404.prototype = Object.create(Runtime.Web.Component.prototype);
+Bayrell.CloudOS.Page404.prototype.constructor = Bayrell.CloudOS.Page404;
+Object.assign(Bayrell.CloudOS.Page404.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.Page404)
+		{
+		}
+		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.Page404";
+	},
+});
+Object.assign(Bayrell.CloudOS.Page404, Runtime.Web.Component);
+Object.assign(Bayrell.CloudOS.Page404,
+{
+	css: function(ctx, vars)
+	{
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Text */
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Page not found")});
+			
+			return __control_childs;
+		};
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.Page404";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Component";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.Page404",
+			"name": "Bayrell.CloudOS.Page404",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.Page404);
+window["Bayrell.CloudOS.Page404"] = Bayrell.CloudOS.Page404;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Page404;
+"use strict;"
 /*!
- *  Bayrell Cloud Web Panel
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -1745,7 +1868,7 @@ Object.assign(Bayrell.CloudOS.ModuleDescription,
 	 */
 	entities: function(ctx)
 	{
-		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"}))]);
+		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.User.UsersPage"}))]);
 	},
 	/**
 	 * Returns context settings

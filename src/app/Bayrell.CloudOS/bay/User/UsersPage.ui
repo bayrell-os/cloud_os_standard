@@ -25,7 +25,10 @@
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
 <use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
 <use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
@@ -34,10 +37,66 @@
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.UsersPageModel" />
+<use name="Bayrell.CloudOS.User.UsersPage" />
+<use name="Bayrell.CloudOS.User.UsersPageModel" />
+
 
 <style>
 </style>
+
+
+<script>
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/users/", "name": "app.users" }
+static async RenderContainer actionIndex(RenderContainer container)
+{
+	/* Create model */
+	UsersPageModel page_model = new UsersPageModel
+	{
+		"crud": new CrudPageModel
+		{
+		},
+	};
+	
+	/* Remote call */
+	Dict search_params = CrudPageModel::getCrudSearchParams(container.request);
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	(
+		{
+			"object_name": "Bayrell.CloudOS.Users",
+			"interface_name": "core.crud",
+			"method_name": "search",
+			"data": search_params,
+		},
+		container
+	);
+	
+	/* Answer */
+	if (answer.isSuccess())
+	{
+		page_model <= crud <= table <= rows <= answer.response["items"];
+		page_model <= crud <= table <= page <= answer.response["page"];
+		page_model <= crud <= table <= pages <= answer.response["pages"];
+		page_model <= crud <= table <= limit <= answer.response["limit"];
+	}
+	
+	/* Set title */
+	container <= layout <= title <= "Users page";
+	container <= layout <= layout_name <= "default";
+	
+	/* Set model */
+	container <= layout <= page_class <= classof UsersPage;
+	container <= layout <= page_model <= page_model;
+	
+	return [ container ];
+}
+
+</script>
+
 
 
 <template name="render">
@@ -78,7 +137,8 @@
 			"class_name_table": classof SelectText,
 			"class_settings":
 			{
-				"select_value": false,
+				"filter_show_select_value": true,
+				"show_select_value": false,
 				"options":
 				[
 					{"id": 0, "value": "No"},
@@ -125,6 +185,12 @@
 		},
 	};
 	
+	%var Collection<string> filter_fields =
+	[
+		"name",
+		"banned",
+	];
+	
 	%var Collection<string> form_fields =
 	[
 		"name",
@@ -149,6 +215,7 @@
 	<CrudPage @name="crud"
 		object_name="Bayrell.CloudOS.Users"
 		crud_settings={ crud_settings }
+		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
@@ -160,5 +227,6 @@
 <script type="frontend">
 
 </script>
+
 
 </class>

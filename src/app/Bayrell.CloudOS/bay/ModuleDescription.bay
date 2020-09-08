@@ -28,7 +28,9 @@ use Runtime.Web.Layout;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderController;
 use Runtime.Web.RenderDriver;
+use Runtime.Web.Route;
 use Runtime.Web.RouteController;
+use Runtime.Web.RouteList;
 use Bayrell.CloudOS.Routes;
 
 
@@ -117,7 +119,7 @@ static class ModuleDescription
 		
 		/* Register routes */
 		new Entity{ "name": classof Routes },
-		
+		new RouteList{ "name": "Bayrell.CloudOS.User.UsersPage" },
 		
 		
 		#ifdef BACKEND then

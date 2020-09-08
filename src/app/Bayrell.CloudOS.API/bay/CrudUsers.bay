@@ -39,7 +39,7 @@ static class CrudUsers extends CrudApi
 	/**
 	 * Returns crud table name
 	 */
-	pure string getTableName() => "docker_users";
+	pure string getTableName() => "users";
 	
 	
 	
@@ -74,7 +74,7 @@ static class CrudUsers extends CrudApi
 	/**
 	 * Returns table field value
 	 */
-	Collection<Collection<string>> getDefaultSearchOrder() =>
+	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
 		["id", "desc"]
 	];
@@ -217,7 +217,7 @@ static class CrudUsers extends CrudApi
 		Cursor cursor = await orm.query
 		(
 			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
-			"left join docker_users_auth as a on (u.id = a.user_id and a.type='password')",
+			"left join users_auth as a on (u.id = a.user_id and a.type='password')",
 		);
 		
 		while (true)
@@ -243,7 +243,7 @@ static class CrudUsers extends CrudApi
 		/* Insert or update nginx file */
 		await orm.insert_or_update
 		(
-			"docker_nginx",
+			"nginx_files",
 			{
 				"name": "inc/htpasswd.inc",
 			},

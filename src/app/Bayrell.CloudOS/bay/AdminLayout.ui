@@ -39,7 +39,6 @@ body, html{
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 14px;
 	width: 100%;
-	height: 100vh;
 	padding: 0;
 	margin: 0;
 }
@@ -56,16 +55,17 @@ span.lpad5{
 }
 %layout_wrap{
 	position: relative;
-	height: 100vh;
-	padding-bottom: 20px;
 	display: flex;
 	align-items: stretch;
+	min-height: calc(100% - 25px);
 }
 %layout_footer{
 	position: relative;
-	font-size: 12px;
+	width: 100%;
 	height: 24px;
-	margin-top: -24px;
+	border-top: 1px #ccc solid;
+	background-color: white;
+	font-size: 12px;
 }
 %layout_footer .b_in{
 }
@@ -76,6 +76,7 @@ span.lpad5{
 %layout_content_wrap{
 	position: relative;
 	width: calc(100% - 200px);
+	padding-bottom: 10px;
 }
 %layout_site_name, %layout_title_wrap{
 	font-size: 16px;
@@ -124,6 +125,9 @@ span.lpad5{
 %layout_menu_items li{
 	background-color: white;
 }
+%layout_menu_items li:hover{
+	background-color: ${ vars["colors", "default", "hover-background"] };
+}
 %layout_menu_items li a{
 	display: block;
 	padding: 10px 15px;
@@ -161,10 +165,10 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(model.route.name, "app.dashboard.main") ? "active": "" }>
+							<li class={ rs::start(layout.route.name, "app.dashboard.main") ? "active": "" }>
 								<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Main") }</a>
 							</li>
-							<li class={ rs::start(model.route.name, "app.dashboard.nodes") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.dashboard.nodes") ? "active": "" }>
 								<a class='nolink' href='/nodes/'>{ _("Bayrell.CloudOS", "Nodes") }</a>
 							</li>
 						</ul>
@@ -175,19 +179,19 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(model.route.name, "app.services") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.services") ? "active": "" }>
 								<a class='nolink' href='/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
 							</li>
-							<li class={ rs::start(model.route.name, "app.yaml.index") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.yaml.index") ? "active": "" }>
 								<a class='nolink' href='/yaml/'>{ _("Bayrell.CloudOS", "Yaml") }</a>
 							</li>
-							<li class={ rs::start(model.route.name, "app.yaml.files") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.yaml.files") ? "active": "" }>
 								<a class='nolink' href='/yaml/files/'>{ _("Bayrell.CloudOS", "Yaml Files") }</a>
 							</li>
-							<li class={ rs::start(model.route.name, "app.nginx") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.nginx") ? "active": "" }>
 								<a class='nolink' href='/nginx/'>{ _("Bayrell.CloudOS", "Nginx") }</a>
 							</li>
-							<li class={ rs::start(model.route.name, "app.cli") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.cli") ? "active": "" }>
 								<a class='nolink' href='/cli/'>{ _("Bayrell.CloudOS", "CLI") }</a>
 							</li>
 						</ul>
@@ -198,7 +202,7 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(model.route.name, "app.users") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.users") ? "active": "" }>
 								<a class='nolink' href='/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
 							<li>
