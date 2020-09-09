@@ -654,6 +654,16 @@ Object.assign(Runtime.rtl,
 		return false;
 	},
 	/**
+	 * Return true if value is function
+	 * @param var value
+	 * @return bool
+	 */
+	isFn: function(ctx, value)
+	{
+		if (typeof(value) == 'function') return true;
+		return false;
+	},
+	/**
 	 * Convert value to string
 	 * @param var value
 	 * @return string
@@ -16461,20 +16471,23 @@ Object.assign(Runtime.Web.RouteController,
 		var routes = new Runtime.Vector(ctx);
 		var class_info = Runtime.RuntimeUtils.getClassIntrospection(ctx, class_name);
 		/* Get routes info */
-		class_info.methods.each(ctx, (ctx, annotations, class_method_name) => 
+		if (class_info)
 		{
-			annotations.each(ctx, (ctx, route) => 
+			class_info.methods.each(ctx, (ctx, annotations, class_method_name) => 
 			{
-				if (route == null)
+				annotations.each(ctx, (ctx, route) => 
 				{
-					return ;
-				}
-				if (route instanceof Runtime.Web.Route)
-				{
-					routes.push(ctx, route.copy(ctx, Runtime.Dict.from({"class_name":class_name,"class_method_name":class_method_name})));
-				}
+					if (route == null)
+					{
+						return ;
+					}
+					if (route instanceof Runtime.Web.Route)
+					{
+						routes.push(ctx, route.copy(ctx, Runtime.Dict.from({"class_name":class_name,"class_method_name":class_method_name})));
+					}
+				});
 			});
-		});
+		}
 		return routes.toCollection(ctx);
 	},
 	/* ======================= Class Init Functions ======================= */

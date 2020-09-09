@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.User.UsersPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.User.UsersPageModel"
+	name="Bayrell.CloudOS.Services.YamlFilesPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Services.YamlFilesPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -37,9 +37,10 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.User.UsersPage" />
-<use name="Bayrell.CloudOS.User.UsersPageModel" />
+<use name="Bayrell.CloudOS.Services.YamlFilesPage" />
+<use name="Bayrell.CloudOS.Services.YamlFilesPageModel" />
 
 
 <style>
@@ -52,11 +53,11 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/users/", "name": "app.users" }
+@Route{ "uri": "/services/yaml/files/", "name": "app.services.yaml.files" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	UsersPageModel page_model = new UsersPageModel
+	YamlFilesPageModel page_model = new YamlFilesPageModel
 	{
 		"crud": new CrudPageModel
 		{
@@ -68,7 +69,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 	(
 		{
-			"object_name": "Bayrell.CloudOS.Users",
+			"object_name": "Bayrell.CloudOS.YamlFiles",
 			"interface_name": "core.crud",
 			"method_name": "search",
 			"data": search_params,
@@ -86,11 +87,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	/* Set title */
-	container <= layout <= title <= "Users page";
+	container <= layout <= title <= "Yaml files page";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof UsersPage;
+	container <= layout <= page_class <= classof YamlFilesPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -111,45 +112,22 @@ static async RenderContainer actionIndex(RenderContainer container)
 			"class_name": classof Label,
 			"class_settings":
 			{
-				"render": html (LayoutModel layout, var model, Dict params, var content)
-				{
-					TableModel table_model = params["table-model"];
-					int index = params["row-index"];
-					if (table_model)
-					{
-						return index + 1;
-					}
-					return "";
-				},
+				"render": CrudPage::fieldNumber,
 			},
 		},
-		
 		new FieldInfo
 		{
-			"api_name": "name",
-			"label": "Name",
+			"api_name": "file_name",
+			"label": "File name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
-		
 		new FieldInfo
 		{
-			"api_name": "banned",
-			"label": "Banned",
-			"class_name": classof Select,
-			"class_name_table": classof SelectText,
-			"class_settings":
-			{
-				"filter_show_select_value": true,
-				"show_select_value": false,
-				"options":
-				[
-					{"id": 0, "value": "No"},
-					{"id": 1, "value": "Yes"},
-				],
-			}
+			"api_name": "content",
+			"label": "Content",
+			"class_name": classof TextArea,
 		},
-		
 		new FieldInfo
 		{
 			"api_name": "edit-buttons",
@@ -167,64 +145,43 @@ static async RenderContainer actionIndex(RenderContainer container)
 				},
 			},
 		},
-		
-		new FieldInfo
-		{
-			"api_name": "password1",
-			"label": "Password",
-			"class_name": classof Input,
-			"class_settings":
-			{
-				"type": "password",
-			},
-		},
-		
-		new FieldInfo
-		{
-			"api_name": "password2",
-			"label": "Password",
-			"class_name": classof Input,
-			"class_settings":
-			{
-				"type": "password",
-			},
-		},
 	];
 	
 	%var Collection<string> filter_fields =
 	[
-		"name",
-		"banned",
+		"file_name",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"name",
-		"banned",
-		"password1",
-		"password2",
+		"file_name",
+		"content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"name",
-		"banned",
+		"file_name",
 		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add user")
+		"add": _("Bayrell.CloudOS", "Add yaml file"),
+		"delete": string (Dict item) =>
+			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["file_name"] } ),
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Users"
+		object_name="Bayrell.CloudOS.YamlFiles"
 		crud_settings={ crud_settings }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		dialog_form={{
+			"width": "800px"
+		}}
 	/>
 	
 </template>

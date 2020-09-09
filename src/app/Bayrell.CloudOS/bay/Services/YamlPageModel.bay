@@ -16,14 +16,14 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Nginx;
+namespace Bayrell.CloudOS.Services;
 
 use Runtime.lib;
 use Runtime.BaseStruct;
 use Runtime.Web.CRUD.CrudPageModel;
 
 
-struct NginxPageModel extends BaseStruct
+struct YamlPageModel extends BaseStruct
 {	
 	CrudPageModel crud = null;
 }

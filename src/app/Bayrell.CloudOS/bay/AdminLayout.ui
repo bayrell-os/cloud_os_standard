@@ -165,7 +165,7 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(layout.route.name, "app.dashboard.main") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.dashboard.main") ? "active": "" }>
 								<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Main") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.dashboard.nodes") ? "active": "" }>
@@ -179,14 +179,16 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(layout["route", "name"], "app.services") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.services.index") ? "active": "" }>
 								<a class='nolink' href='/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.yaml.index") ? "active": "" }>
-								<a class='nolink' href='/yaml/'>{ _("Bayrell.CloudOS", "Yaml") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.services.yaml.index") ? "active": "" }>
+								<a class='nolink' href='/services/yaml/'>{ _("Bayrell.CloudOS", "Yaml") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.yaml.files") ? "active": "" }>
-								<a class='nolink' href='/yaml/files/'>{ _("Bayrell.CloudOS", "Yaml Files") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.services.yaml.files") ? "active": "" }>
+								<a class='nolink' href='/services/yaml/files/'>
+									{ _("Bayrell.CloudOS", "Yaml Files") }
+								</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.nginx") ? "active": "" }>
 								<a class='nolink' href='/nginx/'>{ _("Bayrell.CloudOS", "Nginx") }</a>
@@ -206,10 +208,14 @@ span.lpad5{
 								<a class='nolink' href='/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
 							<li>
-								<a class='nolink' href='/adminer/'>{ _("Bayrell.CloudOS", "Adminer") }</a>
+								<a class='nolink' href='/adminer/' target="_self">
+									{ _("Bayrell.CloudOS", "Adminer") }
+								</a>
 							</li>
 							<li>
-								<a class='nolink' href='/adminer/info/'>{ _("Bayrell.CloudOS", "PHP Info") }</a>
+								<a class='nolink' href='/adminer/info/' target="_self">
+									{ _("Bayrell.CloudOS", "PHP Info") }
+								</a>
 							</li>
 						</ul>
 					</div>

@@ -33,14 +33,14 @@ use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.FieldInfo;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.Users", "interface_name": "core.crud" }
-static class CrudUsers extends CrudApi
+@ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "core.crud" }
+static class CrudYamlFiles extends CrudApi
 {
 	
 	/**
 	 * Returns crud table name
 	 */
-	pure string getTableName() => "users";
+	pure string getTableName() => "yaml_files";
 	
 	
 	
@@ -57,16 +57,16 @@ static class CrudUsers extends CrudApi
 		},
 		new FieldInfo
 		{
-			"api_name": "name",
+			"api_name": "file_name",
 			"dbtype": "string",
 			"default": "",
 			"required": true,
 		},
 		new FieldInfo
 		{
-			"api_name": "banned",
-			"dbtype": "int",
-			"default": "0",
+			"api_name": "content",
+			"dbtype": "string",
+			"default": "",
 		},
 	];
 	
