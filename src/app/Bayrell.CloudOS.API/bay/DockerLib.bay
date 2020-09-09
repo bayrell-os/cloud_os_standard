@@ -16,13 +16,13 @@
  *  limitations under the License.
  */
 
-namespace App;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
 use Runtime.Exceptions.RuntimeException;
-use Runtime.ORM.Cursor;
-use Runtime.ORM.ORMProviderInterface;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
 
 
 class DockerLib

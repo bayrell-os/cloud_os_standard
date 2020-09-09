@@ -83,41 +83,6 @@ static class Routes
 	
 	
 	/**
-	 * Route Action
-	 * @return RenderContainer
-	 */
-	@Route{ "uri": "/", "name": "site:index" }
-	static async RenderContainer MainPage(RenderContainer container)
-	{
-		/*
-		RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-		(
-			{
-				"object_name": "App.Dashboard",
-				"method_name": "status",
-			},
-			container
-		);
-		*/
-		MainPageModel page_model = new MainPageModel
-		{
-			/*"services": answer.isSuccess() ? msg["response"]["services"] : null,*/
-		};
-		
-		/* Set title */
-		container <= layout <= title <= "Index page";
-		container <= layout <= layout_name <= "default";
-		
-		/* Set model */
-		container <= layout <= page_class <= classof MainPage;
-		container <= layout <= page_model <= page_model;
-		
-		return [ container ];
-	}
-	
-	
-	
-	/**
 	 * Render chain
 	 * Page not found
 	 * @return RenderContainer

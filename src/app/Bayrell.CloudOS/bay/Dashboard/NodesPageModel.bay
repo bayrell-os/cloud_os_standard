@@ -16,11 +16,12 @@
  *  limitations under the License.
  */
 
-namespace App.Dashboard;
+namespace Bayrell.CloudOS.Dashboard;
 
-use Runtime.CoreStruct;
+use Runtime.BaseStruct;
 
-struct NodesPageModel extends CoreStruct
+
+struct NodesPageModel extends BaseStruct
 {
 	Collection services = null;
 	Dict nodes = null;

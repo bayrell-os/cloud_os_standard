@@ -6,6 +6,8 @@
 		"Routes",
 		"Dashboard/MainPage",
 		"Dashboard/MainPageModel",
+		"Dashboard/NodesPage",
+		"Dashboard/NodesPageModel",
 		"Other/AdminerPage",
 		"Nginx/NginxPage",
 		"Nginx/NginxPageModel",

@@ -16,32 +16,28 @@
  *  limitations under the License.
  */
 
-namespace App;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
-use Runtime.Task.Annotations.CronTask;
-use Runtime.Task.Annotations.CronTimer;
-use Runtime.Task.Annotations.TaskList;
-use Runtime.Task.Annotations.TaskMethod;
-use Runtime.Task.TaskOutputProvider;
-use Runtime.ORM.Cursor;
-use Runtime.ORM.ORMProviderInterface;
-use App.Service.ServiceCrudApi;
-use App.DockerLib;
+use Runtime.Task.CronTask;
+use Runtime.Task.CronTimer;
+use Runtime.Task.TaskList;
+use Runtime.Task.TaskMethod;
+use Runtime.Task.TaskDriver;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
+use Bayrell.CloudOS.API.DockerLib;
 
 
 @TaskList{}
-class SyncDockerServicesTask
+class DockerTasks
 {
 	
-	@CronTimer
-	{
-		"timer": 15,
-	}
+	@CronTimer{ "timer": 15 }
 	static async void sync()
 	{
-		await static::sync_services();
+		await static::syncServices();
 	}
 	
 	
@@ -49,30 +45,33 @@ class SyncDockerServicesTask
 	/**
 	 * Sync services
 	 */
-	static async void sync_services()
+	static async void syncServices()
 	{
-		TaskOutputProvider output = @ -> method getProvider(classof TaskOutputProvider);
-		ORMProviderInterface p = @ -> method getProvider(classof ORMProviderInterface);
+		Cursor cursor = null;
+		TaskDriver output = @.getDriver(classof TaskDriver);
+		ORMDriver orm = @.getDriver(classof ORMDriver);
 		
+		int time = rtl::time();
+		
+		/* Get nodes */
 		string s = await DockerLib::dockerApi("/nodes");
 		Dict nodes = s
-			-> RuntimeUtils::json_decode
-			-> lib::transition( list (Dict node) => [ node, node["ID"] ] )
+			|> RuntimeUtils::json_decode
+			|> lib::transition( list (Dict node) => [ node, node["ID"] ] )
 		;
 		
-		int time = @.time();
+		/* Get services */
 		string s = await DockerLib::dockerApi("/services");
-		
 		Collection services = RuntimeUtils::json_decode(s);
 		
 		for (int i=0; i<services.count(); i++)
 		{
 			Dict json = services.item(i);
 			string service_id = json.get("ID", "");
-			string service_name = json -> lib::attr(["Spec", "Name"], "");
-			string service_image = json -> lib::attr(["Spec", "TaskTemplate", "ContainerSpec", "Image"], "");
+			string service_name = json |> attr "Spec", "Name" |> default string "";
+			string service_image = json |> attr "Spec", "TaskTemplate", "ContainerSpec", "Image" |> default string "";
 			
-			output -> method writeln ("Update service " ~ service_name);
+			output.writeln ("Update service " ~ service_name);
 			string tasks_str = await DockerLib::dockerApi("/tasks?filters=" ~
 				rs::url_encode('{"service":{"' ~ service_name ~ '":true}}'))
 			;
@@ -80,52 +79,45 @@ class SyncDockerServicesTask
 			Dict tasks = RuntimeUtils::json_decode(tasks_str);
 			
 			/* Insert or update */
-			p
-				/* -> lib::copy{ "log_query": true } */
-				-> await method insert_or_update
-				(
-					p.prefix ~ "docker_services",
-					{
-						"service_id": service_id,
-					},
-					{
-						"_name": service_name,
-						"_image": service_image,
-						"is_deleted": 0,
-						"enable": 1,
-						"timestamp": time,
-						"json": RuntimeUtils::json_encode(json),
-						"tasks": tasks_str,
-						"balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
-					}
-				)
-				-> await method end
-			;
-			
+			await orm.insert_or_update
+			(
+				"services",
+				{
+					"service_id": service_id,
+				},
+				{
+					"_name": service_name,
+					"_image": service_image,
+					"is_deleted": 0,
+					"enable": 1,
+					"timestamp": time,
+					"json": RuntimeUtils::json_encode(json),
+					"tasks": tasks_str,
+					"balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
+				}
+			);
 		}
 		
-		p
-			-> await method query
-			(
-				"update " ~ p.prefix ~ "docker_services set enable=0 where timestamp != :timestamp",
-				{
-					"timestamp": time,
-				}
-			)
-			-> await method end
-		;
+		/* Disable old services */
+		cursor = await orm.query
+		(
+			"update services set enable=0 where timestamp != :timestamp",
+			{
+				"timestamp": time,
+			}
+		);
+		await cursor.close();
 		
-		p
-			-> await method query
-			(
-				"delete from " ~ p.prefix ~ "docker_services where is_deleted=1 and timestamp < :timestamp",
-				{
-					"timestamp": time - 24*60*60,
-				}
-			)
-			-> await method end
-		;
 		
+		/* Delete old services */
+		cursor = await orm.query
+		(
+			"delete from services where is_deleted=1 and timestamp < :timestamp",
+			{
+				"timestamp": time - 24*60*60,
+			}
+		)
+		await cursor.close();
 	}
 	
 	
@@ -146,15 +138,15 @@ class SyncDockerServicesTask
 		};
 		
 		Collection Tasks = [];
-		int total = rtl::attr(json, ["Spec", "Mode", "Replicated", "Replicas"], 1);
+		int total = json["Spec", "Mode", "Replicated", "Replicas"] |> default int 1;
 		int work = 0;
 		
 		tasks = tasks.sortIm
 		(
 			bool (Dict a, Dict b)
 			{
-				int time_a = rtl::timestamp( rs::substr(a["Status"]["Timestamp"], 0, 19) );
-				int time_b = rtl::timestamp( rs::substr(b["Status"]["Timestamp"], 0, 19) );
+				int time_a = rtl::timestamp( rs::substr(a["Status", "Timestamp"], 0, 19) );
+				int time_b = rtl::timestamp( rs::substr(b["Status", "Timestamp"], 0, 19) );
 				return time_a < time_b;
 			}
 		);
@@ -162,9 +154,9 @@ class SyncDockerServicesTask
 		for (int i=0; i<tasks.count(); i++)
 		{
 			Dict task = tasks.item(i);
-			string state = task["Status"]["State"];
+			string state = task["Status", "State"];
 			
-			Dict node = nodes.get(task["NodeID"], null);
+			Dict node = nodes[task["NodeID"]];
 			
 			Dict service =
 			{
@@ -173,7 +165,7 @@ class SyncDockerServicesTask
 				"Slot": task["Slot"],
 				"Node": {
 					"ID": task["NodeID"],
-					"Hostname": node["Description"]["Hostname"],
+					"Hostname": node["Description", "Hostname"],
 					"Status": node["Status"],
 				},
 				"Networks": [],
@@ -186,8 +178,8 @@ class SyncDockerServicesTask
 					Dict network = NetworksAttachments.item(j);
 					service <= Networks <= service.Networks.pushIm
 					{
-						"ID": network["Network"]["ID"],
-						"Name": network["Network"]["Spec"]["Name"],
+						"ID": network["Network", "ID"],
+						"Name": network["Network", "Spec", "Name"],
 						"Addresses": network["Addresses"],
 					};
 				}

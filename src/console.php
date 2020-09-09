@@ -20,6 +20,7 @@ $env = include ROOT_PATH . "/env.php";
 $loader = ( new Loader() )
 	->addIncludePath( ROOT_PATH . "/app" )
 	->addIncludePath( ROOT_PATH . "/lib" )
+	->setArgs($argv)
 	->setEnv($env)
 	->setMainModule("Bayrell.CloudOS")
 	->setEntryPoint("Runtime.Task.Entry")

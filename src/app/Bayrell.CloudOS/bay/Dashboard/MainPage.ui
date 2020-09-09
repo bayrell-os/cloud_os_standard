@@ -22,8 +22,55 @@
 >
 
 <use name="Runtime.Core.Message" />
+<use name="Runtime.Core.RemoteCallAnswer" />
 <use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Bayrell.CloudOS.Dashboard.MainPage" />
+<use name="Bayrell.CloudOS.Dashboard.MainPageModel" />
+
+
+<script>
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/", "name": "app.dashboard.main" }
+static async RenderContainer MainPage(RenderContainer container)
+{
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	(
+		{
+			"object_name": "Bayrell.CloudOS.Dashboard",
+			"method_name": "status",
+		},
+		container
+	);
+	
+	/* Set page model */
+	MainPageModel page_model = new MainPageModel
+	{
+		"services": answer.isSuccess() ? answer["response", "services"] : null,
+	};
+	
+	/* Set title */
+	container <= layout <= title <= "Index page";
+	container <= layout <= layout_name <= "default";
+	
+	/* Set model */
+	container <= layout <= page_class <= classof MainPage;
+	container <= layout <= page_model <= page_model;
+	
+	return [ container ];
+}
+
+</script>
+
+
 
 <style>
 %content{
@@ -31,15 +78,15 @@
 	display: flex;
 	align-items: stretch;
 }
-%left, %right{
+%content_left, %content_right{
 	width: 50%;
 	position: relative;
 	overflow-y: auto;
 }
-%left{
+%content_left{
 	padding-right: 10px;
 }
-%right{
+%content_right{
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -102,10 +149,10 @@
 
 <template name="render">
 	<div class="content">
-		<div class="left">
+		<div class="content_left">
 			{ static::renderServices(layout, model, params) }
 		</div>
-		<div class="right">
+		<div class="content_right">
 			{ static::renderInfo(layout, model, params) }
 		</div>
 	</div>
@@ -113,7 +160,7 @@
 
 
 <template name="renderServices" args="LayoutModel layout, MainPageModel model, Dict params">
-	%var Collection<Dict> services = model["services"] |> default Dict [];
+	%var Collection<Dict> services = model["services"] |> default Collection [];
 	<div class="services">
 		<div class="service">
 			<div class="service_item label service_item--name">{ _("Bayrell.CloudOS", "Name") }</div>
@@ -205,10 +252,10 @@ pure string trimImageName(string name)
 /**
  * On click
  */
-public void onClick(MouseClickEvent e)
+public void onClick(Message<MouseClickEvent> msg)
 {
-	int pos = e.sender.params["data-index"];
-	this.update("setAttr", "active", "pos");
+	int pos = msg.sender.params["data-index"];
+	this.update("setAttr", "active", pos);
 }
 
 </script>

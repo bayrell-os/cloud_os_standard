@@ -544,31 +544,6 @@ Object.assign(Bayrell.CloudOS.Routes,
 		return Runtime.Collection.from([container]);
 	},
 	/**
-	 * Route Action
-	 * @return RenderContainer
-	 */
-	MainPage: async function(ctx, container)
-	{
-		/*
-		RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-		(
-			{
-				"object_name": "App.Dashboard",
-				"method_name": "status",
-			},
-			container
-		);
-		*/
-		var page_model = new Bayrell.CloudOS.Dashboard.MainPageModel(ctx, Runtime.Dict.from({}));
-		/* Set title */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Index page");
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
-		/* Set model */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.Dashboard.MainPage");
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
-		return Promise.resolve(Runtime.Collection.from([container]));
-	},
-	/**
 	 * Render chain
 	 * Page not found
 	 * @return RenderContainer
@@ -632,26 +607,11 @@ Object.assign(Bayrell.CloudOS.Routes,
 	getMethodsList: function(ctx)
 	{
 		var a = [
-			"MainPage",
 		];
 		return Runtime.Collection.from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{
-		if (field_name == "MainPage")
-		{
-			var Collection = Runtime.Collection;
-			var Dict = Runtime.Dict;
-			var IntrospectionInfo = Runtime.IntrospectionInfo;
-			return new IntrospectionInfo(ctx, {
-				"kind": IntrospectionInfo.ITEM_METHOD,
-				"class_name": "Bayrell.CloudOS.Routes",
-				"name": "MainPage",
-				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/","name":"site:index"})),
-				]),
-			});
-		}
 		return null;
 	},
 });
@@ -690,10 +650,10 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage.prototype,
 	/**
  * On click
  */
-	onClick: function(ctx, e)
+	onClick: function(ctx, msg)
 	{
-		var pos = Runtime.rtl.get(ctx, e.sender.params, "data-index");
-		this.update(ctx, "setAttr", "active", "pos");
+		var pos = Runtime.rtl.get(ctx, msg.sender.params, "data-index");
+		this.update(ctx, "setAttr", "active", pos);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -719,9 +679,26 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage.prototype,
 Object.assign(Bayrell.CloudOS.Dashboard.MainPage, Runtime.Web.Component);
 Object.assign(Bayrell.CloudOS.Dashboard.MainPage,
 {
+	/**
+ * Route Action
+ * @return RenderContainer
+ */
+	MainPage: async function(ctx, container)
+	{
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.Dashboard","method_name":"status"}), container);
+		/* Set page model */
+		var page_model = new Bayrell.CloudOS.Dashboard.MainPageModel(ctx, Runtime.Dict.from({"services":(answer.isSuccess(ctx)) ? (Runtime.rtl.attr(ctx, answer, ["response", "services"])) : (null)}));
+		/* Set title */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Index page");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
+		/* Set model */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.Dashboard.MainPage");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
+		return Promise.resolve(Runtime.Collection.from([container]));
+	},
 	css: function(ctx, vars)
 	{
-		return ".content.h-e9f6{" + Runtime.rtl.toStr("height: 100%;display: flex;align-items: stretch;") + Runtime.rtl.toStr("}.left.h-e9f6, .right.h-e9f6{") + Runtime.rtl.toStr("width: 50%;position: relative;overflow-y: auto;") + Runtime.rtl.toStr("}.left.h-e9f6{") + Runtime.rtl.toStr("padding-right: 10px;") + Runtime.rtl.toStr("}.right.h-e9f6{") + Runtime.rtl.toStr("padding-left: 10px;padding-right: 10px;") + Runtime.rtl.toStr("}.services.h-e9f6{") + Runtime.rtl.toStr("display: table;border-left: 1px #ccc solid;border-top: 1px #ccc solid;width: 100%;") + Runtime.rtl.toStr("}.service.h-e9f6{") + Runtime.rtl.toStr("display: table-row;cursor: pointer;") + Runtime.rtl.toStr("}.service.h-e9f6:hover{") + Runtime.rtl.toStr("background: #eee;") + Runtime.rtl.toStr("}.service.h-e9f6.active{") + Runtime.rtl.toStr("background-color: #337ab7;border-color: #337ab7;color: white;") + Runtime.rtl.toStr("}.service_item.h-e9f6{") + Runtime.rtl.toStr("display: table-cell;padding: 5px;border-bottom: 1px #ccc solid;border-right: 1px #ccc solid;") + Runtime.rtl.toStr("}.label.h-e9f6{") + Runtime.rtl.toStr("font-weight: bold;") + Runtime.rtl.toStr("}.info_item.h-e9f6{") + Runtime.rtl.toStr("overflow-wrap: anywhere;padding-bottom: 10px;") + Runtime.rtl.toStr("}.info_item.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_actions.h-e9f6 > .label{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-ready .state{") + Runtime.rtl.toStr("color: #00aa00;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-failed .state, .info_item_action.h-e9f6.state-rejected .state{") + Runtime.rtl.toStr("color: red;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action_error.h-e9f6{") + Runtime.rtl.toStr("color: red;") + Runtime.rtl.toStr("}");
+		return ".content.h-e9f6{" + Runtime.rtl.toStr("height: 100%;display: flex;align-items: stretch;") + Runtime.rtl.toStr("}.content_left.h-e9f6, .content_right.h-e9f6{") + Runtime.rtl.toStr("width: 50%;position: relative;overflow-y: auto;") + Runtime.rtl.toStr("}.content_left.h-e9f6{") + Runtime.rtl.toStr("padding-right: 10px;") + Runtime.rtl.toStr("}.content_right.h-e9f6{") + Runtime.rtl.toStr("padding-left: 10px;padding-right: 10px;") + Runtime.rtl.toStr("}.services.h-e9f6{") + Runtime.rtl.toStr("display: table;border-left: 1px #ccc solid;border-top: 1px #ccc solid;width: 100%;") + Runtime.rtl.toStr("}.service.h-e9f6{") + Runtime.rtl.toStr("display: table-row;cursor: pointer;") + Runtime.rtl.toStr("}.service.h-e9f6:hover{") + Runtime.rtl.toStr("background: #eee;") + Runtime.rtl.toStr("}.service.h-e9f6.active{") + Runtime.rtl.toStr("background-color: #337ab7;border-color: #337ab7;color: white;") + Runtime.rtl.toStr("}.service_item.h-e9f6{") + Runtime.rtl.toStr("display: table-cell;padding: 5px;border-bottom: 1px #ccc solid;border-right: 1px #ccc solid;") + Runtime.rtl.toStr("}.label.h-e9f6{") + Runtime.rtl.toStr("font-weight: bold;") + Runtime.rtl.toStr("}.info_item.h-e9f6{") + Runtime.rtl.toStr("overflow-wrap: anywhere;padding-bottom: 10px;") + Runtime.rtl.toStr("}.info_item.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_actions.h-e9f6 > .label{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-ready .state{") + Runtime.rtl.toStr("color: #00aa00;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action.h-e9f6.state-failed .state, .info_item_action.h-e9f6.state-rejected .state{") + Runtime.rtl.toStr("color: red;font-weight: bold;") + Runtime.rtl.toStr("}.info_item_action_error.h-e9f6{") + Runtime.rtl.toStr("color: red;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -734,17 +711,17 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage,
 			var __v0; var __v0_childs = [];
 			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["content", this.getCssHash(ctx)].join(" "),"@elem_name":"content"}});
 			
-			/* Element 'div.left' */
+			/* Element 'div.content_left' */
 			var __v1; var __v1_childs = [];
-			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["left", this.getCssHash(ctx)].join(" "),"@elem_name":"left"}});
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["content_left", this.getCssHash(ctx)].join(" "),"@elem_name":"content_left"}});
 			
 			/* Text */
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": this.renderServices(ctx, layout, model, params)});
 			RenderDriver.p(__v1, __v1_childs);
 			
-			/* Element 'div.right' */
+			/* Element 'div.content_right' */
 			var __v1; var __v1_childs = [];
-			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["right", this.getCssHash(ctx)].join(" "),"@elem_name":"right"}});
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["content_right", this.getCssHash(ctx)].join(" "),"@elem_name":"content_right"}});
 			
 			/* Text */
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": this.renderInfo(ctx, layout, model, params)});
@@ -762,7 +739,7 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage,
 			var __control_childs = [];
 			
 			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, model, "services"));
-			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Dict", Runtime.Collection.from([])));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var services = __v0.value(ctx);
 			
 			/* Element 'div.services' */
@@ -1061,11 +1038,26 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPage,
 	getMethodsList: function(ctx)
 	{
 		var a = [
+			"MainPage",
 		];
 		return Runtime.Collection.from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{
+		if (field_name == "MainPage")
+		{
+			var Collection = Runtime.Collection;
+			var Dict = Runtime.Dict;
+			var IntrospectionInfo = Runtime.IntrospectionInfo;
+			return new IntrospectionInfo(ctx, {
+				"kind": IntrospectionInfo.ITEM_METHOD,
+				"class_name": "Bayrell.CloudOS.Dashboard.MainPage",
+				"name": "MainPage",
+				"annotations": Collection.from([
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/","name":"app.dashboard.main"})),
+				]),
+			});
+		}
 		return null;
 	},
 });
@@ -1211,6 +1203,424 @@ Object.assign(Bayrell.CloudOS.Dashboard.MainPageModel,
 Runtime.rtl.defClass(Bayrell.CloudOS.Dashboard.MainPageModel);
 window["Bayrell.CloudOS.Dashboard.MainPageModel"] = Bayrell.CloudOS.Dashboard.MainPageModel;
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.MainPageModel;
+"use strict;"
+/*
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+if (typeof Bayrell.CloudOS.Dashboard == 'undefined') Bayrell.CloudOS.Dashboard = {};
+Bayrell.CloudOS.Dashboard.NodesPage = function(ctx)
+{
+	Runtime.Web.Component.apply(this, arguments);
+};
+Bayrell.CloudOS.Dashboard.NodesPage.prototype = Object.create(Runtime.Web.Component.prototype);
+Bayrell.CloudOS.Dashboard.NodesPage.prototype.constructor = Bayrell.CloudOS.Dashboard.NodesPage;
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPage.prototype,
+{
+	/**
+ * On click
+ */
+	onClick: function(ctx, e)
+	{
+		var pos = Runtime.rtl.get(ctx, e.sender.params, "data-index");
+		this.update(ctx, "setAttr", "active", pos);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.Dashboard.NodesPage)
+		{
+		}
+		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.Dashboard.NodesPage";
+	},
+});
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPage, Runtime.Web.Component);
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPage,
+{
+	/**
+ * Route Action
+ * @return WebContainer
+ */
+	actionIndex: async function(ctx, container)
+	{
+		/* Get services state */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.Dashboard","method_name":"status"}), container);
+		/* Set page model */
+		var page_model = new Bayrell.CloudOS.Dashboard.NodesPageModel(ctx, Runtime.Dict.from({"services":(answer.isSuccess(ctx)) ? (Runtime.rtl.attr(ctx, answer, ["response", "services"])) : (null),"nodes":(answer.isSuccess(ctx)) ? (Runtime.rtl.attr(ctx, answer, ["response", "nodes"])) : (null)}));
+		/* Set title */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Nodes");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
+		/* Create model */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.Dashboard.NodesPage");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
+		return Promise.resolve(Runtime.Collection.from([container]));
+	},
+	css: function(ctx, vars)
+	{
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.nodes' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["nodes", this.getCssHash(ctx)].join(" "),"@elem_name":"nodes"}});
+			
+			for (var i = 0;i < model.nodes.count(ctx);i++)
+			{
+				var node = Runtime.rtl.get(ctx, model.nodes, i);
+				
+				/* Element 'div.node' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["node", this.getCssHash(ctx)].join(" "),"@key":i,"@elem_name":"node"}});
+				
+				/* Element 'div.node_name' */
+				var __v2; var __v2_childs = [];
+				[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "div","attrs": {"class":["node_name", this.getCssHash(ctx)].join(" "),"@elem_name":"node_name"}});
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Hostname")});
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": ": "});
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, node, "Description"), "Hostname")});
+				RenderDriver.p(__v2, __v2_childs);
+				
+				/* Element 'ul.node_services' */
+				var __v2; var __v2_childs = [];
+				[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "ul","attrs": {"class":["node_services", this.getCssHash(ctx)].join(" "),"@elem_name":"node_services"}});
+				
+				/* Text */
+				[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "text", {"content": this.renderNodeTasks(ctx, layout, model, node)});
+				RenderDriver.p(__v2, __v2_childs);
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	renderNodeTasks: function(ctx, layout, model, node)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			var tasks = this.getNodeTasks(ctx, model, node);
+			
+			for (var i = 0;i < tasks.count(ctx);i++)
+			{
+				var task = Runtime.rtl.get(ctx, tasks, i);
+				
+				/* Element 'li.node_service' */
+				var __v0; var __v0_childs = [];
+				[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "li","attrs": {"class":["node_service", this.getCssHash(ctx)].join(" "),"@elem_name":"node_service"}});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.rtl.get(ctx, task, "ServiceName")});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": " ["});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.rtl.get(ctx, task, "ID")});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": "] "});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Address")});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": ":&nbsp;"});
+				
+				/* Text */
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.rs.join(ctx, ", ", Runtime.rtl.get(ctx, task, "Networks").map(ctx, (ctx, net) => 
+				{
+					return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, net, "Addresses"), 0);
+				}))});
+				RenderDriver.p(__v0, __v0_childs);
+			}
+			
+			return __control_childs;
+		};
+	},
+	/**
+ * Get node tasks
+ */
+	getNodeTasks: function(ctx, model, node)
+	{
+		var tasks = new Runtime.Vector(ctx);
+		if (model.services != null)
+		{
+			for (var i = 0;i < model.services.count(ctx);i++)
+			{
+				var item = model.services.item(ctx, i);
+				var Tasks = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, item, "balancer"), "Tasks");
+				for (var j = 0;j < Tasks.count(ctx);j++)
+				{
+					var task = Tasks.item(ctx, j);
+					if (Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, task, "Node"), "ID") == Runtime.rtl.get(ctx, node, "ID") && Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, task, "Status"), "State") == "running")
+					{
+						tasks.push(ctx, task.setIm(ctx, "ServiceName", Runtime.rtl.get(ctx, item, "_name")));
+					}
+				}
+			}
+		}
+		return tasks.toCollection(ctx);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS.Dashboard";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.Dashboard.NodesPage";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Component";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.Dashboard.NodesPage",
+			"name": "Bayrell.CloudOS.Dashboard.NodesPage",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+			"actionIndex",
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		if (field_name == "actionIndex")
+		{
+			var Collection = Runtime.Collection;
+			var Dict = Runtime.Dict;
+			var IntrospectionInfo = Runtime.IntrospectionInfo;
+			return new IntrospectionInfo(ctx, {
+				"kind": IntrospectionInfo.ITEM_METHOD,
+				"class_name": "Bayrell.CloudOS.Dashboard.NodesPage",
+				"name": "actionIndex",
+				"annotations": Collection.from([
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/nodes/","name":"app.dashboard.nodes"})),
+				]),
+			});
+		}
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.Dashboard.NodesPage);
+window["Bayrell.CloudOS.Dashboard.NodesPage"] = Bayrell.CloudOS.Dashboard.NodesPage;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.NodesPage;
+"use strict;"
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+if (typeof Bayrell.CloudOS.Dashboard == 'undefined') Bayrell.CloudOS.Dashboard = {};
+Bayrell.CloudOS.Dashboard.NodesPageModel = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Bayrell.CloudOS.Dashboard.NodesPageModel.prototype = Object.create(Runtime.BaseStruct.prototype);
+Bayrell.CloudOS.Dashboard.NodesPageModel.prototype.constructor = Bayrell.CloudOS.Dashboard.NodesPageModel;
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPageModel.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.services = null;
+		this.nodes = null;
+		this.active = -1;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.Dashboard.NodesPageModel)
+		{
+			this.services = o.services;
+			this.nodes = o.nodes;
+			this.active = o.active;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "services")this.services = v;
+		else if (k == "nodes")this.nodes = v;
+		else if (k == "active")this.active = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "services")return this.services;
+		else if (k == "nodes")return this.nodes;
+		else if (k == "active")return this.active;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.Dashboard.NodesPageModel";
+	},
+});
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPageModel, Runtime.BaseStruct);
+Object.assign(Bayrell.CloudOS.Dashboard.NodesPageModel,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS.Dashboard";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.Dashboard.NodesPageModel";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.Dashboard.NodesPageModel",
+			"name": "Bayrell.CloudOS.Dashboard.NodesPageModel",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("services");
+			a.push("nodes");
+			a.push("active");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "services") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.Dashboard.NodesPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "nodes") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.Dashboard.NodesPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "active") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.Dashboard.NodesPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.Dashboard.NodesPageModel);
+window["Bayrell.CloudOS.Dashboard.NodesPageModel"] = Bayrell.CloudOS.Dashboard.NodesPageModel;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.NodesPageModel;
 "use strict;"
 /*
  *  Bayrell Cloud OS
@@ -2668,9 +3078,6 @@ Object.assign(Bayrell.CloudOS.User.UsersPage.prototype,
 Object.assign(Bayrell.CloudOS.User.UsersPage, Runtime.Web.Component);
 Object.assign(Bayrell.CloudOS.User.UsersPage,
 {
-	css: function(ctx, vars)
-	{
-	},
 	/**
  * Route Action
  * @return RenderContainer
@@ -2697,6 +3104,9 @@ Object.assign(Bayrell.CloudOS.User.UsersPage,
 		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Bayrell.CloudOS.User.UsersPage");
 		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
 		return Promise.resolve(Runtime.Collection.from([container]));
+	},
+	css: function(ctx, vars)
+	{
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3126,7 +3536,7 @@ Object.assign(Bayrell.CloudOS.ModuleDescription,
 	 */
 	entities: function(ctx)
 	{
-		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Nginx.NginxPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.ServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.YamlFilesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.YamlPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.User.UsersPage"}))]);
+		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.MainPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.NodesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Nginx.NginxPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.ServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.YamlFilesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Services.YamlPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.User.UsersPage"}))]);
 	},
 	/**
 	 * Returns context settings

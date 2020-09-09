@@ -42,10 +42,6 @@
 <use name="Bayrell.CloudOS.User.UsersPageModel" />
 
 
-<style>
-</style>
-
-
 <script>
 
 /**
@@ -98,6 +94,10 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 </script>
 
+
+
+<style>
+</style>
 
 
 <template name="render">

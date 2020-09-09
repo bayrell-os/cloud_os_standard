@@ -16258,7 +16258,7 @@ Object.assign(Runtime.Web.RouteController.prototype,
 		host = window.location.hostname;
 		protocol = window.location.protocol.substr(0, window.location.protocol.length - 1);
 		var pos = Runtime.rs.strpos(ctx, url, "?");
-		var uri = Runtime.rs.substr(ctx, url, 0, pos);
+		var uri = (pos >= 0) ? (Runtime.rs.substr(ctx, url, 0, pos)) : (url);
 		var get = (pos >= 0) ? (Runtime.rs.substr(ctx, url, pos + 1)) : ("");
 		var query = new Runtime.Map(ctx);
 		if (get != "")

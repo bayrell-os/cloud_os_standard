@@ -66,6 +66,10 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudUsers" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudYaml" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudYamlFiles" },
+		new Entity{ "name": "Bayrell.CloudOS.API.Dashboard" },
+		
+		/* Tasks */
+		new Entity{ "name": "Bayrell.CloudOS.API.DockerTasks" },
 	];
 	
 	

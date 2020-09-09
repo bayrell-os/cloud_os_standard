@@ -22,8 +22,15 @@
 >
 
 <use name="Runtime.Core.Message" />
+<use name="Runtime.Core.RemoteCallAnswer" />
 <use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Bayrell.CloudOS.Dashboard.NodesPage" />
+<use name="Bayrell.CloudOS.Dashboard.NodesPageModel" />
 
 
 <script>
@@ -35,30 +42,32 @@
 @Route{ "uri": "/nodes/", "name": "app.dashboard.nodes" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
+	/* Get services state */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	(
+		{
+			"object_name": "Bayrell.CloudOS.Dashboard",
+			"method_name": "status",
+		},
+		container
+	);
+	
+	/* Set page model */
+	NodesPageModel page_model = new NodesPageModel
+	{
+		"services": answer.isSuccess() ? answer["response", "services"] : null,
+		"nodes": answer.isSuccess() ? answer["response", "nodes"] : null,
+	};
+	
 	/* Set title */
 	container <= layout <= title <= "Nodes";
-	container <= layout <= layout_name <= "admin";
-	
-	/* Get services state */
-	MessageRPC msg = container -> await method sendMessage
-	{
-		"api_name": "App.Dashboard",
-		"space_name": "default",
-		"method_name": "status",
-		"data":
-		{
-		},
-	};
+	container <= layout <= layout_name <= "default";
 	
 	/* Create model */
 	container <= layout <= page_class <= classof NodesPage;
-	container <= layout <= page_model <= new NodesPageModel
-	{
-		"services": (msg -> method isSuccess) ? msg["response"]["services"] : null,
-		"nodes": (msg -> method isSuccess) ? msg["response"]["nodes"] : null,
-	};
+	container <= layout <= page_model <= page_model;
 	
-	return container;
+	return [ container ];
 }
 
 </script>
@@ -72,9 +81,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 	<div class="nodes">
 	%for (int i=0; i<model.nodes.count(); i++)
 	{
-		Dict node = model.nodes[i];
+		%var Dict node = model.nodes[i];
 		<div class="node" @key={ i }>
-			<div class="node_name">{ _("App", "Hostname") }: { node["Description"]["Hostname"] }</div>
+			<div class="node_name">{ _("Bayrell.CloudOS", "Hostname") }: { node["Description"]["Hostname"] }</div>
 			<ul class="node_services">
 				{ static::renderNodeTasks(layout, model, node) }
 			</ul>
@@ -88,8 +97,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 	%var Collection tasks = static::getNodeTasks(model, node);
 	%for (int i=0; i<tasks.count(); i++)
 	{
+		%var Dict task = tasks[i];
 		<li class="node_service">
-			{ task["ServiceName"] } [{ task["ID"] }] { _("App", "Address") }:&nbsp;
+			{ task["ServiceName"] } [{ task["ID"] }] { _("Bayrell.CloudOS", "Address") }:&nbsp;
 			{
 				rs::join
 				(

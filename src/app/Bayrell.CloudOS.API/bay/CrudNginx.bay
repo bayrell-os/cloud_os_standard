@@ -19,7 +19,6 @@
 namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
-
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
