@@ -172,7 +172,7 @@ static class CrudUsers extends CrudApi
 	{
 		await parent::after();
 		
-		if (this.action == "add" or this.action == "update")
+		if (this.action == "create" or this.action == "update")
 		{
 			string user_id = this.pk["id"];
 			string password1 = this.item["password1"];
@@ -271,12 +271,12 @@ static class CrudUsers extends CrudApi
 	
 	
 	/**
-	 * Add
+	 * Create
 	 */
-	@ApiMethod{ "method_name": "add" }
-	static async list addAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
-		return await parent::addAction(request, answer);
+		return await parent::createAction(request, answer);
 	}
 	
 	

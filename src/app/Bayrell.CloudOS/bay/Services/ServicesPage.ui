@@ -33,6 +33,9 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Form.Form" component="true" />
+<use name="Runtime.Web.Form.FormEvent" />
+<use name="Runtime.Web.Form.FormModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
@@ -182,9 +185,6 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		"_name",
 		"_image",
-		"enable",
-		"password1",
-		"password2",
 	];
 	
 	%var Collection<string> table_fields =
@@ -204,12 +204,40 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	<CrudPage @name="crud"
+		@event:FormEvent="onFormEvent"
 		object_name="Bayrell.CloudOS.Services"
 		crud_settings={ crud_settings }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		form={{
+			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
+				%if (params['action'] == "add")
+				{
+					{ Form::renderButton(layout, model, params, "create") }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+				%if (params['action'] == "edit")
+				{
+					%var bool enable = model["item", "enable"] |> default bool false;
+					{ Form::renderButton(layout, model, params, "update") }
+					{ Form::renderButtonInfo
+					(
+						layout,
+						model,
+						params,
+						{
+							"type": "danger",
+							"@key": (enable) ? "disable" : "enable",
+							"data-action": (enable) ? "disable" : "enable",
+							"value": (enable) ? _("Bayrell.CloudOS", "Disable") : _("Bayrell.CloudOS", "Enable")
+						}
+					) }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+			</div>
+		}}
 	/>
 	
 </template>
@@ -226,6 +254,94 @@ pure string trimImageName(string name)
 	if (pos != -1) name = rs::substr(name, 0, pos);
 	return name;
 }
+
+
+
+/**
+ * On form event
+ */
+async void onFormEvent(Message<FormEvent> msg)
+{
+	FormEvent e = msg.data;
+	
+	if (e.event == "disable")
+	{
+		await this.onItemDisable();
+	}
+	else if (e.event == "enable")
+	{
+		await this.onItemEnable();
+	}
+	
+	log(e);
+}
+
+
+
+/**
+ * Enable item
+ */
+async void onItemEnable()
+{
+	Dict item = this.crud.form_edit.model("item");
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "enable",
+		"data":
+		{
+			"service_id": item["service_id"],
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
+
+
+
+/**
+ * Disable item
+ */
+async void onItemDisable()
+{
+	Dict item = this.crud.form_edit.model("item");
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "disable",
+		"data":
+		{
+			"service_id": item["service_id"],
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
+
 
 </script>
 

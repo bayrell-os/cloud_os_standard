@@ -500,6 +500,10 @@ Object.assign(Runtime.rtl,
 	convert: function(v, t, d)
 	{
 		if (d == undefined) d = null;
+		if (v == null)
+		{
+			v = d;
+		}
 		if (t == "mixed" || t == "primitive" || t == "var" || t == "fn" || t == "callback")
 		{
 			return v;
@@ -10682,37 +10686,37 @@ Object.assign(Runtime.Core.RemoteCallAnswer,
 	 * @param primitive res
 	 * @return Message
 	 */
-	success: function(ctx, msg, response, message, code)
+	success: function(ctx, answer, response, message, code)
 	{
 		if (message == undefined) message = "";
 		if (code == undefined) code = 1;
-		return msg.copy(ctx, Runtime.Dict.from({"code":code,"error_message":"","success_message":message,"response":response,"have_answer":true}));
+		return answer.copy(ctx, Runtime.Dict.from({"code":code,"error_message":"","success_message":message,"response":response,"have_answer":true}));
 	},
 	/**
 	 * Set fail result
 	 * @param primitive res
 	 * @return Message
 	 */
-	fail: function(ctx, msg, response, error, code, error_name)
+	fail: function(ctx, answer, response, error, code, error_name)
 	{
 		if (error == undefined) error = "";
 		if (code == undefined) code = -1;
 		if (error_name == undefined) error_name = "";
-		return msg.copy(ctx, Runtime.Dict.from({"code":code,"error_message":error,"error_name":error_name,"response":response,"have_answer":true}));
+		return answer.copy(ctx, Runtime.Dict.from({"code":code,"error_message":error,"error_name":error_name,"response":response,"have_answer":true}));
 	},
 	/**
 	 * Set exception
 	 * @param primitive res
 	 * @return Message
 	 */
-	exception: function(ctx, msg, e)
+	exception: function(ctx, answer, e)
 	{
-		msg = msg.copy(ctx, Runtime.Dict.from({"code":e.getErrorCode(ctx),"error_message":e.getErrorMessage(ctx),"error_name":e.getClassName(ctx),"response":null,"have_answer":true}));
+		answer = answer.copy(ctx, Runtime.Dict.from({"code":e.getErrorCode(ctx),"error_message":e.getErrorMessage(ctx),"error_name":e.getClassName(ctx),"response":null,"have_answer":true}));
 		if (e instanceof Runtime.Core.ApiException)
 		{
-			msg = Runtime.rtl.setAttr(ctx, msg, Runtime.Collection.from(["response"]), e.response);
+			answer = Runtime.rtl.setAttr(ctx, answer, Runtime.Collection.from(["response"]), e.response);
 		}
-		return msg;
+		return answer;
 	},
 	/**
 	 * End pipe
@@ -13531,7 +13535,8 @@ Object.assign(Runtime.Web.RenderController.prototype,
 				{
 					if (elem.tagName == "INPUT" || elem.tagName == "SELECT" || elem.tagName == "TEXTAREA")
 					{
-						if (elem.value != value) elem.value = value;
+						if (value == null && elem.value != "") elem.value = "";
+						else if (elem.value != value) elem.value = value;
 						continue;
 					}
 				}

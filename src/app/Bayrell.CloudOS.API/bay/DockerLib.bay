@@ -27,7 +27,6 @@ use Runtime.ORM.DriverInterface as ORMDriver;
 
 class DockerLib
 {
-	#ifdef BACKEND then
 	
 	/**
 	 * Send docker command
@@ -62,5 +61,16 @@ class DockerLib
 		return content;
 	}
 	
-	#endif
+	
+	
+	/**
+	 * Get service from docker
+	 */
+	static async Dict getService(string service_id)
+	{
+		string url_api = "/services/" ~ service_id;
+		string content = await static::dockerApi(url_api);
+		return rtl::json_decode(content);
+	}
+	
 }

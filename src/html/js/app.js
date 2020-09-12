@@ -2112,6 +2112,60 @@ Bayrell.CloudOS.Services.ServicesPage.prototype = Object.create(Runtime.Web.Comp
 Bayrell.CloudOS.Services.ServicesPage.prototype.constructor = Bayrell.CloudOS.Services.ServicesPage;
 Object.assign(Bayrell.CloudOS.Services.ServicesPage.prototype,
 {
+	/**
+ * On form event
+ */
+	onFormEvent: async function(ctx, msg)
+	{
+		var e = msg.data;
+		if (e.event == "disable")
+		{
+			await this.onItemDisable(ctx);
+		}
+		else if (e.event == "enable")
+		{
+			await this.onItemEnable(ctx);
+		}
+		console.log(e);
+	},
+	/**
+ * Enable item
+ */
+	onItemEnable: async function(ctx)
+	{
+		var item = this.crud.form_edit.model(ctx, "item");
+		this.crud.dialog_edit.update(ctx, "setWaitMessage");
+		/* Send api */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.crud.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"enable","data":Runtime.Dict.from({"service_id":Runtime.rtl.get(ctx, item, "service_id")})}));
+		if (answer.isSuccess(ctx))
+		{
+			this.crud.table.update(ctx, "setItem", Runtime.rtl.get(ctx, item, "id"), Runtime.rtl.get(ctx, answer.response, "new_item"));
+			this.crud.dialog_edit.update(ctx, "hide");
+		}
+		else
+		{
+			this.crud.dialog_edit.update(ctx, "setAnswer", answer);
+		}
+	},
+	/**
+ * Disable item
+ */
+	onItemDisable: async function(ctx)
+	{
+		var item = this.crud.form_edit.model(ctx, "item");
+		this.crud.dialog_edit.update(ctx, "setWaitMessage");
+		/* Send api */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.crud.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"disable","data":Runtime.Dict.from({"service_id":Runtime.rtl.get(ctx, item, "service_id")})}));
+		if (answer.isSuccess(ctx))
+		{
+			this.crud.table.update(ctx, "setItem", Runtime.rtl.get(ctx, item, "id"), Runtime.rtl.get(ctx, answer.response, "new_item"));
+			this.crud.dialog_edit.update(ctx, "hide");
+		}
+		else
+		{
+			this.crud.dialog_edit.update(ctx, "setAnswer", answer);
+		}
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof Bayrell.CloudOS.Services.ServicesPage)
@@ -2183,7 +2237,7 @@ Object.assign(Bayrell.CloudOS.Services.ServicesPage,
 			
 			var filter_fields = Runtime.Collection.from(["_name","_image","enable"]);
 			
-			var form_fields = Runtime.Collection.from(["_name","_image","enable","password1","password2"]);
+			var form_fields = Runtime.Collection.from(["_name","_image"]);
 			
 			var table_fields = Runtime.Collection.from(["number","_name","_image","enable","edit-buttons"]);
 			
@@ -2192,7 +2246,46 @@ Object.assign(Bayrell.CloudOS.Services.ServicesPage,
 				return ctx.translate(ctx, "Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", Runtime.Dict.from({"name":Runtime.rtl.get(ctx, item, "_name")}));
 			}});
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Services.ServicesPage","crud"],"object_name":"Bayrell.CloudOS.Services","crud_settings":crud_settings,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages}, "layout": layout});
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Services.ServicesPage","crud"],"@event:Runtime.Web.Form.FormEvent":["Bayrell.CloudOS.Services.ServicesPage","onFormEvent"],"object_name":"Bayrell.CloudOS.Services","crud_settings":crud_settings,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages,"form":Runtime.Dict.from({"renderButtons":(ctx, layout, model, params, content) => 
+			{
+				return (__control) =>
+				{
+					var __vnull = null;
+					var __control_childs = [];
+					
+					/* Element 'div' */
+					var __v0; var __v0_childs = [];
+					[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {}});
+					
+					if (Runtime.rtl.get(ctx, params, "action") == "add")
+					{
+						/* Text */
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "create")});
+						
+						/* Text */
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+					}
+					
+					if (Runtime.rtl.get(ctx, params, "action") == "edit")
+					{
+						var __v1 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "enable"]));
+						__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "bool", false));
+						var enable = __v1.value(ctx);
+						
+						/* Text */
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "update")});
+						
+						/* Text */
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButtonInfo(ctx, layout, model, params, Runtime.Dict.from({"type":"danger","@key":(enable) ? ("disable") : ("enable"),"data-action":(enable) ? ("disable") : ("enable"),"value":(enable) ? (ctx.translate(ctx, "Bayrell.CloudOS", "Disable")) : (ctx.translate(ctx, "Bayrell.CloudOS", "Enable"))}))});
+						
+						/* Text */
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+					}
+					RenderDriver.p(__v0, __v0_childs);
+					
+					return __control_childs;
+				};
+			}})}, "layout": layout});
 			
 			return __control_childs;
 		};
@@ -2211,7 +2304,7 @@ Object.assign(Bayrell.CloudOS.Services.ServicesPage,
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText"]);
+		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Form.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

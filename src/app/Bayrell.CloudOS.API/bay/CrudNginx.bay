@@ -108,7 +108,7 @@ static class CrudNginx extends CrudApi
 		{
 		}
 		
-		else if (this.action == "add" or this.action == "update")
+		else if (this.action == "create" or this.action == "update")
 		{
 		}
 		
@@ -185,12 +185,12 @@ static class CrudNginx extends CrudApi
 	
 	
 	/**
-	 * Add
+	 * Create
 	 */
-	@ApiMethod{ "method_name": "add" }
-	static async list addAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
-		return await parent::addAction(request, answer);
+		return await parent::createAction(request, answer);
 	}
 	
 	

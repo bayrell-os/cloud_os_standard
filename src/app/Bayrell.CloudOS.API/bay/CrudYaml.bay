@@ -112,14 +112,6 @@ static class CrudYaml extends CrudApi
 		
 		else if (this.action == "add" or this.action == "update")
 		{
-			/* Check password */
-			string password1 = this.item["password1"];
-			string password2 = this.item["password2"];
-			
-			if (password1 != "" and password1 != password2)
-			{
-				throw new ApiException( _("Bayrell.CloudOS", "Password mismatch") );
-			}
 		}
 		
 		else if (this.action == "delete")
@@ -178,90 +170,6 @@ static class CrudYaml extends CrudApi
 	async bool after()
 	{
 		await parent::after();
-		
-		if (this.action == "add" or this.action == "update")
-		{
-			string user_id = this.pk["id"];
-			string password1 = this.item["password1"];
-			
-			/* Set up password */
-			if (password1 != "")
-			{
-				/* Get ORM driver */
-				ORMDriver orm = @.getDriver(classof ORMDriver);
-				
-				await orm.insert_or_update
-				(
-					"docker_users_auth",
-					{
-						"user_id": user_id,
-						"type": "password",
-					},
-					{
-						"value": Password::createHash(password1),
-					}
-				);
-				
-			}
-			
-			/* Generate nginx password */
-			await static::nginxPasswdCreate();
-		}
-	}
-	
-	
-	
-	/**
-	 * Nginx password
-	 */
-	static async void nginxPasswdCreate()
-	{
-		string htpasswd = "";
-		
-		/* Get ORM driver */
-		ORMDriver orm = @.getDriver(classof ORMDriver);
-		
-		string table_name = static::getTableName();
-		Cursor cursor = await orm.query
-		(
-			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
-			"left join users_auth as a on (u.id = a.user_id and a.type='password')",
-		);
-		
-		while (true)
-		{
-			Dict row = await cursor.fetch();
-			if (row == null)
-			{
-				break;
-			}
-			
-			string banned = row["banned"];
-			string name = row["name"];
-			string password = row["password"];
-			
-			if (banned == "0" and not rtl::isEmpty(password))
-			{
-				htpasswd ~= name ~ ":" ~ password ~ "\n";
-			}
-		}
-		
-		await cursor.close();
-		
-		/* Insert or update nginx file */
-		await orm.insert_or_update
-		(
-			"nginx_files",
-			{
-				"name": "inc/htpasswd.inc",
-			},
-			{
-				"enable": 1,
-				"content": htpasswd,
-				"timestamp": rtl::time(),
-				"is_deleted": 0,
-			}
-		);
 	}
 	
 	
@@ -278,12 +186,12 @@ static class CrudYaml extends CrudApi
 	
 	
 	/**
-	 * Add
+	 * Create
 	 */
-	@ApiMethod{ "method_name": "add" }
-	static async list addAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
-		return await parent::addAction(request, answer);
+		return await parent::createAction(request, answer);
 	}
 	
 	
