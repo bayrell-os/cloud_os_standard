@@ -203,8 +203,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["_name"] } ),
 	};
 	
-	<CrudPage @name="crud"
-		@event:FormEvent="onFormEvent"
+	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
 		object_name="Bayrell.CloudOS.Services"
 		crud_settings={ crud_settings }
 		filter_fields={ filter_fields }
@@ -273,7 +272,6 @@ async void onFormEvent(Message<FormEvent> msg)
 		await this.onItemEnable();
 	}
 	
-	log(e);
 }
 
 

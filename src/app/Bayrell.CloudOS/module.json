@@ -9,6 +9,7 @@
 		"Dashboard/NodesPage",
 		"Dashboard/NodesPageModel",
 		"Other/AdminerPage",
+		"Other/CLIPage",
 		"Nginx/NginxPage",
 		"Nginx/NginxPageModel",
 		"Services/ServicesPage",

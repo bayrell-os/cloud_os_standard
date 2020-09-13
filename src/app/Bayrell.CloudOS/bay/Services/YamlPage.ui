@@ -33,6 +33,9 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Form.Form" component="true" />
+<use name="Runtime.Web.Form.FormEvent" />
+<use name="Runtime.Web.Form.FormModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
@@ -180,7 +183,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"add": _("Bayrell.CloudOS", "Add yaml service")
 	};
 	
-	<CrudPage @name="crud"
+	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
 		object_name="Bayrell.CloudOS.Yaml"
 		crud_settings={ crud_settings }
 		filter_fields={ filter_fields }
@@ -190,12 +193,90 @@ static async RenderContainer actionIndex(RenderContainer container)
 		dialog_form={{
 			"width": "800px"
 		}}
+		form={{
+			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
+				%if (params['action'] == "add")
+				{
+					{ Form::renderButton(layout, model, params, "create") }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+				%if (params['action'] == "edit")
+				{
+					%var bool enable = model["item", "enable"] |> default bool false;
+					{ Form::renderButton(layout, model, params, "update") }
+					{ Form::renderButtonInfo
+					(
+						layout,
+						model,
+						params,
+						{
+							"type": "danger",
+							"@key": "compose",
+							"data-action": "compose",
+							"value": _("Bayrell.CloudOS", "Compose")
+						}
+					) }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+			</div>
+		}}
 	/>
 	
 </template>
 
 
 <script type="frontend">
+
+/**
+ * On form event
+ */
+async void onFormEvent(Message<FormEvent> msg)
+{
+	FormEvent e = msg.data;
+	
+	if (e.event == "compose")
+	{
+		await this.onItemCompose();
+	}
+	
+}
+
+
+
+/**
+ * Enable item
+ */
+async void onItemCompose()
+{
+	Dict item = this.crud.form_edit.model("item");
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "compose",
+		"data":
+		{
+			"pk":
+			{
+				"id": item["id"],
+			},
+			"item": item,
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
 
 </script>
 

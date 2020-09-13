@@ -172,33 +172,37 @@ static class CrudUsers extends CrudApi
 	{
 		await parent::after();
 		
-		if (this.action == "create" or this.action == "update")
+		/* If is success */
+		if (this.isSuccess())
 		{
-			string user_id = this.pk["id"];
-			string password1 = this.item["password1"];
-			
-			/* Set up password */
-			if (password1 != "")
+			if (this.action == "create" or this.action == "update")
 			{
-				/* Get ORM driver */
-				ORMDriver orm = @.getDriver(classof ORMDriver);
+				string user_id = this.pk["id"];
+				string password1 = this.item["password1"];
 				
-				await orm.insert_or_update
-				(
-					"docker_users_auth",
-					{
-						"user_id": user_id,
-						"type": "password",
-					},
-					{
-						"value": Password::createHash(password1),
-					}
-				);
+				/* Set up password */
+				if (password1 != "")
+				{
+					/* Get ORM driver */
+					ORMDriver orm = @.getDriver(classof ORMDriver);
+					
+					await orm.insert_or_update
+					(
+						"docker_users_auth",
+						{
+							"user_id": user_id,
+							"type": "password",
+						},
+						{
+							"value": Password::createHash(password1),
+						}
+					);
+					
+				}
 				
+				/* Generate nginx password */
+				await static::nginxPasswdCreate();
 			}
-			
-			/* Generate nginx password */
-			await static::nginxPasswdCreate();
 		}
 	}
 	

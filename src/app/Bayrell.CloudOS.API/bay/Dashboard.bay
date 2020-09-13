@@ -98,7 +98,7 @@ class Dashboard
 		string content = await DockerLib::exec("sudo " ~ request["data", "cmd"] ~ " 2>&1");
 		
 		/* Set answer */
-		answer = answer::success(answer, content)
+		answer = answer::success(answer, { "content": content });
 		
 		return [ request, answer ];
 	}
