@@ -52,13 +52,15 @@ static class CrudServices extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "id",
+			"api_name": "service_id",
 			"dbtype": "bigint",
+			"auto_increment": true,
 			"readonly": true,
+			"primary": true,
 		},
 		new FieldInfo
 		{
-			"api_name": "service_id",
+			"api_name": "docker_service_id",
 			"dbtype": "string",
 			"readonly": true,
 		},
@@ -108,7 +110,7 @@ static class CrudServices extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["id", "desc"]
+		["service_id", "desc"]
 	];
 	
 	
@@ -277,7 +279,7 @@ static class CrudServices extends CrudApi
 		{
 			if (this.action == "delete")
 			{
-				string service_id_1 = this.old_item["service_id"];
+				string service_id_1 = this.old_item["docker_service_id"];
 				await this.dockerDisableService(service_id_1);
 				
 				string service_id_2 = this.old_item["json"]["ID"];
@@ -348,10 +350,10 @@ static class CrudServices extends CrudApi
 		api.action = "enable";
 		api.answer = answer;
 		api.request = request;
-		string service_id = request["data", "service_id"];
+		string docker_service_id = request["data", "docker_service_id"];
 		
 		/* Disable service */
-		Dict res = await api.dockerEnableService(service_id);
+		Dict res = await api.dockerEnableService(docker_service_id);
 		Dict item = await api.processItem(res.item);
 		answer = answer::success(answer, { "new_item": res["item"] }, res["Message"]);
 		
@@ -373,10 +375,10 @@ static class CrudServices extends CrudApi
 		api.action = "disable";
 		api.answer = answer;
 		api.request = request;
-		string service_id = request["data", "service_id"];
+		string docker_service_id = request["data", "docker_service_id"];
 		
 		/* Disable service */
-		Dict res = await api.dockerDisableService(service_id);
+		Dict res = await api.dockerDisableService(docker_service_id);
 		Dict item = await api.processItem(res.item);
 		answer = answer::success(answer, { "new_item": res["item"] }, res["Message"]);
 		
@@ -431,14 +433,14 @@ static class CrudServices extends CrudApi
 		if (res == null) throw new ApiException( _("Bayrell.CloudOS", "Error create service in docker"), -1 );
 		
 		string message = res["message"] |> default string _("Bayrell.CloudOS", "Service does not created");
-		string service_id = res["ID"];
-		if (service_id == null) throw new ApiException( message, -1 );
+		string docker_service_id = res["ID"];
+		if (docker_service_id == null) throw new ApiException( message, -1 );
 		
 		/* Update spec of the service */
-		Dict new_json = await DockerLib::getService(service_id);
+		Dict new_json = await DockerLib::getService(docker_service_id);
 		await static::updateServiceInDatabase("", new_json);
 		
-		return service_id;
+		return docker_service_id;
 	}
 	
 	
@@ -448,14 +450,14 @@ static class CrudServices extends CrudApi
 	 */
 	async string dockerUpdateService(Dict old_json, Dict new_json)
 	{
-		string service_id = old_json["ID"];
+		string docker_service_id = old_json["ID"];
 		string version = old_json["Version", "Index"];
 		Dict diff_spec = static::dockerDiffSpec(old_json, new_json);
 		if (diff_spec == null) return null;
 		
 		/* Update service */
 		string s = rtl::json_encode(diff_spec);
-		string url_api = "/services/" ~ service_id ~ "/update?version=" ~ version;
+		string url_api = "/services/" ~ docker_service_id ~ "/update?version=" ~ version;
 		string content = await DockerLib::dockerApi(url_api, "POST", s);
 		Dict res = rtl::json_decode(content);
 		/*
@@ -466,10 +468,10 @@ static class CrudServices extends CrudApi
 		*/
 		
 		/* Update spec of the service */
-		Dict spec = await DockerLib::getService(service_id);
-		await this.updateServiceInDatabase(service_id, spec);
+		Dict spec = await DockerLib::getService(docker_service_id);
+		await this.updateServiceInDatabase(docker_service_id, spec);
 		
-		return service_id;
+		return docker_service_id;
 	}
 	
 	
@@ -510,12 +512,12 @@ static class CrudServices extends CrudApi
 	/**
 	 * Disable service
 	 */
-	async Dict dockerDisableService(string service_id)
+	async Dict dockerDisableService(string docker_service_id)
 	{
-		if (service_id == null) throw new ApiException( _("Bayrell.CloudOS", "Service ID is not set"), -1 );
+		if (docker_service_id == null) throw new ApiException( _("Bayrell.CloudOS", "Service ID is not set"), -1 );
 		
 		/* Delete service */
-		string url_api = "/services/" ~ service_id;
+		string url_api = "/services/" ~ docker_service_id;
 		string content = await DockerLib::dockerApi(url_api, "DELETE");
 		Dict res = rtl::json_decode(content);
 		
@@ -536,14 +538,14 @@ static class CrudServices extends CrudApi
 		ORMDriver orm = @.getDriver(classof ORMDriver);
 		Cursor cursor = await orm.query
 		(
-			"update services set enable=0 where service_id = :service_id limit 1",
+			"update services set enable=0 where docker_service_id = :docker_service_id limit 1",
 			{
-				"service_id": service_id,
+				"docker_service_id": docker_service_id,
 			}
 		);
 		await cursor.close();
 		
-		Dict item = await this.getServiceFromDb(service_id);
+		Dict item = await this.getServiceFromDb(docker_service_id);
 		
 		return { "Message": _("Bayrell.CloudOS", "Service disabled"), "Code": 1, "item": item };
 	}
@@ -553,14 +555,14 @@ static class CrudServices extends CrudApi
 	/**
 	 * Returns item by service id from database
 	 */
-	async Dict getServiceFromDb(string service_id)
+	async Dict getServiceFromDb(string docker_service_id)
 	{
 		string table_name = static::getTableName();
 		
 		/* Process primary key */
 		Dict pk =
 		{
-			"service_id": service_id,
+			"docker_service_id": docker_service_id,
 		};
 		pk = this.toDatabase(pk);
 		
@@ -600,8 +602,8 @@ static class CrudServices extends CrudApi
 		{
 			Cursor cursor = await orm.query
 			(
-				"update services set service_id=:new_service_id, is_deleted=0, enable=1 " ~
-					" where service_id = :old_service_id limit 1",
+				"update services set docker_service_id=:new_service_id, is_deleted=0, enable=1 " ~
+					" where docker_service_id = :old_service_id limit 1",
 				{
 					"old_service_id": old_service_id,
 					"new_service_id": new_service_id,
@@ -618,7 +620,7 @@ static class CrudServices extends CrudApi
 				Cursor cursor = await orm.query
 				(
 					"delete from services " ~
-						" where service_id = :old_service_id limit 1",
+						" where docker_service_id = :old_service_id limit 1",
 					{
 						"old_service_id": old_service_id,
 					}
@@ -632,7 +634,7 @@ static class CrudServices extends CrudApi
 		(
 			"services",
 			{
-				"service_id": new_service_id,
+				"docker_service_id": new_service_id,
 			},
 			{
 				"_name": service_name,

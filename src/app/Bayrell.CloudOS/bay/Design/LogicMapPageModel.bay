@@ -23,7 +23,6 @@ use Runtime.BaseStruct;
 use Runtime.Web.CRUD.CrudPageModel;
 
 
-struct YamlPageModel extends BaseStruct
+struct LogicMapPageModel extends BaseStruct
 {	
-	CrudPageModel crud = null;
 }

@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Nginx.NginxPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Nginx.NginxPageModel"
+	name="Bayrell.CloudOS.Design.SpacesPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.SpacesPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -39,8 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Nginx.NginxPage" />
-<use name="Bayrell.CloudOS.Nginx.NginxPageModel" />
+<use name="Bayrell.CloudOS.Design.SpacesPage" />
+<use name="Bayrell.CloudOS.Design.SpacesPageModel" />
 
 
 <style>
@@ -53,11 +53,11 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/nginx/", "name": "app.nginx" }
+@Route{ "uri": "/design/spaces/", "name": "app.design.spaces" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	NginxPageModel page_model = new NginxPageModel
+	SpacesPageModel page_model = new SpacesPageModel
 	{
 		"crud": new CrudPageModel
 		{
@@ -69,7 +69,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 	(
 		{
-			"object_name": "Bayrell.CloudOS.Nginx",
+			"object_name": "Bayrell.CloudOS.Spaces",
 			"interface_name": "core.crud",
 			"method_name": "search",
 			"data": search_params,
@@ -87,11 +87,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	/* Set title */
-	container <= layout <= title <= "Nginx page";
+	container <= layout <= title <= "Spaces";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof NginxPage;
+	container <= layout <= page_class <= classof SpacesPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -103,8 +103,14 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection<FieldInfo> crud_settings =
+	%var Collection<FieldInfo> struct =
 	[
+		new FieldInfo
+		{
+			"api_name": "space_id",
+			"primary": true,
+		},
+		
 		new FieldInfo
 		{
 			"api_name": "number",
@@ -112,47 +118,22 @@ static async RenderContainer actionIndex(RenderContainer container)
 			"class_name": classof Label,
 			"class_settings":
 			{
-				"render": html (LayoutModel layout, var model, Dict params, var content)
-				{
-					TableModel table_model = params["table-model"];
-					int index = params["row-index"];
-					if (table_model)
-					{
-						return index + 1;
-					}
-					return "";
-				},
+				"render": CrudPage::fieldNumber,
 			},
 		},
 		new FieldInfo
 		{
 			"api_name": "name",
-			"label": "Name",
+			"label": "Space name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "enable",
-			"label": "Enable",
-			"class_name": classof Select,
-			"class_name_table": classof SelectText,
-			"class_settings":
-			{
-				"filter_show_select_value": true,
-				"show_select_value": false,
-				"options":
-				[
-					{"id": 0, "value": "No"},
-					{"id": 1, "value": "Yes"},
-				],
-			}
-		},
-		new FieldInfo
-		{
-			"api_name": "content",
-			"label": "Content",
-			"class_name": classof TextArea,
+			"api_name": "domain",
+			"label": "Domain name",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
@@ -170,38 +151,39 @@ static async RenderContainer actionIndex(RenderContainer container)
 					];
 				},
 			},
-		}
+		},
 	];
 	
 	%var Collection<string> filter_fields =
 	[
 		"name",
-		"enable",
+		"domain",
 	];
 	
 	%var Collection<string> form_fields =
 	[
 		"name",
-		"enable",
-		"content",
+		"domain",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
 		"name",
-		"enable",
-		"edit-buttons",
+		"domain",
+		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add nginx file")
+		"add": _("Bayrell.CloudOS", "Add space"),
+		"delete": string (Dict item) =>
+			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["name"] } ),
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Nginx"
-		crud_settings={ crud_settings }
+		object_name="Bayrell.CloudOS.Spaces"
+		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }

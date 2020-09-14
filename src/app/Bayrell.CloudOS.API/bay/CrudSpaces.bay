@@ -33,14 +33,14 @@ use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.FieldInfo;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "core.crud" }
-static class CrudYamlFiles extends CrudApi
+@ApiList{ "object_name": "Bayrell.CloudOS.Spaces", "interface_name": "core.crud" }
+static class CrudSpaces extends CrudApi
 {
 	
 	/**
 	 * Returns crud table name
 	 */
-	pure string getTableName() => "yaml_files";
+	pure string getTableName() => "spaces";
 	
 	
 	
@@ -51,7 +51,7 @@ static class CrudYamlFiles extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "file_id",
+			"api_name": "space_id",
 			"dbtype": "bigint",
 			"auto_increment": true,
 			"readonly": true,
@@ -59,16 +59,17 @@ static class CrudYamlFiles extends CrudApi
 		},
 		new FieldInfo
 		{
-			"api_name": "file_name",
+			"api_name": "name",
 			"dbtype": "string",
 			"default": "",
 			"required": true,
 		},
 		new FieldInfo
 		{
-			"api_name": "content",
+			"api_name": "domain",
 			"dbtype": "string",
 			"default": "",
+			"required": true,
 		},
 	];
 	
@@ -79,7 +80,7 @@ static class CrudYamlFiles extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["file_id", "desc"]
+		["space_id", "desc"]
 	];
 	
 	

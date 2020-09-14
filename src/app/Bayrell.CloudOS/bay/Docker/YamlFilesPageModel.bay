@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Services;
+namespace Bayrell.CloudOS.Docker;
 
 use Runtime.lib;
 use Runtime.BaseStruct;

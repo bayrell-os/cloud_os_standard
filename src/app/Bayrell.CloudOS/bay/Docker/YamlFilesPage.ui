@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Services.YamlFilesPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Services.YamlFilesPageModel"
+	name="Bayrell.CloudOS.Docker.YamlFilesPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Docker.YamlFilesPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -39,8 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Services.YamlFilesPage" />
-<use name="Bayrell.CloudOS.Services.YamlFilesPageModel" />
+<use name="Bayrell.CloudOS.Docker.YamlFilesPage" />
+<use name="Bayrell.CloudOS.Docker.YamlFilesPageModel" />
 
 
 <style>
@@ -53,7 +53,7 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/services/yaml/files/", "name": "app.services.yaml.files" }
+@Route{ "uri": "/docker/yaml/files/", "name": "app.docker.yaml.files" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
@@ -103,8 +103,14 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection<FieldInfo> crud_settings =
+	%var Collection<FieldInfo> struct =
 	[
+		new FieldInfo
+		{
+			"api_name": "file_id",
+			"primary": true,
+		},
+		
 		new FieldInfo
 		{
 			"api_name": "number",
@@ -174,7 +180,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	<CrudPage @name="crud"
 		object_name="Bayrell.CloudOS.YamlFiles"
-		crud_settings={ crud_settings }
+		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }

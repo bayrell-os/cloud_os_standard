@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Services.ServicesPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Services.ServicesPageModel"
+	name="Bayrell.CloudOS.Docker.YamlPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Docker.YamlPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -40,9 +40,10 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Services.ServicesPage" />
-<use name="Bayrell.CloudOS.Services.ServicesPageModel" />
+<use name="Bayrell.CloudOS.Docker.YamlPage" />
+<use name="Bayrell.CloudOS.Docker.YamlPageModel" />
 
 
 <style>
@@ -55,11 +56,11 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/services/", "name": "app.services.index" }
+@Route{ "uri": "/docker/yaml/", "name": "app.docker.yaml.index" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	ServicesPageModel page_model = new ServicesPageModel
+	YamlPageModel page_model = new YamlPageModel
 	{
 		"crud": new CrudPageModel
 		{
@@ -71,7 +72,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 	(
 		{
-			"object_name": "Bayrell.CloudOS.Services",
+			"object_name": "Bayrell.CloudOS.Yaml",
 			"interface_name": "core.crud",
 			"method_name": "search",
 			"data": search_params,
@@ -89,11 +90,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	/* Set title */
-	container <= layout <= title <= "Services page";
+	container <= layout <= title <= "Yaml page";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof ServicesPage;
+	container <= layout <= page_class <= classof YamlPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -105,8 +106,14 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection<FieldInfo> crud_settings =
+	%var Collection<FieldInfo> struct =
 	[
+		new FieldInfo
+		{
+			"api_name": "yaml_id",
+			"primary": true,
+		},
+		
 		new FieldInfo
 		{
 			"api_name": "number",
@@ -119,41 +126,23 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
-			"api_name": "_name",
+			"api_name": "name",
 			"label": "Name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "_image",
-			"label": "Image",
+			"api_name": "stack",
+			"label": "Stack",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
-			"class_settings":
-			{
-				"render": html (LayoutModel layout, var model, Dict params, var content)
-				{
-					return static::trimImageName(model);
-				}
-			},
 		},
 		new FieldInfo
 		{
-			"api_name": "enable",
-			"label": "Enable",
-			"class_name": classof Select,
-			"class_name_table": classof SelectText,
-			"class_settings":
-			{
-				"filter_show_select_value": true,
-				"show_select_value": false,
-				"options":
-				[
-					{"id": 0, "value": "No"},
-					{"id": 1, "value": "Yes"},
-				],
-			}
+			"api_name": "content",
+			"label": "Content",
+			"class_name": classof TextArea,
 		},
 		new FieldInfo
 		{
@@ -176,40 +165,40 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	%var Collection<string> filter_fields =
 	[
-		"_name",
-		"_image",
-		"enable",
+		"name",
+		"stack",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"_name",
-		"_image",
+		"name",
+		"stack",
+		"content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"_name",
-		"_image",
-		"enable",
+		"name",
+		"stack",
 		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add service"),
-		"delete": string (Dict item) =>
-			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["_name"] } ),
+		"add": _("Bayrell.CloudOS", "Add yaml service")
 	};
 	
 	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
-		object_name="Bayrell.CloudOS.Services"
-		crud_settings={ crud_settings }
+		object_name="Bayrell.CloudOS.Yaml"
+		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		dialog_form={{
+			"width": "800px"
+		}}
 		form={{
 			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
 				%if (params['action'] == "add")
@@ -228,9 +217,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 						params,
 						{
 							"type": "danger",
-							"@key": (enable) ? "disable" : "enable",
-							"data-action": (enable) ? "disable" : "enable",
-							"value": (enable) ? _("Bayrell.CloudOS", "Disable") : _("Bayrell.CloudOS", "Enable")
+							"@key": "compose",
+							"data-action": "compose",
+							"value": _("Bayrell.CloudOS", "Compose")
 						}
 					) }
 					{ Form::renderButton(layout, model, params, "cancel") }
@@ -245,31 +234,15 @@ static async RenderContainer actionIndex(RenderContainer container)
 <script type="frontend">
 
 /**
- * Trim name
- */
-pure string trimImageName(string name)
-{
-	int pos = rs::search(name, "@");
-	if (pos != -1) name = rs::substr(name, 0, pos);
-	return name;
-}
-
-
-
-/**
  * On form event
  */
 async void onFormEvent(Message<FormEvent> msg)
 {
 	FormEvent e = msg.data;
 	
-	if (e.event == "disable")
+	if (e.event == "compose")
 	{
-		await this.onItemDisable();
-	}
-	else if (e.event == "enable")
-	{
-		await this.onItemEnable();
+		await this.onItemCompose();
 	}
 	
 }
@@ -279,9 +252,10 @@ async void onFormEvent(Message<FormEvent> msg)
 /**
  * Enable item
  */
-async void onItemEnable()
+async void onItemCompose()
 {
 	Dict item = this.crud.form_edit.model("item");
+	Dict pk = this.crud::getPrimaryKey(this.crud.params["struct"], item);
 	this.crud.dialog_edit.update("setWaitMessage");
 	
 	/* Send api */
@@ -289,16 +263,17 @@ async void onItemEnable()
 	{
 		"object_name": this.crud.getCrudObjectName(),
 		"interface_name": "core.crud",
-		"method_name": "enable",
+		"method_name": "compose",
 		"data":
 		{
-			"service_id": item["service_id"],
+			"pk": pk,
+			"item": item,
 		},
 	};
 	
 	if (answer.isSuccess())
 	{
-		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
+		this.crud.table.update("setItem", pk, answer.response["new_item"]);
 		this.crud.dialog_edit.update("hide");
 	}
 	else
@@ -306,40 +281,6 @@ async void onItemEnable()
 		this.crud.dialog_edit.update("setAnswer", answer);
 	}
 }
-
-
-
-/**
- * Disable item
- */
-async void onItemDisable()
-{
-	Dict item = this.crud.form_edit.model("item");
-	this.crud.dialog_edit.update("setWaitMessage");
-	
-	/* Send api */
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-	{
-		"object_name": this.crud.getCrudObjectName(),
-		"interface_name": "core.crud",
-		"method_name": "disable",
-		"data":
-		{
-			"service_id": item["service_id"],
-		},
-	};
-	
-	if (answer.isSuccess())
-	{
-		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
-		this.crud.dialog_edit.update("hide");
-	}
-	else
-	{
-		this.crud.dialog_edit.update("setAnswer", answer);
-	}
-}
-
 
 </script>
 

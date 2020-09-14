@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Services.YamlPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Services.YamlPageModel"
+	name="Bayrell.CloudOS.Design.SoftwaresPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.SoftwaresPage"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -33,17 +33,14 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
-<use name="Runtime.Web.Form.Form" component="true" />
-<use name="Runtime.Web.Form.FormEvent" />
-<use name="Runtime.Web.Form.FormModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Services.YamlPage" />
-<use name="Bayrell.CloudOS.Services.YamlPageModel" />
+<use name="Bayrell.CloudOS.Design.SoftwaresPage" />
+<use name="Bayrell.CloudOS.Design.SoftwaresPageModel" />
 
 
 <style>
@@ -56,11 +53,11 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/services/yaml/", "name": "app.services.yaml.index" }
+@Route{ "uri": "/design/softwares/", "name": "app.design.softwares" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	YamlPageModel page_model = new YamlPageModel
+	SoftwaresPageModel page_model = new SoftwaresPageModel
 	{
 		"crud": new CrudPageModel
 		{
@@ -72,7 +69,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 	(
 		{
-			"object_name": "Bayrell.CloudOS.Yaml",
+			"object_name": "Bayrell.CloudOS.Softwares",
 			"interface_name": "core.crud",
 			"method_name": "search",
 			"data": search_params,
@@ -90,11 +87,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	/* Set title */
-	container <= layout <= title <= "Yaml page";
+	container <= layout <= title <= "Softwares";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof YamlPage;
+	container <= layout <= page_class <= classof SoftwaresPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -106,7 +103,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection<FieldInfo> crud_settings =
+	%var Collection<FieldInfo> struct =
 	[
 		new FieldInfo
 		{
@@ -120,23 +117,25 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
+			"api_name": "api_name",
+			"label": "Api name",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
+			"primary": true,
+		},
+		new FieldInfo
+		{
 			"api_name": "name",
-			"label": "Name",
+			"label": "Software name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "stack",
-			"label": "Stack",
+			"api_name": "domain",
+			"label": "Domain name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
-		},
-		new FieldInfo
-		{
-			"api_name": "content",
-			"label": "Content",
-			"class_name": classof TextArea,
 		},
 		new FieldInfo
 		{
@@ -159,124 +158,44 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	%var Collection<string> filter_fields =
 	[
+		"api_name",
 		"name",
-		"stack",
 	];
 	
 	%var Collection<string> form_fields =
 	[
+		"api_name",
 		"name",
-		"stack",
-		"content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
+		"api_name",
 		"name",
-		"stack",
 		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add yaml service")
+		"add": _("Bayrell.CloudOS", "Add software"),
+		"delete": string (Dict item) =>
+			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["api_name"] } ),
 	};
 	
-	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
-		object_name="Bayrell.CloudOS.Yaml"
-		crud_settings={ crud_settings }
+	<CrudPage @name="crud"
+		object_name="Bayrell.CloudOS.Softwares"
+		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
-		dialog_form={{
-			"width": "800px"
-		}}
-		form={{
-			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
-				%if (params['action'] == "add")
-				{
-					{ Form::renderButton(layout, model, params, "create") }
-					{ Form::renderButton(layout, model, params, "cancel") }
-				}
-				%if (params['action'] == "edit")
-				{
-					%var bool enable = model["item", "enable"] |> default bool false;
-					{ Form::renderButton(layout, model, params, "update") }
-					{ Form::renderButtonInfo
-					(
-						layout,
-						model,
-						params,
-						{
-							"type": "danger",
-							"@key": "compose",
-							"data-action": "compose",
-							"value": _("Bayrell.CloudOS", "Compose")
-						}
-					) }
-					{ Form::renderButton(layout, model, params, "cancel") }
-				}
-			</div>
-		}}
 	/>
 	
 </template>
 
 
 <script type="frontend">
-
-/**
- * On form event
- */
-async void onFormEvent(Message<FormEvent> msg)
-{
-	FormEvent e = msg.data;
-	
-	if (e.event == "compose")
-	{
-		await this.onItemCompose();
-	}
-	
-}
-
-
-
-/**
- * Enable item
- */
-async void onItemCompose()
-{
-	Dict item = this.crud.form_edit.model("item");
-	this.crud.dialog_edit.update("setWaitMessage");
-	
-	/* Send api */
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-	{
-		"object_name": this.crud.getCrudObjectName(),
-		"interface_name": "core.crud",
-		"method_name": "compose",
-		"data":
-		{
-			"pk":
-			{
-				"id": item["id"],
-			},
-			"item": item,
-		},
-	};
-	
-	if (answer.isSuccess())
-	{
-		this.crud.table.update("setItem", item["id"], answer.response["new_item"]);
-		this.crud.dialog_edit.update("hide");
-	}
-	else
-	{
-		this.crud.dialog_edit.update("setAnswer", answer);
-	}
-}
 
 </script>
 

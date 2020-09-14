@@ -83,7 +83,7 @@ class DockerTasks
 			(
 				"services",
 				{
-					"service_id": service_id,
+					"docker_service_id": service_id,
 				},
 				{
 					"_name": service_name,

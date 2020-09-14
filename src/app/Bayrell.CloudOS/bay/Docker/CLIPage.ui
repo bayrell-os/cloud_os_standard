@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Other.CLIPage" extends="Runtime.Web.Component" 
+	name="Bayrell.CloudOS.Docker.CLIPage" extends="Runtime.Web.Component" 
 	module="Bayrell.CloudOS" model="Runtime.Dict"
 >
 
@@ -32,7 +32,7 @@
 <use name="Runtime.Web.RouteList" />
 <use name="Runtime.Web.Events.KeyDownEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Bayrell.CloudOS.Other.CLIPage" />
+<use name="Bayrell.CloudOS.Docker.CLIPage" />
 
 
 <script>
@@ -41,7 +41,7 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/cli/", "name": "app.cli" }
+@Route{ "uri": "/docker/cli/", "name": "app.docker.cli" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Set title */

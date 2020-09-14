@@ -1581,7 +1581,9 @@ Object.assign(Runtime.Web.Form.Form,
 			var __vnull = null;
 			var __control_childs = [];
 			
-			var field = Runtime.Web.CRUD.FieldInfo.getFieldInfo(ctx, Runtime.rtl.get(ctx, params, "struct"), field_name);
+			var struct = Runtime.rtl.get(ctx, params, "struct");
+			
+			var field = Runtime.Web.CRUD.FieldInfo.getFieldInfo(ctx, struct, field_name);
 			
 			if (field != null)
 			{
@@ -1631,7 +1633,7 @@ Object.assign(Runtime.Web.Form.Form,
 				
 				if (!Runtime.rtl.isEmpty(ctx, class_name))
 				{
-					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Form.Form",model_path],"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Form.Form","onItemChange"],"used-by":"form","name":field_name,"field-info":field,"form-item":Runtime.rtl.get(ctx, model, "item"),"model-path":model_path},class_settings), "layout": layout});
+					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Form.Form",model_path],"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Form.Form","onItemChange"],"used-by":"form","name":field_name,"field-info":field,"struct":struct,"form-item":Runtime.rtl.get(ctx, model, "item"),"model-path":model_path},class_settings), "layout": layout});
 				}
 				RenderDriver.p(__v1, __v1_childs);
 				
@@ -2208,6 +2210,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		var a = Object.getOwnPropertyNames(this);
 		this.fields_errors = null;
 		this.item = null;
+		this.old_item = null;
 		this.message = "";
 		this.success_message = "";
 		this.error_message = "";
@@ -2219,6 +2222,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		{
 			this.fields_errors = o.fields_errors;
 			this.item = o.item;
+			this.old_item = o.old_item;
 			this.message = o.message;
 			this.success_message = o.success_message;
 			this.error_message = o.error_message;
@@ -2229,6 +2233,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 	{
 		if (k == "fields_errors")this.fields_errors = v;
 		else if (k == "item")this.item = v;
+		else if (k == "old_item")this.old_item = v;
 		else if (k == "message")this.message = v;
 		else if (k == "success_message")this.success_message = v;
 		else if (k == "error_message")this.error_message = v;
@@ -2239,6 +2244,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		if (d == undefined) d = null;
 		if (k == "fields_errors")return this.fields_errors;
 		else if (k == "item")return this.item;
+		else if (k == "old_item")return this.old_item;
 		else if (k == "message")return this.message;
 		else if (k == "success_message")return this.success_message;
 		else if (k == "error_message")return this.error_message;
@@ -2257,7 +2263,7 @@ Object.assign(Runtime.Web.Form.FormModel,
 	 */
 	setItem: function(ctx, model, item)
 	{
-		return model.copy(ctx, Runtime.Dict.from({"item":item}));
+		return model.copy(ctx, Runtime.Dict.from({"item":item,"old_item":item}));
 	},
 	/**
 	 * Set wait message
@@ -2347,6 +2353,7 @@ Object.assign(Runtime.Web.Form.FormModel,
 		{
 			a.push("fields_errors");
 			a.push("item");
+			a.push("old_item");
 			a.push("message");
 			a.push("success_message");
 			a.push("error_message");
@@ -2366,6 +2373,13 @@ Object.assign(Runtime.Web.Form.FormModel,
 			]),
 		});
 		if (field_name == "item") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Form.FormModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "old_item") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.Form.FormModel",
 			"name": field_name,
@@ -3810,6 +3824,8 @@ Object.assign(Runtime.Web.Table.Table,
 			
 			var row = Runtime.rtl.get(ctx, model.rows, index);
 			
+			var struct = Runtime.rtl.get(ctx, params, "struct");
+			
 			var field = Runtime.Web.CRUD.FieldInfo.getFieldInfo(ctx, Runtime.rtl.get(ctx, params, "struct"), field_name);
 			
 			if (field != null)
@@ -3839,7 +3855,7 @@ Object.assign(Runtime.Web.Table.Table,
 				
 				if (!Runtime.rtl.isEmpty(ctx, class_name))
 				{
-					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Table.Table",Runtime.Collection.from(["rows",index,field_name])],"used-by":"table","name":field_name,"field-info":field,"row-index":index,"row-data":row,"table-model":model,"@key":field_name},class_settings), "layout": layout});
+					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": class_name,"attrs": this.mergeAttrs(ctx, {"@bind":["Runtime.Web.Table.Table",Runtime.Collection.from(["rows",index,field_name])],"used-by":"table","struct":struct,"name":field_name,"field-info":field,"row-index":index,"row-data":row,"table-model":model,"@key":field_name},class_settings), "layout": layout});
 				}
 			}
 			
@@ -3993,15 +4009,37 @@ Object.assign(Runtime.Web.Table.TableModel, Runtime.BaseStruct);
 Object.assign(Runtime.Web.Table.TableModel,
 {
 	/**
-	 * Returns item by id
+	 * Returns position of item
 	 */
-	getItemById: function(ctx, model, id)
+	findPos: function(ctx, model, find)
+	{
+		var keys = find.keys(ctx);
+		return model.rows.find(ctx, (ctx, row) => 
+		{
+			for (var i = 0;i < keys.count(ctx);i++)
+			{
+				var key = Runtime.rtl.get(ctx, keys, i);
+				var value1 = Runtime.rtl.get(ctx, find, key);
+				var value2 = Runtime.rtl.get(ctx, row, key);
+				if (value1 != value2)
+				{
+					return false;
+				}
+			}
+			return true;
+		});
+	},
+	/**
+	 * Find first item
+	 */
+	getFirstItem: function(ctx, model, find)
 	{
 		if (model.rows == null)
 		{
 			return null;
 		}
-		return model.rows.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", id));
+		var pos = this.findPos(ctx, model, find);
+		return model.rows.get(ctx, pos, null);
 	},
 	/**
 	 * Add item
@@ -4030,13 +4068,13 @@ Object.assign(Runtime.Web.Table.TableModel,
 	/**
 	 * Set item
 	 */
-	setItem: function(ctx, model, id, item)
+	setItem: function(ctx, model, find, item)
 	{
 		if (model.rows == null)
 		{
 			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["rows"]), Runtime.Collection.from([]));
 		}
-		var pos = model.rows.find(ctx, Runtime.lib.equalAttr(ctx, "id", id));
+		var pos = this.findPos(ctx, model, find);
 		if (pos != -1)
 		{
 			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["rows"]), model.rows.setIm(ctx, pos, item));
@@ -4046,13 +4084,13 @@ Object.assign(Runtime.Web.Table.TableModel,
 	/**
 	 * Remove item by id
 	 */
-	removeItemById: function(ctx, model, id)
+	removeItem: function(ctx, model, find)
 	{
 		if (model.rows == null)
 		{
 			return model;
 		}
-		var pos = model.rows.find(ctx, Runtime.lib.equalAttr(ctx, "id", id));
+		var pos = this.findPos(ctx, model, find);
 		if (pos != -1)
 		{
 			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["rows"]), model.rows.removeIm(ctx, pos));
@@ -4534,8 +4572,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
  */
 	onRowEditClick: async function(ctx, msg)
 	{
-		var id = Runtime.rtl.get(ctx, msg.sender.params, "data-id");
-		var item = this.table.call(ctx, "getItemById", id);
+		var pk = Runtime.rtl.get(ctx, msg.sender.params, "data-pk");
+		var item = this.table.call(ctx, "getFirstItem", pk);
 		this.dialog_edit.update(ctx, "show");
 		this.form_edit.update(ctx, "clear");
 		this.form_edit.update(ctx, "setItem", item);
@@ -4545,8 +4583,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
  */
 	onRowDeleteClick: async function(ctx, msg)
 	{
-		var id = Runtime.rtl.get(ctx, msg.sender.params, "data-id");
-		var item = this.table.call(ctx, "getItemById", id);
+		var pk = Runtime.rtl.get(ctx, msg.sender.params, "data-pk");
+		var item = this.table.call(ctx, "getFirstItem", pk);
 		var message = "";
 		var f = Runtime.rtl.attr(ctx, this.params, ["messages", "delete"]);
 		if (Runtime.rtl.exists(ctx, f))
@@ -4639,13 +4677,15 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
  */
 	onItemUpdate: async function(ctx)
 	{
+		var old_item = this.form_edit.model(ctx, "old_item");
 		var item = this.form_edit.model(ctx, "item");
+		var pk = this.constructor.getPrimaryKey(ctx, Runtime.rtl.get(ctx, this.params, "struct"), old_item);
 		this.form_edit.update(ctx, "setWaitMessage");
 		/* Send api */
-		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"update","data":Runtime.Dict.from({"pk":Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "id")}),"item":item})}));
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"update","data":Runtime.Dict.from({"pk":pk,"item":item})}));
 		if (answer.isSuccess(ctx))
 		{
-			this.table.update(ctx, "setItem", Runtime.rtl.get(ctx, item, "id"), Runtime.rtl.get(ctx, answer.response, "new_item"));
+			this.table.update(ctx, "setItem", pk, Runtime.rtl.get(ctx, answer.response, "new_item"));
 			this.dialog_edit.update(ctx, "hide");
 		}
 		else
@@ -4659,11 +4699,12 @@ Object.assign(Runtime.Web.CRUD.CrudPage.prototype,
 	onItemDelete: async function(ctx, item)
 	{
 		this.dialog_delete.update(ctx, "setWaitMessage");
+		var pk = this.constructor.getPrimaryKey(ctx, Runtime.rtl.get(ctx, this.params, "struct"), item);
 		/* Send api */
-		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"delete","data":Runtime.Dict.from({"pk":Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "id")})})}));
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":this.getCrudObjectName(ctx),"interface_name":"core.crud","method_name":"delete","data":Runtime.Dict.from({"pk":pk})}));
 		if (answer.isSuccess(ctx))
 		{
-			this.table.update(ctx, "removeItemById", Runtime.rtl.get(ctx, item, "id"));
+			this.table.update(ctx, "removeItem", pk);
 			this.dialog_delete.update(ctx, "hide");
 		}
 		else
@@ -4707,7 +4748,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			
 			var messages = Runtime.rtl.get(ctx, params, "messages");
 			
-			var crud_settings = Runtime.rtl.get(ctx, params, "crud_settings");
+			var struct = Runtime.rtl.get(ctx, params, "struct");
 			
 			var form_fields = Runtime.rtl.get(ctx, params, "form_fields");
 			
@@ -4742,7 +4783,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __v1; var __v1_childs = [];
 				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["filter", this.getCssHash(ctx)].join(" "),"@elem_name":"filter"}});
 				
-				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.CRUD.CrudFilter","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","filter"],"struct":crud_settings,"fields":filter_fields}, "layout": layout});
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.CRUD.CrudFilter","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","filter"],"struct":struct,"fields":filter_fields}, "layout": layout});
 				RenderDriver.p(__v1, __v1_childs);
 			}
 			
@@ -4750,7 +4791,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var __v1; var __v1_childs = [];
 			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["table", this.getCssHash(ctx)].join(" "),"@elem_name":"table"}});
 			
-			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Table.Table","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","table"],"struct":crud_settings,"fields":table_fields}, "layout": layout});
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Table.Table","attrs": {"@name":["Runtime.Web.CRUD.CrudPage","table"],"struct":struct,"fields":table_fields}, "layout": layout});
 			
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Table.Pagination","attrs": {"page":model.table.page + 1,"pages":model.table.pages,"delta":model.table.delta}, "layout": layout});
 			RenderDriver.p(__v1, __v1_childs);
@@ -4773,7 +4814,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":crud_settings,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":struct,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});
@@ -4784,7 +4825,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":crud_settings,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":struct,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});
@@ -4823,6 +4864,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			var struct = Runtime.rtl.get(ctx, params, "struct");
+			
 			var table_model = Runtime.rtl.get(ctx, params, "table-model");
 			
 			var item = Runtime.rtl.get(ctx, params, "row-data");
@@ -4832,7 +4875,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			if (button_type == "edit")
 			{
 				/* Component 'Button' */
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"],"@key":"edit"}, "layout": layout, "content": (__control) =>
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-pk":this.getPrimaryKey(ctx, struct, item),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"],"@key":"edit"}, "layout": layout, "content": (__control) =>
 				{
 					var __vnull = null;
 					var __control_childs = [];
@@ -4853,7 +4896,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var index = Runtime.rtl.get(ctx, params, "row-index");
 				
 				/* Component 'Button' */
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small danger","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"],"@key":"delete"}, "layout": layout, "content": (__control) =>
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small danger","data-index":index,"data-pk":this.getPrimaryKey(ctx, struct, item),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"],"@key":"delete"}, "layout": layout, "content": (__control) =>
 				{
 					var __vnull = null;
 					var __control_childs = [];
@@ -4875,6 +4918,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			var struct = Runtime.rtl.get(ctx, params, "struct");
+			
 			var table_model = Runtime.rtl.get(ctx, params, "table-model");
 			
 			var item = Runtime.rtl.get(ctx, params, "row-data");
@@ -4882,7 +4927,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var index = Runtime.rtl.get(ctx, params, "row-index");
 			
 			/* Component 'Button' */
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"],"@key":"edit"}, "layout": layout, "content": (__control) =>
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small","data-index":index,"data-pk":this.getPrimaryKey(ctx, struct, item),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowEditClick"],"@key":"edit"}, "layout": layout, "content": (__control) =>
 			{
 				var __vnull = null;
 				var __control_childs = [];
@@ -4903,6 +4948,8 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			var struct = Runtime.rtl.get(ctx, params, "struct");
+			
 			var table_model = Runtime.rtl.get(ctx, params, "table-model");
 			
 			var item = Runtime.rtl.get(ctx, params, "row-data");
@@ -4910,7 +4957,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			var index = Runtime.rtl.get(ctx, params, "row-index");
 			
 			/* Component 'Button' */
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small danger","data-index":index,"data-id":Runtime.rtl.get(ctx, item, "id"),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"],"@key":"delete"}, "layout": layout, "content": (__control) =>
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small danger","data-index":index,"data-pk":this.getPrimaryKey(ctx, struct, item),"@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.CRUD.CrudPage","onRowDeleteClick"],"@key":"delete"}, "layout": layout, "content": (__control) =>
 			{
 				var __vnull = null;
 				var __control_childs = [];
@@ -4923,6 +4970,21 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			
 			return __control_childs;
 		};
+	},
+	/**
+ * Returns primary key by item
+ */
+	getPrimaryKey: function(ctx, struct, item)
+	{
+		var pk = new Runtime.Map(ctx);
+		struct = struct.filter(ctx, Runtime.lib.equalAttr(ctx, "primary", true));
+		for (var i = 0;i < struct.count(ctx);i++)
+		{
+			var field = Runtime.rtl.get(ctx, struct, i);
+			var value = Runtime.rtl.get(ctx, item, field.api_name);
+			pk.set(ctx, field.api_name, value);
+		}
+		return pk.toDict(ctx);
 	},
 	components: function(ctx)
 	{
@@ -5241,6 +5303,8 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		this.class_name_extends = null;
 		this.class_settings = null;
 		this.dbtype = "";
+		this.auto_increment = false;
+		this.primary = false;
 		this.required = false;
 		this.readonly = false;
 		this.virtual = false;
@@ -5265,6 +5329,8 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 			this.class_name_extends = o.class_name_extends;
 			this.class_settings = o.class_settings;
 			this.dbtype = o.dbtype;
+			this.auto_increment = o.auto_increment;
+			this.primary = o.primary;
 			this.required = o.required;
 			this.readonly = o.readonly;
 			this.virtual = o.virtual;
@@ -5288,6 +5354,8 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		else if (k == "class_name_extends")this.class_name_extends = v;
 		else if (k == "class_settings")this.class_settings = v;
 		else if (k == "dbtype")this.dbtype = v;
+		else if (k == "auto_increment")this.auto_increment = v;
+		else if (k == "primary")this.primary = v;
 		else if (k == "required")this.required = v;
 		else if (k == "readonly")this.readonly = v;
 		else if (k == "virtual")this.virtual = v;
@@ -5311,6 +5379,8 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		else if (k == "class_name_extends")return this.class_name_extends;
 		else if (k == "class_settings")return this.class_settings;
 		else if (k == "dbtype")return this.dbtype;
+		else if (k == "auto_increment")return this.auto_increment;
+		else if (k == "primary")return this.primary;
 		else if (k == "required")return this.required;
 		else if (k == "readonly")return this.readonly;
 		else if (k == "virtual")return this.virtual;
@@ -5378,6 +5448,8 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 			a.push("class_name_extends");
 			a.push("class_settings");
 			a.push("dbtype");
+			a.push("auto_increment");
+			a.push("primary");
 			a.push("required");
 			a.push("readonly");
 			a.push("virtual");
@@ -5458,6 +5530,20 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 			]),
 		});
 		if (field_name == "dbtype") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.FieldInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "auto_increment") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.FieldInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "primary") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.CRUD.FieldInfo",
 			"name": field_name,

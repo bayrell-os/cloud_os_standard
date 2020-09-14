@@ -19,7 +19,6 @@
 namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
-
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
@@ -33,14 +32,14 @@ use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.FieldInfo;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "core.crud" }
-static class CrudYamlFiles extends CrudApi
+@ApiList{ "object_name": "Bayrell.CloudOS.Softwares", "interface_name": "core.crud" }
+static class CrudSoftwares extends CrudApi
 {
 	
 	/**
 	 * Returns crud table name
 	 */
-	pure string getTableName() => "yaml_files";
+	pure string getTableName() => "softwares";
 	
 	
 	
@@ -51,24 +50,16 @@ static class CrudYamlFiles extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "file_id",
+			"api_name": "api_name",
 			"dbtype": "bigint",
-			"auto_increment": true,
-			"readonly": true,
 			"primary": true,
 		},
 		new FieldInfo
 		{
-			"api_name": "file_name",
+			"api_name": "name",
 			"dbtype": "string",
 			"default": "",
 			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "content",
-			"dbtype": "string",
-			"default": "",
 		},
 	];
 	
@@ -79,7 +70,7 @@ static class CrudYamlFiles extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["file_id", "desc"]
+		["api_name", "desc"]
 	];
 	
 	
@@ -105,7 +96,7 @@ static class CrudYamlFiles extends CrudApi
 		{
 		}
 		
-		else if (this.action == "add" or this.action == "update")
+		else if (this.action == "create" or this.action == "update")
 		{
 		}
 		

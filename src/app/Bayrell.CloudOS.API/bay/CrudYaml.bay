@@ -53,9 +53,11 @@ static class CrudYaml extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "id",
+			"api_name": "yaml_id",
 			"dbtype": "bigint",
+			"auto_increment": true,
 			"readonly": true,
+			"primary": true,
 		},
 		new FieldInfo
 		{
@@ -86,7 +88,7 @@ static class CrudYaml extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["id", "desc"]
+		["yaml_id", "desc"]
 	];
 	
 	

@@ -57,7 +57,7 @@ class Dashboard
 		QueryBuilder q = new QueryBuilder()
 			.select("services")
 			.fields([
-				"id", "service_id", "_name", "_image", "enable", "timestamp", "balancer",
+				"service_id", "docker_service_id", "_name", "_image", "enable", "timestamp", "balancer",
 			])
 			.order([ ["_name", "asc"] ])
 			.where

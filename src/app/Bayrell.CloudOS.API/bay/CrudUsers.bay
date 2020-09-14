@@ -51,8 +51,10 @@ static class CrudUsers extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "id",
+			"api_name": "user_id",
 			"dbtype": "bigint",
+			"auto_increment": true,
+			"primary": true,
 			"readonly": true,
 		},
 		new FieldInfo
@@ -77,7 +79,7 @@ static class CrudUsers extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["id", "desc"]
+		["user_id", "desc"]
 	];
 	
 	
@@ -177,7 +179,7 @@ static class CrudUsers extends CrudApi
 		{
 			if (this.action == "create" or this.action == "update")
 			{
-				string user_id = this.pk["id"];
+				string user_id = this.pk["user_id"];
 				string password1 = this.item["password1"];
 				
 				/* Set up password */
@@ -188,7 +190,7 @@ static class CrudUsers extends CrudApi
 					
 					await orm.insert_or_update
 					(
-						"docker_users_auth",
+						"users_auth",
 						{
 							"user_id": user_id,
 							"type": "password",
@@ -222,7 +224,7 @@ static class CrudUsers extends CrudApi
 		Cursor cursor = await orm.query
 		(
 			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
-			"left join users_auth as a on (u.id = a.user_id and a.type='password')",
+			"left join users_auth as a on (u.user_id = a.user_id and a.method='password')",
 		);
 		
 		while (true)

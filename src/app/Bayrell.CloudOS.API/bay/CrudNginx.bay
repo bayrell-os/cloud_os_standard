@@ -50,9 +50,11 @@ static class CrudNginx extends CrudApi
 	[
 		new FieldInfo
 		{
-			"api_name": "id",
+			"api_name": "file_id",
 			"dbtype": "bigint",
+			"auto_increment": true,
 			"readonly": true,
+			"primary": true,
 		},
 		new FieldInfo
 		{
@@ -82,7 +84,7 @@ static class CrudNginx extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["id", "desc"]
+		["file_id", "desc"]
 	];
 	
 	

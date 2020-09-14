@@ -63,10 +63,13 @@ static class ModuleDescription
 		/* Register api */
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudNginx" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudServices" },
+		new Entity{ "name": "Bayrell.CloudOS.API.CrudSoftwares" },
+		new Entity{ "name": "Bayrell.CloudOS.API.CrudSpaces" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudUsers" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudYaml" },
 		new Entity{ "name": "Bayrell.CloudOS.API.CrudYamlFiles" },
 		new Entity{ "name": "Bayrell.CloudOS.API.Dashboard" },
+		new Entity{ "name": "Bayrell.CloudOS.LogicMap" },
 		
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.API.DockerTasks" },

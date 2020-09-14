@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.User.UsersPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.User.UsersPageModel"
+	name="Bayrell.CloudOS.Docker.NginxPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Docker.NginxPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -37,9 +37,14 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.User.UsersPage" />
-<use name="Bayrell.CloudOS.User.UsersPageModel" />
+<use name="Bayrell.CloudOS.Docker.NginxPage" />
+<use name="Bayrell.CloudOS.Docker.NginxPageModel" />
+
+
+<style>
+</style>
 
 
 <script>
@@ -48,11 +53,11 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/users/", "name": "app.users" }
+@Route{ "uri": "/docker/nginx/", "name": "app.docker.nginx" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	UsersPageModel page_model = new UsersPageModel
+	NginxPageModel page_model = new NginxPageModel
 	{
 		"crud": new CrudPageModel
 		{
@@ -64,7 +69,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
 	(
 		{
-			"object_name": "Bayrell.CloudOS.Users",
+			"object_name": "Bayrell.CloudOS.Nginx",
 			"interface_name": "core.crud",
 			"method_name": "search",
 			"data": search_params,
@@ -82,11 +87,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	/* Set title */
-	container <= layout <= title <= "Users page";
+	container <= layout <= title <= "Nginx page";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof UsersPage;
+	container <= layout <= page_class <= classof NginxPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -96,17 +101,13 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 
 
-<style>
-</style>
-
-
 <template name="render">
 	
 	%var Collection<FieldInfo> struct =
 	[
 		new FieldInfo
 		{
-			"api_name": "user_id",
+			"api_name": "file_id",
 			"primary": true,
 		},
 		
@@ -129,7 +130,6 @@ static async RenderContainer actionIndex(RenderContainer container)
 				},
 			},
 		},
-		
 		new FieldInfo
 		{
 			"api_name": "name",
@@ -137,11 +137,10 @@ static async RenderContainer actionIndex(RenderContainer container)
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
-		
 		new FieldInfo
 		{
-			"api_name": "banned",
-			"label": "Banned",
+			"api_name": "enable",
+			"label": "Enable",
 			"class_name": classof Select,
 			"class_name_table": classof SelectText,
 			"class_settings":
@@ -155,7 +154,12 @@ static async RenderContainer actionIndex(RenderContainer container)
 				],
 			}
 		},
-		
+		new FieldInfo
+		{
+			"api_name": "content",
+			"label": "Content",
+			"class_name": classof TextArea,
+		},
 		new FieldInfo
 		{
 			"api_name": "edit-buttons",
@@ -172,60 +176,37 @@ static async RenderContainer actionIndex(RenderContainer container)
 					];
 				},
 			},
-		},
-		
-		new FieldInfo
-		{
-			"api_name": "password1",
-			"label": "Password",
-			"class_name": classof Input,
-			"class_settings":
-			{
-				"type": "password",
-			},
-		},
-		
-		new FieldInfo
-		{
-			"api_name": "password2",
-			"label": "Password",
-			"class_name": classof Input,
-			"class_settings":
-			{
-				"type": "password",
-			},
-		},
+		}
 	];
 	
 	%var Collection<string> filter_fields =
 	[
 		"name",
-		"banned",
+		"enable",
 	];
 	
 	%var Collection<string> form_fields =
 	[
 		"name",
-		"banned",
-		"password1",
-		"password2",
+		"enable",
+		"content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
 		"name",
-		"banned",
-		"edit-buttons"
+		"enable",
+		"edit-buttons",
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add user")
+		"add": _("Bayrell.CloudOS", "Add nginx file")
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Users"
+		object_name="Bayrell.CloudOS.Nginx"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
