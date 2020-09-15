@@ -922,6 +922,18 @@ Object.assign(Runtime.rtl,
 		return Symbol();
 	},
 	/**
+	 * Generate uuid
+	 */
+	uid: function(ctx)
+	{
+	},
+	/**
+	 * Generate timestamp based uuid
+	 */
+	time_uid: function(ctx)
+	{
+	},
+	/**
 	 * Returns random value x, where a <= x <= b
 	 * @param int a
 	 * @param int b

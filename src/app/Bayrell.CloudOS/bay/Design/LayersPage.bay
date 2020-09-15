@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Docker.YamlFilesPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Docker.YamlFilesPageModel"
+	name="Bayrell.CloudOS.Design.LayersPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LayersPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -39,8 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Docker.YamlFilesPage" />
-<use name="Bayrell.CloudOS.Docker.YamlFilesPageModel" />
+<use name="Bayrell.CloudOS.Design.LayersPage" />
+<use name="Bayrell.CloudOS.Design.LayersPageModel" />
 
 
 <style>
@@ -53,16 +53,16 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/docker/yaml/files/", "name": "app.docker.yaml.files" }
+@Route{ "uri": "/design/layers/", "name": "app.design.layers" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	YamlFilesPageModel page_model = new YamlFilesPageModel
+	LayersPageModel page_model = new LayersPageModel
 	{
 		"crud": await CrudPageModel::crudSearch
 		(
 			{
-				"object_name": "Bayrell.CloudOS.YamlFiles",
+				"object_name": "Bayrell.CloudOS.Layers",
 				"interface_name": "core.crud",
 				"method_name": "search",
 			},
@@ -71,11 +71,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	/* Set title */
-	container <= layout <= title <= "Yaml files page";
+	container <= layout <= title <= "Layers";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof YamlFilesPage;
+	container <= layout <= page_class <= classof LayersPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -91,12 +91,6 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		new FieldInfo
 		{
-			"api_name": "file_id",
-			"primary": true,
-		},
-		
-		new FieldInfo
-		{
 			"api_name": "number",
 			"label": "",
 			"class_name": classof Label,
@@ -107,16 +101,44 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
-			"api_name": "file_name",
-			"label": "File name",
+			"api_name": "layer_id",
+			"label": "Layer id",
+			"primary": true,
+		},
+		new FieldInfo
+		{
+			"api_name": "software_api_name",
+			"label": "Software api name",
+			"class_name": classof Select,
+			"class_name_table": classof Label,
+			"class_settings":
+			{
+				"show_select_value_filter": true,
+				"show_select_value": true,
+				"options": model.crud["foreigns", "softwares"],
+			},
+		},
+		new FieldInfo
+		{
+			"api_name": "software_name",
+			"dbtype": "string",
+			"class_name": classof Label,
+			"virtual": true,
+		},
+		new FieldInfo
+		{
+			"api_name": "name",
+			"label": "Layer name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "content",
-			"label": "Content",
-			"class_name": classof TextArea,
+			"api_name": "uid",
+			"label": "UID",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
+			"can_update": false,
 		},
 		new FieldInfo
 		{
@@ -139,39 +161,41 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	%var Collection<string> filter_fields =
 	[
-		"file_name",
+		"software_api_name",
+		"name",
+		"uid",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"file_name",
-		"content",
+		"software_api_name",
+		"name",
+		"uid",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"file_name",
+		"software_api_name",
+		"name",
+		"uid",
 		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add yaml file"),
+		"add": _("Bayrell.CloudOS", "Add layer"),
 		"delete": string (Dict item) =>
-			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["file_name"] } ),
+			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["name"] } ),
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.YamlFiles"
+		object_name="Bayrell.CloudOS.Layers"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
-		dialog_form={{
-			"width": "800px"
-		}}
 	/>
 	
 </template>

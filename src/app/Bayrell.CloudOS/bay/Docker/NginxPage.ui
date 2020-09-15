@@ -59,32 +59,16 @@ static async RenderContainer actionIndex(RenderContainer container)
 	/* Create model */
 	NginxPageModel page_model = new NginxPageModel
 	{
-		"crud": new CrudPageModel
-		{
-		},
+		"crud": await CrudPageModel::crudSearch
+		(
+			{
+				"object_name": "Bayrell.CloudOS.Nginx",
+				"interface_name": "core.crud",
+				"method_name": "search",
+			},
+			container
+		)
 	};
-	
-	/* Remote call */
-	Dict search_params = CrudPageModel::getCrudSearchParams(container.request);
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-	(
-		{
-			"object_name": "Bayrell.CloudOS.Nginx",
-			"interface_name": "core.crud",
-			"method_name": "search",
-			"data": search_params,
-		},
-		container
-	);
-	
-	/* Answer */
-	if (answer.isSuccess())
-	{
-		page_model <= crud <= table <= rows <= answer.response["items"];
-		page_model <= crud <= table <= page <= answer.response["page"];
-		page_model <= crud <= table <= pages <= answer.response["pages"];
-		page_model <= crud <= table <= limit <= answer.response["limit"];
-	}
 	
 	/* Set title */
 	container <= layout <= title <= "Nginx page";

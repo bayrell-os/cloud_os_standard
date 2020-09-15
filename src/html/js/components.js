@@ -4457,10 +4457,10 @@ Object.assign(Runtime.Web.CRUD.CrudFilter,
  */
 	patchSettings: function(ctx, layout, field, class_settings, model, params)
 	{
-		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, class_settings, "filter_show_select_value"));
+		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, class_settings, "show_select_value_filter"));
 		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "bool", false));
-		var filter_show_select_value = __v0.value(ctx);
-		if (filter_show_select_value)
+		var show_select_value_filter = __v0.value(ctx);
+		if (show_select_value_filter)
 		{
 			class_settings = Runtime.rtl.setAttr(ctx, class_settings, Runtime.Collection.from(["show_select_value"]), true);
 		}
@@ -4804,6 +4804,10 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Dict", Runtime.Dict.from({})));
 			var form_settings = __v1.value(ctx);
 			
+			var form_add_fields = form_fields.filter(ctx, (ctx, __varg0) => Runtime.Web.CRUD.FieldInfo.filterForm(ctx, struct, "create", __varg0));
+			
+			var form_edit_fields = form_fields.filter(ctx, (ctx, __varg0) => Runtime.Web.CRUD.FieldInfo.filterForm(ctx, struct, "update", __varg0));
+			
 			/* Element 'div.dialogs' */
 			var __v1; var __v1_childs = [];
 			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["dialogs", this.getCssHash(ctx)].join(" "),"@elem_name":"dialogs"}});
@@ -4814,7 +4818,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":struct,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":struct,"fields":form_add_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});
@@ -4825,7 +4829,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":struct,"fields":form_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":struct,"fields":form_edit_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});
@@ -5083,6 +5087,8 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		this.dialog_add = new Runtime.Web.Dialog.DialogModel(ctx);
 		this.dialog_edit = new Runtime.Web.Dialog.DialogModel(ctx);
 		this.dialog_delete = new Runtime.Web.Dialog.DialogModel(ctx);
+		this.foreigns = Runtime.Dict.from({});
+		this.params = Runtime.Dict.from({});
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -5096,6 +5102,8 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 			this.dialog_add = o.dialog_add;
 			this.dialog_edit = o.dialog_edit;
 			this.dialog_delete = o.dialog_delete;
+			this.foreigns = o.foreigns;
+			this.params = o.params;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
@@ -5108,6 +5116,8 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		else if (k == "dialog_add")this.dialog_add = v;
 		else if (k == "dialog_edit")this.dialog_edit = v;
 		else if (k == "dialog_delete")this.dialog_delete = v;
+		else if (k == "foreigns")this.foreigns = v;
+		else if (k == "params")this.params = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
@@ -5120,6 +5130,8 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 		else if (k == "dialog_add")return this.dialog_add;
 		else if (k == "dialog_edit")return this.dialog_edit;
 		else if (k == "dialog_delete")return this.dialog_delete;
+		else if (k == "foreigns")return this.foreigns;
+		else if (k == "params")return this.params;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -5130,6 +5142,18 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel.prototype,
 Object.assign(Runtime.Web.CRUD.CrudPageModel, Runtime.BaseStruct);
 Object.assign(Runtime.Web.CRUD.CrudPageModel,
 {
+	/**
+	 * Curd Search
+	 */
+	crudSearch: async function(ctx, items, container)
+	{
+		/* Remote call */
+		var search_params = this.getCrudSearchParams(ctx, container.request);
+		items = Runtime.rtl.setAttr(ctx, items, Runtime.Collection.from(["data"]), search_params);
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, items, container);
+		/* Answer */
+		return Promise.resolve(this.fromAnswer(ctx, this.newInstance(ctx, Runtime.Dict.from({})), answer));
+	},
 	/**
 	 * Crud search
 	 */
@@ -5147,6 +5171,21 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 			data.set(ctx, "limit", 20);
 		}
 		return data.toDict(ctx);
+	},
+	/**
+	 * From answer
+	 */
+	fromAnswer: function(ctx, model, answer)
+	{
+		if (answer.isSuccess(ctx))
+		{
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["table", "rows"]), Runtime.rtl.get(ctx, answer.response, "items"));
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["table", "page"]), Runtime.rtl.get(ctx, answer.response, "page"));
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["table", "pages"]), Runtime.rtl.get(ctx, answer.response, "pages"));
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["table", "limit"]), Runtime.rtl.get(ctx, answer.response, "limit"));
+			model = Runtime.rtl.setAttr(ctx, model, Runtime.Collection.from(["foreigns"]), Runtime.rtl.get(ctx, answer.response, "foreigns"));
+		}
+		return model;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -5187,6 +5226,8 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 			a.push("dialog_add");
 			a.push("dialog_edit");
 			a.push("dialog_delete");
+			a.push("foreigns");
+			a.push("params");
 		}
 		return Runtime.Collection.from(a);
 	},
@@ -5238,6 +5279,20 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 			]),
 		});
 		if (field_name == "dialog_delete") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.CrudPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "foreigns") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.CrudPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "params") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.CRUD.CrudPageModel",
 			"name": field_name,
@@ -5308,10 +5363,11 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		this.required = false;
 		this.readonly = false;
 		this.virtual = false;
-		this.group = "default";
-		this.default_value = null;
 		this.can_create = true;
 		this.can_update = true;
+		this.group = "default";
+		this.default_value = null;
+		this.foreign = Runtime.Dict.from({});
 		this.params = Runtime.Dict.from({});
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
@@ -5334,10 +5390,11 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 			this.required = o.required;
 			this.readonly = o.readonly;
 			this.virtual = o.virtual;
-			this.group = o.group;
-			this.default_value = o.default_value;
 			this.can_create = o.can_create;
 			this.can_update = o.can_update;
+			this.group = o.group;
+			this.default_value = o.default_value;
+			this.foreign = o.foreign;
 			this.params = o.params;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
@@ -5359,10 +5416,11 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		else if (k == "required")this.required = v;
 		else if (k == "readonly")this.readonly = v;
 		else if (k == "virtual")this.virtual = v;
-		else if (k == "group")this.group = v;
-		else if (k == "default_value")this.default_value = v;
 		else if (k == "can_create")this.can_create = v;
 		else if (k == "can_update")this.can_update = v;
+		else if (k == "group")this.group = v;
+		else if (k == "default_value")this.default_value = v;
+		else if (k == "foreign")this.foreign = v;
 		else if (k == "params")this.params = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
@@ -5384,10 +5442,11 @@ Object.assign(Runtime.Web.CRUD.FieldInfo.prototype,
 		else if (k == "required")return this.required;
 		else if (k == "readonly")return this.readonly;
 		else if (k == "virtual")return this.virtual;
-		else if (k == "group")return this.group;
-		else if (k == "default_value")return this.default_value;
 		else if (k == "can_create")return this.can_create;
 		else if (k == "can_update")return this.can_update;
+		else if (k == "group")return this.group;
+		else if (k == "default_value")return this.default_value;
+		else if (k == "foreign")return this.foreign;
 		else if (k == "params")return this.params;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
@@ -5404,7 +5463,27 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 	 */
 	getFieldInfo: function(ctx, settings, field_name)
 	{
-		return settings.findItem(ctx, Runtime.lib.equalAttr(ctx, "api_name", field_name));
+		var __memorize_value = Runtime.rtl._memorizeValue("Runtime.Web.CRUD.FieldInfo.getFieldInfo", arguments);
+		if (__memorize_value != Runtime.rtl._memorize_not_found) return __memorize_value;
+		var __memorize_value = settings.findItem(ctx, Runtime.lib.equalAttr(ctx, "api_name", field_name));
+		Runtime.rtl._memorizeSave("Runtime.Web.CRUD.FieldInfo.getFieldInfo", arguments, __memorize_value);
+		return __memorize_value;
+	},
+	/**
+	 * Filter form
+	 */
+	filterForm: function(ctx, settings, form_type, field_name)
+	{
+		var info = this.getFieldInfo(ctx, settings, field_name);
+		if (form_type == "create" && info.can_create == false)
+		{
+			return false;
+		}
+		if (form_type == "update" && info.can_update == false)
+		{
+			return false;
+		}
+		return true;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -5453,10 +5532,11 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 			a.push("required");
 			a.push("readonly");
 			a.push("virtual");
-			a.push("group");
-			a.push("default_value");
 			a.push("can_create");
 			a.push("can_update");
+			a.push("group");
+			a.push("default_value");
+			a.push("foreign");
 			a.push("params");
 		}
 		return Runtime.Collection.from(a);
@@ -5571,6 +5651,20 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 			"annotations": Collection.from([
 			]),
 		});
+		if (field_name == "can_create") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.FieldInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "can_update") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.CRUD.FieldInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		if (field_name == "group") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.CRUD.FieldInfo",
@@ -5585,14 +5679,7 @@ Object.assign(Runtime.Web.CRUD.FieldInfo,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "can_create") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.CRUD.FieldInfo",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "can_update") return new IntrospectionInfo(ctx, {
+		if (field_name == "foreign") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.CRUD.FieldInfo",
 			"name": field_name,

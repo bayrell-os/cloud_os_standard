@@ -25,6 +25,7 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Button.Button" component="true" />
+<use name="Bayrell.CloudOS.ModuleDescription" />
 
 
 <style>
@@ -185,6 +186,9 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.design.softwares") ? "active": "" }>
 								<a class='nolink' href='/design/softwares/'>{ _("Bayrell.CloudOS", "Softwares") }</a>
 							</li>
+							<li class={ rs::start(layout["route", "name"], "app.design.layers") ? "active": "" }>
+								<a class='nolink' href='/design/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.logic_map") ? "active": "" }>
 								<a class='nolink' href='/design/logic_map/'>{ _("Bayrell.CloudOS", "Logic Map") }</a>
 							</li>
@@ -274,7 +278,8 @@ span.lpad5{
 		</div>
 		<div class='layout_footer'>
 			<div class='b_out'><div class='b_in'>
-				{ "(c) BAYRELL Cloud OS 2020 \"Ildar Bikmamatov\" <support@bayrell.org>" }
+				{ "(c) BAYRELL Cloud OS 2020 \"Ildar Bikmamatov\" <support@bayrell.org>" }.
+				Version: { ModuleDescription::getModuleVersion() }
 			</div></div>
 		</div>
 	</div>

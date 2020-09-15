@@ -18,7 +18,7 @@
 
 <class version="1.0"
 	name="Bayrell.CloudOS.Design.LogicMapPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.SpacesPageModel"
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LogicMapPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -39,8 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Services.LogicMapPage" />
-<use name="Bayrell.CloudOS.Services.LogicMapPageModel" />
+<use name="Bayrell.CloudOS.Design.LogicMapPage" />
+<use name="Bayrell.CloudOS.Design.LogicMapPageModel" />
 
 
 <style>

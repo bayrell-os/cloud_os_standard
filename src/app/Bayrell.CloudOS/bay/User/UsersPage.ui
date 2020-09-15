@@ -54,32 +54,16 @@ static async RenderContainer actionIndex(RenderContainer container)
 	/* Create model */
 	UsersPageModel page_model = new UsersPageModel
 	{
-		"crud": new CrudPageModel
-		{
-		},
+		"crud": await CrudPageModel::crudSearch
+		(
+			{
+				"object_name": "Bayrell.CloudOS.Users",
+				"interface_name": "core.crud",
+				"method_name": "search",
+			},
+			container
+		)
 	};
-	
-	/* Remote call */
-	Dict search_params = CrudPageModel::getCrudSearchParams(container.request);
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-	(
-		{
-			"object_name": "Bayrell.CloudOS.Users",
-			"interface_name": "core.crud",
-			"method_name": "search",
-			"data": search_params,
-		},
-		container
-	);
-	
-	/* Answer */
-	if (answer.isSuccess())
-	{
-		page_model <= crud <= table <= rows <= answer.response["items"];
-		page_model <= crud <= table <= page <= answer.response["page"];
-		page_model <= crud <= table <= pages <= answer.response["pages"];
-		page_model <= crud <= table <= limit <= answer.response["limit"];
-	}
 	
 	/* Set title */
 	container <= layout <= title <= "Users page";
@@ -146,7 +130,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 			"class_name_table": classof SelectText,
 			"class_settings":
 			{
-				"filter_show_select_value": true,
+				"show_select_value_filter": true,
 				"show_select_value": false,
 				"options":
 				[
