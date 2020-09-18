@@ -1556,6 +1556,19 @@ Object.assign(Runtime.Web.Form.Form,
 			var __vnull = null;
 			var __control_childs = [];
 			
+			/* Text */
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": this.renderRows(ctx, layout, model, params, content)});
+			
+			return __control_childs;
+		};
+	},
+	renderRows: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
 			/* Element 'div.form_rows' */
 			var __v0; var __v0_childs = [];
 			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form_rows", this.getCssHash(ctx)].join(" "),"@key":"rows","@elem_name":"form_rows"}});
@@ -2214,6 +2227,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		this.message = "";
 		this.success_message = "";
 		this.error_message = "";
+		this.params = Runtime.Dict.from({});
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -2226,6 +2240,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 			this.message = o.message;
 			this.success_message = o.success_message;
 			this.error_message = o.error_message;
+			this.params = o.params;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
@@ -2237,6 +2252,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		else if (k == "message")this.message = v;
 		else if (k == "success_message")this.success_message = v;
 		else if (k == "error_message")this.error_message = v;
+		else if (k == "params")this.params = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
@@ -2248,6 +2264,7 @@ Object.assign(Runtime.Web.Form.FormModel.prototype,
 		else if (k == "message")return this.message;
 		else if (k == "success_message")return this.success_message;
 		else if (k == "error_message")return this.error_message;
+		else if (k == "params")return this.params;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -2357,6 +2374,7 @@ Object.assign(Runtime.Web.Form.FormModel,
 			a.push("message");
 			a.push("success_message");
 			a.push("error_message");
+			a.push("params");
 		}
 		return Runtime.Collection.from(a);
 	},
@@ -2401,6 +2419,13 @@ Object.assign(Runtime.Web.Form.FormModel,
 			]),
 		});
 		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Form.FormModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "params") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.Form.FormModel",
 			"name": field_name,
@@ -2625,7 +2650,7 @@ Object.assign(Runtime.Web.Input.Input,
 			
 			var tag = (params != null) ? (params.get(ctx, "@tag", "")) : ("");
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "input","attrs": {"@tag":tag,"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Input","onChange"],"name":name,"type":type,"value":model,"class":["input", this.getCssHash(ctx)].join(" "),"@elem_name":"input"}});
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "input","attrs": {"@tag":tag,"@event:Runtime.Web.Events.ChangeEvent":["Runtime.Web.Input.Input","onChange"],"name":name,"type":type,"value":((model != null) ? (model) : (value)),"class":["input", this.getCssHash(ctx)].join(" "),"@elem_name":"input"}});
 			
 			return __control_childs;
 		};
@@ -4808,6 +4833,10 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 			
 			var form_edit_fields = form_fields.filter(ctx, (ctx, __varg0) => Runtime.Web.CRUD.FieldInfo.filterForm(ctx, struct, "update", __varg0));
 			
+			var __v1 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, form_settings, "class_name"));
+			__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "string", "Runtime.Web.Form.Form"));
+			var form_class_name = __v1.value(ctx);
+			
 			/* Element 'div.dialogs' */
 			var __v1; var __v1_childs = [];
 			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["dialogs", this.getCssHash(ctx)].join(" "),"@elem_name":"dialogs"}});
@@ -4818,7 +4847,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":struct,"fields":form_add_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": form_class_name,"attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_add"],"action":"add","struct":struct,"fields":form_add_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});
@@ -4829,7 +4858,7 @@ Object.assign(Runtime.Web.CRUD.CrudPage,
 				var __vnull = null;
 				var __control_childs = [];
 				
-				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Form.Form","attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":struct,"fields":form_edit_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": form_class_name,"attrs": this.mergeAttrs(ctx, {"@name":["Runtime.Web.CRUD.CrudPage","form_edit"],"action":"edit","struct":struct,"fields":form_edit_fields,"@event:Runtime.Web.Form.FormEvent":["Runtime.Web.CRUD.CrudPage","onFormEvent"]},form_settings), "layout": layout});
 				
 				return __control_childs;
 			}});

@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LayersPageModel"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -39,6 +40,7 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
+<use name="Bayrell.CloudOS.Design.LayersForm" component="true" />
 <use name="Bayrell.CloudOS.Design.LayersPage" />
 <use name="Bayrell.CloudOS.Design.LayersPageModel" />
 
@@ -87,6 +89,29 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
+	%var Collection softwares = model.crud
+		|> attr "foreigns", "softwares", "items"
+		|> lib::map
+		(
+			Dict (Dict item) =>
+			{
+				"id": item["api_name"],
+				"value": item["api_name"] ~ " (" ~ item["name"] ~ ")",
+				"item": item,
+			}
+		);
+	%var Collection spaces = model.crud
+		|> attr "foreigns", "spaces", "items"
+		|> lib::map
+		(
+			Dict (Dict item) =>
+			{
+				"id": item["space_id"],
+				"value": item["name"],
+				"item": item,
+			}
+		);
+	
 	%var Collection<FieldInfo> struct =
 	[
 		new FieldInfo
@@ -115,15 +140,47 @@ static async RenderContainer actionIndex(RenderContainer container)
 			{
 				"show_select_value_filter": true,
 				"show_select_value": true,
-				"options": model.crud["foreigns", "softwares"],
+				"options": softwares,
 			},
 		},
 		new FieldInfo
 		{
-			"api_name": "software_name",
-			"dbtype": "string",
-			"class_name": classof Label,
-			"virtual": true,
+			"api_name": "backend",
+			"label": "backend",
+			"class_name_table": classof Label,
+			"class_settings":
+			{
+				"options": spaces,
+				"render": html (LayoutModel layout, var model, Dict params, var content)
+				{
+					Dict row = params["row-data"];
+					return row["software", "backend"];
+				},
+			}
+		},
+		new FieldInfo
+		{
+			"api_name": "spaces",
+			"label": "Spaces",
+			"class_name_table": classof Label,
+			"class_settings":
+			{
+				"options": spaces,
+				"render": html (LayoutModel layout, var model, Dict params, var content) use (spaces)
+				{
+					return <div class='spaces'>
+						%for (int i=0; i<model.count(); i++)
+						{
+							%var Dict item = model[i];
+							%var string space_id = item["space_id"];
+							%var string uri = item["uri"];
+							%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
+							%var string name = space["item", "domain"] ~ uri;
+							<div class='spaces_item'>{ name }</div>
+						}
+					</div>;
+				},
+			}
 		},
 		new FieldInfo
 		{
@@ -177,7 +234,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		"number",
 		"software_api_name",
+		"backend",
 		"name",
+		"spaces",
 		"uid",
 		"edit-buttons"
 	];
@@ -196,6 +255,10 @@ static async RenderContainer actionIndex(RenderContainer container)
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		form={{
+			"class_name": classof LayersForm,
+			"spaces": spaces,
+		}}
 	/>
 	
 </template>

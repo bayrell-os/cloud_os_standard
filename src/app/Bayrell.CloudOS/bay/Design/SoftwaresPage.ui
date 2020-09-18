@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.SoftwaresPage"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -123,6 +124,13 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
+			"api_name": "backend",
+			"label": "Backend",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
+		},
+		new FieldInfo
+		{
 			"api_name": "edit-buttons",
 			"label": "",
 			"class_name": classof Label,
@@ -144,12 +152,14 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		"api_name",
 		"name",
+		"backend",
 	];
 	
 	%var Collection<string> form_fields =
 	[
 		"api_name",
 		"name",
+		"backend",
 	];
 	
 	%var Collection<string> table_fields =
@@ -157,6 +167,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"number",
 		"api_name",
 		"name",
+		"backend",
 		"edit-buttons"
 	];
 	

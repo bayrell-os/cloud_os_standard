@@ -366,6 +366,7 @@ Object.assign(Runtime.rtl,
 		if (item === null) return def_val;
 		if (typeof path == "string") path = Collection.from([path]);
 		else if (Array.isArray(path) && path.count == undefined) path = Collection.from(path);
+		if (!(path instanceof Collection)) return def_val;
 		if (path.count() == 0)
 		{
 			return item;
@@ -1549,7 +1550,7 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? (item1.get(ctx, key, null) == value) : (false);
+			return (item1 != null) ? (Runtime.rtl.attr(ctx, item1, key) == value) : (false);
 		};
 	},
 	/**
@@ -1559,7 +1560,7 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? (item1.get(ctx, key, null) != value) : (false);
+			return (item1 != null) ? (Runtime.rtl.attr(ctx, item1, key) != value) : (false);
 		};
 	},
 	/**
@@ -7560,12 +7561,11 @@ Object.assign(Runtime.RuntimeUtils,
 		if (value instanceof _Dict)
 		{
 			var obj = {};
-			value.each((k, v)=>{
+			value.each((v, k)=>{
 				obj[k] = _Utils.PrimitiveToNative(v);
 			});
 			return obj;
 		}
-		
 		return value;
 	},
 	/**
@@ -10273,7 +10273,7 @@ Object.assign(Runtime.Core.ObjectManager.prototype,
 			}
 			if (driver == null)
 			{
-				throw new Runtime.Exceptions.RuntimeException(ctx, "Driver not found " + Runtime.rtl.toStr(class_name))
+				throw new Runtime.Exceptions.RuntimeException(ctx, "Driver '" + Runtime.rtl.toStr(class_name) + Runtime.rtl.toStr("' not found"))
 			}
 			this.objects.set(ctx, driver_name, driver);
 			this.drivers.set(ctx, driver_name, driver);

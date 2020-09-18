@@ -52,34 +52,6 @@ static class CrudLayers extends CrudApi
 	async void init()
 	{
 		await parent::init();
-		
-		if (this.action == "search")
-		{
-			this.foreigns =
-			{
-				"softwares": await CrudSoftwares::search()
-					|> attr "items"
-					|> lib::map
-					(
-						Dict (Dict item) =>
-						{
-							"id": item["api_name"],
-							"value": item["api_name"] ~ " (" ~ item["name"] ~ ")",
-							"item": item
-						}
-					)
-				"spaces": await CrudSpaces::search()
-					|> attr "items"
-					|> lib::map
-					(
-						Dict (Dict item) =>
-						{
-							"id": item["space_id"],
-							"item": item
-						}
-					)
-			};
-		}
 	}
 	
 	
@@ -107,14 +79,29 @@ static class CrudLayers extends CrudApi
 		new FieldInfo
 		{
 			"api_name": "software",
-			"dbtype": "string",
-			"default": "",
 			"virtual": true,
 			"foreign":
 			{
-				"from": "softwares",
+				"name": "softwares",
+				"type": "one_to_many",
 				"key": "software_api_name",
-				"value": "item",
+				"key_subtable": "api_name",
+				"class_name": classof CrudSoftwares,
+			}
+		},
+		new FieldInfo
+		{
+			"api_name": "spaces",
+			"virtual": true,
+			"foreign":
+			{
+				"name": "spaces",
+				"type": "many_to_many",
+				"key": "layer_id",
+				"key_subtable": "layer_id",
+				"key_subtable2": "space_id",
+				"subtable": "layers_spaces",
+				"class_name": classof CrudSpaces,
 			}
 		},
 		new FieldInfo
@@ -238,6 +225,17 @@ static class CrudLayers extends CrudApi
 	async bool after()
 	{
 		await parent::after();
+		
+		/* Update nginx */
+		if (this.action == "create" or this.action == "update" or this.action == "delete")
+		{
+			Collection ids = this.foreigns["spaces", "items"] |> lib::map( lib::attr("space_id") );
+			for (int i=0; i<ids.count(); i++)
+			{
+				await CrudSpaces::updateNginx( ids[i] );
+			}
+		}
+		
 	}
 	
 	

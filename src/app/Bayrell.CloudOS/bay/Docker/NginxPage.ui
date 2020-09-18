@@ -196,6 +196,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		dialog_form={{
+			"width": "800px"
+		}}
 	/>
 	
 </template>

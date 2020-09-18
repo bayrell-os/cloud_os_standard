@@ -1,0 +1,157 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.Design.LayersForm" extends="Runtime.Web.Form.Form" 
+	module="Bayrell.CloudOS" model="Runtime.Web.Form.FormModel"
+>
+
+
+<use name="Runtime.lib" />
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.Events.ChangeEvent" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Button.Button" component="true" />
+<use name="Runtime.Web.Input.Input" component="true" />
+<use name="Runtime.Web.Input.Select" component="true" />
+
+<style>
+%spaces{
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+%spaces_label{
+	font-weight: bold;
+	text-align: center;
+	padding-bottom: 10px;
+}
+%spaces_items{
+	padding-bottom: 10px;
+}
+%spaces_item{
+	padding-bottom: 5px;
+}
+%spaces_item:last-child{
+	padding-bottom: 0px;
+}
+%spaces_item_cell{
+	display: inline-block;
+	vertical-align: middle;
+}
+%spaces_item_cell--domain{
+	width: 100px;
+	text-align: right;
+	padding-right: 5px;
+}
+%spaces_item_cell--uri{
+	width: calc(100% - 170px);
+}
+%spaces_item_cell--button{
+	width: 70px;
+	text-align: center;
+}
+</style>
+
+
+<template name="renderContent">
+	{ static::renderRows(layout, model, params, content) }
+	
+	%var Collection spaces = params["spaces"] |> default Collection null;
+	%var Collection item_spaces = model["item", "spaces"] |> default Collection null;
+	%var Collection spaces2 = spaces;
+	
+	<div class='spaces'>
+		<div class='spaces_label'>
+			{ _("Bayrell.CloudOS", "Spaces") }
+		</div>
+		%if (item_spaces != null)
+		{
+			<div class='spaces_items'>
+			%for(int i=0; i<item_spaces.count(); i++)
+			{
+				%var Dict item_space = item_spaces[i];
+				%var int space_id = item_space["space_id"];
+				%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
+				<div class='spaces_item'>
+					<div class='spaces_item_cell spaces_item_cell--domain'>
+						{ space["item", "domain"] }
+					</div>
+					<div class='spaces_item_cell spaces_item_cell--uri'>
+						<Input
+							value={ item_space["uri"] } data-index={ i } data-name="uri"
+							@event:ChangeEvent="onSpaceItemChange"
+						/>
+					</div>
+					<div class='spaces_item_cell spaces_item_cell--button'>
+						<Button type='small danger' @event:MouseClickEvent="onSpaceItemRemove" data-index={ i }>
+							{ _("Runtime.Web.CRUD", "Remove") }
+						</Button>
+					</div>
+				</div>
+				
+				<!-- Remove select option -->
+				%var int spaces2_index = spaces2.find( lib::equalAttr("id", space_id) );
+				%var spaces2 = spaces2.removeIm(spaces2_index);
+			}
+			</div>
+		}
+		<Select
+			name='select_space'
+			show_select_value={ true }
+			options={ spaces2 }
+			@bind=["params", "select_space"]
+			@event:ChangeEvent="onSpaceSelect"
+		/>
+	</div>
+</template>
+
+
+<script type="frontend">
+void onSpaceItemChange(Message<ChangeEvent> msg)
+{
+	int index = msg.sender.params["data-index"];
+	string field_name = msg.sender.params["data-name"];
+	string value = msg.data.value;
+	this.update("setAttr", ["item", "spaces", index, field_name], value);
+}
+void onSpaceItemRemove(Message<MouseClickEvent> msg)
+{
+	int index = msg.sender.params["data-index"];
+	Collection item_spaces = this.model(["item", "spaces"]) |> default Collection null;
+	item_spaces = item_spaces.removeIm(index);
+	this.update("setAttr", ["item", "spaces"], item_spaces);
+}
+void onSpaceSelect(Message<ChangeEvent> msg)
+{
+	int space_id = msg.data.value;
+	Dict model = this.model();
+	Dict space_item =
+	{
+		"layer_id": model["item", "layer_id"],
+		"space_id": space_id,
+		"uri": "/",
+	};
+	Collection item_spaces = model["item", "spaces"] |> default Collection [];
+	item_spaces = item_spaces.pushIm(space_item);
+	this.update("setAttr", ["item", "spaces"], item_spaces);
+	this.update("setAttr", ["params", "select_space"], "");
+}
+</script>
+
+
+</class>

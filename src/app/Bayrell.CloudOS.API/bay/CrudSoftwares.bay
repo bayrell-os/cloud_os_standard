@@ -30,6 +30,7 @@ use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.FieldInfo;
+use Bayrell.CloudOS.API.CrudServices;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Softwares", "interface_name": "core.crud" }
@@ -60,6 +61,12 @@ static class CrudSoftwares extends CrudApi
 			"dbtype": "string",
 			"default": "",
 			"required": true,
+		},
+		new FieldInfo
+		{
+			"api_name": "backend",
+			"dbtype": "string",
+			"default": "",
 		},
 	];
 	

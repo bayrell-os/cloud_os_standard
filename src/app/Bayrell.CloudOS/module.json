@@ -8,6 +8,7 @@
 		"Dashboard/MainPageModel",
 		"Dashboard/NodesPage",
 		"Dashboard/NodesPageModel",
+		"Design/LayersForm",
 		"Design/LayersPage",
 		"Design/LayersPageModel",
 		"Design/LogicMapPage",
