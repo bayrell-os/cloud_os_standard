@@ -1,0 +1,88 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.ORM;
+
+use Runtime.ORM.Record;
+use Runtime.ORM.Annotations.AutoIncrement;
+use Runtime.ORM.Annotations.BigIntType;
+use Runtime.ORM.Annotations.BooleanType;
+use Runtime.ORM.Annotations.JsonType;
+use Runtime.ORM.Annotations.ManyToMany;
+use Runtime.ORM.Annotations.ManyToOne;
+use Runtime.ORM.Annotations.Primary;
+use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.Virtual;
+use Bayrell.CloudOS.ORM.LayerSpace;
+use Bayrell.CloudOS.ORM.Software;
+use Bayrell.CloudOS.ORM.Space;
+
+
+struct Layer extends Record
+{
+	@AutoIncrement{}
+	@BigIntType{}
+	int layer_id;
+	
+	@StringType{ "length": 255, "nullable": true }
+	string software_api_name;
+	
+	@StringType{ "length": 255 }
+	string name;
+	
+	@StringType{ "length": 255 }
+	string uid;
+	
+	@JsonType{}
+	string data;
+	
+	@BooleanType{ "default": false }
+	bool is_deleted;
+	
+	@Virtual{}
+	@ManyToOne
+	{
+		"class_name": classof Software,
+		"key": "software_api_name",
+		"delete": Record::SET_NULL,
+		"update": Record::CASCADE,
+	}
+	Software software;
+	
+	@Virtual{}
+	@ManyToMany{ "class_name": classof Space, "sub_class_name": classof LayerSpace }
+	Collection<Space> spaces;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string table_name() => "layers";
+	
+	
+	/**
+	 * Keys
+	 */
+	pure Collection keys() =>
+	[
+		new Primary
+		{
+			"keys": ["layer_id"],
+		},
+	];
+}

@@ -1793,11 +1793,11 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": this.renderRows(ctx, layout, model, params, content)});
 			
 			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, params, "spaces"));
-			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", null));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var spaces = __v0.value(ctx);
 			
 			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "spaces"]));
-			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", null));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var item_spaces = __v0.value(ctx);
 			
 			var spaces2 = spaces;
@@ -2017,22 +2017,24 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 			
 			var __v0 = new Runtime.Monad(ctx, model.crud);
 			__v0 = __v0.attr(ctx, "foreigns");
-			__v0 = __v0.attr(ctx, "softwares");
-			__v0 = __v0.attr(ctx, "items");
+			__v0 = __v0.attr(ctx, "software");
+			__v0 = __v0.attr(ctx, "options");
 			__v0 = __v0.call(ctx, Runtime.lib.map(ctx, (ctx, item) => 
 			{
 				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "api_name"),"value":Runtime.rtl.get(ctx, item, "api_name") + Runtime.rtl.toStr(" (") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "name")) + Runtime.rtl.toStr(")"),"item":item});
 			}));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var softwares = __v0.value(ctx);
 			
 			var __v0 = new Runtime.Monad(ctx, model.crud);
 			__v0 = __v0.attr(ctx, "foreigns");
 			__v0 = __v0.attr(ctx, "spaces");
-			__v0 = __v0.attr(ctx, "items");
+			__v0 = __v0.attr(ctx, "options");
 			__v0 = __v0.call(ctx, Runtime.lib.map(ctx, (ctx, item) => 
 			{
 				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "space_id"),"value":Runtime.rtl.get(ctx, item, "name"),"item":item});
 			}));
+			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var spaces = __v0.value(ctx);
 			
 			var struct = Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":Runtime.Web.CRUD.CrudPage.fieldNumber})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"software_api_name","label":"Software api name","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":softwares})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"backend","label":"backend","class_name_table":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"options":spaces,"render":(ctx, layout, model, params, content) => 
@@ -2050,25 +2052,28 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 					var __v0; var __v0_childs = [];
 					[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["spaces", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces"}});
 					
-					for (var i = 0;i < model.count(ctx);i++)
+					if (model != null)
 					{
-						var item = Runtime.rtl.get(ctx, model, i);
-						
-						var space_id = Runtime.rtl.get(ctx, item, "space_id");
-						
-						var uri = Runtime.rtl.get(ctx, item, "uri");
-						
-						var space = spaces.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", space_id));
-						
-						var name = Runtime.rtl.attr(ctx, space, ["item", "domain"]) + Runtime.rtl.toStr(uri);
-						
-						/* Element 'div.spaces_item' */
-						var __v1; var __v1_childs = [];
-						[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["spaces_item", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces_item"}});
-						
-						/* Text */
-						[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": name});
-						RenderDriver.p(__v1, __v1_childs);
+						for (var i = 0;i < model.count(ctx);i++)
+						{
+							var item = Runtime.rtl.get(ctx, model, i);
+							
+							var space_id = Runtime.rtl.get(ctx, item, "space_id");
+							
+							var uri = Runtime.rtl.get(ctx, item, "uri");
+							
+							var space = spaces.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", space_id));
+							
+							var name = Runtime.rtl.attr(ctx, space, ["item", "domain"]) + Runtime.rtl.toStr(uri);
+							
+							/* Element 'div.spaces_item' */
+							var __v1; var __v1_childs = [];
+							[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["spaces_item", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces_item"}});
+							
+							/* Text */
+							[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": name});
+							RenderDriver.p(__v1, __v1_childs);
+						}
 					}
 					RenderDriver.p(__v0, __v0_childs);
 					

@@ -71,8 +71,8 @@
 <template name="renderContent">
 	{ static::renderRows(layout, model, params, content) }
 	
-	%var Collection spaces = params["spaces"] |> default Collection null;
-	%var Collection item_spaces = model["item", "spaces"] |> default Collection null;
+	%var Collection spaces = params["spaces"] |> default Collection [];
+	%var Collection item_spaces = model["item", "spaces"] |> default Collection [];
 	%var Collection spaces2 = spaces;
 	
 	<div class='spaces'>

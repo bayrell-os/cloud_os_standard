@@ -90,7 +90,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 <template name="render">
 	
 	%var Collection softwares = model.crud
-		|> attr "foreigns", "softwares", "items"
+		|> attr "foreigns", "software", "options"
 		|> lib::map
 		(
 			Dict (Dict item) =>
@@ -99,9 +99,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 				"value": item["api_name"] ~ " (" ~ item["name"] ~ ")",
 				"item": item,
 			}
-		);
+		)
+		|> default Collection []
+	;
 	%var Collection spaces = model.crud
-		|> attr "foreigns", "spaces", "items"
+		|> attr "foreigns", "spaces", "options"
 		|> lib::map
 		(
 			Dict (Dict item) =>
@@ -110,7 +112,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 				"value": item["name"],
 				"item": item,
 			}
-		);
+		)
+		|> default Collection []
+	;
 	
 	%var Collection<FieldInfo> struct =
 	[
@@ -169,14 +173,17 @@ static async RenderContainer actionIndex(RenderContainer container)
 				"render": html (LayoutModel layout, var model, Dict params, var content) use (spaces)
 				{
 					return <div class='spaces'>
-						%for (int i=0; i<model.count(); i++)
+						%if (model != null)
 						{
-							%var Dict item = model[i];
-							%var string space_id = item["space_id"];
-							%var string uri = item["uri"];
-							%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
-							%var string name = space["item", "domain"] ~ uri;
-							<div class='spaces_item'>{ name }</div>
+							%for (int i=0; i<model.count(); i++)
+							{
+								%var Dict item = model[i];
+								%var string space_id = item["space_id"];
+								%var string uri = item["uri"];
+								%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
+								%var string name = space["item", "domain"] ~ uri;
+								<div class='spaces_item'>{ name }</div>
+							}
 						}
 					</div>;
 				},

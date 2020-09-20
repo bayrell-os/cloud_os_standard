@@ -19,18 +19,18 @@
 namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
-
+use Runtime.lib;
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
-use Runtime.Crypt.Password;
-use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
-use Runtime.Web.CRUD.FieldInfo;
+use Runtime.Web.CRUD.Rules.ReadOnly;
+use Runtime.Web.CRUD.Rules.Required;
+use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.ORM.YamlFile;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "core.crud" }
@@ -38,38 +38,19 @@ static class CrudYamlFiles extends CrudApi
 {
 	
 	/**
-	 * Returns crud table name
+	 * Returns orm class name
 	 */
-	pure string getTableName() => "yaml_files";
+	pure string getORM() => classof YamlFile;
 	
 	
 	
 	/**
-	 * Returns table field value
+	 * Returns current rules
 	 */
-	Collection<FieldInfo> settings() =>
+	Collection<Rule> rules() =>
 	[
-		new FieldInfo
-		{
-			"api_name": "file_id",
-			"dbtype": "bigint",
-			"auto_increment": true,
-			"readonly": true,
-			"primary": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "file_name",
-			"dbtype": "string",
-			"default": "",
-			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "content",
-			"dbtype": "string",
-			"default": "",
-		},
+		new ReadOnly{ "api_name": "file_id" },
+		new Required{ "api_name": "file_name" },
 	];
 	
 	
@@ -119,11 +100,7 @@ static class CrudYamlFiles extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery()
-	{
-		QueryBuilder q = parent::buildSearchQuery();
-		return q;
-	}
+	QueryBuilder buildSearchQuery(QueryBuilder q) => q;
 	
 	
 	

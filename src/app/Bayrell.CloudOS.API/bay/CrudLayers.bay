@@ -23,16 +23,15 @@ use Runtime.lib;
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
-use Runtime.Crypt.Password;
-use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
-use Runtime.Web.CRUD.FieldInfo;
-use Bayrell.CloudOS.API.CrudSoftwares;
-use Bayrell.CloudOS.API.CrudSpaces;
+use Runtime.Web.CRUD.Rules.ReadOnly;
+use Runtime.Web.CRUD.Rules.Required;
+use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.ORM.Layer;
+use Bayrell.CloudOS.ORM.Space;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Layers", "interface_name": "core.crud" }
@@ -40,9 +39,21 @@ static class CrudLayers extends CrudApi
 {
 	
 	/**
-	 * Returns crud table name
+	 * Returns orm class name
 	 */
-	pure string getTableName() => "layers";
+	pure string getORM() => classof Layer;
+	
+	
+	
+	/**
+	 * Returns current rules
+	 */
+	Collection<Rule> rules() =>
+	[
+		new ReadOnly{ "api_name": "layer_id" },
+		new Required{ "api_name": "software_api_name" },
+		new Required{ "api_name": "name" },
+	];
 	
 	
 	
@@ -53,84 +64,6 @@ static class CrudLayers extends CrudApi
 	{
 		await parent::init();
 	}
-	
-	
-	
-	/**
-	 * Returns table field value
-	 */
-	Collection<FieldInfo> settings() =>
-	[
-		new FieldInfo
-		{
-			"api_name": "layer_id",
-			"dbtype": "bigint",
-			"auto_increment": true,
-			"readonly": true,
-			"primary": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "software_api_name",
-			"dbtype": "string",
-			"default": "",
-			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "software",
-			"virtual": true,
-			"foreign":
-			{
-				"name": "softwares",
-				"type": "one_to_many",
-				"key": "software_api_name",
-				"key_subtable": "api_name",
-				"class_name": classof CrudSoftwares,
-			}
-		},
-		new FieldInfo
-		{
-			"api_name": "spaces",
-			"virtual": true,
-			"foreign":
-			{
-				"name": "spaces",
-				"type": "many_to_many",
-				"key": "layer_id",
-				"key_subtable": "layer_id",
-				"key_subtable2": "space_id",
-				"subtable": "layers_spaces",
-				"class_name": classof CrudSpaces,
-			}
-		},
-		new FieldInfo
-		{
-			"api_name": "name",
-			"dbtype": "string",
-			"default": "",
-			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "uid",
-			"dbtype": "string",
-			"can_update": false,
-			"default": "",
-		},
-		new FieldInfo
-		{
-			"api_name": "data",
-			"dbtype": "string",
-			"default": "",
-		},
-		new FieldInfo
-		{
-			"api_name": "is_deleted",
-			"dbtype": "bool",
-			"default": false,
-		},
-	];
 	
 	
 	
@@ -169,11 +102,7 @@ static class CrudLayers extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery()
-	{
-		QueryBuilder q = parent::buildSearchQuery();
-		return q;
-	}
+	QueryBuilder buildSearchQuery(QueryBuilder q) => q;
 	
 	
 	
@@ -190,7 +119,7 @@ static class CrudLayers extends CrudApi
 		/* Add default value */
 		if (is_uid_empty)
 		{
-			item <= uid <= item.software_api_name ~ ":" ~ rtl::time_uid();
+			item <= uid <= item["software_api_name"] ~ ":" ~ rtl::time_uid();
 		}
 		
 		return item;
@@ -229,10 +158,12 @@ static class CrudLayers extends CrudApi
 		/* Update nginx */
 		if (this.action == "create" or this.action == "update" or this.action == "delete")
 		{
-			Collection ids = this.foreigns["spaces", "items"] |> lib::map( lib::attr("space_id") );
+			Collection ids = this.foreigns["spaces", "many_to_many"]
+				|> lib::map( lib::attr("space_id") )
+			;
 			for (int i=0; i<ids.count(); i++)
 			{
-				await CrudSpaces::updateNginx( ids[i] );
+				await Space::updateNginx( ids[i] );
 			}
 		}
 		

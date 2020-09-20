@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.API;
+namespace Bayrell.CloudOS.ORM;
 
 use Runtime.Core.Context;
 use Runtime.Core.Entity;
@@ -29,7 +29,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "Bayrell.CloudOS.API";
+	pure string getModuleName() => "Bayrell.CloudOS.ORM";
 	
 	
 	
@@ -47,10 +47,6 @@ static class ModuleDescription
 	 */
 	pure Map<string> requiredModules() => 
 	{
-		/* Backend */
-		#ifdef BACKEND then
-		'Runtime.Web.Backend': '*',
-		#endif
 	};
 	
 	
@@ -60,20 +56,8 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() => 
 	[
-		/* Register api */
-		new Entity{ "name": "Bayrell.CloudOS.API.CrudLayers" },
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudNginx" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudServices" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudSoftwares" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudSpaces" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudUsers" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.API.CrudYaml" }, */
-		new Entity{ "name": "Bayrell.CloudOS.API.CrudYamlFiles" },
-		/* new Entity{ "name": "Bayrell.CloudOS.API.Dashboard" }, */
-		/* new Entity{ "name": "Bayrell.CloudOS.LogicMap" }, */
-		
-		/* Tasks */
-		new Entity{ "name": "Bayrell.CloudOS.API.DockerTasks" },
+		/* Register orm */
+		new Entity{ "name": "Bayrell.CloudOS.ORM.Layer" },
 	];
 	
 }

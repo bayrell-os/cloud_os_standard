@@ -1,0 +1,79 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.ORM;
+
+use Runtime.ORM.Record;
+use Runtime.ORM.Annotations.BigIntType;
+use Runtime.ORM.Annotations.ManyToOne;
+use Runtime.ORM.Annotations.Primary;
+use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.Virtual;
+use Bayrell.CloudOS.ORM.Layer;
+use Bayrell.CloudOS.ORM.Space;
+
+
+struct LayerSpace extends Record
+{
+	@BigIntType{}
+	int layer_id;
+	
+	@BigIntType{}
+	int space_id;
+	
+	@StringType{ "length": 255 }
+	string uri;
+	
+	@Virtual{}
+	@ManyToOne
+	{
+		"class_name": classof Layer,
+		"key": "layer_id",
+		"delete": Record::CASCADE,
+		"update": Record::CASCADE,
+	}
+	Layer layer;
+	
+	@Virtual{}
+	@ManyToOne
+	{
+		"class_name": classof Space,
+		"key": "space_id",
+		"delete": Record::CASCADE,
+		"update": Record::CASCADE,
+	}
+	Space space;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string table_name() => "layers_spaces";
+	
+	
+	/**
+	 * Keys
+	 */
+	pure Collection keys() =>
+	[
+		new Primary
+		{
+			"keys": ["layer_id", "space_id"],
+		},
+	];
+}

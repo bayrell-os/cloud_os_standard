@@ -26,6 +26,8 @@ use Runtime.Core.RemoteCallRequest;
 use Runtime.Crypt.Password;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.Anotations.ReadOnly;
+use Runtime.ORM.Anotations.Required;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
@@ -33,6 +35,7 @@ use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.FieldInfo;
 use Bayrell.CloudOS.API.DockerLib;
 use Bayrell.CloudOS.API.DockerTasks;
+use Bayrell.CloudOS.ORM.Yaml;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Yaml", "interface_name": "core.crud" }
@@ -40,45 +43,20 @@ static class CrudYaml extends CrudApi
 {
 	
 	/**
-	 * Returns crud table name
+	 * Returns orm class name
 	 */
-	pure string getTableName() => "yaml";
+	pure string getORMClassName() => classof Yaml;
 	
 	
 	
 	/**
-	 * Returns table field value
+	 * Returns current rules
 	 */
-	Collection<FieldInfo> settings() =>
+	Collection rules() =>
 	[
-		new FieldInfo
-		{
-			"api_name": "yaml_id",
-			"dbtype": "bigint",
-			"auto_increment": true,
-			"readonly": true,
-			"primary": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "name",
-			"dbtype": "string",
-			"default": "",
-			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "stack",
-			"dbtype": "string",
-			"default": "",
-			"required": true,
-		},
-		new FieldInfo
-		{
-			"api_name": "content",
-			"dbtype": "string",
-			"default": "",
-		},
+		new ReadOnly{ "field": "yaml_id" },
+		new Required{ "field": "name" },
+		new Required{ "field": "stack" },
 	];
 	
 	
