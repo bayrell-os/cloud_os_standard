@@ -27,6 +27,7 @@ use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.ForeignKey;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
@@ -53,6 +54,8 @@ static class CrudLayers extends CrudApi
 		new ReadOnly{ "api_name": "layer_id" },
 		new Required{ "api_name": "software_api_name" },
 		new Required{ "api_name": "name" },
+		new ForeignKey{ "api_name": "software", "options": ForeignKey::LOAD_FULL_DICTIONARY },
+		new ForeignKey{ "api_name": "spaces", "options": ForeignKey::LOAD_FULL_DICTIONARY, "save": true },
 	];
 	
 	
@@ -158,6 +161,7 @@ static class CrudLayers extends CrudApi
 		/* Update nginx */
 		if (this.action == "create" or this.action == "update" or this.action == "delete")
 		{
+			/*
 			Collection ids = this.foreigns["spaces", "many_to_many"]
 				|> lib::map( lib::attr("space_id") )
 			;
@@ -165,6 +169,7 @@ static class CrudLayers extends CrudApi
 			{
 				await Space::updateNginx( ids[i] );
 			}
+			*/
 		}
 		
 	}

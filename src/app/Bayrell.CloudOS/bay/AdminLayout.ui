@@ -204,7 +204,7 @@ span.lpad5{
 								<a class='nolink' href='/docker/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.docker.yaml.index") ? "active": "" }>
-								<a class='nolink' href='/docker/yaml/'>{ _("Bayrell.CloudOS", "Yaml") }</a>
+								<a class='nolink' href='/docker/yaml/'>{ _("Bayrell.CloudOS", "Yaml Services") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.docker.yaml.files") ? "active": "" }>
 								<a class='nolink' href='/docker/yaml/files/'>

@@ -1564,6 +1564,25 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
+	 * Equal attrs
+	 */
+	equalAttrs: function(ctx, search)
+	{
+		return (ctx, item) => 
+		{
+			var fields = search.keys(ctx);
+			for (var i = 0;i < fields.count(ctx);i++)
+			{
+				var field_name = Runtime.rtl.get(ctx, fields, i);
+				if (Runtime.rtl.get(ctx, search, field_name) != Runtime.rtl.get(ctx, item, field_name))
+				{
+					return false;
+				}
+			}
+			return true;
+		};
+	},
+	/**
 	 * Equal two struct by key
 	 */
 	equalMethod: function(ctx, method_name, value)
@@ -1754,6 +1773,87 @@ Object.assign(Runtime.lib,
 	monad: function(ctx, m)
 	{
 		return m;
+	},
+	/**
+	 * Get method from class
+	 * @return fn
+	 */
+	method: function(ctx, method_name)
+	{
+		return (ctx, class_name) => 
+		{
+			return Runtime.rtl.method(ctx, class_name, method_name);
+		};
+	},
+	/**
+	 * Apply function
+	 * @return fn
+	 */
+	applyMethod: function(ctx, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return (ctx, class_name) => 
+		{
+			var f = Runtime.rtl.method(ctx, class_name, method_name);
+			return Runtime.rtl.apply(ctx, f, args);
+		};
+	},
+	/**
+	 * Apply async function
+	 * @return fn
+	 */
+	applyMethodAsync: function(ctx, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return async (ctx, class_name) => 
+		{
+			var f = Runtime.rtl.method(ctx, class_name, method_name);
+			return Promise.resolve(Runtime.rtl.apply(ctx, f, args));
+		};
+	},
+	/**
+	 * Apply function
+	 * @return fn
+	 */
+	apply: function(ctx, args)
+	{
+		if (args == undefined) args = null;
+		return (ctx, f) => 
+		{
+			return Runtime.rtl.apply(ctx, f, args);
+		};
+	},
+	/**
+	 * Apply async function
+	 * @return fn
+	 */
+	applyAsync: function(ctx, args)
+	{
+		if (args == undefined) args = null;
+		return async (ctx, f) => 
+		{
+			return await Runtime.rtl.applyAsync(ctx, f, args);
+		};
+	},
+	/**
+	 * Log message
+	 * @return fn
+	 */
+	log: function(ctx, message)
+	{
+		if (message == undefined) message = "";
+		return (ctx, value) => 
+		{
+			if (message == "")
+			{
+				console.log(value);
+			}
+			else
+			{
+				console.log(message);
+			}
+			return value;
+		};
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -3668,6 +3768,18 @@ Object.assign(Runtime.Dict.prototype,
 		return this;
 	},
 	/**
+	 * Remove value from position
+	 * @param string key
+	 * @return self
+	 */
+	removeKeys: function(ctx, keys)
+	{
+		return (keys != null) ? (keys.reduce(ctx, (ctx, item, key) => 
+		{
+			return item.removeIm(ctx, key);
+		}, this)) : (this);
+	},
+	/**
 	 * Returns vector of the keys
 	 * @return Collection<string>
 	 */
@@ -3778,6 +3890,25 @@ Object.assign(Runtime.Dict.prototype,
 			res._map[key] = map._map[key];
 		}
 		return res;
+	},
+	/**
+	 * Clone this struct with fields
+	 * @param Collection fields = null
+	 * @return BaseStruct
+	 */
+	intersect: function(ctx, fields)
+	{
+		if (fields == undefined) fields = null;
+		if (fields == null)
+		{
+			return Runtime.Dict.from({});
+		}
+		var obj = new Runtime.Map(ctx);
+		fields.each(ctx, (ctx, field_name) => 
+		{
+			obj.set(ctx, field_name, this.get(ctx, field_name, null));
+		});
+		return obj.toDict(ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -5811,16 +5942,26 @@ Object.assign(Runtime.BaseStruct.prototype,
 		return this;
 	},
 	/**
+	 * Copy this struct with new values
+	 * @param Map obj = null
+	 * @return BaseStruct
+	 */
+	clone: function(ctx, obj)
+	{
+		if (obj == undefined) obj = null;
+		return this.copy(ctx, obj);
+	},
+	/**
 	 * Clone this struct with fields
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	clone: function(ctx, fields)
+	intersect: function(ctx, fields)
 	{
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
-			return this;
+			return Runtime.Dict.from({});
 		}
 		var obj = new Runtime.Map(ctx);
 		fields.each(ctx, (ctx, field_name) => 

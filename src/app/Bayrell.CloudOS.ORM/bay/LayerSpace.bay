@@ -43,7 +43,10 @@ struct LayerSpace extends Record
 	@ManyToOne
 	{
 		"class_name": classof Layer,
-		"key": "layer_id",
+		"keys":
+		{
+			"layer_id": "layer_id",
+		},
 		"delete": Record::CASCADE,
 		"update": Record::CASCADE,
 	}
@@ -53,7 +56,10 @@ struct LayerSpace extends Record
 	@ManyToOne
 	{
 		"class_name": classof Space,
-		"key": "space_id",
+		"keys":
+		{
+			"space_id": "space_id",
+		},
 		"delete": Record::CASCADE,
 		"update": Record::CASCADE,
 	}

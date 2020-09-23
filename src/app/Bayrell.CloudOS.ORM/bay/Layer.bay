@@ -58,14 +58,25 @@ struct Layer extends Record
 	@ManyToOne
 	{
 		"class_name": classof Software,
-		"key": "software_api_name",
+		"keys":
+		{
+			"software_api_name": "api_name",
+		},
 		"delete": Record::SET_NULL,
 		"update": Record::CASCADE,
 	}
 	Software software;
 	
 	@Virtual{}
-	@ManyToMany{ "class_name": classof Space, "sub_class_name": classof LayerSpace }
+	@ManyToMany
+	{
+		"class_name": classof Space,
+		"sub_class_name": classof LayerSpace,
+		"keys":
+		{
+			"layer_id": "layer_id",
+		},
+	}
 	Collection<Space> spaces;
 	
 	
