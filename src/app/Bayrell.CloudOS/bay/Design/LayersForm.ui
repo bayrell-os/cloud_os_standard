@@ -72,20 +72,20 @@
 	{ static::renderRows(layout, model, params, content) }
 	
 	%var Collection spaces = params["spaces"] |> default Collection [];
-	%var Collection item_spaces = model["item", "spaces"] |> default Collection [];
+	%var Collection layer_spaces = model["item", "layer_spaces"] |> default Collection [];
 	%var Collection spaces2 = spaces;
 	
 	<div class='spaces'>
 		<div class='spaces_label'>
 			{ _("Bayrell.CloudOS", "Spaces") }
 		</div>
-		%if (item_spaces != null)
+		%if (layer_spaces != null)
 		{
 			<div class='spaces_items'>
-			%for(int i=0; i<item_spaces.count(); i++)
+			%for(int i=0; i<layer_spaces.count(); i++)
 			{
-				%var Dict item_space = item_spaces[i];
-				%var int space_id = item_space["space_id"];
+				%var Dict layer_space = layer_spaces[i];
+				%var int space_id = layer_space["space_id"];
 				%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
 				<div class='spaces_item'>
 					<div class='spaces_item_cell spaces_item_cell--domain'>
@@ -93,7 +93,7 @@
 					</div>
 					<div class='spaces_item_cell spaces_item_cell--uri'>
 						<Input
-							value={ item_space["uri"] } data-index={ i } data-name="uri"
+							value={ layer_space["uri"] } data-index={ i } data-name="uri"
 							@event:ChangeEvent="onSpaceItemChange"
 						/>
 					</div>
@@ -127,14 +127,14 @@ void onSpaceItemChange(Message<ChangeEvent> msg)
 	int index = msg.sender.params["data-index"];
 	string field_name = msg.sender.params["data-name"];
 	string value = msg.data.value;
-	this.update("setAttr", ["item", "spaces", index, field_name], value);
+	this.update("setAttr", ["item", "layer_spaces", index, field_name], value);
 }
 void onSpaceItemRemove(Message<MouseClickEvent> msg)
 {
 	int index = msg.sender.params["data-index"];
-	Collection item_spaces = this.model(["item", "spaces"]) |> default Collection null;
+	Collection item_spaces = this.model(["item", "layer_spaces"]) |> default Collection null;
 	item_spaces = item_spaces.removeIm(index);
-	this.update("setAttr", ["item", "spaces"], item_spaces);
+	this.update("setAttr", ["item", "layer_spaces"], item_spaces);
 }
 void onSpaceSelect(Message<ChangeEvent> msg)
 {
@@ -146,9 +146,9 @@ void onSpaceSelect(Message<ChangeEvent> msg)
 		"space_id": space_id,
 		"uri": "/",
 	};
-	Collection item_spaces = model["item", "spaces"] |> default Collection [];
+	Collection item_spaces = model["item", "layer_spaces"] |> default Collection [];
 	item_spaces = item_spaces.pushIm(space_item);
-	this.update("setAttr", ["item", "spaces"], item_spaces);
+	this.update("setAttr", ["item", "layer_spaces"], item_spaces);
 	this.update("setAttr", ["params", "select_space"], "");
 }
 </script>

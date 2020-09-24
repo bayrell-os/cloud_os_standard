@@ -1744,27 +1744,27 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm.prototype,
 		var index = Runtime.rtl.get(ctx, msg.sender.params, "data-index");
 		var field_name = Runtime.rtl.get(ctx, msg.sender.params, "data-name");
 		var value = msg.data.value;
-		this.update(ctx, "setAttr", Runtime.Collection.from(["item","spaces",index,field_name]), value);
+		this.update(ctx, "setAttr", Runtime.Collection.from(["item","layer_spaces",index,field_name]), value);
 	},
 	onSpaceItemRemove: function(ctx, msg)
 	{
 		var index = Runtime.rtl.get(ctx, msg.sender.params, "data-index");
-		var __v0 = new Runtime.Monad(ctx, this.model(ctx, Runtime.Collection.from(["item","spaces"])));
+		var __v0 = new Runtime.Monad(ctx, this.model(ctx, Runtime.Collection.from(["item","layer_spaces"])));
 		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", null));
 		var item_spaces = __v0.value(ctx);
 		item_spaces = item_spaces.removeIm(ctx, index);
-		this.update(ctx, "setAttr", Runtime.Collection.from(["item","spaces"]), item_spaces);
+		this.update(ctx, "setAttr", Runtime.Collection.from(["item","layer_spaces"]), item_spaces);
 	},
 	onSpaceSelect: function(ctx, msg)
 	{
 		var space_id = msg.data.value;
 		var model = this.model(ctx);
 		var space_item = Runtime.Dict.from({"layer_id":Runtime.rtl.attr(ctx, model, ["item", "layer_id"]),"space_id":space_id,"uri":"/"});
-		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "spaces"]));
+		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "layer_spaces"]));
 		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 		var item_spaces = __v0.value(ctx);
 		item_spaces = item_spaces.pushIm(ctx, space_item);
-		this.update(ctx, "setAttr", Runtime.Collection.from(["item","spaces"]), item_spaces);
+		this.update(ctx, "setAttr", Runtime.Collection.from(["item","layer_spaces"]), item_spaces);
 		this.update(ctx, "setAttr", Runtime.Collection.from(["params","select_space"]), "");
 	},
 	assignObject: function(ctx,o)
@@ -1809,9 +1809,9 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var spaces = __v0.value(ctx);
 			
-			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "spaces"]));
+			var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, model, ["item", "layer_spaces"]));
 			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
-			var item_spaces = __v0.value(ctx);
+			var layer_spaces = __v0.value(ctx);
 			
 			var spaces2 = spaces;
 			
@@ -1827,17 +1827,17 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Spaces")});
 			RenderDriver.p(__v1, __v1_childs);
 			
-			if (item_spaces != null)
+			if (layer_spaces != null)
 			{
 				/* Element 'div.spaces_items' */
 				var __v1; var __v1_childs = [];
 				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["spaces_items", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces_items"}});
 				
-				for (var i = 0;i < item_spaces.count(ctx);i++)
+				for (var i = 0;i < layer_spaces.count(ctx);i++)
 				{
-					var item_space = Runtime.rtl.get(ctx, item_spaces, i);
+					var layer_space = Runtime.rtl.get(ctx, layer_spaces, i);
 					
-					var space_id = Runtime.rtl.get(ctx, item_space, "space_id");
+					var space_id = Runtime.rtl.get(ctx, layer_space, "space_id");
 					
 					var space = spaces.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", space_id));
 					
@@ -1857,7 +1857,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 					var __v3; var __v3_childs = [];
 					[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "div","attrs": {"class":["spaces_item_cell spaces_item_cell--uri", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces_item_cell"}});
 					
-					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "component", {"name": "Runtime.Web.Input.Input","attrs": {"value":Runtime.rtl.get(ctx, item_space, "uri"),"data-index":i,"data-name":"uri","@event:Runtime.Web.Events.ChangeEvent":["Bayrell.CloudOS.Design.LayersForm","onSpaceItemChange"]}, "layout": layout});
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "component", {"name": "Runtime.Web.Input.Input","attrs": {"value":Runtime.rtl.get(ctx, layer_space, "uri"),"data-index":i,"data-name":"uri","@event:Runtime.Web.Events.ChangeEvent":["Bayrell.CloudOS.Design.LayersForm","onSpaceItemChange"]}, "layout": layout});
 					RenderDriver.p(__v3, __v3_childs);
 					
 					/* Element 'div.spaces_item_cell.spaces_item_cell--button' */
@@ -2050,7 +2050,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var spaces = __v0.value(ctx);
 			
-			var struct = Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":Runtime.Web.CRUD.CrudPage.fieldNumber})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","label":"Service","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":services})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"spaces","label":"Spaces","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":spaces,"render":(ctx, layout, model, params, content) => 
+			var struct = Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":Runtime.Web.CRUD.CrudPage.fieldNumber})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","label":"Service","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":services})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"spaces","label":"Space","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":spaces})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_spaces","label":"Spaces","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
 			{
 				return (__control) =>
 				{
@@ -2097,7 +2097,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 			
 			var form_fields = Runtime.Collection.from(["service_id","layer_name","uid"]);
 			
-			var table_fields = Runtime.Collection.from(["number","service_id","layer_name","uid","edit-buttons"]);
+			var table_fields = Runtime.Collection.from(["number","service_id","layer_name","layer_spaces","uid","edit-buttons"]);
 			
 			var messages = Runtime.Dict.from({"add":ctx.translate(ctx, "Bayrell.CloudOS", "Add layer"),"delete":(ctx, item) => 
 			{

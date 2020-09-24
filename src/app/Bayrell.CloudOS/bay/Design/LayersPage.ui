@@ -148,19 +148,27 @@ static async RenderContainer actionIndex(RenderContainer container)
 				"options": services,
 			},
 		},
-		
-		
 		new FieldInfo
 		{
 			"api_name": "spaces",
-			"label": "Spaces",
+			"label": "Space",
 			"class_name": classof Select,
-			"class_name_table": classof Label,
+			"class_name_table": classof SelectText,
 			"class_settings":
 			{
 				"show_select_value_filter": true,
 				"show_select_value": true,
 				"options": spaces,
+			},
+		},
+		new FieldInfo
+		{
+			"api_name": "layer_spaces",
+			"label": "Spaces",
+			"class_name": classof Select,
+			"class_name_table": classof Label,
+			"class_settings":
+			{
 				"render": html (LayoutModel layout, var model, Dict params, var content) use (spaces)
 				{
 					return <div class='spaces'>
@@ -234,6 +242,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"number",
 		"service_id",
 		"layer_name",
+		"layer_spaces",
 		"uid",
 		"edit-buttons"
 	];

@@ -57,13 +57,14 @@ static class LayerCrud extends CrudApi
 		new ReadOnly{ "api_name": "layer_id" },
 		new Required{ "api_name": "service_id" },
 		new Required{ "api_name": "layer_name" },
-		new Dictionary{ "class_name": classof Service, "option_name": "services" },
-		new Dictionary{ "class_name": classof VirtualSpace, "option_name": "spaces" },
+		new Dictionary{ "class_name": classof Service, "field_name": "services" },
+		new Dictionary{ "class_name": classof VirtualSpace, "field_name": "spaces" },
 		new ManyToMany
 		{
 			"class_name": classof LayerSpace,
-			"option_name": "layer_spaces",
+			"field_name": "layer_spaces",
 			"key_name": "layer_id",
+			"save": true,
 		},
 	];
 	
