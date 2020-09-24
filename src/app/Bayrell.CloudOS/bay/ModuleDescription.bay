@@ -66,9 +66,7 @@ static class ModuleDescription
 		
 		/* Backend */
 		#ifdef BACKEND then
-		'Runtime.Task': '*',
-		'Runtime.Web.Backend': '*',
-		'Bayrell.CloudOS.API': '*',
+		'Bayrell.CloudOS.Backend': '*',
 		#endif
 	};
 	
@@ -123,13 +121,14 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.NodesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.LogicMapPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SoftwaresPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.StacksPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.VirtualSpacesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Docker.CLIPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.NginxPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.ServicesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.YamlFilesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.YamlPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerServicesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerYamlFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.User.UsersPage" },
 		
 		

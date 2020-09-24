@@ -5180,6 +5180,11 @@ Object.assign(Runtime.Web.CRUD.CrudPageModel,
 		var search_params = this.getCrudSearchParams(ctx, container.request);
 		items = Runtime.rtl.setAttr(ctx, items, Runtime.Collection.from(["data"]), search_params);
 		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, items, container);
+		/* Throw exception */
+		if (!answer.isSuccess(ctx))
+		{
+			throw new Runtime.Exceptions.RuntimeException(ctx, answer.error_message, answer.error_code)
+		}
 		/* Answer */
 		return Promise.resolve(this.fromAnswer(ctx, this.newInstance(ctx, Runtime.Dict.from({})), answer));
 	},

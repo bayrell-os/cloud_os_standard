@@ -17,11 +17,10 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.LayersPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LayersPageModel"
+	name="Bayrell.CloudOS.Design.NginxPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.NginxPageModel"
 >
 
-<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -40,9 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Design.LayersForm" component="true" />
-<use name="Bayrell.CloudOS.Design.LayersPage" />
-<use name="Bayrell.CloudOS.Design.LayersPageModel" />
+<use name="Bayrell.CloudOS.Design.NginxPage" />
+<use name="Bayrell.CloudOS.Design.NginxPageModel" />
 
 
 <style>
@@ -55,16 +53,16 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/layers/", "name": "app.design.layers" }
+@Route{ "uri": "/design/nginx/", "name": "app.design.nginx" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	LayersPageModel page_model = new LayersPageModel
+	NginxPageModel page_model = new NginxPageModel
 	{
 		"crud": await CrudPageModel::crudSearch
 		(
 			{
-				"object_name": "Bayrell.CloudOS.Layer",
+				"object_name": "Bayrell.CloudOS.NginxFile",
 				"interface_name": "core.crud",
 				"method_name": "search",
 			},
@@ -73,11 +71,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	/* Set title */
-	container <= layout <= title <= "Layers";
+	container <= layout <= title <= "Nginx page";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof LayersPage;
+	container <= layout <= page_class <= classof NginxPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -89,36 +87,14 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection services = model.crud
-		|> attr "foreigns", "services", "options"
-		|> lib::map
-		(
-			Dict (Dict item) =>
-			{
-				"id": item["service_id"],
-				"value": item["stack_name"] ~ "_" ~ item["service_name"],
-				"item": item,
-			}
-		)
-		|> default Collection []
-	;
-	
-	%var Collection spaces = model.crud
-		|> attr "foreigns", "spaces", "options"
-		|> lib::map
-		(
-			Dict (Dict item) =>
-			{
-				"id": item["space_id"],
-				"value": item["name"] ~ " (" ~ item["domain"] ~ ")",
-				"item": item,
-			}
-		)
-		|> default Collection []
-	;
-	
 	%var Collection<FieldInfo> struct =
 	[
+		new FieldInfo
+		{
+			"api_name": "file_id",
+			"primary": true,
+		},
+		
 		new FieldInfo
 		{
 			"api_name": "number",
@@ -126,74 +102,47 @@ static async RenderContainer actionIndex(RenderContainer container)
 			"class_name": classof Label,
 			"class_settings":
 			{
-				"render": CrudPage::fieldNumber,
+				"render": html (LayoutModel layout, var model, Dict params, var content)
+				{
+					TableModel table_model = params["table-model"];
+					int index = params["row-index"];
+					if (table_model)
+					{
+						return index + 1;
+					}
+					return "";
+				},
 			},
 		},
 		new FieldInfo
 		{
-			"api_name": "layer_id",
-			"label": "Layer id",
-			"primary": true,
+			"api_name": "name",
+			"label": "Name",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "service_id",
-			"label": "Service",
+			"api_name": "enable",
+			"label": "Enable",
 			"class_name": classof Select,
 			"class_name_table": classof SelectText,
 			"class_settings":
 			{
 				"show_select_value_filter": true,
-				"show_select_value": true,
-				"options": services,
-			},
-		},
-		
-		
-		new FieldInfo
-		{
-			"api_name": "spaces",
-			"label": "Spaces",
-			"class_name": classof Select,
-			"class_name_table": classof Label,
-			"class_settings":
-			{
-				"show_select_value_filter": true,
-				"show_select_value": true,
-				"options": spaces,
-				"render": html (LayoutModel layout, var model, Dict params, var content) use (spaces)
-				{
-					return <div class='spaces'>
-						%if (model != null)
-						{
-							%for (int i=0; i<model.count(); i++)
-							{
-								%var Dict item = model[i];
-								%var string space_id = item["space_id"];
-								%var string uri = item["uri"];
-								%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
-								%var string name = space["item", "domain"] ~ uri;
-								<div class='spaces_item'>{ name }</div>
-							}
-						}
-					</div>;
-				},
+				"show_select_value": false,
+				"options":
+				[
+					{"id": 0, "value": "No"},
+					{"id": 1, "value": "Yes"},
+				],
 			}
 		},
 		new FieldInfo
 		{
-			"api_name": "layer_name",
-			"label": "Layer name",
-			"class_name": classof Input,
-			"class_name_table": classof Label,
-		},
-		new FieldInfo
-		{
-			"api_name": "uid",
-			"label": "UID",
-			"class_name": classof Input,
-			"class_name_table": classof Label,
-			"can_update": false,
+			"api_name": "content",
+			"label": "Content",
+			"class_name": classof TextArea,
 		},
 		new FieldInfo
 		{
@@ -211,50 +160,44 @@ static async RenderContainer actionIndex(RenderContainer container)
 					];
 				},
 			},
-		},
+		}
 	];
 	
 	%var Collection<string> filter_fields =
 	[
-		"spaces",
-		"service_id",
-		"layer_name",
-		"uid",
+		"name",
+		"enable",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"service_id",
-		"layer_name",
-		"uid",
+		"name",
+		"enable",
+		"content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"service_id",
-		"layer_name",
-		"uid",
-		"edit-buttons"
+		"name",
+		"enable",
+		"edit-buttons",
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add layer"),
-		"delete": string (Dict item) =>
-			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["uid"] } ),
+		"add": _("Bayrell.CloudOS", "Add nginx file")
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Layer"
+		object_name="Bayrell.CloudOS.NginxFile"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
-		form={{
-			"class_name": classof LayersForm,
-			"spaces": spaces,
+		dialog_form={{
+			"width": "800px"
 		}}
 	/>
 	

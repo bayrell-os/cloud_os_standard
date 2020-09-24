@@ -180,14 +180,23 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
+							<li class={ rs::start(layout["route", "name"], "app.design.stacks") ? "active": "" }>
+								<a class='nolink' href='/design/stacks/'>{ _("Bayrell.CloudOS", "Stacks") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.spaces") ? "active": "" }>
-								<a class='nolink' href='/design/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
+								<a class='nolink' href='/design/spaces/'>{ _("Bayrell.CloudOS", "Virtual spaces") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.softwares") ? "active": "" }>
 								<a class='nolink' href='/design/softwares/'>{ _("Bayrell.CloudOS", "Softwares") }</a>
 							</li>
+							<li class={ rs::start(layout["route", "name"], "app.design.services") ? "active": "" }>
+								<a class='nolink' href='/design/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.layers") ? "active": "" }>
 								<a class='nolink' href='/design/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
+							</li>
+							<li class={ rs::start(layout["route", "name"], "app.design.nginx") ? "active": "" }>
+								<a class='nolink' href='/design/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.logic_map") ? "active": "" }>
 								<a class='nolink' href='/design/logic_map/'>{ _("Bayrell.CloudOS", "Logic Map") }</a>
@@ -201,18 +210,12 @@ span.lpad5{
 					<div class='layout_menu_items'>
 						<ul>
 							<li class={ rs::start(layout["route", "name"], "app.docker.services") ? "active": "" }>
-								<a class='nolink' href='/docker/services/'>{ _("Bayrell.CloudOS", "Services") }</a>
+								<a class='nolink' href='/docker/services/'>{ _("Bayrell.CloudOS", "Yaml Services") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.docker.yaml.index") ? "active": "" }>
-								<a class='nolink' href='/docker/yaml/'>{ _("Bayrell.CloudOS", "Yaml Services") }</a>
-							</li>
-							<li class={ rs::start(layout["route", "name"], "app.docker.yaml.files") ? "active": "" }>
-								<a class='nolink' href='/docker/yaml/files/'>
+							<li class={ rs::start(layout["route", "name"], "app.docker.yaml_files") ? "active": "" }>
+								<a class='nolink' href='/docker/yaml_files/'>
 									{ _("Bayrell.CloudOS", "Yaml Files") }
 								</a>
-							</li>
-							<li class={ rs::start(layout["route", "name"], "app.docker.nginx") ? "active": "" }>
-								<a class='nolink' href='/docker/nginx/'>{ _("Bayrell.CloudOS", "Nginx") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.docker.cli") ? "active": "" }>
 								<a class='nolink' href='/docker/cli/'>{ _("Bayrell.CloudOS", "CLI") }</a>

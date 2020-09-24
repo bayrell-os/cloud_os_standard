@@ -1,0 +1,338 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.Docker.DockerServicesPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Docker.DockerServicesPageModel"
+>
+
+<use name="Runtime.Exceptions.RuntimeException" />
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Core.RemoteCallAnswer" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.CRUD.CrudPage" component="true" />
+<use name="Runtime.Web.CRUD.CrudPageModel" />
+<use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Form.Form" component="true" />
+<use name="Runtime.Web.Form.FormEvent" />
+<use name="Runtime.Web.Form.FormModel" />
+<use name="Runtime.Web.Input.Input" component="true" />
+<use name="Runtime.Web.Input.Label" component="true" />
+<use name="Runtime.Web.Input.Select" component="true" />
+<use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Table.TableModel" />
+<use name="Bayrell.CloudOS.Docker.DockerServicesPage" />
+<use name="Bayrell.CloudOS.Docker.DockerServicesPageModel" />
+
+
+<style>
+</style>
+
+
+<script>
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/docker/services/", "name": "app.docker.services" }
+static async RenderContainer actionIndex(RenderContainer container)
+{
+	/* Create model */
+	DockerServicesPageModel page_model = new DockerServicesPageModel
+	{
+		"crud": await CrudPageModel::crudSearch
+		(
+			{
+				"object_name": "Bayrell.CloudOS.DockerService",
+				"interface_name": "core.crud",
+				"method_name": "search",
+			},
+			container
+		)
+	};
+	
+	/* Set title */
+	container <= layout <= title <= "Services page";
+	container <= layout <= layout_name <= "default";
+	
+	/* Set model */
+	container <= layout <= page_class <= classof DockerServicesPage;
+	container <= layout <= page_model <= page_model;
+	
+	return [ container ];
+}
+
+</script>
+
+
+
+<template name="render">
+	
+	%var Collection<FieldInfo> struct =
+	[
+		new FieldInfo
+		{
+			"api_name": "number",
+			"label": "",
+			"class_name": classof Label,
+			"class_settings":
+			{
+				"render": CrudPage::fieldNumber,
+			},
+		},
+		new FieldInfo
+		{
+			"api_name": "service_id",
+			"primary": true,
+		},
+		new FieldInfo
+		{
+			"api_name": "_name",
+			"label": "Name",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
+		},
+		new FieldInfo
+		{
+			"api_name": "_image",
+			"label": "Image",
+			"class_name": classof Input,
+			"class_name_table": classof Label,
+			"class_settings":
+			{
+				"render": html (LayoutModel layout, var model, Dict params, var content)
+				{
+					return static::trimImageName(model);
+				}
+			},
+		},
+		new FieldInfo
+		{
+			"api_name": "enable",
+			"label": "Enable",
+			"class_name": classof Select,
+			"class_name_table": classof SelectText,
+			"class_settings":
+			{
+				"filter_show_select_value": true,
+				"show_select_value": false,
+				"options":
+				[
+					{"id": 0, "value": "No"},
+					{"id": 1, "value": "Yes"},
+				],
+			}
+		},
+		new FieldInfo
+		{
+			"api_name": "edit-buttons",
+			"label": "",
+			"class_name": classof Label,
+			"class_settings":
+			{
+				"render": html (LayoutModel layout, var model, Dict params, var content)
+				{
+					return
+					[
+						CrudPage::buttonEdit(layout, model, params, content),
+						CrudPage::buttonDelete(layout, model, params, content),
+					];
+				},
+			},
+		},
+	];
+	
+	%var Collection<string> filter_fields =
+	[
+		"_name",
+		"_image",
+		"enable",
+	];
+	
+	%var Collection<string> form_fields =
+	[
+		"_name",
+		"_image",
+	];
+	
+	%var Collection<string> table_fields =
+	[
+		"number",
+		"_name",
+		"_image",
+		"enable",
+		"edit-buttons"
+	];
+	
+	%var Dict messages =
+	{
+		"add": _("Bayrell.CloudOS", "Add service"),
+		"delete": string (Dict item) =>
+			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["_name"] } ),
+	};
+	
+	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
+		object_name="Bayrell.CloudOS.DockerService"
+		struct={ struct }
+		filter_fields={ filter_fields }
+		form_fields={ form_fields }
+		table_fields={ table_fields }
+		messages={ messages }
+		form={{
+			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
+				%if (params['action'] == "add")
+				{
+					{ Form::renderButton(layout, model, params, "create") }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+				%if (params['action'] == "edit")
+				{
+					%var bool enable = model["item", "enable"] |> default bool false;
+					{ Form::renderButton(layout, model, params, "update") }
+					{ Form::renderButtonInfo
+					(
+						layout,
+						model,
+						params,
+						{
+							"type": "danger",
+							"@key": (enable) ? "disable" : "enable",
+							"data-action": (enable) ? "disable" : "enable",
+							"value": (enable) ? _("Bayrell.CloudOS", "Disable") : _("Bayrell.CloudOS", "Enable")
+						}
+					) }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+			</div>
+		}}
+	/>
+	
+</template>
+
+
+<script type="frontend">
+
+/**
+ * Trim name
+ */
+pure string trimImageName(string name)
+{
+	int pos = rs::search(name, "@");
+	if (pos != -1) name = rs::substr(name, 0, pos);
+	return name;
+}
+
+
+
+/**
+ * On form event
+ */
+async void onFormEvent(Message<FormEvent> msg)
+{
+	FormEvent e = msg.data;
+	
+	if (e.event == "disable")
+	{
+		await this.onItemDisable();
+	}
+	else if (e.event == "enable")
+	{
+		await this.onItemEnable();
+	}
+	
+}
+
+
+
+/**
+ * Enable item
+ */
+async void onItemEnable()
+{
+	Dict item = this.crud.form_edit.model("item");
+	Dict pk = this.crud::getPrimaryKey(this.crud.params["struct"], item);
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "enable",
+		"data":
+		{
+			"docker_service_id": item["docker_service_id"],
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", pk, answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
+
+
+
+/**
+ * Disable item
+ */
+async void onItemDisable()
+{
+	Dict item = this.crud.form_edit.model("item");
+	Dict pk = this.crud::getPrimaryKey(this.crud.params["struct"], item);
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "disable",
+		"data":
+		{
+			"docker_service_id": item["docker_service_id"],
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", pk, answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
+
+
+</script>
+
+
+</class>

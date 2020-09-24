@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.LayersPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LayersPageModel"
+	name="Bayrell.CloudOS.Design.ServicesPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.ServicesPageModel"
 >
 
 <use name="Runtime.lib" />
@@ -34,15 +34,17 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Form.Form" component="true" />
+<use name="Runtime.Web.Form.FormEvent" />
+<use name="Runtime.Web.Form.FormModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Design.LayersForm" component="true" />
-<use name="Bayrell.CloudOS.Design.LayersPage" />
-<use name="Bayrell.CloudOS.Design.LayersPageModel" />
+<use name="Bayrell.CloudOS.Design.ServicesPage" />
+<use name="Bayrell.CloudOS.Design.ServicesPageModel" />
 
 
 <style>
@@ -55,16 +57,16 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/layers/", "name": "app.design.layers" }
+@Route{ "uri": "/design/services/", "name": "app.design.services" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
-	LayersPageModel page_model = new LayersPageModel
+	ServicesPageModel page_model = new ServicesPageModel
 	{
 		"crud": await CrudPageModel::crudSearch
 		(
 			{
-				"object_name": "Bayrell.CloudOS.Layer",
+				"object_name": "Bayrell.CloudOS.Service",
 				"interface_name": "core.crud",
 				"method_name": "search",
 			},
@@ -73,11 +75,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	/* Set title */
-	container <= layout <= title <= "Layers";
+	container <= layout <= title <= "Services page";
 	container <= layout <= layout_name <= "default";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof LayersPage;
+	container <= layout <= page_class <= classof ServicesPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -89,28 +91,28 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 <template name="render">
 	
-	%var Collection services = model.crud
-		|> attr "foreigns", "services", "options"
+	%var Collection stacks = model.crud
+		|> attr "foreigns", "stacks", "options"
 		|> lib::map
 		(
 			Dict (Dict item) =>
 			{
-				"id": item["service_id"],
-				"value": item["stack_name"] ~ "_" ~ item["service_name"],
+				"id": item["stack_name"],
+				"value": item["stack_name"],
 				"item": item,
 			}
 		)
 		|> default Collection []
 	;
 	
-	%var Collection spaces = model.crud
-		|> attr "foreigns", "spaces", "options"
+	%var Collection softwares = model.crud
+		|> attr "foreigns", "softwares", "options"
 		|> lib::map
 		(
 			Dict (Dict item) =>
 			{
-				"id": item["space_id"],
-				"value": item["name"] ~ " (" ~ item["domain"] ~ ")",
+				"id": item["api_name"],
+				"value": item["api_name"] ~ " (" ~ item["name"] ~ ")",
 				"item": item,
 			}
 		)
@@ -131,69 +133,47 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
-			"api_name": "layer_id",
-			"label": "Layer id",
+			"api_name": "service_id",
 			"primary": true,
 		},
 		new FieldInfo
 		{
-			"api_name": "service_id",
-			"label": "Service",
+			"api_name": "stack_name",
+			"label": "Stack",
+			"class_name": classof Select,
+			"class_name_table": classof Label,
+			"class_settings":
+			{
+				"show_select_value_filter": true,
+				"show_select_value": true,
+				"options": stacks,
+			},
+		},
+		new FieldInfo
+		{
+			"api_name": "software_api_name",
+			"label": "Software",
 			"class_name": classof Select,
 			"class_name_table": classof SelectText,
 			"class_settings":
 			{
 				"show_select_value_filter": true,
 				"show_select_value": true,
-				"options": services,
+				"options": softwares,
 			},
 		},
-		
-		
 		new FieldInfo
 		{
-			"api_name": "spaces",
-			"label": "Spaces",
-			"class_name": classof Select,
-			"class_name_table": classof Label,
-			"class_settings":
-			{
-				"show_select_value_filter": true,
-				"show_select_value": true,
-				"options": spaces,
-				"render": html (LayoutModel layout, var model, Dict params, var content) use (spaces)
-				{
-					return <div class='spaces'>
-						%if (model != null)
-						{
-							%for (int i=0; i<model.count(); i++)
-							{
-								%var Dict item = model[i];
-								%var string space_id = item["space_id"];
-								%var string uri = item["uri"];
-								%var Dict space = spaces.findItem( lib::equalAttr("id", space_id) );
-								%var string name = space["item", "domain"] ~ uri;
-								<div class='spaces_item'>{ name }</div>
-							}
-						}
-					</div>;
-				},
-			}
-		},
-		new FieldInfo
-		{
-			"api_name": "layer_name",
-			"label": "Layer name",
+			"api_name": "service_name",
+			"label": "Service name",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
 		new FieldInfo
 		{
-			"api_name": "uid",
-			"label": "UID",
-			"class_name": classof Input,
-			"class_name_table": classof Label,
-			"can_update": false,
+			"api_name": "docker_content",
+			"label": "Docker content",
+			"class_name": classof TextArea,
 		},
 		new FieldInfo
 		{
@@ -216,45 +196,69 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	%var Collection<string> filter_fields =
 	[
-		"spaces",
-		"service_id",
-		"layer_name",
-		"uid",
+		"stack_name",
+		"software_api_name",
+		"service_name",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"service_id",
-		"layer_name",
-		"uid",
+		"stack_name",
+		"software_api_name",
+		"service_name",
+		"docker_content",
 	];
 	
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"service_id",
-		"layer_name",
-		"uid",
+		"stack_name",
+		"software_api_name",
+		"service_name",
 		"edit-buttons"
 	];
 	
 	%var Dict messages =
 	{
-		"add": _("Bayrell.CloudOS", "Add layer"),
-		"delete": string (Dict item) =>
-			_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["uid"] } ),
+		"add": _("Bayrell.CloudOS", "Add service")
 	};
 	
-	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Layer"
+	<CrudPage @name="crud" @event:FormEvent="onFormEvent"
+		object_name="Bayrell.CloudOS.Service"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		dialog_form={{
+			"width": "800px"
+		}}
 		form={{
-			"class_name": classof LayersForm,
-			"spaces": spaces,
+			"renderButtons": html (LayoutModel layout, var model, Dict params, var content) => <div>
+				%if (params['action'] == "add")
+				{
+					{ Form::renderButton(layout, model, params, "create") }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+				%if (params['action'] == "edit")
+				{
+					%var bool enable = model["item", "enable"] |> default bool false;
+					{ Form::renderButton(layout, model, params, "update") }
+					{ Form::renderButtonInfo
+					(
+						layout,
+						model,
+						params,
+						{
+							"type": "danger",
+							"@key": "compose",
+							"data-action": "compose",
+							"value": _("Bayrell.CloudOS", "Compose")
+						}
+					) }
+					{ Form::renderButton(layout, model, params, "cancel") }
+				}
+			</div>
 		}}
 	/>
 	
@@ -262,6 +266,55 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 
 <script type="frontend">
+
+/**
+ * On form event
+ */
+async void onFormEvent(Message<FormEvent> msg)
+{
+	FormEvent e = msg.data;
+	
+	if (e.event == "compose")
+	{
+		await this.onItemCompose();
+	}
+	
+}
+
+
+
+/**
+ * Enable item
+ */
+async void onItemCompose()
+{
+	Dict item = this.crud.form_edit.model("item");
+	Dict pk = this.crud::getPrimaryKey(this.crud.params["struct"], item);
+	this.crud.dialog_edit.update("setWaitMessage");
+	
+	/* Send api */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	{
+		"object_name": this.crud.getCrudObjectName(),
+		"interface_name": "core.crud",
+		"method_name": "compose",
+		"data":
+		{
+			"pk": pk,
+			"item": item,
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.crud.table.update("setItem", pk, answer.response["new_item"]);
+		this.crud.dialog_edit.update("hide");
+	}
+	else
+	{
+		this.crud.dialog_edit.update("setAnswer", answer);
+	}
+}
 
 </script>
 

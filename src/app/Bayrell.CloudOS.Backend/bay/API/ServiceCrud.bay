@@ -1,0 +1,209 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.API;
+
+use Runtime.rtl;
+use Runtime.lib;
+use Runtime.Core.ApiException;
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
+use Runtime.Web.Backend.ApiList;
+use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.ORM.QueryBuilder;
+use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.DefaultValue;
+use Runtime.Web.CRUD.Rules.Dictionary;
+use Runtime.Web.CRUD.Rules.ReadOnly;
+use Runtime.Web.CRUD.Rules.Required;
+use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.Backend.ORM.Service;
+use Bayrell.CloudOS.Backend.ORM.Software;
+use Bayrell.CloudOS.Backend.ORM.Stack;
+
+
+@ApiList{ "object_name": "Bayrell.CloudOS.Service", "interface_name": "core.crud" }
+static class ServiceCrud extends CrudApi
+{
+	
+	/**
+	 * Returns orm class name
+	 */
+	pure string getORM() => classof Service;
+	
+	
+	
+	/**
+	 * Returns current rules
+	 */
+	Collection rules() =>
+	[
+		new ReadOnly{ "api_name": "service_id" },
+		new Required{ "api_name": "stack_name" },
+		new Required{ "api_name": "service_name" },
+		new DefaultValue{ "api_name": "software_api_name", "value": null },
+		new Dictionary{ "class_name": classof Stack, "option_name": "stacks" },
+		new Dictionary{ "class_name": classof Software, "option_name": "softwares" },
+	];
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	Collection<Collection<string>> getDefaultOrder() =>
+	[ 
+		["stack_name", "asc"],
+		["software_api_name", "asc"],
+	];
+	
+	
+	
+	/**
+	 * Build query
+	 */
+	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	
+	
+	
+	/**
+	 * Init request
+	 */
+	async void init()
+	{
+		await parent::init();
+	}
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	async void validate()
+	{
+		await parent::validate();
+		
+		if (this.action == "search")
+		{
+		}
+		
+		else if (this.action == "add" or this.action == "update")
+		{
+		}
+		
+		else if (this.action == "delete")
+		{
+		}
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async void after()
+	{
+		await parent::after();
+		
+		/* If is success */
+		if (this.isSuccess())
+		{
+		}
+	}
+	
+	
+	
+	/**
+	 * Search api
+	 */
+	@ApiMethod{ "method_name": "search" }
+	static async list searchAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::searchAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Create
+	 */
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::createAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Update
+	 */
+	@ApiMethod{ "method_name": "update" }
+	static async list updateAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::updateAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Delete
+	 */
+	@ApiMethod{ "method_name": "delete" }
+	static async list deleteAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::deleteAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	@ApiMethod{ "method_name": "compose" }
+	static async list composeAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		/* Create api */
+		CrudApi api = rtl::newInstance(static::getCurrentClassName());
+		
+		/* Get data from request */
+		api.action = "update";
+		api.answer = answer;
+		api.request = request;
+		api.pk = request.data["pk"] |> default Dict {};
+		api.item = request.data["item"] |> default Dict {};
+		
+		/* Init api */
+		await api.init();
+		
+		/* Update */
+		await api.update();
+		
+		/* Compose */
+		if (this.isSuccess())
+		{
+			await Service::compose(this.new_item);
+		}
+		
+		/* After query */
+		await api.after();
+		
+		return [request, api.answer];
+	}
+	
+}

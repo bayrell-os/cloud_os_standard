@@ -63,7 +63,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"crud": await CrudPageModel::crudSearch
 		(
 			{
-				"object_name": "Bayrell.CloudOS.Softwares",
+				"object_name": "Bayrell.CloudOS.Software",
 				"interface_name": "core.crud",
 				"method_name": "search",
 			},
@@ -124,13 +124,6 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
-			"api_name": "backend",
-			"label": "Backend",
-			"class_name": classof Input,
-			"class_name_table": classof Label,
-		},
-		new FieldInfo
-		{
 			"api_name": "edit-buttons",
 			"label": "",
 			"class_name": classof Label,
@@ -152,14 +145,12 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		"api_name",
 		"name",
-		"backend",
 	];
 	
 	%var Collection<string> form_fields =
 	[
 		"api_name",
 		"name",
-		"backend",
 	];
 	
 	%var Collection<string> table_fields =
@@ -167,7 +158,6 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"number",
 		"api_name",
 		"name",
-		"backend",
 		"edit-buttons"
 	];
 	
@@ -179,7 +169,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Softwares"
+		object_name="Bayrell.CloudOS.Software"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }

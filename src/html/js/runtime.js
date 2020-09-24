@@ -5350,6 +5350,114 @@ window["Runtime.Exceptions.AssignStructValueError"] = Runtime.Exceptions.AssignS
 if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Exceptions.AssignStructValueError;
 "use strict;"
 /*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
+Runtime.Exceptions.FileNotFound = function(ctx, name, object, code, prev)
+{
+	if (object == undefined) object = "File";
+	if (code == undefined) code = -5;
+	if (prev == undefined) prev = null;
+	Runtime.Exceptions.RuntimeException.call(this, ctx, ctx.translate(ctx, "Runtime", "%object% '%name%' not found", Runtime.Dict.from({"name":name,"object":object})), code, prev);
+};
+Runtime.Exceptions.FileNotFound.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
+Runtime.Exceptions.FileNotFound.prototype.constructor = Runtime.Exceptions.FileNotFound;
+Object.assign(Runtime.Exceptions.FileNotFound.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Exceptions.FileNotFound)
+		{
+		}
+		Runtime.Exceptions.RuntimeException.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Exceptions.RuntimeException.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Exceptions.RuntimeException.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Exceptions.FileNotFound";
+	},
+});
+Object.assign(Runtime.Exceptions.FileNotFound, Runtime.Exceptions.RuntimeException);
+Object.assign(Runtime.Exceptions.FileNotFound,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Exceptions";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Exceptions.FileNotFound";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Exceptions.RuntimeException";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Exceptions.FileNotFound",
+			"name": "Runtime.Exceptions.FileNotFound",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Exceptions.FileNotFound);
+window["Runtime.Exceptions.FileNotFound"] = Runtime.Exceptions.FileNotFound;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Exceptions.FileNotFound;
+"use strict;"
+/*!
  *  Bayrell Runtime Library 
  *
  *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
@@ -13755,98 +13863,95 @@ Object.assign(Runtime.Web.RenderController.prototype,
 	{
 		if (is_new_elem == undefined) is_new_elem = false;
 		var path_id = (elem instanceof Runtime.Web.Component) ? (elem.getPath(ctx)) : (elem._path_id);
-		if (is_new_elem)
+		for (var key in attrs)
 		{
-			for (var key in attrs)
+			var value = attrs[key];
+			var is_event = key.substring(0, 7) == "@event:";
+			var is_event_async = key.substring(0, 12) == "@eventAsync:";
+			
+			if (key == "@bind")
 			{
-				var value = attrs[key];
-				var is_event = key.substring(0, 7) == "@event:";
-				var is_event_async = key.substring(0, 12) == "@eventAsync:";
-				
-				if (key == "@bind")
+				if (elem instanceof Runtime.Web.Component)
 				{
-					if (elem instanceof Runtime.Web.Component)
-					{
-					}
-					else
-					{
-						var f_event = function (ctx, controller, path_id, bind_value)
-						{
-							return function (e)
-							{
-								var model_path = controller.getBindModelPath(ctx, path_id, bind_value);
-								controller.updateModel(ctx, model_path, elem.value);
-							}
-						};
-						elem.addEventListener
-						(
-							"change",
-							f_event(ctx, this, path_id, value)
-						);
-					}
 				}
-				else if (is_event || is_event_async)
+				else
 				{
-					var event_class_name = "";
-					if (is_event) event_class_name = key.substring(7);
-					if (is_event_async) event_class_name = key.substring(12);
-					
-					var event_class = use(event_class_name);
-					if (event_class == undefined)
+					var f_event = function (ctx, controller, path_id, bind_value)
 					{
-						this.warning(ctx, "Event '" + event_class_name + "' not found in ", elem);
-						continue;
-					}
-					
-					/* Find component */
-					var class_name = value[0];
-					var callback = value[1];
-					var component = this.searchComponent(ctx, path_id, class_name);
-					if (component == null)
-					{
-						continue;
-					}
-					
-					if (elem instanceof Runtime.Web.Component)
-					{
-						this.register_listeners.push
-						(
-							ctx,
-							{
-								"from": elem.getObjectName(),
-								"event_class_name": event_class_name,
-								"object_name": component.getObjectName(),
-								"method_name": callback
-							}
-						);
-					}
-					else
-					{
-						var es6_name = event_class.ES6_EVENT_NAME;
-						if (es6_name == undefined) continue;
-						
-						/* Find callback method */
-						if (!Runtime.rtl.method_exists(ctx, component, callback))
+						return function (e)
 						{
-							this.warning(ctx, "Method '" + callback + "' not found in ", component);
-							continue;
+							var model_path = controller.getBindModelPath(ctx, path_id, bind_value);
+							controller.updateModel(ctx, model_path, elem.value);
 						}
-						
-						/* Register listener */
-						this.register_listeners.push
-						(
-							ctx,
-							{
-								"from": path_id,
-								"event_class_name": event_class_name,
-								"object_name": component.getObjectName(),
-								"method_name": callback
-							}
-						);
-						
-						/* Register event listener */
-						elem.addEventListener(es6_name, Runtime.Web.RenderDriver.js_event);
+					};
+					elem.addEventListener
+					(
+						"change",
+						f_event(ctx, this, path_id, value)
+					);
+				}
+			}
+			else if (is_event || is_event_async)
+			{
+				var event_class_name = "";
+				if (is_event) event_class_name = key.substring(7);
+				if (is_event_async) event_class_name = key.substring(12);
+				
+				var event_class = use(event_class_name);
+				if (event_class == undefined)
+				{
+					this.warning(ctx, "Event '" + event_class_name + "' not found in ", elem);
+					continue;
+				}
+				
+				/* Find component */
+				var class_name = value[0];
+				var callback = value[1];
+				var component = this.searchComponent(ctx, path_id, class_name);
+				if (component == null)
+				{
+					continue;
+				}
+				
+				if (elem instanceof Runtime.Web.Component)
+				{
+					this.register_listeners.push
+					(
+						ctx,
+						{
+							"from": elem.getObjectName(),
+							"event_class_name": event_class_name,
+							"object_name": component.getObjectName(),
+							"method_name": callback
+						}
+					);
+				}
+				else
+				{
+					var es6_name = event_class.ES6_EVENT_NAME;
+					if (es6_name == undefined) continue;
+					
+					/* Find callback method */
+					if (!Runtime.rtl.method_exists(ctx, component, callback))
+					{
+						this.warning(ctx, "Method '" + callback + "' not found in ", component);
+						continue;
 					}
+					
+					/* Register listener */
+					this.register_listeners.push
+					(
+						ctx,
+						{
+							"from": path_id,
+							"event_class_name": event_class_name,
+							"object_name": component.getObjectName(),
+							"method_name": callback
+						}
+					);
+					
+					/* Register event listener */
+					elem.addEventListener(es6_name, Runtime.Web.RenderDriver.js_event);
 				}
 			}
 		}
@@ -15393,6 +15498,35 @@ Object.assign(Runtime.Web.RenderDriver,
 		
 		/* Patch element params */
 		/* controller.updateElemParams(ctx, control, control.parent_elem); */
+	},
+	
+	
+	
+	/**
+	 * Find listeners
+	 */
+	findListeners: function (path_id)
+	{
+		var arr = [];
+		var ctx = globalContext;
+		for (var i=0; i<ctx.object_manager.listeners.count(); i++)
+		{
+			var listener = ctx.object_manager.listeners[i];
+			var from = listener.get(ctx, "from");
+			if (from.indexOf(path_id) == 0) arr.push(listener);
+		}
+		return Runtime.Collection.from(arr);
+	},
+	
+	
+	
+	/**
+	 * Returns object
+	 */
+	getObject: function (path_id)
+	{
+		var ctx = globalContext;
+		return ctx.object_manager.objects.get(ctx, path_id);
 	}
 	
 });

@@ -1,0 +1,168 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.ORM;
+
+use Runtime.fs;
+use Runtime.ORM.Annotations.AutoIncrement;
+use Runtime.ORM.Annotations.BigIntType;
+use Runtime.ORM.Annotations.BooleanType;
+use Runtime.ORM.Annotations.ForeignKey;
+use Runtime.ORM.Annotations.Index;
+use Runtime.ORM.Annotations.JsonType;
+use Runtime.ORM.Annotations.Primary;
+use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.TextType;
+use Runtime.ORM.Annotations.Unique;
+use Runtime.ORM.Annotations.Virtual;
+use Runtime.ORM.ConnectionInterface as Connection;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.DockerLib;
+use Bayrell.CloudOS.Backend.DockerTasks;
+use Bayrell.CloudOS.Backend.ORM.Software;
+use Bayrell.CloudOS.Backend.ORM.Stack;
+
+
+struct Service extends Record
+{
+	@AutoIncrement{}
+	@BigIntType{}
+	int service_id;
+	
+	@StringType{ "length": 255 }
+	string stack_name;
+	
+	@StringType{ "length": 255, "nullable": true }
+	string software_api_name;
+	
+	@StringType{ "length": 255 }
+	string service_name;
+	
+	@TextType{ "length": 255 }
+	string docker_content;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string table_name() => "services";
+	
+	
+	
+	/**
+	 * Keys
+	 */
+	pure Collection keys() =>
+	[
+		new Primary
+		{
+			"keys": ["service_id"],
+		},
+		new Unique
+		{
+			"keys": ["stack_name", "service_name"],
+		},
+		new Index
+		{
+			"keys": ["software_api_name"],
+		},
+		new ForeignKey
+		{
+			"name": "stack_name",
+			"class_name": classof Stack,
+			"keys":
+			[
+				{"src": "stack_name", "dest": "stack_name"},
+			],
+			"delete": Record::RESTRICT,
+			"update": Record::RESTRICT,
+		},
+		new ForeignKey
+		{
+			"name": "software_api_name",
+			"class_name": classof Software,
+			"keys":
+			[
+				{"src": "software_api_name", "dest": "api_name"},
+			],
+			"delete": Record::RESTRICT,
+			"update": Record::CASCADE,
+		}
+	];
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	static async void compose(Service item)
+	{
+		/* Save yaml file */
+		string name = item["name"];
+		string stack = item["stack"];
+		string content = item["content"];
+		string dir_path = "/tmp/docker";
+		string file_name = stack ~ "_" ~ name ~ ".yaml";
+		string file_path = dir_path ~ "/" ~ file_name;
+		
+		/* Create files */
+		await fs::mkdir(dir_path);
+		await fs::saveFile(file_path, content);
+		await static::createYamlFiles();
+		
+		/* Deploy */
+		string cmd = "sudo docker stack deploy -c " ~ file_path ~ " " ~ stack ~ " --with-registry-auth";
+		string result = await DockerLib::exec(cmd ~ " 2>/dev/null");
+		
+		/* Sync services */
+		await DockerTasks::syncServices();
+	}
+	
+	
+	
+	/**
+	 * Create yaml files
+	 */
+	static async void createYamlFiles()
+	{
+		/* Get ORM driver */
+		ORMDriver orm = @.getDriver(classof ORMDriver);
+		
+		string table_name = static::getTableName();
+		string dir_path = "/tmp/docker";
+		
+		Cursor cursor = await orm.query
+		(
+			"select * from yaml_files",
+		);
+		
+		while (true)
+		{
+			Dict row = await cursor.fetch();
+			if (row == null)
+			{
+				break;
+			}
+			await fs::saveFile(row["file_name"], row["content"], "utf8", dir_path);
+		}
+		
+		await cursor.close();
+	}
+}

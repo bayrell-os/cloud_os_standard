@@ -1,0 +1,155 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.ORM;
+
+use Runtime.Crypt.Password;
+use Runtime.ORM.Annotations.AutoIncrement;
+use Runtime.ORM.Annotations.BigIntType;
+use Runtime.ORM.Annotations.BooleanType;
+use Runtime.ORM.Annotations.ForeignKey;
+use Runtime.ORM.Annotations.Index;
+use Runtime.ORM.Annotations.JsonType;
+use Runtime.ORM.Annotations.Primary;
+use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.Unique;
+use Runtime.ORM.Annotations.Virtual;
+use Runtime.ORM.ConnectionInterface as Connection;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.Record;
+
+
+struct User extends Record
+{
+	@AutoIncrement{}
+	@BigIntType{}
+	int user_id;
+	
+	@StringType{ "length": 1024 }
+	string name;
+	
+	@BooleanType{}
+	bool banned;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string table_name() => "users";
+	
+	
+	/**
+	 * Keys
+	 */
+	pure Collection keys() =>
+	[
+		new Primary
+		{
+			"keys": ["user_id"],
+		},
+		new Unique
+		{
+			"keys": ["name"],
+		},
+	];
+	
+	
+	
+	/**
+	 * Change password
+	 */
+	static async changePassword(int user_id, string password, Dict db_settings)
+	{
+		if (password != "")
+		{
+			/* Connect to database */
+			Connection conn = await static::connect(db_settings);
+			
+			/* Set up password */
+			await conn.insert_or_update
+			(
+				"users_auth",
+				{
+					"user_id": user_id,
+					"type": "password",
+				},
+				{
+					"value": Password::createHash(password1),
+				},
+				db_settings
+			);
+			
+		}
+	}
+	
+	
+	
+	/**
+	 * Create passwd file
+	 */
+	static async void nginxPasswdCreate(Dict db_settings)
+	{
+		/* Connect to database */
+		Connection conn = await static::connect(db_settings);
+		
+		string htpasswd = "";
+		string table_name = static::getTableName();
+		Cursor cursor = await orm.query
+		(
+			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
+			"left join users_auth as a on (u.user_id = a.user_id and a.method='password')",
+			db_settings
+		);
+		
+		while (true)
+		{
+			Dict row = await cursor.fetch();
+			if (row == null)
+			{
+				break;
+			}
+			
+			string banned = row["banned"];
+			string name = row["name"];
+			string password = row["password"];
+			
+			if (banned == "0" and not rtl::isEmpty(password))
+			{
+				htpasswd ~= name ~ ":" ~ password ~ "\n";
+			}
+		}
+		
+		await cursor.close();
+		
+		/* Insert or update nginx file */
+		await orm.insert_or_update
+		(
+			"nginx_files",
+			{
+				"name": "inc/htpasswd.inc",
+			},
+			{
+				"enable": 1,
+				"content": htpasswd,
+				"timestamp": rtl::time(),
+				"is_deleted": 0,
+			}
+		);
+	}
+}

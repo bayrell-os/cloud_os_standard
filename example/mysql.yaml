@@ -39,7 +39,3 @@ networks:
     backend:
         driver: overlay
         attachable: true
-        ipam:
-            driver: default
-            config:
-                - subnet: 172.21.0.0/16

@@ -1,0 +1,293 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.API;
+
+use Runtime.rtl;
+use Runtime.lib;
+use Runtime.Core.ApiException;
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
+use Runtime.Web.Backend.ApiList;
+use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.ORM.QueryBuilder;
+use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.ForeignKey;
+use Runtime.Web.CRUD.Rules.ReadOnly;
+use Runtime.Web.CRUD.Rules.Required;
+use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.Backend.ORM.DockerService;
+
+
+@ApiList{ "object_name": "Bayrell.CloudOS.DockerService", "interface_name": "core.crud" }
+static class DockerServiceCrud extends CrudApi
+{
+	/**
+	 * Returns orm class name
+	 */
+	pure string getORM() => classof DockerService;
+	
+	
+	
+	/**
+	 * Returns current rules
+	 */
+	Collection rules() =>
+	[
+		new ReadOnly{ "api_name": "service_id" },
+		new Required{ "api_name": "docker_service_id" },
+		new Required{ "api_name": "_name" },
+		new ReadOnly{ "api_name": "enable" },
+		new ReadOnly{ "api_name": "json" },
+		new ReadOnly{ "api_name": "tasks" },
+		new ReadOnly{ "api_name": "balancer" },
+	];
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	Collection<Collection<string>> getDefaultOrder() =>
+	[ 
+		["service_id", "desc"]
+	];
+	
+	
+	
+	/**
+	 * Build query
+	 */
+	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	
+	
+	
+	/**
+	 * Init request
+	 */
+	async void init()
+	{
+		await parent::init();
+	}
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	async void validate()
+	{
+		await parent::validate();
+		
+		if (this.action == "search")
+		{
+		}
+		
+		else if (this.action == "add" or this.action == "update")
+		{
+		}
+		
+		else if (this.action == "delete")
+		{
+		}
+	}
+	
+	
+	
+	/**
+	 * Create query
+	 */
+	async void createQuery()
+	{
+		/* Convert item */
+		Dict item = await this.convertItem(this.item);
+		
+		string service_name = item["_name"] |> default string "";
+		string service_image = item["_image"] |> default string "";
+		Dict json =
+		{
+			"Spec":
+			{
+				"Name": service_name,
+				"TaskTemplate":
+				{
+					"ContainerSpec":
+					{
+						"Image": service_image,
+					}
+				}
+			}
+		};
+		string new_service_id = await static::dockerAddService(json);
+		this.new_item = await this.getServiceFromDb(new_service_id);
+		this.pk =
+		{
+			"id": this.new_item["id"],
+		};
+	}
+	
+	
+	
+	/**
+	 * Custom update query
+	 */
+	async void updateQuery()
+	{
+		string old_image = this.old_item["_image"];
+		string new_image = this.item["_image"];
+		if (new_image != old_image)
+		{
+			Dict old_json = this.old_item["json"];
+			Dict new_json = old_json;
+			new_json = rtl::setAttr(new_json, ["Spec", "TaskTemplate", "ContainerSpec", "Image"], new_image);
+			
+			/* Docker update */
+			string new_service_id = await this.dockerUpdateService(old_json, new_json);
+			
+			/* Read service from database */
+			if (not rtl::isEmpty(new_service_id))
+			{
+				this.new_item = await this.getServiceFromDb(new_service_id);
+			}
+			else
+			{
+				this.new_item = this.old_item;
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async void after()
+	{
+		await parent::after();
+		
+		/* If is success */
+		if (this.isSuccess())
+		{
+			if (this.action == "delete")
+			{
+				string service_id_1 = this.old_item["docker_service_id"];
+				await this.dockerDisableService(service_id_1);
+				
+				string service_id_2 = this.old_item["json"]["ID"];
+				if (service_id_1 != service_id_2)
+				{
+					await this.dockerDisableService(service_id_2);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Search api
+	 */
+	@ApiMethod{ "method_name": "search" }
+	static async list searchAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::searchAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Create
+	 */
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::createAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Update
+	 */
+	@ApiMethod{ "method_name": "update" }
+	static async list updateAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::updateAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Delete
+	 */
+	@ApiMethod{ "method_name": "delete" }
+	static async list deleteAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::deleteAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Enable
+	 */
+	@ApiMethod{ "method_name": "enable" }
+	static async list enableAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		/* Create api */
+		CrudApi api = rtl::newInstance(static::getCurrentClassName());
+		
+		/* Get data from request */
+		api.action = "enable";
+		api.answer = answer;
+		api.request = request;
+		string docker_service_id = request["data", "docker_service_id"];
+		
+		/* Disable service */
+		Dict res = await api.dockerEnableService(docker_service_id);
+		Dict item = await api.processItem(res.item);
+		answer = answer::success(answer, { "new_item": res["item"] }, res["Message"]);
+		
+		return [request, answer];
+	}
+	
+	
+	
+	/**
+	 * Disable
+	 */
+	@ApiMethod{ "method_name": "disable" }
+	static async list disableAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		/* Create api */
+		CrudApi api = rtl::newInstance(static::getCurrentClassName());
+		
+		/* Get data from request */
+		api.action = "disable";
+		api.answer = answer;
+		api.request = request;
+		string docker_service_id = request["data", "docker_service_id"];
+		
+		/* Disable service */
+		Dict res = await api.dockerDisableService(docker_service_id);
+		Dict item = await api.processItem(res.item);
+		answer = answer::success(answer, { "new_item": res["item"] }, res["Message"]);
+		
+		return [request, answer];
+	}
+}

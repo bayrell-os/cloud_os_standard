@@ -1,9 +1,4 @@
-# Cloud Web Panel
+# Cloud OS
 
-## Start
 
-Create swarm
-```
-docker swarm init --advertise-addr EXTERNAL-IP
-```
 

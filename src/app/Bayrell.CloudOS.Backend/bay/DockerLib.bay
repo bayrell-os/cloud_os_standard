@@ -1,0 +1,76 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend;
+
+use Runtime.lib;
+use Runtime.RuntimeUtils;
+use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
+
+
+class DockerLib
+{
+	
+	/**
+	 * Send docker command
+	 */
+	static async string dockerApi(string url, string m = "GET", string post = null)
+	{
+		string content = "";
+		string cmd = "sudo /usr/bin/curl -s -X " ~ m ~ " -H 'Content-Type: application/json' ";
+		if (post != null) cmd ~= "-d '" ~ post ~ "' ";
+		
+		cmd ~= "--unix-socket /var/run/docker.sock http:/v1.39" ~ url;
+		
+		#ifcode PHP then
+		$content = @shell_exec($cmd . " 2>/dev/null");
+		#endif
+		
+		return content;
+	}
+	
+	
+	/**
+	 * Send docker command
+	 */
+	static async string exec(string cmd)
+	{
+		string content = "";
+		
+		#ifcode PHP then
+		$content = @shell_exec($cmd);
+		#endif
+		
+		return content;
+	}
+	
+	
+	
+	/**
+	 * Get service from docker
+	 */
+	static async Dict getService(string service_id)
+	{
+		string url_api = "/services/" ~ service_id;
+		string content = await static::dockerApi(url_api);
+		return rtl::json_decode(content);
+	}
+	
+}
