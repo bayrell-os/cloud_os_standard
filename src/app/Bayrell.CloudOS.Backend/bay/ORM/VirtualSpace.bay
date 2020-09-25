@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Backend.ORM;
 
+use Runtime.lib;
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
 use Runtime.ORM.Annotations.BooleanType;
@@ -26,15 +27,18 @@ use Runtime.ORM.Annotations.Index;
 use Runtime.ORM.Annotations.JsonType;
 use Runtime.ORM.Annotations.Primary;
 use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.TextType;
 use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.QueryBuilder;
 use Runtime.ORM.Record;
 use Bayrell.CloudOS.Backend.ORM.Layer;
 use Bayrell.CloudOS.Backend.ORM.LayerSpace;
 use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.ORM.Software;
 
 
@@ -50,11 +54,16 @@ struct VirtualSpace extends Record
 	@StringType{ "length": 1024 }
 	string domain;
 	
+	@TextType{}
+	string nginx_template;
+	
+	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string table_name() => "virtual_spaces";
+	
 	
 	
 	/**
@@ -73,6 +82,67 @@ struct VirtualSpace extends Record
 	];
 	
 	
+	
+	/**
+	 * Process item to database
+	 */
+	static async Dict toDatabase(Dict item)
+	{
+		item = await parent::toDatabase(item);
+		
+		/* Set default template */
+		string nginx_template = item["nginx_template"] |> default string "";
+		if (nginx_template == "")
+		{
+			nginx_template = "";
+			nginx_template ~= "server {\n";
+			nginx_template ~= "\tlisten 80;\n";
+			nginx_template ~= "\tserver_name %SERVER_NAME%;\n";
+			nginx_template ~= "\troot /usr/share/nginx/default;\n";
+			nginx_template ~= "\tindex index.html;\n";
+			nginx_template ~= "\tautoindex off;\n";
+			nginx_template ~= "%LAYERS%\n";
+			nginx_template ~= "%SSL%\n";
+			nginx_template ~= "}";
+			item <= nginx_template <= nginx_template;
+		}
+		
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Get layer
+	 */
+	pure string getLayer(VirtualSpace space, Dict item)
+	{
+		string domain = space.domain;
+		string uri = item["uri"] |> default string "";
+		string stack_name = item["stack_name"] |> default string "";
+		string service_name = item["service_name"] |> default string "";
+		string layer_id = item["layer_id"] |> default string "";
+		string layer_uid = item["layer_uid"] |> default string "";
+		
+		if (uri == "") return "";
+		if (stack_name == "") return "";
+		if (service_name == "") return "";
+		
+		string res = "";
+		res ~= "\tlocation " ~ uri ~ " {\n";
+		res ~= "\t\tproxy_pass http://" ~ stack_name ~ "_" ~ service_name ~ ".test/;\n";
+		res ~= "\t\tinclude proxy_params;\n";
+		res ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ uri ~ "\";\n";
+		if (space.space_id) res ~= "\t\tproxy_set_header X-SPACE-ID \"" ~ space.space_id ~ "\";\n";
+		if (layer_id) res ~= "\t\tproxy_set_header X-LAYER-ID \"" ~ layer_id ~ "\";\n";
+		if (layer_uid) res ~= "\t\tproxy_set_header X-LAYER-UID \"" ~ layer_uid ~ "\";\n";
+		res ~= "\t}";
+		
+		return res;
+	}
+	
+	
+	
 	/**
 	 * Update nginx
 	 */
@@ -85,6 +155,7 @@ struct VirtualSpace extends Record
 		string spaces_table_name = VirtualSpace::table_name();
 		string layers_table_name = Layer::table_name();
 		string layers_spaces_table_name = LayerSpace::table_name();
+		string services_table_name = Service::table_name();
 		string softwares_table_name = Software::table_name();
 		string nginx_file_table_name = NginxFile::table_name();
 		
@@ -94,65 +165,60 @@ struct VirtualSpace extends Record
 			return;
 		}
 		
-		/* Get items */
-		string sql = "select spaces.domain, layers_spaces.uri, softwares.backend from "~spaces_table_name~
-			" as spaces\n"~
-			"left join "~layers_spaces_table_name~" as layers_spaces on (layers_spaces.space_id = spaces.space_id)\n" ~
-			"left join "~layers_table_name~" as layers on (layers_spaces.layer_id = layers.layer_id)\n" ~
-			"left join "~softwares_table_name~" as softwares on (layers.software_api_name = softwares.api_name)\n" ~
-			"where spaces.space_id=:space_id";
+		fn getLayer = curry static::getLayer(space, ?);
 		
-		Cursor cursor = await conn.query
-		(
-			sql,
-			{
-				"space_id": space_id,
-			},
-			db_settings
-		);
-		Collection items = await cursor.fetchAll();
-		await cursor.close();
+		/* Get layers */
+		Collection layers = new QueryBuilder()
+			
+			/* Query */
+			|> .select(layers_spaces_table_name, "layers_spaces")
+			|> .fields
+			([
+				"layers.layer_id as layer_id",
+				"layers.uid as layer_uid",
+				"layers_spaces.uri as uri",
+				"services.stack_name as stack_name",
+				"services.service_name as service_name",
+			])
+			|> .leftJoin(layers_table_name, "layers", "layers_spaces.layer_id = layers.layer_id")
+			|> .leftJoin(services_table_name, "services", "layers.service_id = services.service_id")
+			|> .filter
+			([
+				["layers_spaces.space_id", "=", space_id]
+			])
+			
+			/* Get items from database by query */
+			|> await .all()
+			
+			/* Sort by URI */
+			|> .sortIm( lib::sortAttr("uri", "desc") )
+			
+			/* Convert items to layer */
+			|> .map( getLayer )
+			
+			/* Remove empty strings */
+			|> .filter( lib::equalNot("") )
+		;
 		
 		/* Create nginx files */
-		string nginx_content = "";
-		if (items.count() > 0)
-		{
-			string domain = space.domain;
-			nginx_content ~= "server {\n";
-			nginx_content ~= "\tlisten 80;\n";
-			nginx_content ~= "\tserver_name " ~ domain ~ ";\n";
-			nginx_content ~= "\troot /usr/share/nginx/default;\n";
-			nginx_content ~= "\tindex index.html;\n";
-			nginx_content ~= "\tautoindex off;\n";
-			for (int i=0; i<items.count(); i++)
+		string nginx_content = space.nginx_template;
+		
+		nginx_content = rs::replace("%SERVER_NAME%", space.domain, nginx_content);
+		nginx_content = rs::replace("%LAYERS%", rs::join("\n", layers), nginx_content);
+		nginx_content = rs::replace("%SSL%", "", nginx_content);
+		
+		/* Update nginx file */
+		await conn.insert_or_update
+		(
+			nginx_file_table_name,
 			{
-				Dict item = items[i];
-				string uri = item["uri"];
-				string backend = item["backend"];
-				if (rtl::isEmpty(uri) or rtl::isEmpty(backend))
-				{
-					continue;
-				}
-				nginx_content ~= "\tlocation " ~ uri ~ " {\n";
-				nginx_content ~= "\t\tproxy_pass http://" ~ backend ~ ".test/;\n";
-				nginx_content ~= "\t\tinclude proxy_params;\n";
-				nginx_content ~= "\t}\n";
+				"name": "spaces/" ~ space_id ~ ".conf",
+			},
+			{
+				"content": nginx_content,
+				"enable": 1,
+				"timestamp": rtl::time(),
 			}
-			nginx_content ~= "}";
-			
-			/* Update nginx file */
-			await conn.insert_or_update
-			(
-				nginx_file_table_name,
-				{
-					"name": "spaces/" ~ space_id ~ ".conf",
-				},
-				{
-					"content": nginx_content,
-					"enable": 1,
-					"timestamp": rtl::time(),
-				}
-			);
-		}
+		);
 	}
 }

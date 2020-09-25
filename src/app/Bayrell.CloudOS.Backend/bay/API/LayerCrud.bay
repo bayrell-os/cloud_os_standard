@@ -163,15 +163,31 @@ static class LayerCrud extends CrudApi
 			/* Update nginx */
 			if (this.action == "create" or this.action == "update" or this.action == "delete")
 			{
-				/*
-				Collection ids = this.foreigns["spaces", "many_to_many"]
-					|> lib::map( lib::attr("space_id") )
-				;
+				Collection ids = [];
+				Dict field = this.foreign.fields["layer_spaces"];
+				Collection old_values = field["old_values"] |> default Collection null;
+				Collection new_values = field["new_values"] |> default Collection null;
+				if (old_values != null)
+				{
+					ids = old_values.reduce
+					(
+						Collection (Collection ids, Dict old_value) => ids.pushIm( old_value["space_id"] )
+						ids
+					);
+				}
+				if (new_values != null)
+				{
+					ids = new_values.reduce
+					(
+						Collection (Collection ids, Dict new_value) => ids.pushIm( new_value["space_id"] )
+						ids
+					);
+				}
+				ids = ids.removeDuplicatesIm();
 				for (int i=0; i<ids.count(); i++)
 				{
-					await Space::updateNginx( ids[i] );
+					await VirtualSpace::updateNginx( ids[i] );
 				}
-				*/
 			}
 		}
 		

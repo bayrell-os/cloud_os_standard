@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.LogicMapPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.LogicMapPageModel"
+	name="Bayrell.CloudOS.LogicMap.LogicMapPage" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.LogicMap.LogicMapPageModel"
 >
 
 <use name="Runtime.Exceptions.RuntimeException" />
@@ -39,8 +39,8 @@
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
-<use name="Bayrell.CloudOS.Design.LogicMapPage" />
-<use name="Bayrell.CloudOS.Design.LogicMapPageModel" />
+<use name="Bayrell.CloudOS.LogicMap.LogicMapPage" />
+<use name="Bayrell.CloudOS.LogicMap.LogicMapPageModel" />
 
 
 <style>
@@ -56,29 +56,7 @@
 @Route{ "uri": "/design/logic_map/", "name": "app.design.logic_map" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
-	/* Create model */
-	LogicMapPageModel page_model = new LogicMapPageModel
-	{
-	};
-	
-	/* Remote call */
-	Dict search_params = CrudPageModel::getCrudSearchParams(container.request);
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
-	(
-		{
-			"object_name": "Bayrell.CloudOS.Spaces",
-			"interface_name": "core.crud",
-			"method_name": "search",
-			"data": search_params,
-		},
-		container
-	);
-	
-	/* Answer */
-	if (answer.isSuccess())
-	{
-		page_model <= spaces <= answer.response["items"];
-	}
+	LogicMapPageModel page_model = new LogicMapPageModel{};
 	
 	/* Set title */
 	container <= layout <= title <= "Logic Map";

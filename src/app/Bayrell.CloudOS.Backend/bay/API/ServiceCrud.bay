@@ -57,8 +57,8 @@ static class ServiceCrud extends CrudApi
 		new Required{ "api_name": "stack_name" },
 		new Required{ "api_name": "service_name" },
 		new DefaultValue{ "api_name": "software_api_name", "value": null },
-		new Dictionary{ "class_name": classof Stack, "option_name": "stacks" },
-		new Dictionary{ "class_name": classof Software, "option_name": "softwares" },
+		new Dictionary{ "class_name": classof Stack, "field_name": "stacks" },
+		new Dictionary{ "class_name": classof Software, "field_name": "softwares" },
 	];
 	
 	

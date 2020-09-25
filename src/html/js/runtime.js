@@ -1724,6 +1724,26 @@ Object.assign(Runtime.lib,
 		return (a > b) ? (-1) : ((a < b) ? (1) : (0));
 	},
 	/**
+	 * Sort attr
+	 */
+	sortAttr: function(ctx, field_name, f)
+	{
+		return (ctx, a, b) => 
+		{
+			var a = Runtime.rtl.get(ctx, a, field_name);
+			var b = Runtime.rtl.get(ctx, b, field_name);
+			if (f == "asc")
+			{
+				return (a > b) ? (1) : ((a < b) ? (-1) : (0));
+			}
+			if (f == "desc")
+			{
+				return (a > b) ? (-1) : ((a < b) ? (1) : (0));
+			}
+			return f(ctx, a, b);
+		};
+	},
+	/**
 	 * Convert monad by type
 	 */
 	to: function(ctx, type_value, def_value)

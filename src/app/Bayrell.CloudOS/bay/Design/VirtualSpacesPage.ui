@@ -121,6 +121,12 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
+			"api_name": "nginx_template",
+			"label": "Nginx template",
+			"class_name": classof TextArea,
+		},
+		new FieldInfo
+		{
 			"api_name": "edit-buttons",
 			"label": "",
 			"class_name": classof Label,
@@ -148,6 +154,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	[
 		"name",
 		"domain",
+		"nginx_template",
 	];
 	
 	%var Collection<string> table_fields =
@@ -172,6 +179,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 		form_fields={ form_fields }
 		table_fields={ table_fields }
 		messages={ messages }
+		dialog_form={{
+			"width": "800px"
+		}}
 	/>
 	
 </template>
