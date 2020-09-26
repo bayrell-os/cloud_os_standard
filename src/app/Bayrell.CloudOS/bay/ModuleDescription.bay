@@ -120,7 +120,6 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.MainPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.NodesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.LogicMapPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SoftwaresPage" },
@@ -129,6 +128,7 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Docker.CLIPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerServicesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerYamlFilesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.LogicMap.LogicMapPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.User.UsersPage" },
 		
 		

@@ -58,6 +58,10 @@ struct Service extends Record
 	@TextType{ "length": 255 }
 	string docker_content;
 	
+	@BigIntType{}
+	int logic_map_pos_y = 0;
+	
+	
 	
 	/**
 	 * Returns table name

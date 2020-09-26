@@ -29,22 +29,23 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Route" />
 <use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.Events.ChangeEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Web.CRUD.CrudPage" component="true" />
-<use name="Runtime.Web.CRUD.CrudPageModel" />
-<use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Events.MouseDownEvent" />
+<use name="Runtime.Web.Events.MouseMoveEvent" />
+<use name="Runtime.Web.Events.MouseUpEvent" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
+<use name="Bayrell.CloudOS.LogicMap.Box" component="true" />
+<use name="Bayrell.CloudOS.LogicMap.BoxModel" />
+<use name="Bayrell.CloudOS.LogicMap.DragAndDropEvent" />
 <use name="Bayrell.CloudOS.LogicMap.LogicMapPage" />
 <use name="Bayrell.CloudOS.LogicMap.LogicMapPageModel" />
-
-
-<style>
-</style>
 
 
 <script>
@@ -57,6 +58,58 @@
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	LogicMapPageModel page_model = new LogicMapPageModel{};
+	
+	/* Send request */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	(
+		{
+			"object_name": "Bayrell.CloudOS.LogicMap",
+			"interface_name": "default",
+			"method_name": "status",
+		},
+		container
+	);
+	
+	/* Throw exception */
+	if (not answer.isSuccess())
+	{
+		throw new RuntimeException(answer.error_message, answer.error_code);
+	}
+	
+	Dict response = answer.response;
+	
+	/* Get services */
+	page_model <= services <=
+		response
+		|> attr "services"
+		|> default Collection []
+		|> .map
+		(
+			BoxModel (Dict item) => new BoxModel{ "kind": "service", "item": item, "y": item["logic_map_pos_y"] }
+		)
+	;
+	
+	/* Get spaces */
+	page_model <= spaces <=
+		response
+		|> attr "spaces"
+		|> default Collection []
+		|> .map
+		(
+			BoxModel (Dict item) => new BoxModel{ "kind": "space", "item": item, "y": item["logic_map_pos_y"] }
+		)
+	;
+	
+	/* Get layers */
+	page_model <= layers <=
+		response
+		|> attr "layers"
+		|> default Collection []
+		|> .map
+		(
+			BoxModel (Dict item) => new BoxModel{ "kind": "layer", "item": item, "y": item["logic_map_pos_y"] }
+		)
+	;
 	
 	/* Set title */
 	container <= layout <= title <= "Logic Map";
@@ -73,12 +126,207 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 
 
+<style>
+%box_wrap{
+	position: relative;
+    display: flex;
+    align-items: stretch;
+	min-height: 100%;
+}
+%box_items{
+	position: relative;
+	width: 33%;
+	margin: 10px;
+}
+%box_items--spaces{
+	margin-left: 0px;
+}
+%box_items--services{
+	margin-right: 0px;
+}
+</style>
+
+
+
 <template name="render">
-	Hello
+	<div class='buttons'>
+		<Button @event:MouseClickEvent="onSavePos">Save positions</Button>
+	</div>
+	<div class='box_wrap'>
+		<div class='box_items box_items--spaces'>
+			%for (int i=0; i<model.spaces.count(); i++)
+			{
+				%var BoxModel box = model.spaces[i];
+				<Box
+					@key={ "space_" ~ box["item", "space_id"] }
+					@bind=[ "spaces", i ]
+					@event:DragAndDropEvent="onBoxEvent"
+				/>
+			}
+		</div>
+		<div class='box_items box_items--layers'>
+			%for (int i=0; i<model.layers.count(); i++)
+			{
+				%var BoxModel box = model.layers[i];
+				<Box
+					@key={ "layer_" ~ box["item", "layer_id"] }
+					@bind=[ "layers", i ]
+					@event:DragAndDropEvent="onBoxEvent"
+				/>
+			}
+		</div>
+		<div class='box_items box_items--services'>
+			%for (int i=0; i<model.services.count(); i++)
+			{
+				%var BoxModel box = model.services[i];
+				<Box
+					@key={ "service_" ~ box["item", "service_id"] }
+					@bind=[ "services", i ]
+					@event:DragAndDropEvent="onBoxEvent"
+				/>
+			}
+		</div>
+	</div>
 </template>
 
 
+
 <script type="frontend">
+
+Box current_box = null;
+
+
+/**
+ * Created component
+ */
+public void onCreated()
+{
+	this.driver.registerGlobalListener(classof MouseMoveEvent, this.getObjectName(), "onMouseMove");
+	this.driver.registerGlobalListener(classof MouseUpEvent, this.getObjectName(), "onMouseUp");
+}
+
+
+
+/**
+ * On mouse move
+ */
+public void onBoxEvent(Message<DragAndDropEvent> msg)
+{
+	DragAndDropEvent e = msg.data;
+	if (e.kind == DragAndDropEvent::PICK_UP)
+	{
+		this.current_box = e.obj;
+	}
+}
+
+
+
+/**
+ * On mouse up
+ */
+public void onMouseUp(Message<MouseUpEvent> msg)
+{
+	if (this.current_box != null)
+	{
+		this.current_box.update("stopMove");
+		this.current_box = null;
+	}
+}
+
+
+
+/**
+ * On mouse move
+ */
+public void onMouseMove(Message<MouseMoveEvent> msg)
+{
+	MouseDownEvent e = msg.data;
+	if (this.current_box != null)
+	{
+		var p = this.current_box.box.parentElement;
+		int top = this.getOffsetTop(p);
+		int y = e.pageY - top;
+		if (y < 0) y = 0;
+		this.current_box.update("setPosY", y);
+	}
+}
+
+
+
+/**
+ * Returns offset top
+ */
+public int getOffsetTop(var e)
+{
+	var top = 0;
+	while (e != null)
+	{
+		top += e.offsetTop;
+		e = e.parentElement;
+	}
+	return top;
+}
+
+
+
+/**
+ * Save positions
+ */
+public async void onSavePos(Message<MouseClickEvent> msg)
+{
+	Dict data = {};
+	
+	LogicMapPageModel page_model = this.model();
+	
+	/* Push services */
+	data <= services <= page_model.services
+		|> .map
+		(
+			Dict (BoxModel box) =>
+			{
+				"service_id": box["item", "service_id"],
+				"y": box.y
+			}
+		)
+	;
+	
+	/* Push layers */
+	data <= layers <= page_model.layers
+		|> .map
+		(
+			Dict (BoxModel box) =>
+			{
+				"layer_id": box["item", "layer_id"],
+				"y": box.y
+			}
+		)
+	;
+	
+	/* Push spaces */
+	data <= spaces <= page_model.spaces
+		|> .map
+		(
+			Dict (BoxModel box) =>
+			{
+				"space_id": box["item", "space_id"],
+				"y": box.y
+			}
+		)
+	;
+	
+	/* Send request */
+	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	(
+		{
+			"object_name": "Bayrell.CloudOS.LogicMap",
+			"interface_name": "default",
+			"method_name": "savePos",
+			"data": data,
+		}
+	);
+	
+	log(answer);
+}
 
 </script>
 

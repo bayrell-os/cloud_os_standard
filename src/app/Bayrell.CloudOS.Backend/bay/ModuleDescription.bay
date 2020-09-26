@@ -66,6 +66,7 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DockerServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DockerYamlFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LayerCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LogicMap" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.NginxFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.ServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SoftwareCrud" },

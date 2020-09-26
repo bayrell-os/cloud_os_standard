@@ -23,12 +23,17 @@ use Runtime.lib;
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
+use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.QueryBuilder;
+use Runtime.ORM.Record;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
-use Bayrell.CloudOS.API.DockerLib;
+use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.ORM.LayerSpace;
+use Bayrell.CloudOS.Backend.ORM.Service;
+use Bayrell.CloudOS.Backend.ORM.VirtualSpace;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.LogicMap", "interface_name": "default" }
@@ -42,8 +47,125 @@ class LogicMap
 	@ApiMethod{ "method_name": "status" }
 	static async list statusAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
+		Collection services = Service::select()
+			|> .asRecord(false)
+			|> await .all();
+		
+		Collection spaces = VirtualSpace::select()
+			|> .asRecord(false)
+			|> await .all();
+		
+		Collection layers = Layer::select()
+			|> .asRecord(false)
+			|> await .all();
+		
+		Collection layers_spaces = LayerSpace::select()
+			|> .asRecord(false)
+			|> await .all();
+		
+		/* Set response */
+		Dict response =
+		{
+			"services": services,
+			"spaces": spaces,
+			"layers": layers,
+			"layers_spaces": layers_spaces,
+		};
+		answer = answer::success(answer, response);
+		
 		return [ request, answer ];
 	}
 	
+	
+	
+	/**
+	 * Save pos
+	 */
+	@ApiMethod{ "method_name": "savePos" }
+	static async list savePosAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		Dict db_settings = {};
+		
+		/* Connect to database */
+		Connection conn = await Record::connect(db_settings)
+		
+		/* Spaces */
+		Collection<Dict> spaces = request["data", "spaces"] |> default Collection null;
+		if (spaces != null)
+		{
+			for (int i=0; i<spaces.count(); i++)
+			{
+				Dict space = spaces[i];
+				int space_id = space["space_id"] |> default int 0;
+				int y = space["y"] |> default int 0;
+				if (space_id == 0) continue;
+				
+				/* Update virtual space */
+				await VirtualSpace::update
+				(
+					{
+						"space_id": space_id,
+					},
+					{
+						"logic_map_pos_y": y,
+					},
+					db_settings
+				);
+			}
+		}
+		
+		/* Layers */
+		Collection<Dict> layers = request["data", "layers"] |> default Collection null;
+		if (layers != null)
+		{
+			for (int i=0; i<layers.count(); i++)
+			{
+				Dict layer = layers[i];
+				int layer_id = layer["layer_id"] |> default int 0;
+				int y = layer["y"] |> default int 0;
+				if (layer_id == 0) continue;
+				
+				/* Update service */
+				await Layer::update
+				(
+					{
+						"layer_id": layer_id,
+					},
+					{
+						"logic_map_pos_y": y,
+					},
+					db_settings
+				);
+			}
+		}
+		
+		/* Services */
+		Collection<Dict> services = request["data", "services"] |> default Collection null;
+		if (services != null)
+		{
+			for (int i=0; i<services.count(); i++)
+			{
+				Dict service = services[i];
+				int service_id = service["service_id"] |> default int 0;
+				int y = service["y"] |> default int 0;
+				if (service_id == 0) continue;
+				
+				/* Update service */
+				await Service::update
+				(
+					{
+						"service_id": service_id,
+					},
+					{
+						"logic_map_pos_y": y,
+					},
+					db_settings
+				);
+			}
+		}
+		
+		answer = answer::success(answer, null);
+		return [ request, answer ];
+	}
 	
 }

@@ -20,14 +20,12 @@ namespace Bayrell.CloudOS.LogicMap;
 
 use Runtime.lib;
 use Runtime.BaseStruct;
-use Runtime.Web.CRUD.CrudPageModel;
-use Bayrell.CloudOS.LogicMap.BoxModel;
+use Runtime.Web.Events.UIEvent;
 
 
-struct LogicMapPageModel extends BaseStruct
+struct DragAndDropEvent extends UIEvent
 {
-	Collection<BoxModel> services = null;
-	Collection<BoxModel> spaces = null;
-	Collection<BoxModel> layers = null;
-	Collection<Dict> layers_spaces = null;
+	static const string PICK_UP = "pickup";
+	string kind = "";
+	var obj = null;
 }

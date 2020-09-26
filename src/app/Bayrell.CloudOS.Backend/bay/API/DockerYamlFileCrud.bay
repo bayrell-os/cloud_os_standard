@@ -27,7 +27,7 @@ use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
-use Runtime.Web.CRUD.Rules.ForeignKey;
+use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
@@ -50,6 +50,7 @@ static class DockerYamlFileCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
+		new AllowFields{ "fields": ["file_name", "content"] },
 		new ReadOnly{ "api_name": "file_id" },
 		new Required{ "api_name": "file_name" },
 	];
@@ -102,13 +103,6 @@ static class DockerYamlFileCrud extends CrudApi
 		{
 		}
 	}
-	
-	
-	
-	/**
-	 * Build query
-	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) => q;
 	
 	
 	

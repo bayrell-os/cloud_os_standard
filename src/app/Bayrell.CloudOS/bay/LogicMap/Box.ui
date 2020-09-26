@@ -1,0 +1,116 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.LogicMap.Box" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.LogicMap.BoxModel"
+>
+
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Events.ChangeEvent" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Events.MouseDownEvent" />
+<use name="Runtime.Web.Events.MouseMoveEvent" />
+<use name="Runtime.Web.Events.MouseUpEvent" />
+<use name="Bayrell.CloudOS.LogicMap.BoxModel" />
+<use name="Bayrell.CloudOS.LogicMap.DragAndDropEvent" />
+
+
+<style>
+%box{
+	position: absolute;
+	width: 100%;
+	height: 100px;
+	padding: 10px;
+	border: 1px #ccc solid;
+	background-color: white;
+}
+%box_title{
+	text-align: center;
+	font-weight: bold;
+}
+</style>
+
+
+<template name="render">
+	
+	<div class='box' style={{
+			"top": model.y ~ "px",
+			"left": model.x ~ "px",
+			"cursor": model.move ? "grabbing" : "default",
+		}}
+		@ref='box' @event:MouseDownEvent="onMouseDown">
+		
+		%if (model.kind == "space")
+		{
+			<div class='box_title'>{ model["item", "name"] }</div>
+			<div class='service_domain'>Domain: { model["item", "domain"] }</div>
+		}
+		
+		%if (model.kind == "layer")
+		{
+			<div class='box_title'>{ model["item", "layer_name"] }</div>
+			<div class='service_domain'>UID: { model["item", "uid"] }</div>
+		}
+		
+		%if (model.kind == "service")
+		{
+			<div class='box_title'>{ model["item", "stack_name"] ~ "_" ~ model["item", "service_name"] }</div>
+		}
+	</div>
+</template>
+
+
+<script type="frontend">
+
+var box;
+
+
+/**
+ * On mouse move
+ */
+public void onMouseDown(Message<MouseDownEvent> msg)
+{
+	MouseDownEvent e = msg.data;
+	msg.cancel();
+	int shift_y = this.getOffsetTop(e.currentElement, this.box) + e.offsetY;
+	this.update("startMove", 0, shift_y);
+	this.signal(new DragAndDropEvent{ "kind": DragAndDropEvent::PICK_UP, "obj": this });
+}
+
+
+/**
+ * Returns offset top
+ */
+public int getOffsetTop(var e, var stop = null)
+{
+	var top = 0;
+	while (e != stop)
+	{
+		top += e.offsetTop;
+		e = e.parentElement;
+	}
+	return top;
+}
+
+
+</script>
+
+</class>

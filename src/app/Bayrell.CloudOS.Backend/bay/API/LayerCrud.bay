@@ -27,6 +27,7 @@ use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.Dictionary;
 use Runtime.Web.CRUD.Rules.ManyToMany;
 use Runtime.Web.CRUD.Rules.ReadOnly;
@@ -54,6 +55,7 @@ static class LayerCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
+		new AllowFields{ "fields": ["service_id", "layer_name", "uid"] },
 		new ReadOnly{ "api_name": "layer_id" },
 		new Required{ "api_name": "service_id" },
 		new Required{ "api_name": "layer_name" },

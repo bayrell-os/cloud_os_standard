@@ -11795,6 +11795,13 @@ Object.assign(Runtime.Web.Component,
 	 */
 	escapeAttr: function(ctx, s)
 	{
+		if (s instanceof Runtime.Dict)
+		{
+			s = s.reduce(ctx, (ctx, s, val, key) => 
+			{
+				return s + Runtime.rtl.toStr(key) + Runtime.rtl.toStr(":") + Runtime.rtl.toStr(val) + Runtime.rtl.toStr(";");
+			}, "");
+		}
 		return Runtime.rs.escapeHtml(ctx, s);
 	},
 	/**

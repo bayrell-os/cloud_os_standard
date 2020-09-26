@@ -56,11 +56,15 @@ struct Layer extends Record
 	@BooleanType{ "default": false }
 	bool is_deleted;
 	
+	@BigIntType{}
+	int logic_map_pos_y = 0;
+	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string table_name() => "layers";
+	
 	
 	
 	/**

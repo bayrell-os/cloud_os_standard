@@ -57,6 +57,9 @@ struct VirtualSpace extends Record
 	@TextType{}
 	string nginx_template;
 	
+	@BigIntType{}
+	int logic_map_pos_y = 0;
+	
 	
 	
 	/**

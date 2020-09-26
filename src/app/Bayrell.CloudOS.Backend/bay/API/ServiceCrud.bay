@@ -27,6 +27,7 @@ use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.DefaultValue;
 use Runtime.Web.CRUD.Rules.Dictionary;
 use Runtime.Web.CRUD.Rules.ReadOnly;
@@ -53,6 +54,7 @@ static class ServiceCrud extends CrudApi
 	 */
 	Collection rules() =>
 	[
+		new AllowFields{ "fields": ["stack_name", "software_api_name", "service_name", "docker_content"] },
 		new ReadOnly{ "api_name": "service_id" },
 		new Required{ "api_name": "stack_name" },
 		new Required{ "api_name": "service_name" },

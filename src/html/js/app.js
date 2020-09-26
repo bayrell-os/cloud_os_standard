@@ -4821,6 +4821,633 @@ if (typeof module != "undefined" && typeof module.exports != "undefined") module
 if (typeof Bayrell == 'undefined') Bayrell = {};
 if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
 if (typeof Bayrell.CloudOS.LogicMap == 'undefined') Bayrell.CloudOS.LogicMap = {};
+Bayrell.CloudOS.LogicMap.Box = function(ctx)
+{
+	Runtime.Web.Component.apply(this, arguments);
+};
+Bayrell.CloudOS.LogicMap.Box.prototype = Object.create(Runtime.Web.Component.prototype);
+Bayrell.CloudOS.LogicMap.Box.prototype.constructor = Bayrell.CloudOS.LogicMap.Box;
+Object.assign(Bayrell.CloudOS.LogicMap.Box.prototype,
+{
+	/**
+ * On mouse move
+ */
+	onMouseDown: function(ctx, msg)
+	{
+		var e = msg.data;
+		msg.cancel(ctx);
+		var shift_y = this.getOffsetTop(ctx, e.currentElement, this.box) + e.offsetY;
+		this.update(ctx, "startMove", 0, shift_y);
+		this.signal(ctx, new Bayrell.CloudOS.LogicMap.DragAndDropEvent(ctx, Runtime.Dict.from({"kind":Bayrell.CloudOS.LogicMap.DragAndDropEvent.PICK_UP,"obj":this})));
+	},
+	/**
+ * Returns offset top
+ */
+	getOffsetTop: function(ctx, e, stop)
+	{
+		if (stop == undefined) stop = null;
+		var top = 0;
+		while (e != stop)
+		{
+			top += e.offsetTop;
+			e = e.parentElement;
+		}
+		return top;
+	},
+	_init: function(ctx)
+	{
+		this.box = null;
+		Runtime.Web.Component.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.LogicMap.Box)
+		{
+			this.box = o.box;
+		}
+		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "box")this.box = v;
+		else Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "box")return this.box;
+		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.LogicMap.Box";
+	},
+});
+Object.assign(Bayrell.CloudOS.LogicMap.Box, Runtime.Web.Component);
+Object.assign(Bayrell.CloudOS.LogicMap.Box,
+{
+	css: function(ctx, vars)
+	{
+		return ".box.h-2cc3{" + Runtime.rtl.toStr("position: absolute;width: 100%;height: 100px;padding: 10px;border: 1px #ccc solid;background-color: white;") + Runtime.rtl.toStr("}.box_title.h-2cc3{") + Runtime.rtl.toStr("text-align: center;font-weight: bold;") + Runtime.rtl.toStr("}");
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.box' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"style":(Runtime.Dict.from({"top":model.y + Runtime.rtl.toStr("px"),"left":model.x + Runtime.rtl.toStr("px"),"cursor":(model.move) ? ("grabbing") : ("default")})),"@ref":["Bayrell.CloudOS.LogicMap.Box","box"],"@event:Runtime.Web.Events.MouseDownEvent":["Bayrell.CloudOS.LogicMap.Box","onMouseDown"],"class":["box", this.getCssHash(ctx)].join(" "),"@elem_name":"box"}});
+			
+			if (model.kind == "space")
+			{
+				/* Element 'div.box_title' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_title", this.getCssHash(ctx)].join(" "),"@elem_name":"box_title"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.attr(ctx, model, ["item", "name"])});
+				RenderDriver.p(__v1, __v1_childs);
+				
+				/* Element 'div.service_domain' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["service_domain", this.getCssHash(ctx)].join(" "),"@elem_name":"service_domain"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": "Domain: "});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.attr(ctx, model, ["item", "domain"])});
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			
+			if (model.kind == "layer")
+			{
+				/* Element 'div.box_title' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_title", this.getCssHash(ctx)].join(" "),"@elem_name":"box_title"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.attr(ctx, model, ["item", "layer_name"])});
+				RenderDriver.p(__v1, __v1_childs);
+				
+				/* Element 'div.service_domain' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["service_domain", this.getCssHash(ctx)].join(" "),"@elem_name":"service_domain"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": "UID: "});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.attr(ctx, model, ["item", "uid"])});
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			
+			if (model.kind == "service")
+			{
+				/* Element 'div.box_title' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_title", this.getCssHash(ctx)].join(" "),"@elem_name":"box_title"}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.attr(ctx, model, ["item", "stack_name"]) + Runtime.rtl.toStr("_") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, model, ["item", "service_name"]))});
+				RenderDriver.p(__v1, __v1_childs);
+			}
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS.LogicMap";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.LogicMap.Box";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Component";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.LogicMap.Box",
+			"name": "Bayrell.CloudOS.LogicMap.Box",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("box");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "box") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.Box",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.LogicMap.Box);
+window["Bayrell.CloudOS.LogicMap.Box"] = Bayrell.CloudOS.LogicMap.Box;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.LogicMap.Box;
+"use strict;"
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+if (typeof Bayrell.CloudOS.LogicMap == 'undefined') Bayrell.CloudOS.LogicMap = {};
+Bayrell.CloudOS.LogicMap.BoxModel = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Bayrell.CloudOS.LogicMap.BoxModel.prototype = Object.create(Runtime.BaseStruct.prototype);
+Bayrell.CloudOS.LogicMap.BoxModel.prototype.constructor = Bayrell.CloudOS.LogicMap.BoxModel;
+Object.assign(Bayrell.CloudOS.LogicMap.BoxModel.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.move = false;
+		this.kind = "";
+		this.x = 0;
+		this.y = 0;
+		this.shift_x = 0;
+		this.shift_y = 0;
+		this.item = null;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.LogicMap.BoxModel)
+		{
+			this.move = o.move;
+			this.kind = o.kind;
+			this.x = o.x;
+			this.y = o.y;
+			this.shift_x = o.shift_x;
+			this.shift_y = o.shift_y;
+			this.item = o.item;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "move")this.move = v;
+		else if (k == "kind")this.kind = v;
+		else if (k == "x")this.x = v;
+		else if (k == "y")this.y = v;
+		else if (k == "shift_x")this.shift_x = v;
+		else if (k == "shift_y")this.shift_y = v;
+		else if (k == "item")this.item = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "move")return this.move;
+		else if (k == "kind")return this.kind;
+		else if (k == "x")return this.x;
+		else if (k == "y")return this.y;
+		else if (k == "shift_x")return this.shift_x;
+		else if (k == "shift_y")return this.shift_y;
+		else if (k == "item")return this.item;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.LogicMap.BoxModel";
+	},
+});
+Object.assign(Bayrell.CloudOS.LogicMap.BoxModel, Runtime.BaseStruct);
+Object.assign(Bayrell.CloudOS.LogicMap.BoxModel,
+{
+	/**
+	 * Start move
+	 */
+	startMove: function(ctx, box, shift_x, shift_y)
+	{
+		if (shift_x == undefined) shift_x = 0;
+		if (shift_y == undefined) shift_y = 0;
+		return box.copy(ctx, Runtime.Dict.from({"move":true,"shift_x":shift_x,"shift_y":shift_y}));
+	},
+	/**
+	 * Stop move
+	 */
+	stopMove: function(ctx, box)
+	{
+		return box.copy(ctx, Runtime.Dict.from({"move":false}));
+	},
+	/**
+	 * Set pos
+	 */
+	setPos: function(ctx, box, x, y)
+	{
+		var new_x = x - box.shift_x;
+		var new_y = y - box.shift_y;
+		if (new_x < 0)
+		{
+			new_x = 0;
+		}
+		if (new_y < 0)
+		{
+			new_y = 0;
+		}
+		return box.copy(ctx, Runtime.Dict.from({"x":new_x,"y":new_y}));
+	},
+	/**
+	 * Set pos x
+	 */
+	setPosX: function(ctx, box, x)
+	{
+		var new_x = x - box.shift_x;
+		if (new_x < 0)
+		{
+			new_x = 0;
+		}
+		return box.copy(ctx, Runtime.Dict.from({"x":new_x}));
+	},
+	/**
+	 * Set pos y
+	 */
+	setPosY: function(ctx, box, y)
+	{
+		var new_y = y - box.shift_y;
+		if (new_y < 0)
+		{
+			new_y = 0;
+		}
+		return box.copy(ctx, Runtime.Dict.from({"y":new_y}));
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS.LogicMap";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.LogicMap.BoxModel";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("move");
+			a.push("kind");
+			a.push("x");
+			a.push("y");
+			a.push("shift_x");
+			a.push("shift_y");
+			a.push("item");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "move") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "kind") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "x") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "y") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "shift_x") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "shift_y") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "item") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.BoxModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.LogicMap.BoxModel);
+window["Bayrell.CloudOS.LogicMap.BoxModel"] = Bayrell.CloudOS.LogicMap.BoxModel;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.LogicMap.BoxModel;
+"use strict;"
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+if (typeof Bayrell.CloudOS.LogicMap == 'undefined') Bayrell.CloudOS.LogicMap = {};
+Bayrell.CloudOS.LogicMap.DragAndDropEvent = function(ctx)
+{
+	Runtime.Web.Events.UIEvent.apply(this, arguments);
+};
+Bayrell.CloudOS.LogicMap.DragAndDropEvent.prototype = Object.create(Runtime.Web.Events.UIEvent.prototype);
+Bayrell.CloudOS.LogicMap.DragAndDropEvent.prototype.constructor = Bayrell.CloudOS.LogicMap.DragAndDropEvent;
+Object.assign(Bayrell.CloudOS.LogicMap.DragAndDropEvent.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.kind = "";
+		this.obj = null;
+		Runtime.Web.Events.UIEvent.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Bayrell.CloudOS.LogicMap.DragAndDropEvent)
+		{
+			this.kind = o.kind;
+			this.obj = o.obj;
+		}
+		Runtime.Web.Events.UIEvent.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "kind")this.kind = v;
+		else if (k == "obj")this.obj = v;
+		else Runtime.Web.Events.UIEvent.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "kind")return this.kind;
+		else if (k == "obj")return this.obj;
+		return Runtime.Web.Events.UIEvent.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Bayrell.CloudOS.LogicMap.DragAndDropEvent";
+	},
+});
+Object.assign(Bayrell.CloudOS.LogicMap.DragAndDropEvent, Runtime.Web.Events.UIEvent);
+Object.assign(Bayrell.CloudOS.LogicMap.DragAndDropEvent,
+{
+	PICK_UP: "pickup",
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Bayrell.CloudOS.LogicMap";
+	},
+	getCurrentClassName: function()
+	{
+		return "Bayrell.CloudOS.LogicMap.DragAndDropEvent";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Events.UIEvent";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Bayrell.CloudOS.LogicMap.DragAndDropEvent",
+			"name": "Bayrell.CloudOS.LogicMap.DragAndDropEvent",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("kind");
+			a.push("obj");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "PICK_UP") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.DragAndDropEvent",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "kind") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.DragAndDropEvent",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "obj") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.DragAndDropEvent",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Bayrell.CloudOS.LogicMap.DragAndDropEvent);
+window["Bayrell.CloudOS.LogicMap.DragAndDropEvent"] = Bayrell.CloudOS.LogicMap.DragAndDropEvent;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.LogicMap.DragAndDropEvent;
+"use strict;"
+/*
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Bayrell == 'undefined') Bayrell = {};
+if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
+if (typeof Bayrell.CloudOS.LogicMap == 'undefined') Bayrell.CloudOS.LogicMap = {};
 Bayrell.CloudOS.LogicMap.LogicMapPage = function(ctx)
 {
 	Runtime.Web.Component.apply(this, arguments);
@@ -4829,20 +5456,121 @@ Bayrell.CloudOS.LogicMap.LogicMapPage.prototype = Object.create(Runtime.Web.Comp
 Bayrell.CloudOS.LogicMap.LogicMapPage.prototype.constructor = Bayrell.CloudOS.LogicMap.LogicMapPage;
 Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage.prototype,
 {
+	/**
+ * Created component
+ */
+	onCreated: function(ctx)
+	{
+		this.driver.registerGlobalListener(ctx, "Runtime.Web.Events.MouseMoveEvent", this.getObjectName(ctx), "onMouseMove");
+		this.driver.registerGlobalListener(ctx, "Runtime.Web.Events.MouseUpEvent", this.getObjectName(ctx), "onMouseUp");
+	},
+	/**
+ * On mouse move
+ */
+	onBoxEvent: function(ctx, msg)
+	{
+		var e = msg.data;
+		if (e.kind == Bayrell.CloudOS.LogicMap.DragAndDropEvent.PICK_UP)
+		{
+			this.current_box = e.obj;
+		}
+	},
+	/**
+ * On mouse up
+ */
+	onMouseUp: function(ctx, msg)
+	{
+		if (this.current_box != null)
+		{
+			this.current_box.update(ctx, "stopMove");
+			this.current_box = null;
+		}
+	},
+	/**
+ * On mouse move
+ */
+	onMouseMove: function(ctx, msg)
+	{
+		var e = msg.data;
+		if (this.current_box != null)
+		{
+			var p = this.current_box.box.parentElement;
+			var top = this.getOffsetTop(ctx, p);
+			var y = e.pageY - top;
+			if (y < 0)
+			{
+				y = 0;
+			}
+			this.current_box.update(ctx, "setPosY", y);
+		}
+	},
+	/**
+ * Returns offset top
+ */
+	getOffsetTop: function(ctx, e)
+	{
+		var top = 0;
+		while (e != null)
+		{
+			top += e.offsetTop;
+			e = e.parentElement;
+		}
+		return top;
+	},
+	/**
+ * Save positions
+ */
+	onSavePos: async function(ctx, msg)
+	{
+		var data = Runtime.Dict.from({});
+		var page_model = this.model(ctx);
+		/* Push services */
+		var __v0 = new Runtime.Monad(ctx, page_model.services);
+		try{ __v0=(__v0.val!=null && __v0.err==null) ? new Runtime.Monad(ctx, __v0.val.map(ctx, (ctx, box) => 
+		{
+			return Runtime.Dict.from({"service_id":Runtime.rtl.attr(ctx, box, ["item", "service_id"]),"y":box.y});
+		})) : __v0; } catch (err) { __v0=new Runtime.Monad(ctx, null, err); }
+		data = Runtime.rtl.setAttr(ctx, data, Runtime.Collection.from(["services"]), __v0.value(ctx));
+		/* Push layers */
+		var __v1 = new Runtime.Monad(ctx, page_model.layers);
+		try{ __v1=(__v1.val!=null && __v1.err==null) ? new Runtime.Monad(ctx, __v1.val.map(ctx, (ctx, box) => 
+		{
+			return Runtime.Dict.from({"layer_id":Runtime.rtl.attr(ctx, box, ["item", "layer_id"]),"y":box.y});
+		})) : __v1; } catch (err) { __v1=new Runtime.Monad(ctx, null, err); }
+		data = Runtime.rtl.setAttr(ctx, data, Runtime.Collection.from(["layers"]), __v1.value(ctx));
+		/* Push spaces */
+		var __v2 = new Runtime.Monad(ctx, page_model.spaces);
+		try{ __v2=(__v2.val!=null && __v2.err==null) ? new Runtime.Monad(ctx, __v2.val.map(ctx, (ctx, box) => 
+		{
+			return Runtime.Dict.from({"space_id":Runtime.rtl.attr(ctx, box, ["item", "space_id"]),"y":box.y});
+		})) : __v2; } catch (err) { __v2=new Runtime.Monad(ctx, null, err); }
+		data = Runtime.rtl.setAttr(ctx, data, Runtime.Collection.from(["spaces"]), __v2.value(ctx));
+		/* Send request */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.LogicMap","interface_name":"default","method_name":"savePos","data":data}));
+		console.log(answer);
+	},
+	_init: function(ctx)
+	{
+		this.current_box = null;
+		Runtime.Web.Component.prototype._init.call(this,ctx);
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof Bayrell.CloudOS.LogicMap.LogicMapPage)
 		{
+			this.current_box = o.current_box;
 		}
 		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+		if (k == "current_box")this.current_box = v;
+		else Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "current_box")return this.current_box;
 		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -4853,9 +5581,6 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage.prototype,
 Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage, Runtime.Web.Component);
 Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 {
-	css: function(ctx, vars)
-	{
-	},
 	/**
  * Route Action
  * @return RenderContainer
@@ -4863,6 +5588,41 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 	actionIndex: async function(ctx, container)
 	{
 		var page_model = new Bayrell.CloudOS.LogicMap.LogicMapPageModel(ctx, Runtime.Dict.from({}));
+		/* Send request */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.LogicMap","interface_name":"default","method_name":"status"}), container);
+		/* Throw exception */
+		if (!answer.isSuccess(ctx))
+		{
+			throw new Runtime.Exceptions.RuntimeException(ctx, answer.error_message, answer.error_code)
+		}
+		var response = answer.response;
+		/* Get services */
+		var __v0 = new Runtime.Monad(ctx, response);
+		__v0 = __v0.attr(ctx, "services");
+		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
+		try{ __v0=(__v0.val!=null && __v0.err==null) ? new Runtime.Monad(ctx, __v0.val.map(ctx, (ctx, item) => 
+		{
+			return new Bayrell.CloudOS.LogicMap.BoxModel(ctx, Runtime.Dict.from({"kind":"service","item":item,"y":Runtime.rtl.get(ctx, item, "logic_map_pos_y")}));
+		})) : __v0; } catch (err) { __v0=new Runtime.Monad(ctx, null, err); }
+		page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["services"]), __v0.value(ctx));
+		/* Get spaces */
+		var __v1 = new Runtime.Monad(ctx, response);
+		__v1 = __v1.attr(ctx, "spaces");
+		__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
+		try{ __v1=(__v1.val!=null && __v1.err==null) ? new Runtime.Monad(ctx, __v1.val.map(ctx, (ctx, item) => 
+		{
+			return new Bayrell.CloudOS.LogicMap.BoxModel(ctx, Runtime.Dict.from({"kind":"space","item":item,"y":Runtime.rtl.get(ctx, item, "logic_map_pos_y")}));
+		})) : __v1; } catch (err) { __v1=new Runtime.Monad(ctx, null, err); }
+		page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["spaces"]), __v1.value(ctx));
+		/* Get layers */
+		var __v2 = new Runtime.Monad(ctx, response);
+		__v2 = __v2.attr(ctx, "layers");
+		__v2 = __v2.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
+		try{ __v2=(__v2.val!=null && __v2.err==null) ? new Runtime.Monad(ctx, __v2.val.map(ctx, (ctx, item) => 
+		{
+			return new Bayrell.CloudOS.LogicMap.BoxModel(ctx, Runtime.Dict.from({"kind":"layer","item":item,"y":Runtime.rtl.get(ctx, item, "logic_map_pos_y")}));
+		})) : __v2; } catch (err) { __v2=new Runtime.Monad(ctx, null, err); }
+		page_model = Runtime.rtl.setAttr(ctx, page_model, Runtime.Collection.from(["layers"]), __v2.value(ctx));
 		/* Set title */
 		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Logic Map");
 		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
@@ -4871,6 +5631,10 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
 		return Promise.resolve(Runtime.Collection.from([container]));
 	},
+	css: function(ctx, vars)
+	{
+		return ".box_wrap.h-ad66{" + Runtime.rtl.toStr("position: relative;    display: flex;    align-items: stretch;min-height: 100%;") + Runtime.rtl.toStr("}.box_items.h-ad66{") + Runtime.rtl.toStr("position: relative;width: 33%;margin: 10px;") + Runtime.rtl.toStr("}.box_items--spaces.h-ad66{") + Runtime.rtl.toStr("margin-left: 0px;") + Runtime.rtl.toStr("}.box_items--services.h-ad66{") + Runtime.rtl.toStr("margin-right: 0px;") + Runtime.rtl.toStr("}");
+	},
 	render: function(ctx, layout, model, params, content)
 	{
 		return (__control) =>
@@ -4878,15 +5642,70 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 			var __vnull = null;
 			var __control_childs = [];
 			
-			/* Text */
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Hello"});
+			/* Element 'div.buttons' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["buttons", this.getCssHash(ctx)].join(" "),"@elem_name":"buttons"}});
+			
+			/* Component 'Button' */
+			[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.LogicMap.LogicMapPage","onSavePos"]}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Text */
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Save positions"});
+				
+				return __control_childs;
+			}});
+			RenderDriver.p(__v0, __v0_childs);
+			
+			/* Element 'div.box_wrap' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["box_wrap", this.getCssHash(ctx)].join(" "),"@elem_name":"box_wrap"}});
+			
+			/* Element 'div.box_items.box_items--spaces' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_items box_items--spaces", this.getCssHash(ctx)].join(" "),"@elem_name":"box_items"}});
+			
+			for (var i = 0;i < model.spaces.count(ctx);i++)
+			{
+				var box = Runtime.rtl.get(ctx, model.spaces, i);
+				
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Bayrell.CloudOS.LogicMap.Box","attrs": {"@bind":["Bayrell.CloudOS.LogicMap.LogicMapPage",Runtime.Collection.from(["spaces",i])],"@event:Bayrell.CloudOS.LogicMap.DragAndDropEvent":["Bayrell.CloudOS.LogicMap.LogicMapPage","onBoxEvent"],"@key":"space_" + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, box, ["item", "space_id"]))}, "layout": layout});
+			}
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.box_items.box_items--layers' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_items box_items--layers", this.getCssHash(ctx)].join(" "),"@elem_name":"box_items"}});
+			
+			for (var i = 0;i < model.layers.count(ctx);i++)
+			{
+				var box = Runtime.rtl.get(ctx, model.layers, i);
+				
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Bayrell.CloudOS.LogicMap.Box","attrs": {"@bind":["Bayrell.CloudOS.LogicMap.LogicMapPage",Runtime.Collection.from(["layers",i])],"@event:Bayrell.CloudOS.LogicMap.DragAndDropEvent":["Bayrell.CloudOS.LogicMap.LogicMapPage","onBoxEvent"],"@key":"layer_" + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, box, ["item", "layer_id"]))}, "layout": layout});
+			}
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.box_items.box_items--services' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["box_items box_items--services", this.getCssHash(ctx)].join(" "),"@elem_name":"box_items"}});
+			
+			for (var i = 0;i < model.services.count(ctx);i++)
+			{
+				var box = Runtime.rtl.get(ctx, model.services, i);
+				
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Bayrell.CloudOS.LogicMap.Box","attrs": {"@bind":["Bayrell.CloudOS.LogicMap.LogicMapPage",Runtime.Collection.from(["services",i])],"@event:Bayrell.CloudOS.LogicMap.DragAndDropEvent":["Bayrell.CloudOS.LogicMap.LogicMapPage","onBoxEvent"],"@key":"service_" + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, box, ["item", "service_id"]))}, "layout": layout});
+			}
+			RenderDriver.p(__v1, __v1_childs);
+			RenderDriver.p(__v0, __v0_childs);
 			
 			return __control_childs;
 		};
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Input.TextArea"]);
+		return Runtime.Collection.from(["Runtime.Web.Input.Button","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Input.TextArea","Bayrell.CloudOS.LogicMap.Box"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -4918,6 +5737,10 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("current_box");
+		}
 		return Runtime.Collection.from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -4925,6 +5748,13 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPage,
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "current_box") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.LogicMapPage",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)
@@ -4985,20 +5815,42 @@ Bayrell.CloudOS.LogicMap.LogicMapPageModel.prototype = Object.create(Runtime.Bas
 Bayrell.CloudOS.LogicMap.LogicMapPageModel.prototype.constructor = Bayrell.CloudOS.LogicMap.LogicMapPageModel;
 Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPageModel.prototype,
 {
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.services = null;
+		this.spaces = null;
+		this.layers = null;
+		this.layers_spaces = null;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof Bayrell.CloudOS.LogicMap.LogicMapPageModel)
 		{
+			this.services = o.services;
+			this.spaces = o.spaces;
+			this.layers = o.layers;
+			this.layers_spaces = o.layers_spaces;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+		if (k == "services")this.services = v;
+		else if (k == "spaces")this.spaces = v;
+		else if (k == "layers")this.layers = v;
+		else if (k == "layers_spaces")this.layers_spaces = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "services")return this.services;
+		else if (k == "spaces")return this.spaces;
+		else if (k == "layers")return this.layers;
+		else if (k == "layers_spaces")return this.layers_spaces;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -5039,6 +5891,13 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPageModel,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("services");
+			a.push("spaces");
+			a.push("layers");
+			a.push("layers_spaces");
+		}
 		return Runtime.Collection.from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -5046,6 +5905,34 @@ Object.assign(Bayrell.CloudOS.LogicMap.LogicMapPageModel,
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "services") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.LogicMapPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "spaces") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.LogicMapPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "layers") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.LogicMapPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "layers_spaces") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.LogicMap.LogicMapPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)
@@ -5708,7 +6595,7 @@ Object.assign(Bayrell.CloudOS.ModuleDescription,
 	 */
 	entities: function(ctx)
 	{
-		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.MainPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.NodesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.LayersPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.LogicMapPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.NginxPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.ServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.SoftwaresPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.StacksPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.VirtualSpacesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.CLIPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.DockerServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.DockerYamlFilesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.User.UsersPage"}))]);
+		return Runtime.Collection.from([new Runtime.Core.Driver(ctx, Runtime.Dict.from({"name":"root-controller","value":"Runtime.Web.RenderController","params":Runtime.Dict.from({"selector":"#root","main_controller":true,"window":"RootController"})})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.LAYOUT_CHAIN,"pos":10,"value":"Bayrell.CloudOS.Routes::layoutChain"})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::Page404","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_PAGE_NOT_FOUND,"is_async":true})),new Runtime.Core.LambdaChain(ctx, Runtime.Dict.from({"name":Runtime.Web.RenderDriver.RENDER_CHAIN,"value":"Bayrell.CloudOS.Routes::renderChainRouteAfter","pos":Runtime.Web.RenderDriver.RENDER_CHAIN_CALL_ROUTE_AFTER,"is_async":true})),new Runtime.Core.Entity(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Routes"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.MainPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Dashboard.NodesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.LayersPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.NginxPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.ServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.SoftwaresPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.StacksPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Design.VirtualSpacesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.CLIPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.DockerServicesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.Docker.DockerYamlFilesPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.LogicMap.LogicMapPage"})),new Runtime.Web.RouteList(ctx, Runtime.Dict.from({"name":"Bayrell.CloudOS.User.UsersPage"}))]);
 	},
 	/**
 	 * Returns context settings
