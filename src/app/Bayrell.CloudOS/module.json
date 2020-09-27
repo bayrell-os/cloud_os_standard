@@ -3,6 +3,7 @@
 	"assets":
 	[
 		"AdminLayout",
+		"DefaultLayout",
 		"Routes",
 		"Dashboard/MainPage",
 		"Dashboard/MainPageModel",

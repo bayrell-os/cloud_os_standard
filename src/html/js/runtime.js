@@ -617,6 +617,15 @@ Object.assign(Runtime.rtl,
 		return false;
 	},
 	/**
+	 * Return true if value is boolean
+	 * @param var value
+	 * @return bool
+	 */
+	isBool: function(ctx, value)
+	{
+		return this.isBoolean(ctx, value);
+	},
+	/**
 	 * Return true if value is number
 	 * @param var value
 	 * @return bool
@@ -2344,11 +2353,31 @@ Object.assign(Runtime.rs,
 	 * @param {int} flags - Флаги
 	 * @return {string} json строка
 	 */
-	json_encode: function(ctx, s, flags)
+	json_encode_primitive: function(ctx, s, flags)
 	{
 		if (flags & 128 == 128) 
 			return JSON.stringify(obj, null, 2);
 		return JSON.stringify(obj);
+	},
+	/**
+	 * Json encode data
+	 * @param var data
+	 * @return string
+	 */
+	json_encode: function(ctx, data)
+	{
+		var f = Runtime.rtl.method(ctx, "Runtime.RuntimeUtils", "json_encode");
+		return f(ctx, data);
+	},
+	/**
+	 * Json decode to primitive values
+	 * @param string s Encoded string
+	 * @return var
+	 */
+	json_decode: function(ctx, obj)
+	{
+		var f = Runtime.rtl.method(ctx, "Runtime.RuntimeUtils", "json_decode");
+		return f(ctx, obj);
 	},
 	/**
 	 * Escape HTML special chars
@@ -8379,6 +8408,7 @@ Object.assign(Runtime.Core.Context.prototype,
 	{
 		var __v0 = new Runtime.Monad(ctx, this);
 		__v0 = __v0.attr(ctx, "settings");
+		__v0 = __v0.call(ctx, Runtime.lib.get(ctx, "secrets", null));
 		__v0 = __v0.call(ctx, Runtime.lib.get(ctx, key, ""));
 		return __v0.value(ctx);
 	},
@@ -10926,6 +10956,9 @@ Object.assign(Runtime.Core.RemoteCallAnswer.prototype,
 		this.logs = null;
 		this.have_answer = false;
 		this.response = null;
+		this.new_cookies = Runtime.Dict.from({});
+		this.new_headers = Runtime.Collection.from([]);
+		this.new_http_code = 200;
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -10944,6 +10977,9 @@ Object.assign(Runtime.Core.RemoteCallAnswer.prototype,
 			this.logs = o.logs;
 			this.have_answer = o.have_answer;
 			this.response = o.response;
+			this.new_cookies = o.new_cookies;
+			this.new_headers = o.new_headers;
+			this.new_http_code = o.new_http_code;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
@@ -10961,6 +10997,9 @@ Object.assign(Runtime.Core.RemoteCallAnswer.prototype,
 		else if (k == "logs")this.logs = v;
 		else if (k == "have_answer")this.have_answer = v;
 		else if (k == "response")this.response = v;
+		else if (k == "new_cookies")this.new_cookies = v;
+		else if (k == "new_headers")this.new_headers = v;
+		else if (k == "new_http_code")this.new_http_code = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
@@ -10978,6 +11017,9 @@ Object.assign(Runtime.Core.RemoteCallAnswer.prototype,
 		else if (k == "logs")return this.logs;
 		else if (k == "have_answer")return this.have_answer;
 		else if (k == "response")return this.response;
+		else if (k == "new_cookies")return this.new_cookies;
+		else if (k == "new_headers")return this.new_headers;
+		else if (k == "new_http_code")return this.new_http_code;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -10995,6 +11037,7 @@ Object.assign(Runtime.Core.RemoteCallAnswer,
 	 */
 	success: function(ctx, answer, response, message, code)
 	{
+		if (response == undefined) response = null;
 		if (message == undefined) message = "";
 		if (code == undefined) code = 1;
 		return answer.copy(ctx, Runtime.Dict.from({"code":code,"error_message":"","success_message":message,"response":response,"have_answer":true}));
@@ -11080,6 +11123,9 @@ Object.assign(Runtime.Core.RemoteCallAnswer,
 			a.push("logs");
 			a.push("have_answer");
 			a.push("response");
+			a.push("new_cookies");
+			a.push("new_headers");
+			a.push("new_http_code");
 		}
 		return Runtime.Collection.from(a);
 	},
@@ -11166,6 +11212,27 @@ Object.assign(Runtime.Core.RemoteCallAnswer,
 			]),
 		});
 		if (field_name == "response") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_cookies") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_headers") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Core.RemoteCallAnswer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_http_code") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Core.RemoteCallAnswer",
 			"name": field_name,
@@ -13190,15 +13257,15 @@ Object.assign(Runtime.Web.RenderContainer.prototype,
 		this.route = null;
 		this.route_params = null;
 		this.layout = null;
-		this.backend_storage = new Runtime.Dict(ctx);
-		this.new_cookies = Runtime.Dict.from({});
-		this.new_headers = Runtime.Dict.from({});
-		this.new_http_code = 200;
-		this.frontend_controller_name = "";
 		this.frontend_storage = new Runtime.Dict(ctx);
 		this.frontend_env = new Runtime.Dict(ctx);
 		this.pattern_name = "default";
 		this.pattern_class = "";
+		this.frontend_controller_name = "";
+		this.backend_storage = new Runtime.Dict(ctx);
+		this.new_cookies = Runtime.Dict.from({});
+		this.new_headers = Runtime.Collection.from([]);
+		this.new_http_code = 200;
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -13210,15 +13277,15 @@ Object.assign(Runtime.Web.RenderContainer.prototype,
 			this.route = o.route;
 			this.route_params = o.route_params;
 			this.layout = o.layout;
-			this.backend_storage = o.backend_storage;
-			this.new_cookies = o.new_cookies;
-			this.new_headers = o.new_headers;
-			this.new_http_code = o.new_http_code;
-			this.frontend_controller_name = o.frontend_controller_name;
 			this.frontend_storage = o.frontend_storage;
 			this.frontend_env = o.frontend_env;
 			this.pattern_name = o.pattern_name;
 			this.pattern_class = o.pattern_class;
+			this.frontend_controller_name = o.frontend_controller_name;
+			this.backend_storage = o.backend_storage;
+			this.new_cookies = o.new_cookies;
+			this.new_headers = o.new_headers;
+			this.new_http_code = o.new_http_code;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
@@ -13229,15 +13296,15 @@ Object.assign(Runtime.Web.RenderContainer.prototype,
 		else if (k == "route")this.route = v;
 		else if (k == "route_params")this.route_params = v;
 		else if (k == "layout")this.layout = v;
-		else if (k == "backend_storage")this.backend_storage = v;
-		else if (k == "new_cookies")this.new_cookies = v;
-		else if (k == "new_headers")this.new_headers = v;
-		else if (k == "new_http_code")this.new_http_code = v;
-		else if (k == "frontend_controller_name")this.frontend_controller_name = v;
 		else if (k == "frontend_storage")this.frontend_storage = v;
 		else if (k == "frontend_env")this.frontend_env = v;
 		else if (k == "pattern_name")this.pattern_name = v;
 		else if (k == "pattern_class")this.pattern_class = v;
+		else if (k == "frontend_controller_name")this.frontend_controller_name = v;
+		else if (k == "backend_storage")this.backend_storage = v;
+		else if (k == "new_cookies")this.new_cookies = v;
+		else if (k == "new_headers")this.new_headers = v;
+		else if (k == "new_http_code")this.new_http_code = v;
 		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
@@ -13248,15 +13315,15 @@ Object.assign(Runtime.Web.RenderContainer.prototype,
 		else if (k == "route")return this.route;
 		else if (k == "route_params")return this.route_params;
 		else if (k == "layout")return this.layout;
-		else if (k == "backend_storage")return this.backend_storage;
-		else if (k == "new_cookies")return this.new_cookies;
-		else if (k == "new_headers")return this.new_headers;
-		else if (k == "new_http_code")return this.new_http_code;
-		else if (k == "frontend_controller_name")return this.frontend_controller_name;
 		else if (k == "frontend_storage")return this.frontend_storage;
 		else if (k == "frontend_env")return this.frontend_env;
 		else if (k == "pattern_name")return this.pattern_name;
 		else if (k == "pattern_class")return this.pattern_class;
+		else if (k == "frontend_controller_name")return this.frontend_controller_name;
+		else if (k == "backend_storage")return this.backend_storage;
+		else if (k == "new_cookies")return this.new_cookies;
+		else if (k == "new_headers")return this.new_headers;
+		else if (k == "new_http_code")return this.new_http_code;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -13304,15 +13371,15 @@ Object.assign(Runtime.Web.RenderContainer,
 			a.push("route");
 			a.push("route_params");
 			a.push("layout");
-			a.push("backend_storage");
-			a.push("new_cookies");
-			a.push("new_headers");
-			a.push("new_http_code");
-			a.push("frontend_controller_name");
 			a.push("frontend_storage");
 			a.push("frontend_env");
 			a.push("pattern_name");
 			a.push("pattern_class");
+			a.push("frontend_controller_name");
+			a.push("backend_storage");
+			a.push("new_cookies");
+			a.push("new_headers");
+			a.push("new_http_code");
 		}
 		return Runtime.Collection.from(a);
 	},
@@ -13356,41 +13423,6 @@ Object.assign(Runtime.Web.RenderContainer,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "backend_storage") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.RenderContainer",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "new_cookies") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.RenderContainer",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "new_headers") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.RenderContainer",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "new_http_code") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.RenderContainer",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "frontend_controller_name") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Web.RenderContainer",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
 		if (field_name == "frontend_storage") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.RenderContainer",
@@ -13413,6 +13445,41 @@ Object.assign(Runtime.Web.RenderContainer,
 			]),
 		});
 		if (field_name == "pattern_class") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderContainer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "frontend_controller_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderContainer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "backend_storage") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderContainer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_cookies") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderContainer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_headers") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderContainer",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "new_http_code") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.RenderContainer",
 			"name": field_name,
@@ -13884,6 +13951,16 @@ Object.assign(Runtime.Web.RenderController.prototype,
 		/*elem.setAttribute("data-path", path_id);*/
 	},
 	/**
+	 * Component model changed
+	 */
+	onChangeComponent: function(ctx, msg)
+	{
+		var component = msg.sender;
+		var model_path = component.getModelPath(ctx);
+		var new_value = msg.data.value;
+		this.updateModel(ctx, model_path, new_value);
+	},
+	/**
 	 * Bind element events
 	 */
 	bindEvents: function(ctx, control, elem, attrs, is_new_elem)
@@ -13896,10 +13973,20 @@ Object.assign(Runtime.Web.RenderController.prototype,
 			var is_event = key.substring(0, 7) == "@event:";
 			var is_event_async = key.substring(0, 12) == "@eventAsync:";
 			
-			if (key == "@bind")
+			if (key == "@bind" || key == "@name")
 			{
 				if (elem instanceof Runtime.Web.Component)
 				{
+					this.register_listeners.push
+					(
+						ctx,
+						{
+							"from": elem.getObjectName(),
+							"event_class_name": "Runtime.Web.Events.ChangeEvent",
+							"object_name": this.getObjectName(),
+							"method_name": "onChangeComponent"
+						}
+					);
 				}
 				else
 				{
@@ -13908,7 +13995,7 @@ Object.assign(Runtime.Web.RenderController.prototype,
 						return function (e)
 						{
 							var model_path = controller.getBindModelPath(ctx, path_id, bind_value);
-							controller.updateModel(ctx, model_path, elem.value);
+							controller.updateModel(ctx, model_path, e.value);
 						}
 					};
 					elem.addEventListener
@@ -14461,14 +14548,15 @@ Object.assign(Runtime.Web.RenderDriver.prototype,
 Object.assign(Runtime.Web.RenderDriver, Runtime.Core.CoreDriver);
 Object.assign(Runtime.Web.RenderDriver,
 {
-	LAYOUT_CHAIN: "Runtime.Web.RenderDriver::LAYOUT_CHAIN",
-	PATTERN_CHAIN: "Runtime.Web.RenderDriver::PATTERN_CHAIN",
-	RENDER_CHAIN: "Runtime.Web.RenderDriver::RENDER_CHAIN",
-	API_PREPARE_CHAIN: "Runtime.Web.RenderDriver::API_PREPARE_CHAIN",
+	LAYOUT_CHAIN: "Runtime.Web.Layout",
+	PATTERN_CHAIN: "Runtime.Web.Pattern",
+	RENDER_CHAIN: "Runtime.Web.Render",
+	API_EXTERNAL_BUS_PREPARE_CHAIN: "Runtime.Web.Api.ExternalBusPrepare",
 	RENDER_CHAIN_START: 500,
-	RENDER_CHAIN_CREATE_LAYOUT_MODEL: 1000,
-	RENDER_CHAIN_CHANGE_LAYOUT_MODEL: 1050,
+	RENDER_CHAIN_CREATE_LAYOUT_MODEL: 950,
+	RENDER_CHAIN_CHANGE_LAYOUT_MODEL: 1000,
 	RENDER_CHAIN_SET_FRONTEND_ENVIROMENTS: 1500,
+	RENDER_CHAIN_SET_FRONTEND_STORAGE: 1500,
 	RENDER_CHAIN_CALL_ROUTE_BEFORE: 2000,
 	RENDER_CHAIN_CALL_ROUTE_MIDDLEWARE: 2500,
 	RENDER_CHAIN_CALL_ROUTE: 3000,
@@ -14781,7 +14869,7 @@ Object.assign(Runtime.Web.RenderDriver,
 			}
 		}
 		/* Create LayoutModel */
-		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout"]), new Runtime.Web.LayoutModel(ctx, Runtime.Dict.from({"uri":this.splitRoutePrefix(ctx, container.request.uri, container.request.route_prefix),"f_inc":ctx.config(ctx, Runtime.Collection.from(["Runtime.Web","f_inc"]), "1"),"full_uri":container.request.uri,"route":container.route,"route_prefix":container.request.route_prefix,"route_params":container.route_params,"keep_data":frontend_keep_data,"css_vars":Runtime.Dict.from({"colors":Runtime.Dict.from({"default":Runtime.Dict.from({"background":"#fff","border":"#ccc","text":"#000","hover-background":"#eee","hover-text":"inherit"}),"active":Runtime.Dict.from({"background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#337ab7","hover-text":"#fff"}),"primary":Runtime.Dict.from({"background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#286090","hover-text":"#fff","active-background":"#286090","active-tet":"#fff"}),"danger":Runtime.Dict.from({"background":"#d14b42","border":"#a02e27","text":"#fff","hover-background":"#e60000","hover-text":"#fff","active-background":"#e60000","active-tet":"#fff"}),"success":Runtime.Dict.from({"background":"green","border":"green","text":"#fff","hover":"green","hover-text":"#fff","active":"green","active-tet":"#fff"}),"warning":Runtime.Dict.from({"background":"yellow","border":"yellow","text":"#fff","hover":"yellow","hover-text":"#fff","active":"yellow","active-tet":"#fff"})}),"font":Runtime.Dict.from({"size":"14px"})})})));
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout"]), new Runtime.Web.LayoutModel(ctx, Runtime.Dict.from({"uri":this.splitRoutePrefix(ctx, container.request.uri, container.request.route_prefix),"f_inc":ctx.config(ctx, Runtime.Collection.from(["Runtime.Web","f_inc"]), "1"),"full_uri":container.request.uri,"route":container.route,"route_prefix":container.request.route_prefix,"route_params":container.route_params,"keep_data":frontend_keep_data,"css_vars":Runtime.Dict.from({"colors":Runtime.Dict.from({"default":Runtime.Dict.from({"color":"#fff","background":"#fff","border":"#ccc","text":"#000","hover-background":"#eee","hover-text":"inherit"}),"active":Runtime.Dict.from({"color":"#337ab7","background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#337ab7","hover-text":"#fff"}),"primary":Runtime.Dict.from({"color":"#337ab7","background":"#337ab7","border":"#22527b","text":"#fff","hover-background":"#286090","hover-text":"#fff","active-background":"#286090","active-tet":"#fff"}),"danger":Runtime.Dict.from({"color":"#d14b42","background":"#d14b42","border":"#a02e27","text":"#fff","hover-background":"#e60000","hover-text":"#fff","active-background":"#e60000","active-tet":"#fff"}),"success":Runtime.Dict.from({"color":"green","background":"green","border":"green","text":"#fff","hover":"green","hover-text":"#fff","active":"green","active-tet":"#fff"}),"error":Runtime.Dict.from({"color":"#d14b42","background":"#d14b42","border":"#a02e27","text":"#fff","hover-background":"#e60000","hover-text":"#fff","active-background":"#e60000","active-tet":"#fff"}),"warning":Runtime.Dict.from({"color":"yellow","background":"yellow","border":"yellow","text":"#fff","hover":"yellow","hover-text":"#fff","active":"yellow","active-tet":"#fff"})}),"font":Runtime.Dict.from({"size":"14px"})})})));
 		return Runtime.Collection.from([container]);
 	},
 	/**
@@ -14883,8 +14971,8 @@ Object.assign(Runtime.Web.RenderDriver,
 		items = items.copy(ctx, Runtime.Dict.from({"app_name":items.get(ctx, "app_name", "self"),"interface_name":items.get(ctx, "interface_name", "default")}));
 		/* Change api request */
 		var request = new Runtime.Core.RemoteCallRequest(ctx, items);
-		var res = ctx.chain(ctx, Runtime.Web.RenderDriver.API_PREPARE_CHAIN, Runtime.Collection.from([request,container]));
-		request = Runtime.rtl.get(ctx, res, 0);
+		var res = await ctx.chainAsync(ctx, Runtime.Web.RenderDriver.API_EXTERNAL_BUS_PREPARE_CHAIN, Runtime.Collection.from([container,request]));
+		request = Runtime.rtl.get(ctx, res, 1);
 		/* Restore request */
 		request = request.copy(ctx, Runtime.Dict.from({"uri":items.get(ctx, "uri", ""),"app_name":items.get(ctx, "app_name", "self"),"object_name":items.get(ctx, "object_name", ""),"interface_name":items.get(ctx, "interface_name", "default"),"method_name":items.get(ctx, "method_name", "")}));
 		/* Send request */
@@ -14954,7 +15042,7 @@ Object.assign(Runtime.Web.RenderDriver,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "API_PREPARE_CHAIN") return new IntrospectionInfo(ctx, {
+		if (field_name == "API_EXTERNAL_BUS_PREPARE_CHAIN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.RenderDriver",
 			"name": field_name,
@@ -14983,6 +15071,13 @@ Object.assign(Runtime.Web.RenderDriver,
 			]),
 		});
 		if (field_name == "RENDER_CHAIN_SET_FRONTEND_ENVIROMENTS") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.RenderDriver",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "RENDER_CHAIN_SET_FRONTEND_STORAGE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Web.RenderDriver",
 			"name": field_name,
@@ -16138,7 +16233,7 @@ Object.assign(Runtime.Web.Response.prototype,
 		var a = Object.getOwnPropertyNames(this);
 		this.http_code = 200;
 		this.content = "";
-		this.headers = new Runtime.Dict(ctx);
+		this.headers = new Runtime.Collection(ctx);
 		Runtime.BaseStruct.prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)

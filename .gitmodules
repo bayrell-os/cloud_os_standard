@@ -40,3 +40,6 @@
 [submodule "src/lib/Runtime.Core"]
 	path = src/lib/Runtime.Core
 	url = https://github.com/bayrell/Runtime.Core
+[submodule "src/lib/Runtime.Web.Auth"]
+	path = src/lib/Runtime.Web.Auth
+	url = https://github.com/bayrell/Runtime.Web.Auth

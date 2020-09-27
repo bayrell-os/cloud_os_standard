@@ -23,6 +23,7 @@
 
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Auth.AuthToken" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Button.Button" component="true" />
 <use name="Bayrell.CloudOS.ModuleDescription" />
@@ -150,6 +151,30 @@ span.lpad5{
 
 
 <template name="render">
+	%var AuthToken auth_token = layout.keep_data[classof AuthToken] |> default AuthToken null;
+	
+	%if (auth_token)
+	{
+		%render static::renderAuth(layout, model, params, content);
+	}
+	%else
+	{
+		%render static::renderGuest(layout, model, params, content);
+	}
+	
+</template>
+
+
+<template name="renderGuest">
+	%var string class_name = model.page_class;
+	%if (not rtl::isEmpty(class_name))
+	{
+		<{class_name} @bind="page_model" @key="view"></{class_name}>
+	}
+</template>
+
+
+<template name="renderAuth">
 	%var string class_name = model.page_class;
 	
 	<div class='layout'>
@@ -286,8 +311,8 @@ span.lpad5{
 			</div></div>
 		</div>
 	</div>
-	
 </template>
+
 
 
 <script>

@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,16 +14,28 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-namespace Bayrell.CloudOS.User;
+<class version="1.0"
+	name="Bayrell.CloudOS.DefaultLayout" extends="Runtime.Web.Component" 
+	module="Bayrell.CloudOS" model="Runtime.Web.LayoutModel"
+>
 
-use Runtime.lib;
-use Runtime.BaseStruct;
-use Runtime.Web.CRUD.CrudPageModel;
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Auth.AuthToken" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Button.Button" component="true" />
+<use name="Bayrell.CloudOS.ModuleDescription" />
 
 
-struct UsersPageModel extends BaseStruct
-{
-	CrudPageModel crud = null;
-}
+<template name="render">
+	%var string class_name = model.page_class;
+	%if (not rtl::isEmpty(class_name))
+	{
+		<{class_name} @bind="page_model" @key="view"></{class_name}>
+	}
+</template>
+
+
+</class>

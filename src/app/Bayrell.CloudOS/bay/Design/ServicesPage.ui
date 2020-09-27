@@ -30,6 +30,7 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Route" />
 <use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
@@ -58,6 +59,7 @@
  * @return RenderContainer
  */
 @Route{ "uri": "/design/services/", "name": "app.design.services" }
+@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
@@ -76,7 +78,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	/* Set title */
 	container <= layout <= title <= "Services page";
-	container <= layout <= layout_name <= "default";
+	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
 	container <= layout <= page_class <= classof ServicesPage;

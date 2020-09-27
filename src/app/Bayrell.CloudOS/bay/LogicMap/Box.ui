@@ -37,7 +37,7 @@
 %box{
 	position: absolute;
 	width: 100%;
-	height: 100px;
+	min-height: 100px;
 	padding: 10px;
 	border: 1px #ccc solid;
 	background-color: white;
@@ -45,6 +45,12 @@
 %box_title{
 	text-align: center;
 	font-weight: bold;
+}
+%box_row{
+	padding-bottom: 5px;
+}
+%box_row:last-child{
+	padding-bottom: 0px;
 }
 </style>
 
@@ -61,13 +67,31 @@
 		%if (model.kind == "space")
 		{
 			<div class='box_title'>{ model["item", "name"] }</div>
-			<div class='service_domain'>Domain: { model["item", "domain"] }</div>
+			<div class='box_row'>Domain: { model["item", "domain"] }</div>
 		}
 		
 		%if (model.kind == "layer")
 		{
 			<div class='box_title'>{ model["item", "layer_name"] }</div>
-			<div class='service_domain'>UID: { model["item", "uid"] }</div>
+			<div class='box_row'>UID: { model["item", "uid"] }</div>
+			%if (model.service != null)
+			{
+				<div class='box_row'>
+					Service: {model.service["stack_name"] ~ "_" ~ model.service["service_name"] }
+				</div>
+			}
+			%if (model.spaces != null)
+			{
+				<div class='box_row'>
+				%for (int i=0; i<model.spaces.count(); i++)
+				{
+					%var Dict space = model.spaces[i];
+					<div class='space'>
+						{ space["item", "domain"] ~ space["uri"] } => { space["item", "name"] }
+					</div>
+				}
+				</div>
+			}
 		}
 		
 		%if (model.kind == "service")

@@ -31,7 +31,8 @@ struct BoxModel extends BaseStruct
 	int shift_x = 0;
 	int shift_y = 0;
 	Dict item = null;
-	
+	Dict service = null;
+	Collection<Dict> spaces = null;
 	
 	
 	/**

@@ -28,6 +28,7 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Route" />
 <use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Bayrell.CloudOS.Dashboard.MainPage" />
 <use name="Bayrell.CloudOS.Dashboard.MainPageModel" />
@@ -40,6 +41,7 @@
  * @return RenderContainer
  */
 @Route{ "uri": "/", "name": "app.dashboard.main" }
+@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer MainPage(RenderContainer container)
 {
 	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
@@ -59,7 +61,7 @@ static async RenderContainer MainPage(RenderContainer container)
 	
 	/* Set title */
 	container <= layout <= title <= "Index page";
-	container <= layout <= layout_name <= "default";
+	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
 	container <= layout <= page_class <= classof MainPage;

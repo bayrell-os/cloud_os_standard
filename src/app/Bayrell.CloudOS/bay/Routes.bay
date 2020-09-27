@@ -28,9 +28,11 @@ use Runtime.Web.RenderDriver;
 use Runtime.Web.Response;
 use Runtime.Web.Route;
 use Runtime.Web.RouteList;
+use Runtime.Web.RouteMiddleware;
 use Runtime.Web.CRUD.CrudPageModel;
 use Runtime.Web.Table.TableModel;
 use Bayrell.CloudOS.AdminLayout;
+use Bayrell.CloudOS.DefaultLayout;
 use Bayrell.CloudOS.Page404;
 use Bayrell.CloudOS.Pattern;
 use Bayrell.CloudOS.Dashboard.MainPage;
@@ -49,7 +51,8 @@ static class Routes
 	 */
 	pure LayoutModel layoutChain(LayoutModel layout)
 	{
-		if (layout.layout_name == "default") layout <= layout_class <= classof AdminLayout;
+		if (layout.layout_name == "default") layout <= layout_class <= classof DefaultLayout;
+		if (layout.layout_name == "admin") layout <= layout_class <= classof AdminLayout;
 		return [ layout ];
 	}
 	
@@ -114,6 +117,7 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
+	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerPage(RenderContainer container)
 	{
 		MySQLSettings settings = @.config(["Runtime.ORM.MySQL", "default"]);
@@ -138,6 +142,7 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/info/", "name": "app.adminer.info" }
+	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerInfoPage(RenderContainer container)
 	{
 		string content = "";
@@ -161,6 +166,7 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
+	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerVersionPage(RenderContainer container)
 	{
 		string content = "";

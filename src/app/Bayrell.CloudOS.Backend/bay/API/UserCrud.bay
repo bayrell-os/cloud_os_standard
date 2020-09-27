@@ -50,9 +50,9 @@ static class UserCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["name", "banned"] },
+		new AllowFields{ "fields": ["login", "banned"] },
 		new ReadOnly{ "api_name": "user_id" },
-		new Required{ "api_name": "name" },
+		new Required{ "api_name": "login" },
 	];
 	
 	

@@ -20,6 +20,8 @@ namespace Bayrell.CloudOS.Backend;
 
 use Runtime.Core.Context;
 use Runtime.Core.Entity;
+use Runtime.Core.LambdaChain;
+use Runtime.Web.Auth.AuthBackend;
 
 
 static class ModuleDescription
@@ -76,6 +78,30 @@ static class ModuleDescription
 		
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
+		
+		/* Auth Chain. Login */
+		new LambdaChain
+		{
+			"name": AuthBackend::CHAIN_LOGIN,
+			"value": "Bayrell.CloudOS.Backend.Auth::chainLogin",
+			"is_async": true,
+		},
+		
+		/* Auth Chain. Logout */
+		new LambdaChain
+		{
+			"name": AuthBackend::CHAIN_LOGOUT,
+			"value": "Bayrell.CloudOS.Backend.Auth::chainLogout",
+			"is_async": true,
+		},
+		
+		/* Auth Chain. Check token */
+		new LambdaChain
+		{
+			"name": AuthBackend::CHAIN_CHECK_TOKEN,
+			"value": "Bayrell.CloudOS.Backend.Auth::chainCheckToken",
+			"is_async": true,
+		},
 	];
 	
 }

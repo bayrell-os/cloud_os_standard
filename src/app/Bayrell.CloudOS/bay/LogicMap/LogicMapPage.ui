@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Bayrell.CloudOS.LogicMap.LogicMapPageModel"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -29,6 +30,7 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Route" />
 <use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
 <use name="Runtime.Web.Events.ChangeEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Events.MouseDownEvent" />
@@ -55,6 +57,7 @@
  * @return RenderContainer
  */
 @Route{ "uri": "/design/logic_map/", "name": "app.design.logic_map" }
+@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	LogicMapPageModel page_model = new LogicMapPageModel{};
@@ -77,6 +80,9 @@ static async RenderContainer actionIndex(RenderContainer container)
 	}
 	
 	Dict response = answer.response;
+	
+	/* Get layers spaces */
+	Collection<Dict> layers_spaces = response["layers_spaces"] |> default Collection [];
 	
 	/* Get services */
 	page_model <= services <=
@@ -101,19 +107,50 @@ static async RenderContainer actionIndex(RenderContainer container)
 	;
 	
 	/* Get layers */
+	Collection spaces = response |> attr "spaces" |> default Collection [];
+	Collection services = response |> attr "services" |> default Collection [];
 	page_model <= layers <=
 		response
 		|> attr "layers"
 		|> default Collection []
 		|> .map
 		(
-			BoxModel (Dict item) => new BoxModel{ "kind": "layer", "item": item, "y": item["logic_map_pos_y"] }
+			BoxModel (Dict item) use (layers_spaces, services, spaces)
+			{
+				Dict service = services.findItem( lib::equalAttr("service_id", item["service_id"]) );
+				
+				/* Get layer spaces */
+				Collection layer_spaces = [];
+				for (int i=0; i<layers_spaces.count(); i++)
+				{
+					Dict layer_space = layers_spaces[i];
+					int layer_id = layer_space["layer_id"] |> default int 0;
+					if (layer_id != item["layer_id"]) continue;
+					int space_id = layer_space["space_id"] |> default int 0;
+					string uri = layer_space["uri"] |> default string "";
+					Dict space = spaces.findItem( lib::equalAttr("space_id", space_id) );
+					layer_spaces = layer_spaces.pushIm
+					{
+						"item": space,
+						"uri": uri,
+					};
+				}
+				
+				return new BoxModel
+				{
+					"kind": "layer",
+					"item": item,
+					"service": service,
+					"spaces": layer_spaces,
+					"y": item["logic_map_pos_y"]
+				};
+			}
 		)
 	;
 	
 	/* Set title */
 	container <= layout <= title <= "Logic Map";
-	container <= layout <= layout_name <= "default";
+	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
 	container <= layout <= page_class <= classof LogicMapPage;
@@ -153,13 +190,13 @@ static async RenderContainer actionIndex(RenderContainer container)
 		<Button @event:MouseClickEvent="onSavePos">Save positions</Button>
 	</div>
 	<div class='box_wrap'>
-		<div class='box_items box_items--spaces'>
-			%for (int i=0; i<model.spaces.count(); i++)
+		<div class='box_items box_items--services'>
+			%for (int i=0; i<model.services.count(); i++)
 			{
-				%var BoxModel box = model.spaces[i];
+				%var BoxModel box = model.services[i];
 				<Box
-					@key={ "space_" ~ box["item", "space_id"] }
-					@bind=[ "spaces", i ]
+					@key={ "service_" ~ box["item", "service_id"] }
+					@bind=[ "services", i ]
 					@event:DragAndDropEvent="onBoxEvent"
 				/>
 			}
@@ -175,13 +212,13 @@ static async RenderContainer actionIndex(RenderContainer container)
 				/>
 			}
 		</div>
-		<div class='box_items box_items--services'>
-			%for (int i=0; i<model.services.count(); i++)
+		<div class='box_items box_items--spaces'>
+			%for (int i=0; i<model.spaces.count(); i++)
 			{
-				%var BoxModel box = model.services[i];
+				%var BoxModel box = model.spaces[i];
 				<Box
-					@key={ "service_" ~ box["item", "service_id"] }
-					@bind=[ "services", i ]
+					@key={ "space_" ~ box["item", "space_id"] }
+					@bind=[ "spaces", i ]
 					@event:DragAndDropEvent="onBoxEvent"
 				/>
 			}

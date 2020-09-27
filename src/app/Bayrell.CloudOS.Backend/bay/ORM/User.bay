@@ -41,8 +41,8 @@ struct User extends Record
 	@BigIntType{}
 	int user_id;
 	
-	@StringType{ "length": 1024 }
-	string name;
+	@StringType{ "length": 255 }
+	string login;
 	
 	@BooleanType{}
 	bool banned;
@@ -74,7 +74,7 @@ struct User extends Record
 	/**
 	 * Change password
 	 */
-	static async changePassword(int user_id, string password, Dict db_settings)
+	static async void changePassword(int user_id, string password, Dict db_settings = null)
 	{
 		if (password != "")
 		{
@@ -87,10 +87,10 @@ struct User extends Record
 				"users_auth",
 				{
 					"user_id": user_id,
-					"type": "password",
+					"method": "password",
 				},
 				{
-					"value": Password::createHash(password1),
+					"value": Password::createHash(password),
 				},
 				db_settings
 			);
@@ -101,16 +101,49 @@ struct User extends Record
 	
 	
 	/**
+	 * Check password
+	 */
+	static async bool checkPassword(int user_id, string password, Dict db_settings = null)
+	{
+		if (password == "") return false;
+		
+		/* Connect to database */
+		Connection conn = await static::connect(db_settings);
+		Cursor cursor =	await conn.select
+		(
+			"users_auth",
+			[
+				["user_id", "=", user_id],
+				["method", "=", "password"],
+			],
+			0, 1,
+			db_settings
+		);
+		Dict row = await cursor.fetchOne();
+		await cursor.close();
+		
+		if (row == null) return false;
+		
+		/* Check password hash */
+		string password_hash = row["value"];
+		if (Password::verify(password, password_hash)) return true;
+		
+		return false;
+	}
+	
+	
+	
+	/**
 	 * Create passwd file
 	 */
-	static async void nginxPasswdCreate(Dict db_settings)
+	static async void nginxPasswdCreate(Dict db_settings = null)
 	{
 		/* Connect to database */
 		Connection conn = await static::connect(db_settings);
 		
 		string htpasswd = "";
 		string table_name = static::getTableName();
-		Cursor cursor = await orm.query
+		Cursor cursor = await conn.query
 		(
 			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
 			"left join users_auth as a on (u.user_id = a.user_id and a.method='password')",
@@ -138,7 +171,7 @@ struct User extends Record
 		await cursor.close();
 		
 		/* Insert or update nginx file */
-		await orm.insert_or_update
+		await conn.insert_or_update
 		(
 			"nginx_files",
 			{

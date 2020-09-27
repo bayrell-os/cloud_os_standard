@@ -18,6 +18,7 @@
 			"lang": "es6",
 			"modules":
 			[
+				"Runtime.Web.Auth",
 				"Runtime.Web.Button",
 				"Runtime.Web.Dialog",
 				"Runtime.Web.Form",

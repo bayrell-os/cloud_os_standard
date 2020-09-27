@@ -29,6 +29,7 @@
 <use name="Runtime.Web.RenderDriver" />
 <use name="Runtime.Web.Route" />
 <use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
@@ -49,6 +50,7 @@
  * @return RenderContainer
  */
 @Route{ "uri": "/users/", "name": "app.users" }
+@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
 	/* Create model */
@@ -57,7 +59,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"crud": await CrudPageModel::crudSearch
 		(
 			{
-				"object_name": "Bayrell.CloudOS.Users",
+				"object_name": "Bayrell.CloudOS.User",
 				"interface_name": "core.crud",
 				"method_name": "search",
 			},
@@ -67,7 +69,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	/* Set title */
 	container <= layout <= title <= "Users page";
-	container <= layout <= layout_name <= "default";
+	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
 	container <= layout <= page_class <= classof UsersPage;
@@ -116,8 +118,8 @@ static async RenderContainer actionIndex(RenderContainer container)
 		
 		new FieldInfo
 		{
-			"api_name": "name",
-			"label": "Name",
+			"api_name": "login",
+			"label": "Login",
 			"class_name": classof Input,
 			"class_name_table": classof Label,
 		},
@@ -183,13 +185,13 @@ static async RenderContainer actionIndex(RenderContainer container)
 	
 	%var Collection<string> filter_fields =
 	[
-		"name",
+		"login",
 		"banned",
 	];
 	
 	%var Collection<string> form_fields =
 	[
-		"name",
+		"login",
 		"banned",
 		"password1",
 		"password2",
@@ -198,7 +200,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	%var Collection<string> table_fields =
 	[
 		"number",
-		"name",
+		"login",
 		"banned",
 		"edit-buttons"
 	];
@@ -209,7 +211,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	};
 	
 	<CrudPage @name="crud"
-		object_name="Bayrell.CloudOS.Users"
+		object_name="Bayrell.CloudOS.User"
 		struct={ struct }
 		filter_fields={ filter_fields }
 		form_fields={ form_fields }

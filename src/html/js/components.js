@@ -1,4 +1,938 @@
 "use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Auth == 'undefined') Runtime.Web.Auth = {};
+Runtime.Web.Auth.AuthFrontend = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Web.Auth.AuthFrontend.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Web.Auth.AuthFrontend.prototype.constructor = Runtime.Web.Auth.AuthFrontend;
+Object.assign(Runtime.Web.Auth.AuthFrontend.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Auth.AuthFrontend)
+		{
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Auth.AuthFrontend";
+	},
+});
+Object.assign(Runtime.Web.Auth.AuthFrontend, Runtime.BaseStruct);
+Object.assign(Runtime.Web.Auth.AuthFrontend,
+{
+	/**
+	 * Check auth token
+	 */
+	checkAuthMiddleware: async function(ctx, container)
+	{
+		var __v0 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, container, ["layout", "keep_data", "Runtime.Web.Auth.AuthToken"]));
+		__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Web.Auth.AuthToken", null));
+		var auth_token = __v0.value(ctx);
+		if (auth_token == null)
+		{
+			return Promise.resolve(await Runtime.Web.Auth.LoginPage.actionIndex(ctx, container));
+		}
+		return Promise.resolve(Runtime.Collection.from([container]));
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Auth";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Auth.AuthFrontend";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Auth.AuthFrontend",
+			"name": "Runtime.Web.Auth.AuthFrontend",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Auth.AuthFrontend);
+window["Runtime.Web.Auth.AuthFrontend"] = Runtime.Web.Auth.AuthFrontend;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Auth.AuthFrontend;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Auth == 'undefined') Runtime.Web.Auth = {};
+Runtime.Web.Auth.AuthToken = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Web.Auth.AuthToken.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Web.Auth.AuthToken.prototype.constructor = Runtime.Web.Auth.AuthToken;
+Object.assign(Runtime.Web.Auth.AuthToken.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.created = 0;
+		this.expire = 0;
+		this.user_id = 0;
+		this.login = "";
+		this.session_key = "";
+		this.token_str = "";
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Auth.AuthToken)
+		{
+			this.created = o.created;
+			this.expire = o.expire;
+			this.user_id = o.user_id;
+			this.login = o.login;
+			this.session_key = o.session_key;
+			this.token_str = o.token_str;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "created")this.created = v;
+		else if (k == "expire")this.expire = v;
+		else if (k == "user_id")this.user_id = v;
+		else if (k == "login")this.login = v;
+		else if (k == "session_key")this.session_key = v;
+		else if (k == "token_str")this.token_str = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "created")return this.created;
+		else if (k == "expire")return this.expire;
+		else if (k == "user_id")return this.user_id;
+		else if (k == "login")return this.login;
+		else if (k == "session_key")return this.session_key;
+		else if (k == "token_str")return this.token_str;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Auth.AuthToken";
+	},
+});
+Object.assign(Runtime.Web.Auth.AuthToken, Runtime.BaseStruct);
+Object.assign(Runtime.Web.Auth.AuthToken,
+{
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Auth";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Auth.AuthToken";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": "Runtime.Web.Auth.AuthToken",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("created");
+			a.push("expire");
+			a.push("user_id");
+			a.push("login");
+			a.push("session_key");
+			a.push("token_str");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "created") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "expire") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "user_id") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "login") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "session_key") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "token_str") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.AuthToken",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Auth.AuthToken);
+window["Runtime.Web.Auth.AuthToken"] = Runtime.Web.Auth.AuthToken;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Auth.AuthToken;
+"use strict;"
+/*
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Auth == 'undefined') Runtime.Web.Auth = {};
+Runtime.Web.Auth.LoginPage = function(ctx)
+{
+	Runtime.Web.Component.apply(this, arguments);
+};
+Runtime.Web.Auth.LoginPage.prototype = Object.create(Runtime.Web.Component.prototype);
+Runtime.Web.Auth.LoginPage.prototype.constructor = Runtime.Web.Auth.LoginPage;
+Object.assign(Runtime.Web.Auth.LoginPage.prototype,
+{
+	/**
+ * Mouse click event
+ */
+	onLoginClick: async function(ctx, e)
+	{
+		var model = this.model(ctx);
+		/* Set wait message */
+		this.update(ctx, "setWaitMessage");
+		/* Login */
+		var answer = await Runtime.Web.RenderDriver.remoteBusCall(ctx, Runtime.Dict.from({"object_name":"Runtime.Web.Auth","interface_name":"core.auth","method_name":"login","data":Runtime.Dict.from({"username":model.username,"password":model.password})}));
+		/* Set answer */
+		this.update(ctx, "setAnswer", answer);
+		/* Redirect */
+		if (answer.isSuccess(ctx))
+		{
+			document.location = document.location;
+		}
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Auth.LoginPage)
+		{
+		}
+		Runtime.Web.Component.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		Runtime.Web.Component.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return Runtime.Web.Component.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Auth.LoginPage";
+	},
+});
+Object.assign(Runtime.Web.Auth.LoginPage, Runtime.Web.Component);
+Object.assign(Runtime.Web.Auth.LoginPage,
+{
+	/**
+ * Route Action
+ * @return RenderContainer
+ */
+	actionIndex: async function(ctx, container)
+	{
+		var page_model = new Runtime.Web.Auth.LoginPageModel(ctx);
+		/* Set title */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "title"]), "Login page");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "layout_name"]), "default");
+		/* Set model */
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_class"]), "Runtime.Web.Auth.LoginPage");
+		container = Runtime.rtl.setAttr(ctx, container, Runtime.Collection.from(["layout", "page_model"]), page_model);
+		return Promise.resolve(Runtime.Collection.from([container]));
+	},
+	css: function(ctx, vars)
+	{
+		return ".content.h-00c5{" + Runtime.rtl.toStr("text-align: center;padding-top: 50px;width: 500px;margin-left: auto;margin-right: auto;") + Runtime.rtl.toStr("}.row.h-00c5{") + Runtime.rtl.toStr("text-align: left;") + Runtime.rtl.toStr("}.head.h-00c5{") + Runtime.rtl.toStr("font-weight: bold;") + Runtime.rtl.toStr("}.wrap.h-00c5{") + Runtime.rtl.toStr("padding-bottom: 20px;") + Runtime.rtl.toStr("}.label.h-00c5{") + Runtime.rtl.toStr("padding-bottom: 5px;") + Runtime.rtl.toStr("}.label.h-00c5 label{") + Runtime.rtl.toStr("}.message.h-00c5{") + Runtime.rtl.toStr("}.result.h-00c5.success{") + Runtime.rtl.toStr("color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "success", "color"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.result.h-00c5.error{") + Runtime.rtl.toStr("color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "error", "color"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}");
+	},
+	render: function(ctx, layout, model, params, content)
+	{
+		return (__control) =>
+		{
+			var __vnull = null;
+			var __control_childs = [];
+			
+			/* Element 'div.content' */
+			var __v0; var __v0_childs = [];
+			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["content", this.getCssHash(ctx)].join(" "),"@key":"content","@elem_name":"content"}});
+			
+			/* Element 'div.wrap.head' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["wrap head", this.getCssHash(ctx)].join(" "),"@elem_name":"wrap"}});
+			
+			/* Text */
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": "Login"});
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.wrap' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["wrap", this.getCssHash(ctx)].join(" "),"@elem_name":"wrap"}});
+			
+			/* Element 'div.row.label' */
+			var __v2; var __v2_childs = [];
+			[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "div","attrs": {"class":["row label", this.getCssHash(ctx)].join(" "),"@elem_name":"row"}});
+			
+			/* Element 'label' */
+			var __v3; var __v3_childs = [];
+			[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "label","attrs": {"for":"auth-username"}});
+			
+			/* Text */
+			[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": "Username"});
+			RenderDriver.p(__v3, __v3_childs);
+			RenderDriver.p(__v2, __v2_childs);
+			
+			/* Element 'div.row.input' */
+			var __v2; var __v2_childs = [];
+			[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "div","attrs": {"class":["row input", this.getCssHash(ctx)].join(" "),"@elem_name":"row"}});
+			
+			[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "component", {"name": "Runtime.Web.Input.Input","attrs": {"@name":["Runtime.Web.Auth.LoginPage","username"],"name":"username","id":"auth-username"}, "layout": layout});
+			RenderDriver.p(__v2, __v2_childs);
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.wrap' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["wrap", this.getCssHash(ctx)].join(" "),"@elem_name":"wrap"}});
+			
+			/* Element 'div.row.label' */
+			var __v2; var __v2_childs = [];
+			[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "div","attrs": {"class":["row label", this.getCssHash(ctx)].join(" "),"@elem_name":"row"}});
+			
+			/* Element 'label' */
+			var __v3; var __v3_childs = [];
+			[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "label","attrs": {"for":"auth-password"}});
+			
+			/* Text */
+			[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "text", {"content": "Password"});
+			RenderDriver.p(__v3, __v3_childs);
+			RenderDriver.p(__v2, __v2_childs);
+			
+			/* Element 'div.row.input' */
+			var __v2; var __v2_childs = [];
+			[__v2, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "div","attrs": {"class":["row input", this.getCssHash(ctx)].join(" "),"@elem_name":"row"}});
+			
+			[__vnull, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "component", {"name": "Runtime.Web.Input.Input","attrs": {"type":"password","@name":["Runtime.Web.Auth.LoginPage","password"],"name":"password","id":"auth-password"}, "layout": layout});
+			RenderDriver.p(__v2, __v2_childs);
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.wrap' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["wrap", this.getCssHash(ctx)].join(" "),"@elem_name":"wrap"}});
+			
+			/* Component 'Button' */
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"type":"primary","@event:Runtime.Web.Events.MouseClickEvent":["Runtime.Web.Auth.LoginPage","onLoginClick"]}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Text */
+				[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Login"});
+				
+				return __control_childs;
+			}});
+			RenderDriver.p(__v1, __v1_childs);
+			
+			/* Element 'div.wrap.result' */
+			var __v1; var __v1_childs = [];
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["wrap result", this.getResultClass(ctx, model), this.getCssHash(ctx)].join(" "),"@elem_name":"wrap"}});
+			
+			/* Text */
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": model.get(ctx, "message", "")});
+			
+			/* Text */
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": model.get(ctx, "success_message", "")});
+			
+			/* Text */
+			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": model.get(ctx, "error_message", "")});
+			RenderDriver.p(__v1, __v1_childs);
+			RenderDriver.p(__v0, __v0_childs);
+			
+			return __control_childs;
+		};
+	},
+	/**
+ * Returns result class
+ */
+	getResultClass: function(ctx, model)
+	{
+		if (model.get(ctx, "success_message", "") != "")
+		{
+			return "success";
+		}
+		if (model.get(ctx, "error_message", "") != "")
+		{
+			return "error";
+		}
+		return "";
+	},
+	components: function(ctx)
+	{
+		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Input.Button","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText"]);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Auth";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Auth.LoginPage";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Web.Component";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Auth.LoginPage",
+			"name": "Runtime.Web.Auth.LoginPage",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+			"actionIndex",
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		if (field_name == "actionIndex")
+		{
+			var Collection = Runtime.Collection;
+			var Dict = Runtime.Dict;
+			var IntrospectionInfo = Runtime.IntrospectionInfo;
+			return new IntrospectionInfo(ctx, {
+				"kind": IntrospectionInfo.ITEM_METHOD,
+				"class_name": "Runtime.Web.Auth.LoginPage",
+				"name": "actionIndex",
+				"annotations": Collection.from([
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/login/","name":"app.login"})),
+				]),
+			});
+		}
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Auth.LoginPage);
+window["Runtime.Web.Auth.LoginPage"] = Runtime.Web.Auth.LoginPage;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Auth.LoginPage;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Auth == 'undefined') Runtime.Web.Auth = {};
+Runtime.Web.Auth.LoginPageModel = function(ctx)
+{
+	Runtime.BaseStruct.apply(this, arguments);
+};
+Runtime.Web.Auth.LoginPageModel.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Web.Auth.LoginPageModel.prototype.constructor = Runtime.Web.Auth.LoginPageModel;
+Object.assign(Runtime.Web.Auth.LoginPageModel.prototype,
+{
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.username = "";
+		this.password = "";
+		this.message = "";
+		this.success_message = "";
+		this.error_message = "";
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Auth.LoginPageModel)
+		{
+			this.username = o.username;
+			this.password = o.password;
+			this.message = o.message;
+			this.success_message = o.success_message;
+			this.error_message = o.error_message;
+		}
+		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "username")this.username = v;
+		else if (k == "password")this.password = v;
+		else if (k == "message")this.message = v;
+		else if (k == "success_message")this.success_message = v;
+		else if (k == "error_message")this.error_message = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "username")return this.username;
+		else if (k == "password")return this.password;
+		else if (k == "message")return this.message;
+		else if (k == "success_message")return this.success_message;
+		else if (k == "error_message")return this.error_message;
+		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Auth.LoginPageModel";
+	},
+});
+Object.assign(Runtime.Web.Auth.LoginPageModel, Runtime.BaseStruct);
+Object.assign(Runtime.Web.Auth.LoginPageModel,
+{
+	/**
+	 * Set wait message
+	 */
+	setWaitMessage: function(ctx, model, message)
+	{
+		if (message == undefined) message = "";
+		return model.copy(ctx, Runtime.Dict.from({"message":(message != message) ? (message) : (ctx.translate(ctx, "Runtime.Web", "Please wait")),"success_message":message,"error_message":""}));
+	},
+	/**
+	 * Set answer
+	 */
+	setAnswer: function(ctx, model, answer)
+	{
+		if (answer.isSuccess(ctx))
+		{
+			return this.setSuccess(ctx, model, answer.success_message);
+		}
+		model = this.setError(ctx, model, answer.error_message);
+		return model;
+	},
+	/**
+	 * Success
+	 */
+	setSuccess: function(ctx, model, message)
+	{
+		return model.copy(ctx, Runtime.Dict.from({"message":"","success_message":message,"error_message":""}));
+	},
+	/**
+	 * Error
+	 */
+	setError: function(ctx, model, message)
+	{
+		return model.copy(ctx, Runtime.Dict.from({"message":"","success_message":"","error_message":message}));
+	},
+	/**
+	 * Clear
+	 */
+	clear: function(ctx, model)
+	{
+		return new Runtime.Web.Auth.LoginPageModel(ctx, Runtime.Dict.from({"username":"","password":"","message":"","success_message":"","error_message":""}));
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Auth";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Auth.LoginPageModel";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.BaseStruct";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": "Runtime.Web.Auth.LoginPageModel",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("username");
+			a.push("password");
+			a.push("message");
+			a.push("success_message");
+			a.push("error_message");
+		}
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "username") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "password") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "success_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Web.Auth.LoginPageModel",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Auth.LoginPageModel);
+window["Runtime.Web.Auth.LoginPageModel"] = Runtime.Web.Auth.LoginPageModel;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Auth.LoginPageModel;
+"use strict;"
+/*!
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Web == 'undefined') Runtime.Web = {};
+if (typeof Runtime.Web.Auth == 'undefined') Runtime.Web.Auth = {};
+Runtime.Web.Auth.ModuleDescription = function(ctx)
+{
+};
+Object.assign(Runtime.Web.Auth.ModuleDescription.prototype,
+{
+	assignObject: function(ctx,o)
+	{
+		if (o instanceof Runtime.Web.Auth.ModuleDescription)
+		{
+		}
+	},
+	assignValue: function(ctx,k,v)
+	{
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+	},
+	getClassName: function(ctx)
+	{
+		return "Runtime.Web.Auth.ModuleDescription";
+	},
+});
+Object.assign(Runtime.Web.Auth.ModuleDescription,
+{
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleName: function(ctx)
+	{
+		return "Runtime.Web.Auth";
+	},
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleVersion: function(ctx)
+	{
+		return "0.1.0";
+	},
+	/**
+	 * Returns required modules
+	 * @return Map<string>
+	 */
+	requiredModules: function(ctx)
+	{
+		return Runtime.Dict.from({"Runtime.Web":"*","Runtime.Web.Input":"*"});
+	},
+	/**
+	 * Returns enities
+	 */
+	entities: function(ctx)
+	{
+		return Runtime.Collection.from([]);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Web.Auth";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Web.Auth.ModuleDescription";
+	},
+	getParentClassName: function()
+	{
+		return "";
+	},
+	getClassInfo: function(ctx)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Web.Auth.ModuleDescription",
+			"name": "Runtime.Web.Auth.ModuleDescription",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return Runtime.Collection.from(a);
+	},
+	getFieldInfoByName: function(ctx,field_name)
+	{
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		return null;
+	},
+	getMethodsList: function(ctx)
+	{
+		var a = [
+		];
+		return Runtime.Collection.from(a);
+	},
+	getMethodInfoByName: function(ctx,field_name)
+	{
+		return null;
+	},
+});
+Runtime.rtl.defClass(Runtime.Web.Auth.ModuleDescription);
+window["Runtime.Web.Auth.ModuleDescription"] = Runtime.Web.Auth.ModuleDescription;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Runtime.Web.Auth.ModuleDescription;
+"use strict;"
 /*
  *  Bayrell Runtime Library
  *
