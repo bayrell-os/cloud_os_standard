@@ -30,6 +30,7 @@ use Runtime.ORM.QueryBuilder;
 use Runtime.ORM.Record;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.Backend.ApiMiddleware;
 use Bayrell.CloudOS.Backend.ORM.Layer;
 use Bayrell.CloudOS.Backend.ORM.LayerSpace;
 use Bayrell.CloudOS.Backend.ORM.Service;
@@ -37,6 +38,7 @@ use Bayrell.CloudOS.Backend.ORM.VirtualSpace;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.LogicMap", "interface_name": "default" }
+@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
 class LogicMap
 {
 	

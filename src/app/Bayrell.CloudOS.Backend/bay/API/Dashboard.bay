@@ -28,10 +28,12 @@ use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.QueryBuilder;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.Backend.ApiMiddleware;
 use Bayrell.CloudOS.API.DockerLib;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Dashboard", "interface_name": "default" }
+@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
 class Dashboard
 {
 	

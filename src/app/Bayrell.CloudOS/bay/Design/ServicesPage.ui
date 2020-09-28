@@ -179,6 +179,23 @@ static async RenderContainer actionIndex(RenderContainer container)
 		},
 		new FieldInfo
 		{
+			"api_name": "have_admin_page",
+			"label": "Have admin page",
+			"class_name": classof Select,
+			"class_name_table": classof SelectText,
+			"class_settings":
+			{
+				"show_select_value_filter": true,
+				"show_select_value": false,
+				"options":
+				[
+					{"id": 0, "value": "No"},
+					{"id": 1, "value": "Yes"},
+				],
+			}
+		},
+		new FieldInfo
+		{
 			"api_name": "edit-buttons",
 			"label": "",
 			"class_name": classof Label,
@@ -201,6 +218,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"stack_name",
 		"software_api_name",
 		"service_name",
+		"have_admin_page",
 	];
 	
 	%var Collection<string> form_fields =
@@ -208,6 +226,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"stack_name",
 		"software_api_name",
 		"service_name",
+		"have_admin_page",
 		"docker_content",
 	];
 	
@@ -217,6 +236,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 		"stack_name",
 		"software_api_name",
 		"service_name",
+		"have_admin_page",
 		"edit-buttons"
 	];
 	

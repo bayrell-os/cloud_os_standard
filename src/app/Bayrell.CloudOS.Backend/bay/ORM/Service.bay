@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Backend.ORM;
 
 use Runtime.fs;
+use Runtime.lib;
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
 use Runtime.ORM.Annotations.BooleanType;
@@ -36,6 +37,7 @@ use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
 use Bayrell.CloudOS.Backend.DockerLib;
 use Bayrell.CloudOS.Backend.DockerTasks;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
 use Bayrell.CloudOS.Backend.ORM.Software;
 use Bayrell.CloudOS.Backend.ORM.Stack;
 
@@ -60,6 +62,9 @@ struct Service extends Record
 	
 	@BigIntType{}
 	int logic_map_pos_y = 0;
+	
+	@BooleanType{}
+	bool have_admin_page = 0;
 	
 	
 	
@@ -86,6 +91,10 @@ struct Service extends Record
 		new Index
 		{
 			"keys": ["software_api_name"],
+		},
+		new Index
+		{
+			"keys": ["have_admin_page"],
 		},
 		new ForeignKey
 		{
@@ -168,5 +177,59 @@ struct Service extends Record
 		}
 		
 		await cursor.close();
+	}
+	
+	
+	
+	/**
+	 * Update nginx file
+	 */
+	static async void updateNginx(Dict db_settings = null)
+	{
+		string nginx_file_table_name = NginxFile::table_name();
+		
+		/* Connect to database */
+		Connection conn = await static::connect(db_settings);
+		
+		/* Get items having admin page */
+		Collection<Record> items = static::select()
+			|> .filter([ ["have_admin_page", "=", true] ])
+			|> await .all()
+		;
+		
+		Collection<string> locations = items
+			|> .filter( lib::equalAttrNot("service_name", "") )
+			|> .sortIm( lib::sortDesc )
+			|> .map
+			(
+				string (Record item)
+				{
+					string service_name = item.stack_name ~ "_" ~ item.service_name;
+					string s = "";
+					s ~= "location /service/" ~ service_name ~ " {\n";
+					s ~= "\tproxy_pass http://" ~ service_name ~ ".test/;\n";
+					s ~= "\tinclude proxy_params;\n";
+					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/service/" ~ service_name ~ "\";\n";
+					s ~= "}";
+					return s;
+				}
+			)
+		;
+		
+		/* Update nginx file */
+		await conn.insert_or_update
+		(
+			nginx_file_table_name,
+			{
+				"name": "inc/services_admin_page.inc",
+			},
+			{
+				"content": rs::join("\n", locations),
+				"timestamp": rtl::time(),
+				"enable": true,
+				"is_deleted": false,
+			}
+		);
+		
 	}
 }

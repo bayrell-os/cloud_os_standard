@@ -1,0 +1,120 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.API;
+
+use Runtime.rtl;
+use Runtime.lib;
+use Runtime.Core.ApiException;
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
+use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.QueryBuilder;
+use Runtime.Web.Backend.ApiList;
+use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.Backend.ApiMiddleware;
+use Bayrell.CloudOS.Backend.ORM.DockerService;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
+
+
+@ApiList{ "object_name": "Bayrell.CloudOS.Balancer", "interface_name": "default" }
+static class Balancer
+{
+	
+	/**
+	 * Get services
+	 */
+	@ApiMethod{ "method_name": "getServices" }
+	static async list getServicesAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		/* Get services */
+		Collection<Dict> services = DockerService::select()
+			|> .filter([
+				["enable", "=", 1]
+			])
+			|> .order([ ["_name", "asc"] ])
+			|> await .all()
+			|> .map
+			(
+				Dict (DockerService service)
+				{
+					Collection<string> ip = [];
+					
+					Dict balancer = service["balancer"] |> rtl::json_decode;
+					Collection tasks = balancer["Tasks"] |> default Collection null;
+					
+					if (tasks) for (int task_i=0; task_i<tasks.count(); task_i++)
+					{
+						Dict task = tasks[task_i];
+						string state = task["Status", "State"];
+						if (state != "running") continue;
+						Collection networks = task["Networks"] |> default Collection null;
+						if (networks) for (int network_i=0; network_i<networks.count(); network_i++)
+						{
+							Dict network = networks[network_i];
+							string network_name = network["Name"];
+							if (network_name != "balancer") continue;
+							Collection addresses = network["Addresses"] |> default Collection null;
+							if (addresses)
+							{
+								ip = ip.appendCollectionIm(addresses);
+							}
+						};
+					};
+					
+					return
+					{
+						"name": service._name,
+						"ip": ip,
+					};
+				}
+			)
+		;
+		
+		answer = answer::success(answer, services);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Get nginx changes
+	 */
+	@ApiMethod{ "method_name": "getNginxChanges" }
+	static async list getNginxChangesAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		int timestamp = request["data", "timestamp"] |> default int 0;
+		
+		/* Get files */
+		Collection<Dict> files = NginxFile::select()
+			|> .filter([
+				["timestamp", ">=", timestamp]
+			])
+			|> .asRecord(false)
+			|> await .all()
+			|> .map( lib::intersect(["name", "enable", "content", "timestamp", "is_deleted"]) )
+		;
+		
+		answer = answer::success(answer, files);
+		
+		return [ request, answer ];
+	}
+	
+}

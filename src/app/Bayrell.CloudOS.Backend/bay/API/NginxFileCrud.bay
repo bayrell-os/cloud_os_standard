@@ -25,7 +25,9 @@ use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.Backend.ApiMiddleware;
 use Runtime.Web.ORM.QueryBuilder;
+use Runtime.Web.ORM.Record;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.ReadOnly;
@@ -35,6 +37,7 @@ use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.NginxFile", "interface_name": "core.crud" }
+@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
 static class NginxFileCrud extends CrudApi
 {
 	
@@ -58,7 +61,7 @@ static class NginxFileCrud extends CrudApi
 	
 	
 	/**
-	 * Returns table field value
+	 * Returns default order
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
@@ -68,9 +71,74 @@ static class NginxFileCrud extends CrudApi
 	
 	
 	/**
+	 * Returns default filter
+	 */
+	Collection<Collection<string>> getDefaultFilter() =>
+	[
+		["is_deleted", "=", false]
+	];
+	
+	
+	
+	/**
 	 * Build query
 	 */
 	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	
+	
+	
+	/**
+	 * Force delete items
+	 */
+	bool isForceDelete() => false;
+	
+	
+	
+	/**
+	 * Find existing item for create
+	 */
+	async Record findItemForCreating()
+	{
+		NginxFile item = null;
+		string name = this.item["name"] |> default string "";
+		if (name != "")
+		{
+			item = NginxFile::select()
+				|> .filter([
+					["name", "=", name]
+				])
+				|> await .one()
+			;
+		}
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		item = await parent::convertItem(item);
+		item <= timestamp <= rtl::time();
+		item <= is_deleted <= false;
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Delete query
+	 */
+	async void deleteQuery()
+	{
+		string class_name = static::getORM();
+		fn getPrimaryKey = rtl::method(class_name, "getPrimaryKey");
+		fn update = rtl::method(class_name, "update");
+		Dict pk = getPrimaryKey(this.old_item);
+		update(pk, { "is_deleted": true, "timestamp": rtl::time() });
+	}
 	
 	
 	
@@ -102,18 +170,6 @@ static class NginxFileCrud extends CrudApi
 		else if (this.action == "delete")
 		{
 		}
-	}
-	
-	
-	
-	/**
-	 * Convert item before save to database
-	 */
-	async Dict convertItem(Dict item)
-	{
-		item = await parent::convertItem(item);
-		item <= timestamp <= rtl::time();
-		return item;
 	}
 	
 	

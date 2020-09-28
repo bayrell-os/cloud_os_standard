@@ -1572,6 +1572,10 @@ Object.assign(Runtime.lib,
 			return (item1 != null) ? (Runtime.rtl.attr(ctx, item1, key) != value) : (false);
 		};
 	},
+	equalAttrNot: function(ctx, key, value)
+	{
+		return this.equalNotAttr;
+	},
 	/**
 	 * Equal attrs
 	 */
@@ -1696,6 +1700,16 @@ Object.assign(Runtime.lib,
 		return (ctx, m) => 
 		{
 			return m.filter(ctx, f);
+		};
+	},
+	/**
+	 * Intersect
+	 */
+	intersect: function(ctx, arr)
+	{
+		return (ctx, m) => 
+		{
+			return m.intersect(ctx, arr);
 		};
 	},
 	/**

@@ -25,6 +25,7 @@ use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
 use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
+use Runtime.Web.Backend.ApiMiddleware;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.Rules.AllowFields;
@@ -35,6 +36,7 @@ use Bayrell.CloudOS.Backend.ORM.Software;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Software", "interface_name": "core.crud" }
+@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
 static class SoftwareCrud extends CrudApi
 {
 	/**

@@ -219,8 +219,9 @@ struct VirtualSpace extends Record
 			},
 			{
 				"content": nginx_content,
-				"enable": 1,
 				"timestamp": rtl::time(),
+				"enable": true,
+				"is_deleted": false,
 			}
 		);
 	}

@@ -178,10 +178,10 @@ struct User extends Record
 				"name": "inc/htpasswd.inc",
 			},
 			{
-				"enable": 1,
 				"content": htpasswd,
 				"timestamp": rtl::time(),
-				"is_deleted": 0,
+				"enable": true,
+				"is_deleted": false,
 			}
 		);
 	}
