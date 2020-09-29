@@ -206,8 +206,8 @@ struct Service extends Record
 				{
 					string service_name = item.stack_name ~ "_" ~ item.service_name;
 					string s = "";
-					s ~= "location /service/" ~ service_name ~ " {\n";
-					s ~= "\tproxy_pass http://" ~ service_name ~ ".test/;\n";
+					s ~= "location /service/" ~ service_name ~ "/ {\n";
+					s ~= "\tproxy_pass http://" ~ service_name ~ ".admin.test/;\n";
 					s ~= "\tinclude proxy_params;\n";
 					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/service/" ~ service_name ~ "\";\n";
 					s ~= "}";

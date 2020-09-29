@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.LayersForm" extends="Runtime.Web.Form.Form" 
-	module="Bayrell.CloudOS" model="Runtime.Web.Form.FormModel"
+	name="Bayrell.CloudOS.Design.LayersForm" extends="Runtime.Web.CRUD.Form" 
+	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.FormModel"
 >
 
 
@@ -26,7 +26,7 @@
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.Events.ChangeEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Web.Button.Button" component="true" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 

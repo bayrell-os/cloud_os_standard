@@ -19,11 +19,8 @@
 			"modules":
 			[
 				"Runtime.Web.Auth",
-				"Runtime.Web.Button",
 				"Runtime.Web.Dialog",
-				"Runtime.Web.Form",
 				"Runtime.Web.Input",
-				"Runtime.Web.Table",
 				"Runtime.Web.CRUD"
 			]
 		},

@@ -34,9 +34,9 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
-<use name="Runtime.Web.Form.Form" component="true" />
-<use name="Runtime.Web.Form.FormEvent" />
-<use name="Runtime.Web.Form.FormModel" />
+<use name="Runtime.Web.CRUD.Form" component="true" />
+<use name="Runtime.Web.CRUD.FormEvent" />
+<use name="Runtime.Web.CRUD.FormModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />

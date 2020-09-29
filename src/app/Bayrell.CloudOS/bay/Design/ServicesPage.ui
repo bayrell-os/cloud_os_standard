@@ -35,9 +35,10 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
-<use name="Runtime.Web.Form.Form" component="true" />
-<use name="Runtime.Web.Form.FormEvent" />
-<use name="Runtime.Web.Form.FormModel" />
+<use name="Runtime.Web.CRUD.Form" component="true" />
+<use name="Runtime.Web.CRUD.FormEvent" />
+<use name="Runtime.Web.CRUD.FormModel" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
@@ -203,12 +204,24 @@ static async RenderContainer actionIndex(RenderContainer container)
 			{
 				"render": html (LayoutModel layout, var model, Dict params, var content)
 				{
+					Dict row_data = params["row-data"];
+					bool have_admin_page = row_data["have_admin_page"] |> default bool false;
+					string stack_name = row_data["stack_name"] |> default string "";
+					string service_name = row_data["service_name"] |> default string "";
 					return
 					[
+						(have_admin_page) ?
+						<a class='nolink' href={ "/service/" ~ stack_name ~ "_" ~ service_name } @key="edit">
+							<Button type='small'>{ _("Runtime.Web.CRUD", "Admin Page") }</Button>
+						</a> : "",
 						CrudPage::buttonEdit(layout, model, params, content),
 						CrudPage::buttonDelete(layout, model, params, content),
 					];
 				},
+			},
+			"table":
+			{
+				"text-align": "right",
 			},
 		},
 	];

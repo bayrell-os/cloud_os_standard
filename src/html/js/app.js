@@ -1907,9 +1907,9 @@ if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
 if (typeof Bayrell.CloudOS.Design == 'undefined') Bayrell.CloudOS.Design = {};
 Bayrell.CloudOS.Design.LayersForm = function(ctx)
 {
-	Runtime.Web.Form.Form.apply(this, arguments);
+	Runtime.Web.CRUD.Form.apply(this, arguments);
 };
-Bayrell.CloudOS.Design.LayersForm.prototype = Object.create(Runtime.Web.Form.Form.prototype);
+Bayrell.CloudOS.Design.LayersForm.prototype = Object.create(Runtime.Web.CRUD.Form.prototype);
 Bayrell.CloudOS.Design.LayersForm.prototype.constructor = Bayrell.CloudOS.Design.LayersForm;
 Object.assign(Bayrell.CloudOS.Design.LayersForm.prototype,
 {
@@ -1946,23 +1946,23 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm.prototype,
 		if (o instanceof Bayrell.CloudOS.Design.LayersForm)
 		{
 		}
-		Runtime.Web.Form.Form.prototype.assignObject.call(this,ctx,o);
+		Runtime.Web.CRUD.Form.prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		Runtime.Web.Form.Form.prototype.assignValue.call(this,ctx,k,v);
+		Runtime.Web.CRUD.Form.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		return Runtime.Web.Form.Form.prototype.takeValue.call(this,ctx,k,d);
+		return Runtime.Web.CRUD.Form.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Bayrell.CloudOS.Design.LayersForm";
 	},
 });
-Object.assign(Bayrell.CloudOS.Design.LayersForm, Runtime.Web.Form.Form);
+Object.assign(Bayrell.CloudOS.Design.LayersForm, Runtime.Web.CRUD.Form);
 Object.assign(Bayrell.CloudOS.Design.LayersForm,
 {
 	css: function(ctx, vars)
@@ -2039,7 +2039,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 					[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "div","attrs": {"class":["spaces_item_cell spaces_item_cell--button", this.getCssHash(ctx)].join(" "),"@elem_name":"spaces_item_cell"}});
 					
 					/* Component 'Button' */
-					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "component", {"name": "Runtime.Web.Button.Button","attrs": {"type":"small danger","@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.LayersForm","onSpaceItemRemove"],"data-index":i}, "layout": layout, "content": (__control) =>
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"type":"small danger","@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.LayersForm","onSpaceItemRemove"],"data-index":i}, "layout": layout, "content": (__control) =>
 					{
 						var __vnull = null;
 						var __control_childs = [];
@@ -2068,7 +2068,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.Button.Button","Runtime.Web.Input.Input","Runtime.Web.Input.Select"]);
+		return Runtime.Collection.from(["Runtime.Web.Input.Button","Runtime.Web.Input.Input","Runtime.Web.Input.Select"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -2081,7 +2081,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersForm,
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.Web.Form.Form";
+		return "Runtime.Web.CRUD.Form";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -2923,8 +2923,41 @@ Object.assign(Bayrell.CloudOS.Design.ServicesPage,
 			
 			var struct = Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":Runtime.Web.CRUD.CrudPage.fieldNumber})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"stack_name","label":"Stack","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":stacks})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"software_api_name","label":"Software","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":true,"options":softwares})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_name","label":"Service name","class_name":"Runtime.Web.Input.Input","class_name_table":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"docker_content","label":"Docker content","class_name":"Runtime.Web.Input.TextArea"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"have_admin_page","label":"Have admin page","class_name":"Runtime.Web.Input.Select","class_name_table":"Runtime.Web.Input.SelectText","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","class_settings":Runtime.Dict.from({"render":(ctx, layout, model, params, content) => 
 			{
-				return Runtime.Collection.from([Runtime.Web.CRUD.CrudPage.buttonEdit(ctx, layout, model, params, content),Runtime.Web.CRUD.CrudPage.buttonDelete(ctx, layout, model, params, content)]);
-			}})}))]);
+				var row_data = Runtime.rtl.get(ctx, params, "row-data");
+				var __v0 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, row_data, "have_admin_page"));
+				__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "bool", false));
+				var have_admin_page = __v0.value(ctx);
+				var __v1 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, row_data, "stack_name"));
+				__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
+				var stack_name = __v1.value(ctx);
+				var __v2 = new Runtime.Monad(ctx, Runtime.rtl.get(ctx, row_data, "service_name"));
+				__v2 = __v2.monad(ctx, Runtime.rtl.m_to(ctx, "string", ""));
+				var service_name = __v2.value(ctx);
+				return Runtime.Collection.from([(have_admin_page) ? ((__control) =>
+				{
+					var __vnull = null;
+					var __control_childs = [];
+					
+					/* Element 'a.nolink' */
+					var __v3; var __v3_childs = [];
+					[__v3, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "a","attrs": {"href":"/service/" + Runtime.rtl.toStr(stack_name) + Runtime.rtl.toStr("_") + Runtime.rtl.toStr(service_name),"class":["nolink", this.getCssHash(ctx)].join(" "),"@key":"edit","@elem_name":"nolink"}});
+					
+					/* Component 'Button' */
+					[__vnull, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"type":"small"}, "layout": layout, "content": (__control) =>
+					{
+						var __vnull = null;
+						var __control_childs = [];
+						
+						/* Text */
+						[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": ctx.translate(ctx, "Runtime.Web.CRUD", "Admin Page")});
+						
+						return __control_childs;
+					}});
+					RenderDriver.p(__v3, __v3_childs);
+					
+					return __control_childs;
+				}) : (""),Runtime.Web.CRUD.CrudPage.buttonEdit(ctx, layout, model, params, content),Runtime.Web.CRUD.CrudPage.buttonDelete(ctx, layout, model, params, content)]);
+			}}),"table":Runtime.Dict.from({"text-align":"right"})}))]);
 			
 			var filter_fields = Runtime.Collection.from(["stack_name","software_api_name","service_name","have_admin_page"]);
 			
@@ -2934,7 +2967,7 @@ Object.assign(Bayrell.CloudOS.Design.ServicesPage,
 			
 			var messages = Runtime.Dict.from({"add":ctx.translate(ctx, "Bayrell.CloudOS", "Add service")});
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Design.ServicesPage","crud"],"@event:Runtime.Web.Form.FormEvent":["Bayrell.CloudOS.Design.ServicesPage","onFormEvent"],"object_name":"Bayrell.CloudOS.Service","struct":struct,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages,"dialog_form":Runtime.Dict.from({"width":"800px"}),"form":Runtime.Dict.from({"renderButtons":(ctx, layout, model, params, content) => 
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Design.ServicesPage","crud"],"@event:Runtime.Web.CRUD.FormEvent":["Bayrell.CloudOS.Design.ServicesPage","onFormEvent"],"object_name":"Bayrell.CloudOS.Service","struct":struct,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages,"dialog_form":Runtime.Dict.from({"width":"800px"}),"form":Runtime.Dict.from({"renderButtons":(ctx, layout, model, params, content) => 
 			{
 				return (__control) =>
 				{
@@ -2948,10 +2981,10 @@ Object.assign(Bayrell.CloudOS.Design.ServicesPage,
 					if (Runtime.rtl.get(ctx, params, "action") == "add")
 					{
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "create")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "create")});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "cancel")});
 					}
 					
 					if (Runtime.rtl.get(ctx, params, "action") == "edit")
@@ -2961,13 +2994,13 @@ Object.assign(Bayrell.CloudOS.Design.ServicesPage,
 						var enable = __v1.value(ctx);
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "update")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "update")});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButtonInfo(ctx, layout, model, params, Runtime.Dict.from({"type":"danger","@key":"compose","data-action":"compose","value":ctx.translate(ctx, "Bayrell.CloudOS", "Compose")}))});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButtonInfo(ctx, layout, model, params, Runtime.Dict.from({"type":"danger","@key":"compose","data-action":"compose","value":ctx.translate(ctx, "Bayrell.CloudOS", "Compose")}))});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "cancel")});
 					}
 					RenderDriver.p(__v0, __v0_childs);
 					
@@ -2980,7 +3013,7 @@ Object.assign(Bayrell.CloudOS.Design.ServicesPage,
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Form.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Input.TextArea"]);
+		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.CRUD.Form","Runtime.Web.Input.Button","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText","Runtime.Web.Input.TextArea"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -4427,7 +4460,7 @@ Object.assign(Bayrell.CloudOS.Docker.DockerServicesPage,
 				return ctx.translate(ctx, "Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", Runtime.Dict.from({"name":Runtime.rtl.get(ctx, item, "_name")}));
 			}});
 			
-			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Docker.DockerServicesPage","crud"],"@event:Runtime.Web.Form.FormEvent":["Bayrell.CloudOS.Docker.DockerServicesPage","onFormEvent"],"object_name":"Bayrell.CloudOS.DockerService","struct":struct,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages,"form":Runtime.Dict.from({"renderButtons":(ctx, layout, model, params, content) => 
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.CRUD.CrudPage","attrs": {"@name":["Bayrell.CloudOS.Docker.DockerServicesPage","crud"],"@event:Runtime.Web.CRUD.FormEvent":["Bayrell.CloudOS.Docker.DockerServicesPage","onFormEvent"],"object_name":"Bayrell.CloudOS.DockerService","struct":struct,"filter_fields":filter_fields,"form_fields":form_fields,"table_fields":table_fields,"messages":messages,"form":Runtime.Dict.from({"renderButtons":(ctx, layout, model, params, content) => 
 			{
 				return (__control) =>
 				{
@@ -4441,10 +4474,10 @@ Object.assign(Bayrell.CloudOS.Docker.DockerServicesPage,
 					if (Runtime.rtl.get(ctx, params, "action") == "add")
 					{
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "create")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "create")});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "cancel")});
 					}
 					
 					if (Runtime.rtl.get(ctx, params, "action") == "edit")
@@ -4454,13 +4487,13 @@ Object.assign(Bayrell.CloudOS.Docker.DockerServicesPage,
 						var enable = __v1.value(ctx);
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "update")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "update")});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButtonInfo(ctx, layout, model, params, Runtime.Dict.from({"type":"danger","@key":(enable) ? ("disable") : ("enable"),"data-action":(enable) ? ("disable") : ("enable"),"value":(enable) ? (ctx.translate(ctx, "Bayrell.CloudOS", "Disable")) : (ctx.translate(ctx, "Bayrell.CloudOS", "Enable"))}))});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButtonInfo(ctx, layout, model, params, Runtime.Dict.from({"type":"danger","@key":(enable) ? ("disable") : ("enable"),"data-action":(enable) ? ("disable") : ("enable"),"value":(enable) ? (ctx.translate(ctx, "Bayrell.CloudOS", "Disable")) : (ctx.translate(ctx, "Bayrell.CloudOS", "Enable"))}))});
 						
 						/* Text */
-						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.Form.Form.renderButton(ctx, layout, model, params, "cancel")});
+						[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "text", {"content": Runtime.Web.CRUD.Form.renderButton(ctx, layout, model, params, "cancel")});
 					}
 					RenderDriver.p(__v0, __v0_childs);
 					
@@ -4485,7 +4518,7 @@ Object.assign(Bayrell.CloudOS.Docker.DockerServicesPage,
 	},
 	components: function(ctx)
 	{
-		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.Form.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText"]);
+		return Runtime.Collection.from(["Runtime.Web.CRUD.CrudPage","Runtime.Web.CRUD.Form","Runtime.Web.Input.Input","Runtime.Web.Input.Label","Runtime.Web.Input.Select","Runtime.Web.Input.SelectText"]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

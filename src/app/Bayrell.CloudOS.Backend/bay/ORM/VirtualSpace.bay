@@ -131,11 +131,16 @@ struct VirtualSpace extends Record
 		if (stack_name == "") return "";
 		if (service_name == "") return "";
 		
+		string uri_prefix = uri;
+		int uri_sz = rs::strlen(uri);
+		if (uri[uri_sz - 1] != "/") uri = uri ~ "/";
+		else uri_prefix = rs::substr(uri, 0, uri_sz - 1);
+		
 		string res = "";
 		res ~= "\tlocation " ~ uri ~ " {\n";
 		res ~= "\t\tproxy_pass http://" ~ stack_name ~ "_" ~ service_name ~ ".test/;\n";
 		res ~= "\t\tinclude proxy_params;\n";
-		res ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ uri ~ "\";\n";
+		res ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ uri_prefix ~ "\";\n";
 		if (space.space_id) res ~= "\t\tproxy_set_header X-SPACE-ID \"" ~ space.space_id ~ "\";\n";
 		if (layer_id) res ~= "\t\tproxy_set_header X-LAYER-ID \"" ~ layer_id ~ "\";\n";
 		if (layer_uid) res ~= "\t\tproxy_set_header X-LAYER-UID \"" ~ layer_uid ~ "\";\n";

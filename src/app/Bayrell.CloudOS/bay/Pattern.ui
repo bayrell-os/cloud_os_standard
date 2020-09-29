@@ -45,7 +45,7 @@
 <script src={ "/js/app.js?_=" ~ model.f_inc }></script>
 
 <script>
-runWebApp("Bayrell.CloudOS", @json{ layout.frontend_env });
+runWebApp(@json{ @.main_module }, @json{ layout.frontend_env });
 </script>
 
 </body>

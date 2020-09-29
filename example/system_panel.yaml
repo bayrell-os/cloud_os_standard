@@ -27,7 +27,7 @@ services:
             MYSQL_USERNAME: "lasto4ka"
             MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
             MYSQL_DB: "web_panel"
-            COOKIE_NAME: auth_token
+            COOKIE_NAME: cloud_os_token
             COOKIE_EXPIRE: 86400
         deploy:
             replicas: 1
