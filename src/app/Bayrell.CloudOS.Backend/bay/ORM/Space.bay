@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Backend.ORM;
 
+use Runtime.lib;
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
 use Runtime.ORM.Annotations.BooleanType;
@@ -26,30 +27,31 @@ use Runtime.ORM.Annotations.Index;
 use Runtime.ORM.Annotations.JsonType;
 use Runtime.ORM.Annotations.Primary;
 use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.TextType;
 use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
+use Runtime.ORM.QueryBuilder;
 use Runtime.ORM.Record;
 
 
-struct Software extends Record
+struct Space extends Record
 {
-	@StringType{ "length": 255 }
-	string api_name;
+	@AutoIncrement{}
+	@BigIntType{}
+	int space_id;
 	
-	@StringType{ "length": 255 }
-	string name;
+	@StringType{}
+	string space_name;
 	
-	@JsonType{}
-	string manifest;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "softwares";
+	pure string table_name() => "spaces";
+	
 	
 	
 	/**
@@ -59,7 +61,8 @@ struct Software extends Record
 	[
 		new Primary
 		{
-			"keys": ["api_name"],
+			"keys": ["space_id"],
 		},
 	];
+	
 }

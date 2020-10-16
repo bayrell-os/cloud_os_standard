@@ -33,13 +33,7 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.DockerLib;
-use Bayrell.CloudOS.Backend.DockerTasks;
-use Bayrell.CloudOS.Backend.ORM.NginxFile;
-use Bayrell.CloudOS.Backend.ORM.Software;
-use Bayrell.CloudOS.Backend.ORM.Stack;
 
 
 struct Service extends Record
@@ -48,24 +42,38 @@ struct Service extends Record
 	@BigIntType{}
 	int service_id;
 	
-	@StringType{ "length": 255 }
+	@StringType{}
 	string stack_name;
 	
-	@StringType{ "length": 255, "nullable": true }
-	string software_api_name;
-	
-	@StringType{ "length": 255 }
+	@StringType{}
 	string service_name;
 	
-	@TextType{ "length": 255 }
-	string docker_content;
-	
-	@BigIntType{}
-	int logic_map_pos_y = 0;
+	@StringType{}
+	string software_api_name;
 	
 	@BooleanType{}
 	bool have_admin_page = 0;
 	
+	@BooleanType{}
+	bool enable;
+	
+	@BooleanType{}
+	bool is_deleted;
+	
+	@StringType{}
+	string docker_name;
+	
+	@TextType{}
+	string docker_content;
+	
+	@JsonType{ "nullable": true }
+	Dict docker_json;
+
+	@JsonType{ "nullable": true }
+	Dict docker_tasks;
+
+	@JsonType{ "nullable": true }
+	Dict docker_balancer;	
 	
 	
 	/**
@@ -96,88 +104,7 @@ struct Service extends Record
 		{
 			"keys": ["have_admin_page"],
 		},
-		new ForeignKey
-		{
-			"name": "stack_name",
-			"class_name": classof Stack,
-			"keys":
-			[
-				{"src": "stack_name", "dest": "stack_name"},
-			],
-			"delete": Record::RESTRICT,
-			"update": Record::RESTRICT,
-		},
-		new ForeignKey
-		{
-			"name": "software_api_name",
-			"class_name": classof Software,
-			"keys":
-			[
-				{"src": "software_api_name", "dest": "api_name"},
-			],
-			"delete": Record::RESTRICT,
-			"update": Record::CASCADE,
-		}
 	];
-	
-	
-	
-	/**
-	 * Compose
-	 */
-	static async void compose(Service item)
-	{
-		/* Save yaml file */
-		string name = item["name"];
-		string stack = item["stack"];
-		string content = item["content"];
-		string dir_path = "/tmp/docker";
-		string file_name = stack ~ "_" ~ name ~ ".yaml";
-		string file_path = dir_path ~ "/" ~ file_name;
-		
-		/* Create files */
-		await fs::mkdir(dir_path);
-		await fs::saveFile(file_path, content);
-		await static::createYamlFiles();
-		
-		/* Deploy */
-		string cmd = "sudo docker stack deploy -c " ~ file_path ~ " " ~ stack ~ " --with-registry-auth";
-		string result = await DockerLib::exec(cmd ~ " 2>/dev/null");
-		
-		/* Sync services */
-		await DockerTasks::syncServices();
-	}
-	
-	
-	
-	/**
-	 * Create yaml files
-	 */
-	static async void createYamlFiles()
-	{
-		/* Get ORM driver */
-		ORMDriver orm = @.getDriver(classof ORMDriver);
-		
-		string table_name = static::getTableName();
-		string dir_path = "/tmp/docker";
-		
-		Cursor cursor = await orm.query
-		(
-			"select * from yaml_files",
-		);
-		
-		while (true)
-		{
-			Dict row = await cursor.fetch();
-			if (row == null)
-			{
-				break;
-			}
-			await fs::saveFile(row["file_name"], row["content"], "utf8", dir_path);
-		}
-		
-		await cursor.close();
-	}
 	
 	
 	

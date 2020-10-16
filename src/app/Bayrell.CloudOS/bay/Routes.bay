@@ -73,14 +73,12 @@ static class Routes
 	
 	
 	/**
-	 * Render chain. Route after
+	 * Title chain
 	 */
-	pure RenderContainer renderChainRouteAfter(RenderContainer container)
+	pure RenderContainer titleChain(LayoutModel layout, string title)
 	{
-		/* Change title */
-		container <= layout <= title <= container.layout.title ~ " | BAYRELL Cloud OS";
-		
-		return [ container ];
+		title = title ~ " | Bayrell Cloud OS";
+		return [ layout, title ];
 	}
 	
 	
@@ -116,20 +114,20 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/", "name": "app.adminer.index" }
+	@Route{ "uri": "/admin/database/", "name": "app.admin.database" }
 	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerPage(RenderContainer container)
 	{
 		MySQLSettings settings = @.config(["Runtime.ORM.MySQL", "default"]);
 		
 		/* Set title */
-		container <= layout <= title <= "Adminer page";
+		container <= layout <= title <= "Admin database";
 		
 		/* Create model */
 		container <= layout <= page_class <= classof AdminerPage;
 		container <= layout <= page_model <= new Dict
 		{
-			"db": settings,
+			"db": settings.toDict(),
 		};
 		
 		return [ container ];
@@ -141,7 +139,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/info/", "name": "app.adminer.info" }
+	@Route{ "uri": "/admin/info/", "name": "app.admin.info" }
 	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerInfoPage(RenderContainer container)
 	{
@@ -165,7 +163,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/adminer/{version}/", "name": "app.adminer.version" }
+	@Route{ "uri": "/admin/database/{version}/", "name": "app.admin.database.version" }
 	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerVersionPage(RenderContainer container)
 	{

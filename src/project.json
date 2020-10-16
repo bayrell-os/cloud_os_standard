@@ -1,10 +1,12 @@
 {
-	"name": "Cloud Web Panel",
+	"name": "BAYRELL Cloud OS",
 	"cache": "var/bundler",
+	"assets": "assets/",
 	"bundles":
 	[
 		{
-			"dest": "web/js/runtime.js",
+			"name": "runtime",
+			"dest": "assets/runtime.js",
 			"lang": "es6",
 			"modules":
 			[
@@ -14,18 +16,31 @@
 			]
 		},
 		{
-			"dest": "web/js/components.js",
+			"name": "components",
+			"dest": "assets/components.js",
 			"lang": "es6",
 			"modules":
 			[
 				"Runtime.Web.Auth",
 				"Runtime.Web.Dialog",
+				"Runtime.Web.Form",
 				"Runtime.Web.Input",
+				"Runtime.Web.Table",
 				"Runtime.Web.CRUD"
 			]
 		},
 		{
-			"dest": "web/js/app.js",
+			"name": "core.css",
+			"dest": "assets/core.css",
+			"lang": "css",
+			"modules":
+			[
+				"Runtime.Web"
+			]
+		},
+		{
+			"name": "app",
+			"dest": "html/app.js",
 			"lang": "es6",
 			"modules":
 			[
@@ -36,8 +51,8 @@
 	],
 	"modules":
 	[
-		"app",
-		"lib"
+		"app/",
+		"lib/"
 	],
 	"plugins":
 	[
@@ -51,19 +66,23 @@
 	{
 		"Bayrell.Bundler.Plugins.BayLang":
 		{
+			"php":
+			{
+				"enable_check_types": true,
+				"enable_context": true,
+				"backend": true,
+				"frontend": false
+			},
 			"es6":
 			{
 				"use_module_name": false,
 				"use_strict": true,
 				"enable_async_await": true,
-				"emulate_async_await": false
-			},
-			"nodejs":
-			{
-				"use_module_name": true,
-				"use_strict": true,
-				"enable_async_await": true,
-				"emulate_async_await": false
+				"emulate_async_await": false,
+				"enable_check_types": true,
+				"enable_context": true,
+				"backend": false,
+				"frontend": true
 			}
 		}
 	},

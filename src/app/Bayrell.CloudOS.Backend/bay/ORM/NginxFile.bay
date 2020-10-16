@@ -41,11 +41,11 @@ struct NginxFile extends Record
 	@BigIntType{}
 	int file_id;
 	
-	@StringType{ "length": 255, "nullable": true }
+	@StringType{}
 	string name;
 	
 	@BooleanType{}
-	string enable;
+	bool enable;
 	
 	@TextType{}
 	string content;

@@ -3,9 +3,7 @@
 /compiler
 /compiler.new
 /node_modules
+/src/assets/
 /src/app/[^\\]*/es6
 /src/app/[^\\]*/nodejs
 /src/app/[^\\]*/php
-/src/compiler.new
-/src/html/assets
-/src/web/assets

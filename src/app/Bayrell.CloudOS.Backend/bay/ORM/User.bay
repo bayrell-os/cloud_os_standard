@@ -31,7 +31,6 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
 
 
@@ -65,7 +64,7 @@ struct User extends Record
 		},
 		new Unique
 		{
-			"keys": ["name"],
+			"keys": ["login"],
 		},
 	];
 	

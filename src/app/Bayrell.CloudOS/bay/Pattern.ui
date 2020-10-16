@@ -23,29 +23,29 @@
 
 <use name="Runtime.Web.RenderDriver" />
 
-<template name="render">
+<template name="render" args="RenderContainer container, LayoutModel layout, Dict params, var content">
 <html>
 <head>
-<title>{ model.title }</title>
+<title>{ RenderDriver::chainTitle(layout, layout.title) }</title>
 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
-<link rel='stylesheet' href={ "/core.css?_=" ~ model.f_inc } />
-<style id='root_style'>@raw{ rs::spaceless( RenderDriver::getLayoutCSS(model) ) }</style>
+<link rel='stylesheet' href={ layout.route_prefix ~ "/assets/core.css?_=" ~ layout.f_inc } />
+<style id='root_style'>@raw{ rs::spaceless( RenderDriver::getLayoutCSS(layout) ) }</style>
 </head>
 <body>
 
-%var string model_encoded = rs::base64_encode_url(rtl::json_encode(model));
+%var string model_encoded = rs::base64_encode_url(rtl::json_encode(layout));
 %var string frontend_storage = rs::base64_encode_url(rtl::json_encode(layout.frontend_storage));
 
 <div id='root'>{ content }</div>
 <input id='root_model' type='hidden' value={ model_encoded } />
 <input id='frontend_storage' type='hidden' value={ frontend_storage } />
 
-<script src={ "/js/runtime.js?_=" ~ model.f_inc }></script>
-<script src={ "/js/components.js?_=" ~ model.f_inc }></script>
-<script src={ "/js/app.js?_=" ~ model.f_inc }></script>
+<script src={ layout.route_prefix ~ "/assets/runtime.js?_=" ~ layout.f_inc }></script>
+<script src={ layout.route_prefix ~ "/assets/components.js?_=" ~ layout.f_inc }></script>
+<script src={ layout.route_prefix ~ "/app.js?_=" ~ layout.f_inc }></script>
 
 <script>
-runWebApp(@json{ @.main_module }, @json{ layout.frontend_env });
+runWebApp(@json{ @.main_module }, @json{ container.frontend_env });
 </script>
 
 </body>

@@ -10,7 +10,7 @@ secrets:
 services:
     
     system_panel:
-        image: bayrell/cloud_os:20200924_140606
+        image: bayrell/cloud_os:0.1-20201015_171558
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "system_panel_data:/data"
@@ -26,11 +26,12 @@ services:
             MYSQL_HOST: "mysql1"
             MYSQL_USERNAME: "lasto4ka"
             MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
-            MYSQL_DB: "web_panel"
+            MYSQL_DB: "system_panel"
             COOKIE_NAME: cloud_os_token
             COOKIE_EXPIRE: 86400
         deploy:
             replicas: 1
+            endpoint_mode: dnsrr
             update_config:
                 parallelism: 1
                 failure_action: rollback
@@ -41,10 +42,10 @@ services:
                 window: 120s
             placement:
                 constraints:
-                    - node.role == manager
+                    - node.hostname == docker0
         networks:
             - backend
-            - balancer
+            - router
         logging:
             driver: journald
 
@@ -53,7 +54,7 @@ volumes:
 
 networks:
     
-    balancer:
+    router:
         external: true
     
     backend:

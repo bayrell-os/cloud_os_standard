@@ -30,20 +30,21 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
 
 
-struct Stack extends Record
+struct Domain extends Record
 {
 	@StringType{}
-	string stack_name;
+	string domain_name;
+	
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "stacks";
+	pure string table_name() => "domains";
+	
 	
 	
 	/**
@@ -53,7 +54,7 @@ struct Stack extends Record
 	[
 		new Primary
 		{
-			"keys": ["stack_name"],
+			"keys": ["domain_name"],
 		},
 	];
 }

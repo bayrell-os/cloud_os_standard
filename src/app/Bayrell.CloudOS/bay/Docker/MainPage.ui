@@ -44,7 +44,7 @@
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer MainPage(RenderContainer container)
 {
-	RemoteCallAnswer answer = await RenderDriver::remoteBusCall
+	RemoteCallAnswer answer = await RenderDriver::externalBusCall
 	(
 		{
 			"object_name": "Bayrell.CloudOS.Dashboard",

@@ -18,12 +18,37 @@
 
 namespace Bayrell.CloudOS.Backend;
 
+use Runtime.Web.RenderContainer;
 use Runtime.Web.Auth.AuthToken;
 use Bayrell.CloudOS.Backend.ORM.User;
 
 
 static class Auth
 {
+	
+	/**
+	 * Save Auth Token in keep data
+	 */
+	static list createAuthToken(RenderContainer container)
+	{
+		int time = rtl::time();
+		
+		/* Create token */
+		AuthToken token = new AuthToken
+		{
+			"user_id": 35,
+			"login": "admin",
+		}
+		
+		/* Set auth token */
+		container <= layout <= tz <= "GMT+6";
+		container <= layout <= keep_data <= { classof AuthToken } <= token;
+		container <= api_storage <= { classof AuthToken } <= token;
+		
+		return [ container ];
+	}
+	
+	
 	
 	/**
 	 * Login

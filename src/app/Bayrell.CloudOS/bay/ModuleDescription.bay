@@ -107,17 +107,18 @@ static class ModuleDescription
 			"is_async": true,
 		},
 		
-		/* Render Chain. Route after */
+		/* Title chain */
 		new LambdaChain
 		{
-			"name": RenderDriver::RENDER_CHAIN,
-			"value": "Bayrell.CloudOS.Routes::renderChainRouteAfter",
-			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
-			"is_async": true,
+			"name": RenderDriver::TITLE_CHAIN,
+			"value": "Bayrell.CloudOS.Routes::titleChain",
 		},
 		
 		/* Register routes */
 		new Entity{ "name": classof Routes },
+		new RouteList{ "name": "Bayrell.CloudOS.MainPage" },
+		
+		/*
 		new RouteList{ "name": "Runtime.Web.Auth.LoginPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.MainPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.NodesPage" },
@@ -132,7 +133,7 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerYamlFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.LogicMap.LogicMapPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.User.UsersPage" },
-		
+		*/
 		
 		#ifdef BACKEND then
 		

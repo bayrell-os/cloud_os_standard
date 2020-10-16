@@ -30,28 +30,27 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.Layer;
-use Bayrell.CloudOS.Backend.ORM.VirtualSpace;
 
 
-struct LayerSpace extends Record
+struct Role extends Record
 {
+	@AutoIncrement{}
 	@BigIntType{}
-	int layer_id;
+	int role_id;
 	
 	@BigIntType{}
 	int space_id;
 	
-	@StringType{ "length": 255 }
-	string uri;
+	@StringType{}
+	string role_name;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "layers_spaces";
+	pure string table_name() => "roles";
+	
 	
 	
 	/**
@@ -61,33 +60,7 @@ struct LayerSpace extends Record
 	[
 		new Primary
 		{
-			"keys": ["layer_id", "space_id"],
-		},
-		new Index
-		{
-			"keys": ["space_id"],
-		},
-		new ForeignKey
-		{
-			"name": "layer_id",
-			"class_name": classof Layer,
-			"keys":
-			[
-				{"src": "layer_id", "dest": "layer_id"},
-			],
-			"delete": Record::CASCADE,
-			"update": Record::CASCADE,
-		},
-		new ForeignKey
-		{
-			"name": "space_id",
-			"class_name": classof VirtualSpace,
-			"keys":
-			[
-				{"src": "space_id", "dest": "space_id"},
-			],
-			"delete": Record::CASCADE,
-			"update": Record::CASCADE,
+			"keys": ["role_id"],
 		},
 	];
 }

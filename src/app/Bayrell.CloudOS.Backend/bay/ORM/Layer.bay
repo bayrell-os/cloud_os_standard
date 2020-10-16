@@ -30,9 +30,7 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.Service;
 
 
 struct Layer extends Record
@@ -42,22 +40,16 @@ struct Layer extends Record
 	int layer_id;
 	
 	@BigIntType{}
-	string service_id;
-	
-	@StringType{ "length": 255 }
-	string layer_name;
-	
-	@StringType{ "length": 255 }
-	string uid;
-	
-	@JsonType{}
-	string data;
-	
-	@BooleanType{ "default": false }
-	bool is_deleted;
+	int space_id;
 	
 	@BigIntType{}
-	int logic_map_pos_y = 0;
+	int service_id;
+	
+	@StringType{}
+	string layer_uid;
+	
+	@StringType{}
+	string layer_name;
 	
 	
 	/**
@@ -75,25 +67,6 @@ struct Layer extends Record
 		new Primary
 		{
 			"keys": ["layer_id"],
-		},
-		new Unique
-		{
-			"keys": ["uid"],
-		},
-		new Index
-		{
-			"keys": ["service_id"],
-		},
-		new ForeignKey
-		{
-			"name": "service_id",
-			"class_name": classof Service,
-			"keys":
-			[
-				{"src": "service_id", "dest": "service_id"},
-			],
-			"delete": Record::RESTRICT,
-			"update": Record::CASCADE,
 		},
 	];
 }

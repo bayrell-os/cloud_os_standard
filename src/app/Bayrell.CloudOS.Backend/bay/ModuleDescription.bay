@@ -22,6 +22,7 @@ use Runtime.Core.Context;
 use Runtime.Core.Entity;
 use Runtime.Core.LambdaChain;
 use Runtime.Web.Auth.AuthBackend;
+use Runtime.Web.RenderDriver;
 
 
 static class ModuleDescription
@@ -64,6 +65,7 @@ static class ModuleDescription
 	pure Collection<Dict> entities() => 
 	[
 		/* Register api */
+		/*
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.Balancer" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.Dashboard" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DockerServiceCrud" },
@@ -76,9 +78,18 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.StackCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.VirtualSpaceCrud" },
+		*/
 		
 		/* Tasks */
-		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
+		/*new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },*/
+		
+		/* Render Chain. Create layout model */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "Bayrell.CloudOS.Backend.Auth::createAuthToken",
+			"pos": RenderDriver::RENDER_CHAIN_CHANGE_LAYOUT_MODEL,
+		},		
 		
 		/* Auth Chain. Login */
 		new LambdaChain

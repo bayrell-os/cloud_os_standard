@@ -26,32 +26,31 @@ use Runtime.ORM.Annotations.Index;
 use Runtime.ORM.Annotations.JsonType;
 use Runtime.ORM.Annotations.Primary;
 use Runtime.ORM.Annotations.StringType;
-use Runtime.ORM.Annotations.TextType;
 use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
 
 
-struct DockerYamlFile extends Record
+struct Route extends Record
 {
-	@AutoIncrement{}
+	@StringType{}
+	string domain_name;
+	
+	@StringType{}
+	string route;
+	
 	@BigIntType{}
-	int file_id;
+	int layer_id;
 	
-	@StringType{ "length": 1024 }
-	string file_name;
-	
-	@TextType{}
-	string content;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "docker_yaml_files";
+	pure string table_name() => "routes";
+	
 	
 	
 	/**
@@ -61,11 +60,7 @@ struct DockerYamlFile extends Record
 	[
 		new Primary
 		{
-			"keys": ["file_id"],
-		},
-		new Unique
-		{
-			"keys": ["file_name"],
+			"keys": ["domain_name", "route"],
 		},
 	];
 }
