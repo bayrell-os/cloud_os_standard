@@ -43,7 +43,7 @@ struct Route extends Record
 	@StringType{}
 	string route;
 	
-	@BigIntType{}
+	@BigIntType{ "nullable": true }
 	int layer_id;
 	
 	
