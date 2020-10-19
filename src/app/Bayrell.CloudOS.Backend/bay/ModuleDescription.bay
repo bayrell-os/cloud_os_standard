@@ -65,6 +65,7 @@ static class ModuleDescription
 	pure Collection<Dict> entities() => 
 	[
 		/* Register api */
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.ServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SpaceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
 		

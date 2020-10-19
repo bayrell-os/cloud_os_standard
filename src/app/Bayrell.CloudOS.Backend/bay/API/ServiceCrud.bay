@@ -32,18 +32,25 @@ use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
-use Bayrell.CloudOS.Backend.ORM.Space;
+use Bayrell.CloudOS.Backend.ORM.Service;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.Space", "interface_name": "core.crud" }
+@ApiList{ "object_name": "Bayrell.CloudOS.Service", "interface_name": "core.crud" }
 @ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
-static class SpaceCrud extends CrudApi
+static class ServiceCrud extends CrudApi
 {
 	
 	/**
 	 * Returns orm class name
 	 */
-	pure string getORM() => classof Space;
+	pure string getORM() => classof Service;
+	
+	
+	
+	/**
+	 * Force delete items
+	 */
+	bool isForceDelete() => false;
 	
 	
 	
@@ -52,8 +59,25 @@ static class SpaceCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["space_id", "space_name", "domain"] },
-		new ReadOnly{ "api_name": "space_id" },
+		new AllowFields
+		{
+			"fields":
+			[
+				"service_id",
+				"stack_name",
+				"service_name",
+				"docker_name",
+				"software_api_name",
+				"have_admin_page",
+				"enable",
+			]
+		},
+		new ReadOnly{ "api_name": "service_id" },
+		new ReadOnly{ "api_name": "docker_name" },
+		new ReadOnly{ "api_name": "stack_name", "can_create": true, },
+		new ReadOnly{ "api_name": "service_name", "can_create": true, },
+		new Required{ "api_name": "stack_name" },
+		new Required{ "api_name": "service_name" },
 	];
 	
 	
@@ -63,8 +87,8 @@ static class SpaceCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["domain", "asc"],
-		["space_id", "asc"]
+		["stack_name", "asc"],
+		["service_name", "asc"]
 	];
 	
 	
@@ -72,7 +96,38 @@ static class SpaceCrud extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	QueryBuilder buildSearchQuery(QueryBuilder q) =>
+		parent::buildSearchQuery(q)
+		|> .addFilter(["is_deleted", "=", 0])
+	;
+	
+	
+	/**
+	 * Find existing item for create
+	 */
+	async Service findItemForCreating() =>
+		Service::select()
+			|> .filter
+			([
+				["stack_name", "=", this.item["stack_name"]],
+				["service_name", "=", this.item["service_name"]],
+			])
+			|> await .one()
+		;
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		if (this.action == "create")
+		{
+			item <= docker_name <= item["stack_name"] ~ "_" ~ item["service_name"];
+		}
+		return item;
+	}
 	
 	
 	

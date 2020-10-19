@@ -117,6 +117,7 @@ static class ModuleDescription
 		/* Register routes */
 		new Entity{ "name": classof Routes },
 		new RouteList{ "name": "Bayrell.CloudOS.MainPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicePage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
 		

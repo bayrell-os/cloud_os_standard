@@ -34,6 +34,7 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 struct Service extends Record

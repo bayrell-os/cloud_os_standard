@@ -188,8 +188,8 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(layout["route", "name"], "app.docker.services") ? "active": "" }>
-								<a class='nolink' href='/docker/services/'>
+							<li class={ rs::start(layout["route", "name"], "app.design.services") ? "active": "" }>
+								<a class='nolink' href='/design/services/'>
 									{ _("Bayrell.CloudOS", "Services") }
 								</a>
 							</li>
