@@ -52,7 +52,7 @@ static class UserCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["login", "banned"] },
+		new AllowFields{ "fields": ["user_id", "login", "name", "banned"] },
 		new ReadOnly{ "api_name": "user_id" },
 		new Required{ "api_name": "login" },
 	];
@@ -64,7 +64,8 @@ static class UserCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["user_id", "desc"]
+		["login", "asc"],
+		["user_id", "asc"]
 	];
 	
 	
@@ -132,10 +133,10 @@ static class UserCrud extends CrudApi
 				string password1 = this.item["password1"];
 				
 				/* Set up password */
-				await User::changePassword(user_id, password1);
+				/* if (not rtl::isEmpty(password1)) await User::changePassword(user_id, password1);*/
 				
 				/* Generate nginx password */
-				await User::nginxPasswdCreate();
+				/*await User::nginxPasswdCreate();*/
 			}
 		}
 	}

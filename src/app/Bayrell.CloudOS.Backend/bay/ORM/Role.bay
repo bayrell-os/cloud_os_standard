@@ -31,6 +31,7 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.Space;
 
 
 struct Role extends Record
@@ -61,6 +62,17 @@ struct Role extends Record
 		new Primary
 		{
 			"keys": ["role_id"],
+		},
+		new ForeignKey
+		{
+			"name": "space_id",
+			"class_name": classof Space,
+			"keys":
+			[
+				{"src": "space_id", "dest": "space_id"},
+			],
+			"delete": Record::CASCADE,
+			"update": Record::CASCADE,
 		},
 	];
 }

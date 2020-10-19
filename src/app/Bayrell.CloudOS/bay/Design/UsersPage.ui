@@ -1,0 +1,292 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.Design.UsersPage" extends="Runtime.Web.CRUD.CrudPage" 
+	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
+>
+
+<use name="Runtime.Exceptions.RuntimeException" />
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Core.RemoteCallAnswer" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.CRUD.CrudPage" component="true" />
+<use name="Runtime.Web.CRUD.CrudPageModel" />
+<use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Input.Input" component="true" />
+<use name="Runtime.Web.Input.Label" component="true" />
+<use name="Runtime.Web.Input.Select" component="true" />
+<use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Table.TableModel" />
+
+
+<script>
+
+
+/**
+ * Returns object name
+ */
+pure string getCrudObjectName() => "Bayrell.CloudOS.User";
+
+
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/design/users/", "name": "app.design.users" }
+@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
+static async RenderContainer actionIndex(RenderContainer container)
+{
+	/* Create model */
+	CrudPageModel page_model = await CrudPageModel::crudSearch(static::getCrudObjectName(), container);
+	
+	/* Set title */
+	container <= layout <= title <= "Users";
+	container <= layout <= layout_name <= "admin";
+	
+	/* Set model */
+	container <= layout <= page_class <= classof UsersPage;
+	container <= layout <= page_model <= page_model;
+	
+	return [ container ];
+}
+
+
+
+/**
+ * Returns options
+ */
+pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
+{
+	return parent::getOptions(layout, model, params, name);
+}
+
+
+
+/**
+ * Returns crud struct
+ */
+pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params) =>
+[
+	new FieldInfo
+	{
+		"api_name": "user_id",
+		"primary": true,
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "number",
+		"label": "",
+		"class_name": classof Label,
+		"info":
+		{
+			"table":
+			{
+				"render": method static::renderNumber,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "login",
+		"label": "Login",
+		"class_name": classof Input,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "name",
+		"label": "Name",
+		"class_name": classof Input,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "banned",
+		"label": "Banned",
+		"class_name": classof Select,
+		"class_settings":
+		{
+			"show_select_value_filter": true,
+			"show_select_value": false,
+			"options":
+			[
+				{"id": 0, "value": "No"},
+				{"id": 1, "value": "Yes"},
+			],
+		},
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof SelectText,
+			},
+			"form":
+			{
+				"class_settings":
+				{
+					"default": 0,
+				},
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "edit-buttons",
+		"label": "",
+		"class_name": classof Label,
+		"info":
+		{
+			"table":
+			{
+				"render": method static::renderButtons,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "password1",
+		"label": "Password",
+		"class_name": classof Input,
+		"class_settings":
+		{
+			"type": "password",
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "password2",
+		"label": "Password",
+		"class_name": classof Input,
+		"class_settings":
+		{
+			"type": "password",
+		},
+	},
+];
+
+
+
+/**
+ * Returns filter fields
+ */
+pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+[
+	"login",
+	"banned",
+];
+
+
+
+/**
+ * Returns form fields
+ */
+pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+[
+	"login",
+	"name",
+	"banned",
+	"password1",
+	"password2",
+];
+
+
+
+/**
+ * Returns table fields
+ */
+pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+[
+	"number",
+	"login",
+	"name",
+	"banned",
+	"edit-buttons"
+];
+
+
+
+/**
+ * Returns view fields
+ */
+pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+[
+];
+
+
+
+/**
+ * Returns messages
+ */
+pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict params) =>
+{
+	"add": _("Bayrell.TimePlanner", "Add user"),
+	"delete": string (Dict item) =>
+		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["login"] } ),
+};
+
+
+
+/**
+ * Dialog settings
+ */
+pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+{
+};
+
+
+
+/**
+ * Form settings
+ */
+pure Dict getFormSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+{
+};
+
+
+</script>
+
+
+
+</class>

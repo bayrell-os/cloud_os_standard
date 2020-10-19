@@ -45,6 +45,8 @@ struct Space extends Record
 	@StringType{}
 	string space_name;
 	
+	@StringType{ "nullable": true }
+	string domain;
 	
 	
 	/**
@@ -63,6 +65,33 @@ struct Space extends Record
 		{
 			"keys": ["space_id"],
 		},
+		new Unique
+		{
+			"keys": ["domain"],
+		},
 	];
+	
+	
+	
+	/**
+	 * Process item to database
+	 */
+	static async Dict toDatabase(Connection conn, Dict item)
+	{
+		item = await parent::toDatabase(conn, item);
+		
+		/* Check domain */
+		string domain = item["domain"];
+		if (rtl::isEmpty(domain))
+		{
+			item <= domain <= null;
+		}
+		else
+		{
+			item <= domain <= rs::trim(domain);
+		}
+		
+		return item;
+	}
 	
 }

@@ -31,6 +31,8 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.Domain;
+use Bayrell.CloudOS.Backend.ORM.Layer;
 
 
 struct Route extends Record
@@ -61,6 +63,28 @@ struct Route extends Record
 		new Primary
 		{
 			"keys": ["domain_name", "route"],
+		},
+		new ForeignKey
+		{
+			"name": "domain_name",
+			"class_name": classof Domain,
+			"keys":
+			[
+				{"src": "domain_name", "dest": "domain_name"},
+			],
+			"delete": Record::CASCADE,
+			"update": Record::CASCADE,
+		},
+		new ForeignKey
+		{
+			"name": "layer_id",
+			"class_name": classof Layer,
+			"keys":
+			[
+				{"src": "layer_id", "dest": "layer_id"},
+			],
+			"delete": Record::CASCADE,
+			"update": Record::CASCADE,
 		},
 	];
 }

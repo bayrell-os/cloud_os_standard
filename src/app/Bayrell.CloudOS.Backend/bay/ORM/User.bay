@@ -40,8 +40,11 @@ struct User extends Record
 	@BigIntType{}
 	int user_id;
 	
-	@StringType{ "length": 255 }
+	@StringType{}
 	string login;
+	
+	@StringType{}
+	string name;
 	
 	@BooleanType{}
 	bool banned;

@@ -117,23 +117,9 @@ static class ModuleDescription
 		/* Register routes */
 		new Entity{ "name": classof Routes },
 		new RouteList{ "name": "Bayrell.CloudOS.MainPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
 		
-		/*
-		new RouteList{ "name": "Runtime.Web.Auth.LoginPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.MainPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Dashboard.NodesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.SoftwaresPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.StacksPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.VirtualSpacesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.CLIPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerServicesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Docker.DockerYamlFilesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.LogicMap.LogicMapPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.User.UsersPage" },
-		*/
 		
 		#ifdef BACKEND then
 		

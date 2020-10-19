@@ -32,18 +32,18 @@ use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
-use Bayrell.CloudOS.Backend.ORM.Stack;
+use Bayrell.CloudOS.Backend.ORM.Space;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.Stack", "interface_name": "core.crud" }
+@ApiList{ "object_name": "Bayrell.CloudOS.Space", "interface_name": "core.crud" }
 @ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
-static class StackCrud extends CrudApi
+static class SpaceCrud extends CrudApi
 {
 	
 	/**
 	 * Returns orm class name
 	 */
-	pure string getORM() => classof Stack;
+	pure string getORM() => classof Space;
 	
 	
 	
@@ -52,8 +52,8 @@ static class StackCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["stack_name"] },
-		new ReadOnly{ "api_name": "stack_name", "can_create": true, "can_update": false, }
+		new AllowFields{ "fields": ["space_id", "space_name", "domain"] },
+		new ReadOnly{ "api_name": "space_id" },
 	];
 	
 	
@@ -63,7 +63,8 @@ static class StackCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["stack_name", "desc"]
+		["domain", "asc"],
+		["space_id", "asc"]
 	];
 	
 	
@@ -98,6 +99,14 @@ static class StackCrud extends CrudApi
 		
 		else if (this.action == "add" or this.action == "update")
 		{
+			/* Check password */
+			string password1 = this.item["password1"];
+			string password2 = this.item["password2"];
+			
+			if (password1 != "" and password1 != password2)
+			{
+				throw new ApiException( _("Bayrell.CloudOS", "Password mismatch") );
+			}
 		}
 		
 		else if (this.action == "delete")
@@ -117,6 +126,17 @@ static class StackCrud extends CrudApi
 		/* If is success */
 		if (this.isSuccess())
 		{
+			if (this.action == "create" or this.action == "update")
+			{
+				string user_id = this.pk["user_id"];
+				string password1 = this.item["password1"];
+				
+				/* Set up password */
+				/* if (not rtl::isEmpty(password1)) await User::changePassword(user_id, password1);*/
+				
+				/* Generate nginx password */
+				/*await User::nginxPasswdCreate();*/
+			}
 		}
 	}
 	
@@ -163,4 +183,5 @@ static class StackCrud extends CrudApi
 	{
 		return await parent::deleteAction(request, answer);
 	}
+	
 }

@@ -65,20 +65,8 @@ static class ModuleDescription
 	pure Collection<Dict> entities() => 
 	[
 		/* Register api */
-		/*
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.Balancer" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.Dashboard" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DockerServiceCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DockerYamlFileCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LayerCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LogicMap" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.NginxFileCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.ServiceCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SoftwareCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.StackCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SpaceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.VirtualSpaceCrud" },
-		*/
 		
 		/* Tasks */
 		/*new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },*/
