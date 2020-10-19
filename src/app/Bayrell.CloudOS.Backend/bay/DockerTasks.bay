@@ -74,7 +74,9 @@ class DockerTasks
 			Dict json = services.item(i);
 			string service_id = json.get("ID", "");
 			string service_name = json |> attr "Spec", "Name" |> default string "";
+			string stack_name = json |> attr "Spec", "Labels", "com.docker.stack.namespace" |> default string "";
 			string service_image = json |> attr "Spec", "TaskTemplate", "ContainerSpec", "Image" |> default string "";
+			string service_short_name = rs::substr(service_name, rs::Strlen(stack_name) + 1);
 			
 			output.writeln ("Update service " ~ service_name);
 			string tasks_str = await DockerLib::dockerApi("/tasks?filters=" ~
@@ -86,19 +88,20 @@ class DockerTasks
 			/* Insert or update */
 			await conn.insert_or_update
 			(
-				"docker_services",
+				"services",
 				{
-					"docker_service_id": service_id,
+					"docker_name": service_name,
 				},
 				{
-					"_name": service_name,
-					"_image": service_image,
+					"stack_name": stack_name,
+					"service_name": service_short_name,
+					"docker_image": service_image,
 					"is_deleted": 0,
 					"enable": 1,
 					"timestamp": time,
-					"json": RuntimeUtils::json_encode(json),
-					"tasks": tasks_str,
-					"balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
+					"docker_json": RuntimeUtils::json_encode(json),
+					"docker_tasks": tasks_str,
+					"docker_balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
 				},
 				db_settings
 			);
@@ -107,7 +110,7 @@ class DockerTasks
 		/* Disable old services */
 		cursor = await conn.query
 		(
-			"update docker_services set enable=0 where timestamp != :timestamp",
+			"update services set enable=0 where timestamp != :timestamp",
 			{
 				"timestamp": time,
 			},
@@ -119,7 +122,7 @@ class DockerTasks
 		/* Delete old services */
 		cursor = await conn.query
 		(
-			"delete from docker_services where is_deleted=1 and timestamp < :timestamp",
+			"delete from services where is_deleted=1 and timestamp < :timestamp",
 			{
 				"timestamp": time - 24*60*60,
 			},

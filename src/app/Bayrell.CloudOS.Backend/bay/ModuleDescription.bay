@@ -70,7 +70,7 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
 		
 		/* Tasks */
-		/*new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },*/
+		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
 		
 		/* Render Chain. Create layout model */
 		new LambdaChain
