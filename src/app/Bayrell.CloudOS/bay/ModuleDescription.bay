@@ -118,6 +118,8 @@ static class ModuleDescription
 		new Entity{ "name": classof Routes },
 		new RouteList{ "name": "Bayrell.CloudOS.MainPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.DomainsPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.RoutesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicePage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },

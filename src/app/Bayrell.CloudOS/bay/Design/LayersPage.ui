@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.RoutesPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Design.LayersPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
@@ -48,7 +48,7 @@
 /**
  * Returns object name
  */
-pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
+pure string getCrudObjectName() => "Bayrell.CloudOS.Layer";
 
 
 
@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/routes/", "name": "app.design.routes" }
+@Route{ "uri": "/design/layers/", "name": "app.design.layers" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
@@ -64,11 +64,11 @@ static async RenderContainer actionIndex(RenderContainer container)
 	CrudPageModel page_model = await CrudPageModel::crudSearch(static::getCrudObjectName(), container);
 	
 	/* Set title */
-	container <= layout <= title <= "Routes";
+	container <= layout <= title <= "Layers";
 	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof RoutesPage;
+	container <= layout <= page_class <= classof LayersPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
@@ -81,20 +81,39 @@ static async RenderContainer actionIndex(RenderContainer container)
  */
 pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
 {
-	if (name == "domains")
+	if (name == "spaces")
 		return model
-			|> attr "foreigns", "domains", "options"
+			|> attr "foreigns", "spaces", "options"
 			|> lib::map
 			(
 				Dict (Dict item) =>
 				{
-					"id": item["domain_name"],
-					"value": item["domain_name"],
+					"id": item["space_id"],
+					"value":
+						item["domain"] != ""
+							? item["domain"] ~ " (" ~ item["space_name"] ~ ")"
+							: item["space_name"],
 					"item": item,
 				}
 			)
 			|> default Collection []
 		;
+		
+	if (name == "services")
+		return model
+			|> attr "foreigns", "services", "options"
+			|> lib::map
+			(
+				Dict (Dict item) =>
+				{
+					"id": item["service_id"],
+					"value": item["docker_name"],
+					"item": item,
+				}
+			)
+			|> default Collection []
+		;	
+	
 	return parent::getOptions(layout, model, params, name);
 }
 
@@ -105,6 +124,12 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
  */
 pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
+	new FieldInfo
+	{
+		"api_name": "layer_id",
+		"primary": true,
+	},
+	
 	new FieldInfo
 	{
 		"api_name": "number",
@@ -121,20 +146,33 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
-		"api_name": "domain_name",
-		"primary": true,
-		"label": "Domain name",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(layout, model, params, "domains"),
-		},
+		"api_name": "layer_name",
+		"label": "Name",
+		"class_name": classof Input,
 		"info":
 		{
 			"table":
 			{
-				"class_name": classof SelectText,
+				"class_name": classof Label,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_uid",
+		"label": "UID",
+		"class_name": classof Input,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
+			},
+			"form":
+			{
+				"class_name": string (LayoutModel layout, var model, Dict settings) =>
+					model["action"] == "create" ? classof Input : classof Label,
 			},
 		},
 	},
@@ -142,7 +180,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	new FieldInfo
 	{
 		"api_name": "route",
-		"primary": true,
 		"label": "Route",
 		"class_name": classof Input,
 		"info":
@@ -156,12 +193,34 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
-		"api_name": "layer_id",
-		"label": "Layer",
+		"api_name": "space_id",
+		"primary": true,
+		"label": "Space",
 		"class_name": classof Select,
 		"class_settings":
 		{
 			"show_select_value": true,
+			"options": static::getOptions(layout, model, params, "spaces"),
+		},
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof SelectText,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "service_id",
+		"primary": true,
+		"label": "Service",
+		"class_name": classof Select,
+		"class_settings":
+		{
+			"show_select_value": true,
+			"options": static::getOptions(layout, model, params, "services"),
 		},
 		"info":
 		{
@@ -194,9 +253,9 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
  */
 pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
-	"domain_name",
-	"route",
-	"layer_id",
+	"space_id",
+	"service_id",
+	"layer_uid",
 ];
 
 
@@ -206,9 +265,11 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
  */
 pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
-	"domain_name",
+	"space_id",
+	"service_id",
 	"route",
-	"layer_id",
+	"layer_name",
+	"layer_uid",
 ];
 
 
@@ -219,9 +280,11 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"number",
-	"domain_name",
+	"space_id",
 	"route",
-	"layer_id",
+	"service_id",
+	"layer_name",
+	"layer_uid",
 	"edit-buttons"
 ];
 
@@ -241,11 +304,9 @@ pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, D
  */
 pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict params) =>
 {
-	"add": _("Bayrell.TimePlanner", "Add route"),
+	"add": _("Bayrell.TimePlanner", "Add layer"),
 	"delete": string (Dict item) =>
-		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?",
-			{ "name": item["domain_name"] ~ item["route"] }
-		),
+		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["layer_name"] } ),
 };
 
 

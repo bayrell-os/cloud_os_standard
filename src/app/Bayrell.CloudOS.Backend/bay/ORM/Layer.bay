@@ -53,6 +53,9 @@ struct Layer extends Record
 	@StringType{}
 	string layer_name;
 	
+	@StringType{}
+	string route;
+	
 	
 	/**
 	 * Returns table name

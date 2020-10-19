@@ -8,6 +8,8 @@
 		"MainPage",
 		"MainPageModel",
 		"Design/DomainsPage",
+		"Design/LayersPage",
+		"Design/NginxFilesPage",
 		"Design/RoutesPage",
 		"Design/ServicePage",
 		"Design/SpacesPage",

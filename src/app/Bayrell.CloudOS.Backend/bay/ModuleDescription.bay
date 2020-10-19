@@ -66,6 +66,8 @@ static class ModuleDescription
 	[
 		/* Register api */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DomainCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LayerCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.NginxFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.RouteCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.ServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SpaceCrud" },
