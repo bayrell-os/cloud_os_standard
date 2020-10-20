@@ -52,8 +52,7 @@ static class NginxFileCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["file_id", "name", "enable", "content"] },
-		new ReadOnly{ "api_name": "file_id" },
+		new AllowFields{ "fields": ["name", "enable", "content"] },
 	];
 	
 	

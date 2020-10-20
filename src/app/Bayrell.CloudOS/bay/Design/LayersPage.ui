@@ -90,8 +90,8 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 				{
 					"id": item["space_id"],
 					"value":
-						item["domain"] != ""
-							? item["domain"] ~ " (" ~ item["space_name"] ~ ")"
+						not rtl::isEmpty(item["domain_name"])
+							? item["domain_name"] ~ " (" ~ item["space_name"] ~ ")"
 							: item["space_name"],
 					"item": item,
 				}

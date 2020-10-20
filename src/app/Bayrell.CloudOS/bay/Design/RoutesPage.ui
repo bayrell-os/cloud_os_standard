@@ -95,6 +95,25 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 			)
 			|> default Collection []
 		;
+		
+	if (name == "layers")
+		return model
+			|> attr "foreigns", "layers", "options"
+			|> lib::map
+			(
+				Dict (Dict item) =>
+				{
+					"id": item["layer_id"],
+					"value":
+						item["layer_uid"] ~
+						" | " ~ item["domain_name"] ~ item["route"] ~
+						" | " ~ item["layer_name"],
+					"item": item,
+				}
+			)
+			|> default Collection []
+		;
+	
 	return parent::getOptions(layout, model, params, name);
 }
 
@@ -162,6 +181,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"class_settings":
 		{
 			"show_select_value": true,
+			"options": static::getOptions(layout, model, params, "layers"),
 		},
 		"info":
 		{

@@ -195,7 +195,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 						(
 							layout, settings, "view",
 							{
-								"url": "/services/admin/" ~ settings["crud_item"]["service_id"] ~ "/",
+								"url": "/design/services/admin/" ~ settings["crud_item"]["service_id"] ~ "/",
 							}
 						)
 				,

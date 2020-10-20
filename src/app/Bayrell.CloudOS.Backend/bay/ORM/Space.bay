@@ -34,6 +34,7 @@ use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.QueryBuilder;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.Domain;
 
 
 struct Space extends Record
@@ -46,7 +47,7 @@ struct Space extends Record
 	string space_name;
 	
 	@StringType{ "nullable": true }
-	string domain;
+	string domain_name;
 	
 	
 	/**
@@ -67,7 +68,18 @@ struct Space extends Record
 		},
 		new Unique
 		{
-			"keys": ["domain"],
+			"keys": ["domain_name"],
+		},
+		new ForeignKey
+		{
+			"name": "domain_name",
+			"class_name": classof Domain,
+			"keys":
+			[
+				{"src": "domain_name", "dest": "domain_name"},
+			],
+			"delete": Record::RESTRICT,
+			"update": Record::CASCADE,
 		},
 	];
 	

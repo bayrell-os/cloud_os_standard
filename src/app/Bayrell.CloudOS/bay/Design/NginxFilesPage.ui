@@ -93,12 +93,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 [
 	new FieldInfo
 	{
-		"api_name": "file_id",
-		"primary": true,
-	},
-	
-	new FieldInfo
-	{
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
@@ -114,7 +108,8 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	new FieldInfo
 	{
 		"api_name": "name",
-		"label": "Space name",
+		"primary": true,
+		"label": "File name",
 		"class_name": classof Input,
 		"info":
 		{
@@ -249,6 +244,7 @@ pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict para
  */
 pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
 {
+	"width": "800px",
 };
 
 

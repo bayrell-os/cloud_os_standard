@@ -34,7 +34,9 @@ use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.Backend.ORM.Domain;
+use Bayrell.CloudOS.Backend.ORM.Layer;
 use Bayrell.CloudOS.Backend.ORM.Route;
+use Bayrell.CloudOS.Backend.ORM.Space;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Route", "interface_name": "core.crud" }
@@ -63,6 +65,22 @@ static class RouteCrud extends CrudApi
 		{
 			"name": "domains",
 			"class_name": classof Domain,
+		},
+		
+		/* Add layers dictionary */
+		new Dictionary
+		{
+			"name": "layers",
+			"class_name": classof Layer,
+			"fields": ["layer_id", "layer_name", "layer_uid", "route", "domain_name"],
+			"buildSearchQuery": QueryBuilder (QueryBuilder q)
+			{
+				return q
+					|> .alias("layers")
+					|> .fields(["layers.*", "spaces.domain_name as domain_name"])
+					|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
+				;
+			},
 		},
 	];
 	
@@ -113,9 +131,13 @@ static class RouteCrud extends CrudApi
 	{
 		await parent::after();
 		
-		/* If is success */
-		if (this.isSuccess())
+		/* If is modify success */
+		if (this.isSuccess() and this.isModify())
 		{
+			string old_domain_name = this.old_item["domain_name"];
+			string new_domain_name = this.new_item["domain_name"];
+			await Domain::updateNginx(old_domain_name);
+			if (new_domain_name != old_domain_name) await Domain::updateNginx(new_domain_name);
 		}
 	}
 	

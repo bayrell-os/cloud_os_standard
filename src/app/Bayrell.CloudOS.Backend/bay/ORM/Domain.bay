@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Backend.ORM;
 
+use Runtime.lib;
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
 use Runtime.ORM.Annotations.BooleanType;
@@ -26,17 +27,27 @@ use Runtime.ORM.Annotations.Index;
 use Runtime.ORM.Annotations.JsonType;
 use Runtime.ORM.Annotations.Primary;
 use Runtime.ORM.Annotations.StringType;
+use Runtime.ORM.Annotations.TextType;
 use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.Backend.ORM.Route;
+use Bayrell.CloudOS.Backend.ORM.Service;
+use Bayrell.CloudOS.Backend.ORM.Space;
 
 
 struct Domain extends Record
 {
 	@StringType{}
 	string domain_name;
+	
+	
+	@TextType{}
+	string nginx_template;
 	
 	
 	
@@ -57,4 +68,140 @@ struct Domain extends Record
 			"keys": ["domain_name"],
 		},
 	];
+	
+	
+	
+	/**
+	 * Get layer
+	 */
+	pure string getLayer(Dict item)
+	{
+		string uri = item["route"] |> default string "";
+		string layer_id = item["layer_id"] |> default string "";
+		string layer_uid = item["layer_uid"] |> default string "";
+		string space_id = item["space_id"] |> default string "";
+		string docker_name = item["docker_name"] |> default string "";
+		
+		if (rtl::isEmpty(docker_name)) return "";
+		if (rtl::isEmpty(docker_name)) return "";
+		
+		string uri_prefix = uri;
+		int uri_sz = rs::strlen(uri);
+		if (uri[uri_sz - 1] != "/") uri = uri ~ "/";
+		else uri_prefix = rs::substr(uri, 0, uri_sz - 1);
+		
+		string res = "";
+		res ~= "\tlocation " ~ uri ~ " {\n";
+		res ~= "\t\tproxy_pass http://" ~ docker_name ~ ".test/;\n";
+		res ~= "\t\tinclude proxy_params;\n";
+		
+		/* If not Cloud OS Layer */
+		if (layer_uid != "00000000-0000-0000-0000-000000000000")
+		{
+			res ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ uri_prefix ~ "\";\n";
+			if (space_id) res ~= "\t\tproxy_set_header X-SPACE-ID \"" ~ space_id ~ "\";\n";
+			if (layer_id) res ~= "\t\tproxy_set_header X-LAYER-ID \"" ~ layer_id ~ "\";\n";
+			if (layer_uid) res ~= "\t\tproxy_set_header X-LAYER-UID \"" ~ layer_uid ~ "\";\n";
+		}
+		
+		res ~= "\t}";
+		
+		return res;
+	}
+	
+	
+	
+	/**
+	 * Update nginx files
+	 */
+	static async void updateNginx(string domain_name, Dict db_settings = null)
+	{
+		Domain domain = await static::getById(domain_name, db_settings);
+		
+		Collection<Dict> layers = Layer::select()
+			|> .alias("layers")
+			|> .fields([
+				"spaces.domain_name",
+				"layers.route",
+				"layers.layer_id",
+				"layers.layer_uid",
+				"layers.space_id",
+				"services.docker_name",
+			])
+			|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
+			|> .leftJoin(Service::table_name(), "services", "layers.service_id=services.service_id")
+			|> .filter
+			([
+				["spaces.domain_name", "=", domain_name]
+			])
+			|> .asRecord(false)
+			
+			/* Get items from database */
+			|> await .all(db_settings)
+		;
+		
+		Collection<Dict> routes = Route::select()
+			|> .alias("routes")
+			|> .fields([
+				"routes.domain_name",
+				"routes.route",
+				"layers.layer_id",
+				"layers.layer_uid",
+				"layers.space_id",
+				"services.docker_name",
+			])
+			|> .leftJoin(Layer::table_name(), "layers", "layers.layer_id=routes.layer_id")
+			|> .leftJoin(Service::table_name(), "services", "layers.service_id=services.service_id")
+			|> .asRecord(false)
+			|> .filter
+			([
+				["domain_name", "=", domain_name]
+			])
+			
+			/* Get items from database */
+			|> await .all(db_settings)
+			
+			/* Remove routes what have in layers */
+			|> .filter
+			(
+				bool (Dict item) use (layers) =>
+					layers.find( lib::equalAttr("route", item["route"]) ) == -1
+			)
+		;
+		
+		routes = layers
+			
+			/* Add routes */
+			|> .concat( routes )
+			
+			/* Sort by URI */
+			|> .sortIm( lib::sortAttr("route", "desc") )
+			
+			/* Convert items to layer */
+			|> .map( method static::getLayer )
+			
+			/* Remove empty strings */
+			|> .filter( lib::equalNot("") )			
+		
+		
+		/* Create nginx files */
+		string nginx_content = domain.nginx_template;
+		
+		nginx_content = rs::replace("%DOMAIN_NAME%", domain.domain_name, nginx_content);
+		nginx_content = rs::replace("%ROUTES%", rs::join("\n", routes), nginx_content);
+		nginx_content = rs::replace("%SSL%", "", nginx_content);
+		
+		/* Update nginx file */
+		NginxFile file = await NginxFile::save
+		(
+			{
+				"name": "domains/" ~ domain.domain_name ~ ".conf",
+				"content": nginx_content,
+				"timestamp": rtl::time(),
+				"enable": true,
+				"is_deleted": false,
+			},
+			db_settings
+		);
+	}
 }

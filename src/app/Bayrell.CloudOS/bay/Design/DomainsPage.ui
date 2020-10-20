@@ -38,6 +38,7 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
 
 
@@ -121,6 +122,13 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
+		"api_name": "nginx_template",
+		"label": "Nginx temlate",
+		"class_name": classof TextArea,
+	},
+	
+	new FieldInfo
+	{
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
@@ -152,6 +160,7 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
 pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"domain_name",
+	"nginx_template",
 ];
 
 
@@ -194,6 +203,7 @@ pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict para
  */
 pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
 {
+	"width": "800px",
 };
 
 

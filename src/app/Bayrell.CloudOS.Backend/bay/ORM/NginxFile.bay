@@ -37,10 +37,6 @@ use Runtime.ORM.Record;
 
 struct NginxFile extends Record
 {
-	@AutoIncrement{}
-	@BigIntType{}
-	int file_id;
-	
 	@StringType{}
 	string name;
 	
@@ -69,10 +65,6 @@ struct NginxFile extends Record
 	pure Collection keys() =>
 	[
 		new Primary
-		{
-			"keys": ["file_id"],
-		},
-		new Unique
 		{
 			"keys": ["name"],
 		},

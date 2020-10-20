@@ -193,14 +193,14 @@ span.lpad5{
 									{ _("Bayrell.CloudOS", "Services") }
 								</a>
 							</li>
+							<li class={ rs::start(layout["route", "name"], "app.design.domains") ? "active": "" }>
+								<a class='nolink' href='/design/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.spaces") ? "active": "" }>
 								<a class='nolink' href='/design/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.layers") ? "active": "" }>
 								<a class='nolink' href='/design/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
-							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.domains") ? "active": "" }>
-								<a class='nolink' href='/design/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.design.routes") ? "active": "" }>
 								<a class='nolink' href='/design/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>

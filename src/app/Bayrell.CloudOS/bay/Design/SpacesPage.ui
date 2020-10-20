@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -80,6 +81,21 @@ static async RenderContainer actionIndex(RenderContainer container)
  */
 pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
 {
+	if (name == "domains")
+		return model
+			|> attr "foreigns", "domains", "options"
+			|> lib::map
+			(
+				Dict (Dict item) =>
+				{
+					"id": item["domain_name"],
+					"value": item["domain_name"],
+					"item": item,
+				}
+			)
+			|> default Collection []
+		;
+	
 	return parent::getOptions(layout, model, params, name);
 }
 
@@ -126,14 +142,19 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
-		"api_name": "domain",
+		"api_name": "domain_name",
 		"label": "Domain name",
-		"class_name": classof Input,
+		"class_name": classof Select,
+		"class_settings":
+		{
+			"show_select_value": true,
+			"options": static::getOptions(layout, model, params, "domains"),
+		},
 		"info":
 		{
 			"table":
 			{
-				"class_name": classof Label,
+				"class_name": classof SelectText,
 			},
 		},
 	},
@@ -161,7 +182,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"space_name",
-	"domain",
+	"domain_name",
 ];
 
 
@@ -172,7 +193,7 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
 pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"space_name",
-	"domain",
+	"domain_name",
 ];
 
 
@@ -184,7 +205,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 [
 	"number",
 	"space_name",
-	"domain",
+	"domain_name",
 	"edit-buttons"
 ];
 

@@ -52,7 +52,7 @@ static class DomainCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["domain_name"] },
+		new AllowFields{ "fields": ["domain_name", "nginx_template"] },
 		new Required{ "api_name": "domain_name" },
 	];
 	
@@ -72,6 +72,36 @@ static class DomainCrud extends CrudApi
 	 * Build query
 	 */
 	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		/* Convert item */
+		item = await parent::convertItem(item);
+		
+		/* Set default template */
+		string nginx_template = item["nginx_template"] |> default string "";
+		if (nginx_template == "")
+		{
+			nginx_template = "";
+			nginx_template ~= "server {\n";
+			nginx_template ~= "\tlisten 80;\n";
+			nginx_template ~= "\tserver_name %DOMAIN_NAME%;\n";
+			nginx_template ~= "\troot /usr/share/nginx/default;\n";
+			nginx_template ~= "\tindex index.html;\n";
+			nginx_template ~= "\tautoindex off;\n";
+			nginx_template ~= "%ROUTES%\n";
+			nginx_template ~= "%SSL%\n";
+			nginx_template ~= "}";
+			item <= nginx_template <= nginx_template;
+		}
+		
+		return item;
+	}
 	
 	
 	
@@ -103,8 +133,12 @@ static class DomainCrud extends CrudApi
 		await parent::after();
 		
 		/* If is success */
-		if (this.isSuccess())
+		if (this.isSuccess() and this.isModify())
 		{
+			string old_domain_name = this.old_item["domain_name"];
+			string new_domain_name = this.new_item["domain_name"];
+			if (this.isDelete()) await Domain::updateNginx(old_domain_name);
+			else if (new_domain_name != old_domain_name) await Domain::updateNginx(new_domain_name);
 		}
 	}
 	
