@@ -92,15 +92,15 @@ struct Space extends Record
 	{
 		item = await parent::toDatabase(conn, item);
 		
-		/* Check domain */
-		string domain = item["domain"];
-		if (rtl::isEmpty(domain))
+		/* Check domain_name */
+		string domain_name = item["domain_name"];
+		if (rtl::isEmpty(domain_name))
 		{
-			item <= domain <= null;
+			item <= domain_name <= null;
 		}
 		else
 		{
-			item <= domain <= rs::trim(domain);
+			item <= domain_name <= rs::trim(domain_name);
 		}
 		
 		return item;

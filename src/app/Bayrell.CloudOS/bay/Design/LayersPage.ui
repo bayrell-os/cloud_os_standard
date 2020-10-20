@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Layer";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/layers/", "name": "app.design.layers" }
+@Route{ "uri": "/admin/layers/", "name": "app.admin.layers" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
@@ -141,6 +141,19 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 			{
 				"render": method static::renderNumber,
 			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_href",
+		"label": "Route",
+		"class_name": classof Label,
+		"render": html (LayoutModel layout, var value, Dict settings)
+		{
+			Dict item = settings["crud_item"];
+			string uri = "http://" ~ item["domain_name"] ~ item["route"];
+			return uri;
 		},
 	},
 	
@@ -233,6 +246,33 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
+		"api_name": "open",
+		"label": "",
+		"class_name": classof Label,
+		"info":
+		{
+			"table":
+			{
+				"render": html (LayoutModel layout, var value, Dict settings)
+				{
+					Dict item = settings["crud_item"];
+					string uri = "http://" ~ item["domain_name"] ~ item["route"];
+					return static::renderButton
+					(
+						layout, settings, "view",
+						{
+							"url": uri,
+							"target": "_blank",
+							"label": "Open",
+						}
+					);
+				},
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
@@ -280,11 +320,11 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"number",
-	"space_id",
-	"route",
+	"layer_href",
 	"service_id",
 	"layer_name",
 	"layer_uid",
+	"open",
 	"edit-buttons"
 ];
 

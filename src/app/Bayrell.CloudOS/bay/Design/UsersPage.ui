@@ -55,7 +55,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.User";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/users/", "name": "app.design.users" }
+@Route{ "uri": "/admin/users/", "name": "app.admin.users" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {

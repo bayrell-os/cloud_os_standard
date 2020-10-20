@@ -231,11 +231,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.services")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.services")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/services/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/services/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Services")});
@@ -244,11 +244,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.domains")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.domains")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/domains/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/domains/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Domains")});
@@ -257,11 +257,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.spaces")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.spaces")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/spaces/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/spaces/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Spaces")});
@@ -270,11 +270,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.layers")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.layers")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/layers/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/layers/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Layers")});
@@ -283,11 +283,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.routes")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.routes")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/routes/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/routes/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Routes")});
@@ -296,11 +296,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.nginx")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.nginx")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/nginx/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/nginx/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Nginx Files")});
@@ -309,11 +309,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.users")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.users")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/users/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/users/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Users")});
@@ -322,11 +322,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.roles")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.roles")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/roles/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/roles/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Roles")});
@@ -335,11 +335,11 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Element 'li' */
 			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.design.permissions")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.permissions")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
 			
 			/* Element 'a.nolink' */
 			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/design/permissions/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/permissions/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Permissions")});
@@ -374,6 +374,19 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			
 			/* Text */
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Adminer")});
+			RenderDriver.p(__v7, __v7_childs);
+			RenderDriver.p(__v6, __v6_childs);
+			
+			/* Element 'li' */
+			var __v6; var __v6_childs = [];
+			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {}});
+			
+			/* Element 'a.nolink' */
+			var __v7; var __v7_childs = [];
+			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/env/","target":"_self","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+			
+			/* Text */
+			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Env")});
 			RenderDriver.p(__v7, __v7_childs);
 			RenderDriver.p(__v6, __v6_childs);
 			
@@ -1255,7 +1268,7 @@ Object.assign(Bayrell.CloudOS.Design.DomainsPage,
 				"class_name": "Bayrell.CloudOS.Design.DomainsPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/domains/","name":"app.design.domains"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/domains/","name":"app.admin.domains"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -1381,10 +1394,20 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
  */
 	getStruct: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderNumber.bind(this)})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Name","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"UID","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"}),"form":Runtime.Dict.from({"class_name":(ctx, layout, model, settings) => 
+		return Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","primary":true})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderNumber.bind(this)})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_href","label":"Route","class_name":"Runtime.Web.Input.Label","render":(ctx, layout, value, settings) => 
+		{
+			var item = Runtime.rtl.get(ctx, settings, "crud_item");
+			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
+			return uri;
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Name","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"UID","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"}),"form":Runtime.Dict.from({"class_name":(ctx, layout, model, settings) => 
 		{
 			return (Runtime.rtl.get(ctx, model, "action") == "create") ? ("Runtime.Web.Input.Input") : ("Runtime.Web.Input.Label");
-		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"space_id","primary":true,"label":"Space","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "spaces")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","primary":true,"label":"Service","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "services")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderButtons.bind(this)})})}))]);
+		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"space_id","primary":true,"label":"Space","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "spaces")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","primary":true,"label":"Service","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "services")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
+		{
+			var item = Runtime.rtl.get(ctx, settings, "crud_item");
+			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
+			return this.renderButton(ctx, layout, settings, "view", Runtime.Dict.from({"url":uri,"target":"_blank","label":"Open"}));
+		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderButtons.bind(this)})})}))]);
 	},
 	/**
  * Returns filter fields
@@ -1405,7 +1428,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
  */
 	getTableFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["number","space_id","route","service_id","layer_name","layer_uid","edit-buttons"]);
+		return Runtime.Collection.from(["number","layer_href","service_id","layer_name","layer_uid","open","edit-buttons"]);
 	},
 	/**
  * Returns view fields
@@ -1500,7 +1523,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 				"class_name": "Bayrell.CloudOS.Design.LayersPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/layers/","name":"app.design.layers"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/layers/","name":"app.admin.layers"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -1716,7 +1739,7 @@ Object.assign(Bayrell.CloudOS.Design.NginxFilesPage,
 				"class_name": "Bayrell.CloudOS.Design.NginxFilesPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/nginx/","name":"app.design.nginx"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/nginx/","name":"app.admin.nginx"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -1830,7 +1853,7 @@ Object.assign(Bayrell.CloudOS.Design.RoutesPage,
 			__v0 = __v0.attr(ctx, "options");
 			__v0 = __v0.call(ctx, Runtime.lib.map(ctx, (ctx, item) => 
 			{
-				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "layer_id"),"value":Runtime.rtl.get(ctx, item, "layer_uid") + Runtime.rtl.toStr(" | ") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route")) + Runtime.rtl.toStr(" | ") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "layer_name")),"item":item});
+				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "layer_id"),"value":Runtime.rtl.get(ctx, item, "layer_name") + Runtime.rtl.toStr(" (") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route")) + Runtime.rtl.toStr(")"),"item":item});
 			}));
 			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			return __v0.value(ctx);
@@ -1842,28 +1865,53 @@ Object.assign(Bayrell.CloudOS.Design.RoutesPage,
  */
 	getStruct: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderNumber.bind(this)})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"domain_name","primary":true,"label":"Domain name","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "domains")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","primary":true,"label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "layers")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderButtons.bind(this)})})}))]);
+		var layers = this.getOptions(ctx, layout, model, params, "layers");
+		return Runtime.Collection.from([new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"number","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderNumber.bind(this)})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"domain_name","primary":true,"label":"Domain name","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "domains")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","primary":true,"label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"domain_route","label":"Route","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
+		{
+			var item = Runtime.rtl.get(ctx, settings, "crud_item");
+			return Runtime.rtl.get(ctx, item, "domain_name") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":layers}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"Layer UID","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
+		{
+			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
+			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
+			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "layer_uid");
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_route","label":"Layer route","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
+		{
+			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
+			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
+			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "domain_name") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "route"));
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Layer name","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
+		{
+			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
+			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
+			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "layer_name");
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
+		{
+			var item = Runtime.rtl.get(ctx, settings, "crud_item");
+			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
+			return this.renderButton(ctx, layout, settings, "view", Runtime.Dict.from({"url":uri,"target":"_blank","label":"Open"}));
+		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderButtons.bind(this)})})}))]);
 	},
 	/**
  * Returns filter fields
  */
 	getFilterFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["domain_name","route","layer_id"]);
+		return Runtime.Collection.from(["layer_id","domain_name","route"]);
 	},
 	/**
  * Returns form fields
  */
 	getFormFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["domain_name","route","layer_id"]);
+		return Runtime.Collection.from(["layer_id","domain_name","route"]);
 	},
 	/**
  * Returns table fields
  */
 	getTableFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["number","domain_name","route","layer_id","edit-buttons"]);
+		return Runtime.Collection.from(["number","layer_name","layer_route","layer_uid","domain_route","open","edit-buttons"]);
 	},
 	/**
  * Returns view fields
@@ -1958,7 +2006,7 @@ Object.assign(Bayrell.CloudOS.Design.RoutesPage,
 				"class_name": "Bayrell.CloudOS.Design.RoutesPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/routes/","name":"app.design.routes"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/routes/","name":"app.admin.routes"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -2066,7 +2114,7 @@ Object.assign(Bayrell.CloudOS.Design.ServicePage,
 			return (Runtime.rtl.get(ctx, model, "action") == "create") ? ("Runtime.Web.Input.Input") : ("Runtime.Web.Input.Label");
 		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"software_api_name","label":"Software api name","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"docker_name","label":"Docker name","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"filter":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Input"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"have_admin_page","label":"Admin page","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText","render":(ctx, layout, value, settings) => 
 		{
-			return (value == 0) ? ("No") : (this.renderButton(ctx, layout, settings, "view", Runtime.Dict.from({"url":"/design/services/admin/" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "service_id")) + Runtime.rtl.toStr("/")})));
+			return (value == 0) ? ("No") : (this.renderButton(ctx, layout, settings, "view", Runtime.Dict.from({"url":"/admin/services/admin/" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "service_id")) + Runtime.rtl.toStr("/")})));
 		}}),"form":Runtime.Dict.from({"class_settings":Runtime.Dict.from({"default":0})})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"enable","label":"Enable","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"}),"form":Runtime.Dict.from({"class_settings":Runtime.Dict.from({"default":0})})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"edit-buttons","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":this.renderButtons.bind(this)})})}))]);
 	},
 	/**
@@ -2183,7 +2231,7 @@ Object.assign(Bayrell.CloudOS.Design.ServicePage,
 				"class_name": "Bayrell.CloudOS.Design.ServicePage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/services/","name":"app.design.services"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/services/","name":"app.admin.services"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -2412,7 +2460,7 @@ Object.assign(Bayrell.CloudOS.Design.SpacesPage,
 				"class_name": "Bayrell.CloudOS.Design.SpacesPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/spaces/","name":"app.design.spaces"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/spaces/","name":"app.admin.spaces"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});
@@ -2628,7 +2676,7 @@ Object.assign(Bayrell.CloudOS.Design.UsersPage,
 				"class_name": "Bayrell.CloudOS.Design.UsersPage",
 				"name": "actionIndex",
 				"annotations": Collection.from([
-					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/design/users/","name":"app.design.users"})),
+					new Runtime.Web.Route(ctx, Runtime.Dict.from({"uri":"/admin/users/","name":"app.admin.users"})),
 					new Runtime.Web.RouteMiddleware(ctx, Runtime.Dict.from({"value":"Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware"})),
 				]),
 			});

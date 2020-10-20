@@ -116,6 +116,8 @@ struct Domain extends Record
 	 */
 	static async void updateNginx(string domain_name, Dict db_settings = null)
 	{
+		if (rtl::isEmpty(domain_name)) return;
+		
 		Domain domain = await static::getById(domain_name, db_settings);
 		
 		Collection<Dict> layers = Layer::select()
@@ -182,7 +184,7 @@ struct Domain extends Record
 			
 			/* Remove empty strings */
 			|> .filter( lib::equalNot("") )			
-		
+		;
 		
 		/* Create nginx files */
 		string nginx_content = domain.nginx_template;

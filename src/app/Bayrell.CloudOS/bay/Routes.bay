@@ -147,7 +147,34 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/admin/info/", "name": "app.admin.info" }
+	@Route{ "uri": "/admin/env/", "name": "app.admin.env" }
+	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
+	static async RenderContainer adminerEnvPage(RenderContainer container)
+	{
+		string content = "";
+		Dict env = @.enviroments;
+		
+		#ifcode PHP then
+		@ob_start();
+		echo "<pre>";
+		var_dump($env);
+		echo "</pre>";
+		$content = ob_get_contents();
+		@ob_end_clean();
+		#endif
+		
+		container <= response <= new Response{ "content": content };
+		
+		return [ container ];
+	}
+	
+	
+	
+	/**
+	 * Route Action
+	 * @return WebContainer
+	 */
+	@Route{ "uri": "/admin/phpinfo/", "name": "app.admin.phpinfo" }
 	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerInfoPage(RenderContainer container)
 	{

@@ -56,7 +56,15 @@ static class RouteCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["domain_name", "route", "layer_id"] },
+		new AllowFields
+		{
+			"fields":
+			[
+				"domain_name",
+				"route",
+				"layer_id",
+			]
+		},
 		new Required{ "api_name": "domain_name" },
 		new Required{ "api_name": "route" },
 		

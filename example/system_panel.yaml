@@ -29,6 +29,7 @@ services:
             MYSQL_DB: "system_panel"
             COOKIE_NAME: cloud_os_token
             COOKIE_EXPIRE: 86400
+            CLOUD_KEY: mysecretkey
         deploy:
             replicas: 1
             endpoint_mode: dnsrr

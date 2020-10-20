@@ -188,34 +188,34 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
-							<li class={ rs::start(layout["route", "name"], "app.design.services") ? "active": "" }>
-								<a class='nolink' href='/design/services/'>
+							<li class={ rs::start(layout["route", "name"], "app.admin.services") ? "active": "" }>
+								<a class='nolink' href='/admin/services/'>
 									{ _("Bayrell.CloudOS", "Services") }
 								</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.domains") ? "active": "" }>
-								<a class='nolink' href='/design/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.domains") ? "active": "" }>
+								<a class='nolink' href='/admin/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.spaces") ? "active": "" }>
-								<a class='nolink' href='/design/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.spaces") ? "active": "" }>
+								<a class='nolink' href='/admin/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.layers") ? "active": "" }>
-								<a class='nolink' href='/design/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.layers") ? "active": "" }>
+								<a class='nolink' href='/admin/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.routes") ? "active": "" }>
-								<a class='nolink' href='/design/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.routes") ? "active": "" }>
+								<a class='nolink' href='/admin/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.nginx") ? "active": "" }>
-								<a class='nolink' href='/design/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.nginx") ? "active": "" }>
+								<a class='nolink' href='/admin/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.users") ? "active": "" }>
-								<a class='nolink' href='/design/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.users") ? "active": "" }>
+								<a class='nolink' href='/admin/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.roles") ? "active": "" }>
-								<a class='nolink' href='/design/roles/'>{ _("Bayrell.CloudOS", "Roles") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.roles") ? "active": "" }>
+								<a class='nolink' href='/admin/roles/'>{ _("Bayrell.CloudOS", "Roles") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.design.permissions") ? "active": "" }>
-								<a class='nolink' href='/design/permissions/'>
+							<li class={ rs::start(layout["route", "name"], "app.admin.permissions") ? "active": "" }>
+								<a class='nolink' href='/admin/permissions/'>
 									{ _("Bayrell.CloudOS", "Permissions") }
 								</a>
 							</li>
@@ -230,6 +230,11 @@ span.lpad5{
 							<li>
 								<a class='nolink' href='/admin/database/' target="_self">
 									{ _("Bayrell.CloudOS", "Adminer") }
+								</a>
+							</li>
+							<li>
+								<a class='nolink' href='/admin/env/' target="_self">
+									{ _("Bayrell.CloudOS", "Env") }
 								</a>
 							</li>
 							<li>

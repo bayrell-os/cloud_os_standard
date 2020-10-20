@@ -33,6 +33,7 @@ use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Balancer", "interface_name": "default" }
+@ApiMiddleware{ "value": "Bayrell.CloudOS.Backend.ORM.Auth::checkSystemApi" }
 static class Balancer
 {
 	

@@ -67,9 +67,13 @@ static class LayerCrud extends CrudApi
 				"space_id",
 				"service_id",
 				"route",
+				"domain_name",
+				"space_name",
 			]
 		},
 		new DefaultValue{ "api_name": "route", "value": "/" },
+		new ReadOnly{ "api_name": "domain_name" },
+		new ReadOnly{ "api_name": "space_name" },
 		new ReadOnly{ "api_name": "layer_uid", "can_create": true },
 		new Required{ "api_name": "layer_name" },
 		new Required{ "api_name": "space_id" },
@@ -80,6 +84,12 @@ static class LayerCrud extends CrudApi
 		{
 			"name": "services",
 			"class_name": classof Service,
+			"fields":
+			[
+				"service_id",
+				"docker_name",
+				"software_api_name",
+			],
 		},
 		
 		/* Add spaces dictionary */
@@ -87,6 +97,12 @@ static class LayerCrud extends CrudApi
 		{
 			"name": "spaces",
 			"class_name": classof Space,
+			"fields":
+			[
+				"space_id",
+				"domain_name",
+				"space_name",
+			],
 		},
 	];
 	
@@ -97,7 +113,8 @@ static class LayerCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["layer_name", "asc"],
+		["spaces.domain_name", "asc"],
+		["layers.layer_name", "asc"],
 	];
 	
 	
@@ -105,7 +122,12 @@ static class LayerCrud extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	QueryBuilder buildSearchQuery(QueryBuilder q) =>
+		parent::buildSearchQuery(q)
+		|> .fields(["layers.*", "spaces.domain_name", "spaces.space_name"])
+		|> .alias("layers")
+		|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id = layers.space_id")
+	;
 	
 	
 	

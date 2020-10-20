@@ -51,6 +51,16 @@ static class Auth
 	
 	
 	/**
+	 * Check system api
+	 */
+	static async RenderContainer checkSystemApi(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
 	 * Login
 	 */
 	async list chainLogin(string username, string password, AuthToken token)

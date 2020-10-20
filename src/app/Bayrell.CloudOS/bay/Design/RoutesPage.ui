@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/design/routes/", "name": "app.design.routes" }
+@Route{ "uri": "/admin/routes/", "name": "app.admin.routes" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
@@ -104,10 +104,7 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 				Dict (Dict item) =>
 				{
 					"id": item["layer_id"],
-					"value":
-						item["layer_uid"] ~
-						" | " ~ item["domain_name"] ~ item["route"] ~
-						" | " ~ item["layer_name"],
+					"value": item["layer_name"] ~ " (" ~ item["domain_name"] ~ item["route"] ~ ")"
 					"item": item,
 				}
 			)
@@ -122,9 +119,11 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params) =>
-[
-	new FieldInfo
+pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params)
+{
+	Collection layers = static::getOptions(layout, model, params, "layers");
+	
+	return [ new FieldInfo
 	{
 		"api_name": "number",
 		"label": "",
@@ -175,19 +174,97 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
+		"api_name": "domain_route",
+		"label": "Route",
+		"class_name": classof Label,
+		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
+		{
+			Dict item = settings["crud_item"];
+			return item["domain_name"] ~ item["route"];
+		}
+	},
+	
+	new FieldInfo
+	{
 		"api_name": "layer_id",
 		"label": "Layer",
 		"class_name": classof Select,
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(layout, model, params, "layers"),
+			"options": layers,
 		},
 		"info":
 		{
 			"table":
 			{
 				"class_name": classof SelectText,
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_uid",
+		"label": "Layer UID",
+		"class_name": classof Label,
+		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
+		{
+			int layer_id = settings["crud_item"]["layer_id"];
+			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
+			return layer["item"]["layer_uid"];
+		}
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_route",
+		"label": "Layer route",
+		"class_name": classof Label,
+		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
+		{
+			int layer_id = settings["crud_item"]["layer_id"];
+			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
+			return layer["item"]["domain_name"] ~ layer["item"]["route"];
+		}
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_name",
+		"label": "Layer name",
+		"class_name": classof Label,
+		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
+		{
+			int layer_id = settings["crud_item"]["layer_id"];
+			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
+			return layer["item"]["layer_name"];
+		}
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "open",
+		"label": "",
+		"class_name": classof Label,
+		"info":
+		{
+			"table":
+			{
+				"render": html (LayoutModel layout, var value, Dict settings)
+				{
+					Dict item = settings["crud_item"];
+					string uri = "http://" ~ item["domain_name"] ~ item["route"];
+					return static::renderButton
+					(
+						layout, settings, "view",
+						{
+							"url": uri,
+							"target": "_blank",
+							"label": "Open",
+						}
+					);
+				},
 			},
 		},
 	},
@@ -204,8 +281,8 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 				"render": method static::renderButtons,
 			},
 		},
-	},
-];
+	} ];
+}
 
 
 
@@ -214,9 +291,9 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
  */
 pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
+	"layer_id",
 	"domain_name",
 	"route",
-	"layer_id",
 ];
 
 
@@ -226,9 +303,9 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
  */
 pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
+	"layer_id",
 	"domain_name",
 	"route",
-	"layer_id",
 ];
 
 
@@ -239,9 +316,11 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
 [
 	"number",
-	"domain_name",
-	"route",
-	"layer_id",
+	"layer_name",
+	"layer_route",
+	"layer_uid",
+	"domain_route",
+	"open",
 	"edit-buttons"
 ];
 
