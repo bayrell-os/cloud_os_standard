@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Layer";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/layers/", "name": "app.admin.layers" }
+@Route{ "uri": "/admin/layers/", "name": "app.admin.layers.index" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {

@@ -170,6 +170,20 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 	
 	new FieldInfo
 	{
+		"api_name": "docker_replicas",
+		"label": "Replicas",
+		"class_name": classof Label,
+		"calc": string (LayoutModel layout, var model, Dict settings)
+		{
+			Dict item = settings["crud_item"];
+			int work = item["docker_balancer", "State", "Work"] |> default int 0;
+			int total = item["docker_balancer", "State", "Total"] |> default int 0;
+			return work ~ " / " ~ total; 
+		},
+	},
+	
+	new FieldInfo
+	{
 		"api_name": "have_admin_page",
 		"label": "Admin page",
 		"class_name": classof Select,
@@ -195,7 +209,8 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 						(
 							layout, settings, "view",
 							{
-								"url": "/admin/services/admin/" ~ settings["crud_item"]["service_id"] ~ "/",
+								"url": "/admin/services/" ~ settings["crud_item"]["docker_name"] ~ "/",
+								"target": "_blank",
 							}
 						)
 				,
@@ -292,6 +307,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 	"number",
 	"docker_name",
 	"software_api_name",
+	"docker_replicas",
 	"enable",
 	"have_admin_page",
 	"edit-buttons"

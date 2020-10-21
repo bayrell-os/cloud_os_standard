@@ -122,7 +122,7 @@ struct Service extends Record
 		/* Get items having admin page */
 		Collection<Record> items = static::select()
 			|> .filter([ ["have_admin_page", "=", true] ])
-			|> await .all()
+			|> await .all(db_settings)
 		;
 		
 		Collection<string> locations = items
@@ -132,32 +132,36 @@ struct Service extends Record
 			(
 				string (Record item)
 				{
-					string service_name = item.stack_name ~ "_" ~ item.service_name;
+					string service_name = item.docker_name;
 					string s = "";
-					s ~= "location /service/" ~ service_name ~ "/ {\n";
+					s ~= "location /admin/services/" ~ service_name ~ "/ {\n";
 					s ~= "\tproxy_pass http://" ~ service_name ~ ".admin.test/;\n";
 					s ~= "\tinclude proxy_params;\n";
-					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/service/" ~ service_name ~ "\";\n";
+					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/admin/services/" ~ service_name ~ "\";\n";
 					s ~= "}";
 					return s;
 				}
 			)
 		;
 		
-		/* Update nginx file */
-		await conn.insert_or_update
-		(
-			nginx_file_table_name,
-			{
-				"name": "inc/services_admin_page.inc",
-			},
-			{
-				"content": rs::join("\n", locations),
-				"timestamp": rtl::time(),
-				"enable": true,
-				"is_deleted": false,
-			}
-		);
+		/* Find nginx file */
+		NginxFile file = await NginxFile::getById("inc/services_admin_page.inc", db_settings);
+		if (file == null) file = new NginxFile
+		{
+			"name": "inc/services_admin_page.inc"
+		};
 		
+		/* Update nginx file */
+		string new_content = rs::join("\n", locations);
+		if (file.content != new_content or file.is_deleted or file.enable != 1)
+		{
+			file <= content <= new_content;
+			file <= timestamp <= rtl::time();
+			file <= enable <= true;
+			file <= is_deleted <= false;
+			
+			/* Save file */
+			await NginxFile::save(file, db_settings);
+		}
 	}
 }

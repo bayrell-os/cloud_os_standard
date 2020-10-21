@@ -34,8 +34,8 @@ use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
 use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.ORM.LayerRoute;
 use Bayrell.CloudOS.Backend.ORM.NginxFile;
-use Bayrell.CloudOS.Backend.ORM.Route;
 use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.ORM.Space;
 
@@ -142,7 +142,7 @@ struct Domain extends Record
 			|> await .all(db_settings)
 		;
 		
-		Collection<Dict> routes = Route::select()
+		Collection<Dict> routes = LayerRoute::select()
 			|> .alias("routes")
 			|> .fields([
 				"routes.domain_name",

@@ -28,6 +28,7 @@ use Runtime.Task.TaskDriver;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
+use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.DockerLib;
 
 
@@ -35,10 +36,15 @@ use Bayrell.CloudOS.Backend.DockerLib;
 class DockerTasks
 {
 	
-	@CronTimer{ "timer": 15 }
-	static async void sync()
+	/**
+	 * Update services admin pages
+	 */
+	@TaskMethod{}
+	static async void updateServicesAdminPages()
 	{
-		await static::syncServices();
+		TaskDriver output = @.getDriver(classof TaskDriver);
+		await Service::updateNginx();
+		output.writeln("Ok");
 	}
 	
 	
@@ -46,6 +52,7 @@ class DockerTasks
 	/**
 	 * Sync services
 	 */
+	@CronTimer{ "timer": 15, "alias": "Bayrell.CloudOS.Backend.DockerTasks::sync" } 
 	static async void syncServices()
 	{
 		Cursor cursor = null;
@@ -129,6 +136,9 @@ class DockerTasks
 			db_settings
 		)
 		await cursor.close();
+		
+		/* Update service nginx */
+		await Service::updateNginx();
 	}
 	
 	
@@ -166,13 +176,14 @@ class DockerTasks
 		{
 			Dict task = tasks.item(i);
 			string state = task["Status", "State"];
+			string desired_state = task["DesiredState"];
 			
 			Dict node = nodes[task["NodeID"]];
-			
 			Dict service =
 			{
 				"ID": task["ID"],
 				"Status": task["Status"],
+				"DesiredState": task["DesiredState"],
 				"Slot": task["Slot"],
 				"Node": {
 					"ID": task["NodeID"],
@@ -197,7 +208,7 @@ class DockerTasks
 			}
 			Tasks = Tasks.pushIm(service);
 			
-			if (state == "running")
+			if (state == "running" and desired_state == "running")
 			{
 				work++;
 			}

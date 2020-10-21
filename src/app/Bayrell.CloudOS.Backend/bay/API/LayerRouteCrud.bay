@@ -35,19 +35,19 @@ use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
-use Bayrell.CloudOS.Backend.ORM.Route;
+use Bayrell.CloudOS.Backend.ORM.LayerRoute;
 use Bayrell.CloudOS.Backend.ORM.Space;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.Route", "interface_name": "core.crud" }
+@ApiList{ "object_name": "Bayrell.CloudOS.LayerRoute", "interface_name": "core.crud" }
 @ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
-static class RouteCrud extends CrudApi
+static class LayerRouteCrud extends CrudApi
 {
 	
 	/**
 	 * Returns orm class name
 	 */
-	pure string getORM() => classof Route;
+	pure string getORM() => classof LayerRoute;
 	
 	
 	

@@ -199,11 +199,11 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.admin.spaces") ? "active": "" }>
 								<a class='nolink' href='/admin/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.layers") ? "active": "" }>
+							<li class={ rs::start(layout["route", "name"], "app.admin.layers.index") ? "active": "" }>
 								<a class='nolink' href='/admin/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.routes") ? "active": "" }>
-								<a class='nolink' href='/admin/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.layers.routes") ? "active": "" }>
+								<a class='nolink' href='/admin/layers/routes/'>{ _("Bayrell.CloudOS", "Layers Routes") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.nginx") ? "active": "" }>
 								<a class='nolink' href='/admin/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>

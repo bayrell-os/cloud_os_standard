@@ -35,7 +35,7 @@ use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
 
 
-struct Route extends Record
+struct LayerRoute extends Record
 {
 	@StringType{}
 	string domain_name;
@@ -43,7 +43,7 @@ struct Route extends Record
 	@StringType{}
 	string route;
 	
-	@BigIntType{ "nullable": true }
+	@BigIntType{}
 	int layer_id;
 	
 	
@@ -51,7 +51,7 @@ struct Route extends Record
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "routes";
+	pure string table_name() => "layers_routes";
 	
 	
 	

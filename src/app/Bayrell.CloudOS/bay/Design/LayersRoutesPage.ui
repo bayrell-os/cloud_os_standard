@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.RoutesPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Design.LayersRoutesPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
@@ -48,7 +48,7 @@
 /**
  * Returns object name
  */
-pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
+pure string getCrudObjectName() => "Bayrell.CloudOS.LayerRoute";
 
 
 
@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/routes/", "name": "app.admin.routes" }
+@Route{ "uri": "/admin/layers/routes/", "name": "app.admin.layers.routes" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container)
 {
@@ -68,7 +68,7 @@ static async RenderContainer actionIndex(RenderContainer container)
 	container <= layout <= layout_name <= "admin";
 	
 	/* Set model */
-	container <= layout <= page_class <= classof RoutesPage;
+	container <= layout <= page_class <= classof LayersRoutesPage;
 	container <= layout <= page_model <= page_model;
 	
 	return [ container ];
