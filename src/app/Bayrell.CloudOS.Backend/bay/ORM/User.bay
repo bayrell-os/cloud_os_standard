@@ -32,6 +32,7 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 struct User extends Record
@@ -48,6 +49,9 @@ struct User extends Record
 	
 	@BooleanType{}
 	bool banned;
+	
+	@BooleanType{}
+	bool is_deleted;
 	
 	
 	/**
@@ -70,6 +74,18 @@ struct User extends Record
 			"keys": ["login"],
 		},
 	];
+	
+	
+	
+	/**
+	 * Process item to database
+	 */
+	static async Dict toDatabase(Connection conn, Dict item)
+	{
+		item = await parent::toDatabase(conn, item);
+		if (item.has("login")) item <= login <= rs::strtolower(item["login"]);
+		return item;
+	}
 	
 	
 	
@@ -140,18 +156,21 @@ struct User extends Record
 	 */
 	static async void nginxPasswdCreate(Dict db_settings = null)
 	{
-		/* Connect to database */
-		Connection conn = await static::connect(db_settings);
+		/* Execute query */
+		Cursor cursor = static::select("u")
+			|> .fields([
+				"u.*",
+				"a.value as password",
+			])
+			|> .leftJoin("users_auth", "a", "u.user_id = a.user_id and a.method='password'")
+			|> .filter([
+				["u.banned", "=", 0],
+				["u.is_deleted", "=", 0],
+			])
+			|> await .execute()
+		;
 		
 		string htpasswd = "";
-		string table_name = static::getTableName();
-		Cursor cursor = await conn.query
-		(
-			"select u.*, a.value as password from " ~ table_name ~ " as u " ~
-			"left join users_auth as a on (u.user_id = a.user_id and a.method='password')",
-			db_settings
-		);
-		
 		while (true)
 		{
 			Dict row = await cursor.fetch();
@@ -161,30 +180,28 @@ struct User extends Record
 			}
 			
 			string banned = row["banned"];
-			string name = row["name"];
+			string login = row["login"];
 			string password = row["password"];
 			
-			if (banned == "0" and not rtl::isEmpty(password))
+			if (banned == "0" and not rtl::isEmpty(password) and not rtl::isEmpty(login))
 			{
-				htpasswd ~= name ~ ":" ~ password ~ "\n";
+				htpasswd ~= login ~ ":" ~ password ~ "\n";
 			}
 		}
 		
 		await cursor.close();
 		
-		/* Insert or update nginx file */
-		await conn.insert_or_update
+		/* Update nginx file */
+		NginxFile file = await NginxFile::save
 		(
-			"nginx_files",
 			{
 				"name": "inc/htpasswd.inc",
-			},
-			{
 				"content": htpasswd,
 				"timestamp": rtl::time(),
 				"enable": true,
 				"is_deleted": false,
-			}
+			},
+			db_settings
 		);
 	}
 }

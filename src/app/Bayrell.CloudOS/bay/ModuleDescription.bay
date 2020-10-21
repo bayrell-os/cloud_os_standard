@@ -168,7 +168,7 @@ static class ModuleDescription
 			{
 				"AUTH_PRIVATE_KEY": env.get("AUTH_PRIVATE_KEY", ""),
 				"AUTH_PUBLIC_KEY": env.get("AUTH_PUBLIC_KEY", ""),
-				"COOKIE_NAME": env.get("COOKIE_NAME", "cloud_os_token"),
+				"COOKIE_NAME": env.get("AUTH_COOKIE_NAME", "cloud_os_token"),
 				"COOKIE_EXPIRE": 7 * 24 * 60 * 60,
 			},
 			

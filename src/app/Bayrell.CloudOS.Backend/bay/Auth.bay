@@ -18,6 +18,8 @@
 
 namespace Bayrell.CloudOS.Backend;
 
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Auth.AuthToken;
 use Bayrell.CloudOS.Backend.ORM.User;
@@ -26,36 +28,51 @@ use Bayrell.CloudOS.Backend.ORM.User;
 static class Auth
 {
 	
+	
 	/**
-	 * Save Auth Token in keep data
+	 * Check token
 	 */
-	static list createAuthToken(RenderContainer container)
+	async list chainCheckToken(RenderContainer container, AuthToken token)
 	{
-		int time = rtl::time();
+		User user = null;
 		
-		/* Create token */
+		/*
 		AuthToken token = new AuthToken
 		{
 			"user_id": 35,
 			"login": "admin",
 		}
+		*/
 		
-		/* Set auth token */
+		if (token)
+		{
+			/* Find user */
+			User user = User::select()
+				|> .filter
+				([
+					["user_id", "=", token.user_id],
+					["banned", "=", 0],
+					["is_deleted", "=", 0],
+				])
+				|> await .one()
+			;
+			
+			if (user == null)
+			{
+				token = null;
+			}
+		}
+		
+		/* Set auth settings */
 		container <= layout <= tz <= "GMT+6";
-		container <= layout <= keep_data <= { classof AuthToken } <= token;
-		container <= api_storage <= { classof AuthToken } <= token;
+		container <= api_storage <= { classof User } <= (user != null) ? user.convertToDict
+		([
+			"user_id",
+			"login",
+			"name",
+		]) : null;
 		
-		return [ container ];
-	}
-	
-	
-	
-	/**
-	 * Check system api
-	 */
-	static async RenderContainer checkSystemApi(RemoteCallRequest request, RemoteCallAnswer answer)
-	{
-		return [ request, answer ];
+		return [ container, token ];
 	}
 	
 	
@@ -109,12 +126,12 @@ static class Auth
 	
 	
 	
-	/**
-	 * Check token
-	 */
-	async list chainCheckToken(AuthToken token)
-	{
-		return [ token ];
-	}
 	
+	/**
+	 * Check system api
+	 */
+	static async RenderContainer checkSystemApi(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return [ request, answer ];
+	}
 }

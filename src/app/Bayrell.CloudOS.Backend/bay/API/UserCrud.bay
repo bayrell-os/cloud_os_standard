@@ -48,6 +48,13 @@ static class UserCrud extends CrudApi
 	
 	
 	/**
+	 * Force delete items
+	 */
+	bool isForceDelete() => false;
+	
+	
+	
+	/**
 	 * Returns current rules
 	 */
 	Collection<Rule> rules() =>
@@ -73,7 +80,10 @@ static class UserCrud extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	QueryBuilder buildSearchQuery(QueryBuilder q) =>
+		parent::buildSearchQuery(q)
+		|> .addFilter(["is_deleted", "=", 0])
+	;
 	
 	
 	
@@ -133,10 +143,15 @@ static class UserCrud extends CrudApi
 				string password1 = this.item["password1"];
 				
 				/* Set up password */
-				/* if (not rtl::isEmpty(password1)) await User::changePassword(user_id, password1);*/
+				if (not rtl::isEmpty(password1)) await User::changePassword(user_id, password1);
 				
 				/* Generate nginx password */
-				/*await User::nginxPasswdCreate();*/
+				await User::nginxPasswdCreate();
+			}
+			else if (this.action == "delete")
+			{
+				/* Generate nginx password */
+				await User::nginxPasswdCreate();
 			}
 		}
 	}

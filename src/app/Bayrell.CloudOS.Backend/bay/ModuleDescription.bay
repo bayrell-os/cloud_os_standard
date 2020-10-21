@@ -77,13 +77,13 @@ static class ModuleDescription
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
 		
-		/* Render Chain. Create layout model */
+		/* Auth Chain. Check token */
 		new LambdaChain
 		{
-			"name": RenderDriver::RENDER_CHAIN,
-			"value": "Bayrell.CloudOS.Backend.Auth::createAuthToken",
-			"pos": RenderDriver::RENDER_CHAIN_CHANGE_LAYOUT_MODEL,
-		},		
+			"name": AuthBackend::CHAIN_CHECK_TOKEN,
+			"value": "Bayrell.CloudOS.Backend.Auth::chainCheckToken",
+			"is_async": true,
+		},
 		
 		/* Auth Chain. Login */
 		new LambdaChain
@@ -98,14 +98,6 @@ static class ModuleDescription
 		{
 			"name": AuthBackend::CHAIN_LOGOUT,
 			"value": "Bayrell.CloudOS.Backend.Auth::chainLogout",
-			"is_async": true,
-		},
-		
-		/* Auth Chain. Check token */
-		new LambdaChain
-		{
-			"name": AuthBackend::CHAIN_CHECK_TOKEN,
-			"value": "Bayrell.CloudOS.Backend.Auth::chainCheckToken",
 			"is_async": true,
 		},
 	];
