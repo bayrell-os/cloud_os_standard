@@ -46,7 +46,7 @@ services:
                     - node.hostname == docker0
         networks:
             - backend
-            - router
+            - cloud_router
         logging:
             driver: journald
 
@@ -55,7 +55,7 @@ volumes:
 
 networks:
     
-    router:
+    cloud_router:
         external: true
     
     backend:

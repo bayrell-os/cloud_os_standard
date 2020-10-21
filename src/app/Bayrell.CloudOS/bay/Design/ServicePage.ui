@@ -76,6 +76,18 @@ static async RenderContainer actionIndex(RenderContainer container)
 
 
 /**
+ * Trim name
+ */
+pure string trimImageName(string name)
+{
+	int pos = rs::search(name, "@");
+	if (pos != -1) name = rs::substr(name, 0, pos);
+	return name;
+}
+
+
+
+/**
  * Returns options
  */
 pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
@@ -178,7 +190,20 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 			Dict item = settings["crud_item"];
 			int work = item["docker_balancer", "State", "Work"] |> default int 0;
 			int total = item["docker_balancer", "State", "Total"] |> default int 0;
-			return work ~ " / " ~ total; 
+			return work ~ " / " ~ total;
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "docker_image",
+		"label": "Docker image",
+		"class_name": classof Label,
+		"calc": string (LayoutModel layout, var model, Dict settings)
+		{
+			Dict item = settings["crud_item"];
+			string image = item["docker_image"];
+			return static::trimImageName(image);
 		},
 	},
 	
@@ -294,7 +319,6 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 	"service_name",
 	"software_api_name",
 	"have_admin_page",
-	"enable",
 ];
 
 
@@ -306,6 +330,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 [
 	"number",
 	"docker_name",
+	"docker_image",
 	"software_api_name",
 	"docker_replicas",
 	"enable",

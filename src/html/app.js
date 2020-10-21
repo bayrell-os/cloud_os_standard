@@ -2094,6 +2094,18 @@ Object.assign(Bayrell.CloudOS.Design.ServicePage,
 		return Promise.resolve(Runtime.Collection.from([container]));
 	},
 	/**
+ * Trim name
+ */
+	trimImageName: function(ctx, name)
+	{
+		var pos = Runtime.rs.search(ctx, name, "@");
+		if (pos != -1)
+		{
+			name = Runtime.rs.substr(ctx, name, 0, pos);
+		}
+		return name;
+	},
+	/**
  * Returns options
  */
 	getOptions: function(ctx, layout, model, params, name)
@@ -2122,6 +2134,11 @@ Object.assign(Bayrell.CloudOS.Design.ServicePage,
 			__v1 = __v1.monad(ctx, Runtime.rtl.m_to(ctx, "int", 0));
 			var total = __v1.value(ctx);
 			return work + Runtime.rtl.toStr(" / ") + Runtime.rtl.toStr(total);
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"docker_image","label":"Docker image","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, model, settings) => 
+		{
+			var item = Runtime.rtl.get(ctx, settings, "crud_item");
+			var image = Runtime.rtl.get(ctx, item, "docker_image");
+			return this.trimImageName(ctx, image);
 		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"have_admin_page","label":"Admin page","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value_filter":true,"show_select_value":false,"options":Runtime.Collection.from([Runtime.Dict.from({"id":0,"value":"No"}),Runtime.Dict.from({"id":1,"value":"Yes"})])}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText","render":(ctx, layout, value, settings) => 
 		{
 			return (value == 0) ? ("No") : (this.renderButton(ctx, layout, settings, "view", Runtime.Dict.from({"url":"/admin/services/" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "docker_name")) + Runtime.rtl.toStr("/"),"target":"_blank"})));
@@ -2139,14 +2156,14 @@ Object.assign(Bayrell.CloudOS.Design.ServicePage,
  */
 	getFormFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["stack_name","service_name","software_api_name","have_admin_page","enable"]);
+		return Runtime.Collection.from(["stack_name","service_name","software_api_name","have_admin_page"]);
 	},
 	/**
  * Returns table fields
  */
 	getTableFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["number","docker_name","software_api_name","docker_replicas","enable","have_admin_page","edit-buttons"]);
+		return Runtime.Collection.from(["number","docker_name","docker_image","software_api_name","docker_replicas","enable","have_admin_page","edit-buttons"]);
 	},
 	/**
  * Returns view fields
