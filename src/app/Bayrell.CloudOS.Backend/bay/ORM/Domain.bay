@@ -100,7 +100,6 @@ struct Domain extends Record
 		{
 			res ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ uri_prefix ~ "\";\n";
 			if (space_id) res ~= "\t\tproxy_set_header X-SPACE-ID \"" ~ space_id ~ "\";\n";
-			if (layer_id) res ~= "\t\tproxy_set_header X-LAYER-ID \"" ~ layer_id ~ "\";\n";
 			if (layer_uid) res ~= "\t\tproxy_set_header X-LAYER-UID \"" ~ layer_uid ~ "\";\n";
 		}
 		

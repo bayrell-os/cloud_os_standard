@@ -184,8 +184,8 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 			},
 			"form":
 			{
-				"class_name": string (LayoutModel layout, var model, Dict settings) =>
-					model["action"] == "create" ? classof Input : classof Label,
+				"class_name": string (LayoutModel layout, var value, Dict settings) =>
+					settings["crud_form_model"]["action"] == "create" ? classof Input : classof Label,
 			},
 		},
 	},

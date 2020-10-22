@@ -40,15 +40,15 @@ use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.ORM.Space;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.LayerRoute", "interface_name": "core.crud" }
+@ApiList{ "object_name": "Bayrell.CloudOS.Layer", "interface_name": "core.crud" }
 @ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::apiCheckAuthMiddleware" }
-static class LayerRouteCrud extends CrudApi
+static class LayerCrud extends CrudApi
 {
 	
 	/**
 	 * Returns orm class name
 	 */
-	pure string getORM() => classof LayerRoute;
+	pure string getORM() => classof Layer;
 	
 	
 	
@@ -72,6 +72,7 @@ static class LayerRouteCrud extends CrudApi
 			]
 		},
 		new DefaultValue{ "api_name": "route", "value": "/" },
+		new ReadOnly{ "api_name": "layer_id" },
 		new ReadOnly{ "api_name": "domain_name" },
 		new ReadOnly{ "api_name": "space_name" },
 		new ReadOnly{ "api_name": "layer_uid", "can_create": true },
@@ -114,7 +115,7 @@ static class LayerRouteCrud extends CrudApi
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
 		["spaces.domain_name", "asc"],
-		["layers.layer_name", "asc"],
+		["layers.route", "asc"],
 	];
 	
 	
