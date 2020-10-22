@@ -36,6 +36,7 @@ use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
 use Bayrell.CloudOS.Backend.ORM.LayerRoute;
+use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.ORM.Space;
 
 
@@ -63,8 +64,20 @@ static class LayerRouteCrud extends CrudApi
 				"domain_name",
 				"route",
 				"layer_id",
+				"layer_uid",
+				"layer_name",
+				"layer_domain_name",
+				"layer_route",
+				"service_name",
+				"software_api_name",
 			]
 		},
+		new ReadOnly{ "api_name": "layer_uid" },
+		new ReadOnly{ "api_name": "layer_name" },
+		new ReadOnly{ "api_name": "layer_domain_name" },
+		new ReadOnly{ "api_name": "layer_route" },
+		new ReadOnly{ "api_name": "service_name" },
+		new ReadOnly{ "api_name": "software_api_name" },
 		new Required{ "api_name": "domain_name" },
 		new Required{ "api_name": "route" },
 		
@@ -80,13 +93,29 @@ static class LayerRouteCrud extends CrudApi
 		{
 			"name": "layers",
 			"class_name": classof Layer,
-			"fields": ["layer_id", "layer_name", "layer_uid", "route", "domain_name"],
+			"fields":
+			[
+				"layer_id",
+				"layer_name",
+				"layer_uid",
+				"route",
+				"domain_name",
+				"service_name",
+				"software_api_name",
+			],
 			"buildSearchQuery": QueryBuilder (QueryBuilder q)
 			{
 				return q
 					|> .alias("layers")
-					|> .fields(["layers.*", "spaces.domain_name as domain_name"])
+					|> .fields
+					([
+						"layers.*",
+						"spaces.domain_name as domain_name",
+						"services.docker_name as service_name",
+						"services.software_api_name as software_api_name",
+					])
 					|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
+					|> .leftJoin(Service::table_name(), "services", "services.service_id=layers.service_id")
 				;
 			},
 		},
@@ -108,7 +137,41 @@ static class LayerRouteCrud extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	QueryBuilder buildSearchQuery(QueryBuilder q) =>
+		parent::buildSearchQuery(q)
+		|> .alias("routes")
+		|> .fields
+		([
+			"routes.*",
+			"layers.layer_uid",
+			"layers.layer_name",
+			"spaces.domain_name as layer_domain_name",
+			"layers.route as layer_route",
+			"services.docker_name as service_name",
+			"services.software_api_name as software_api_name",
+		])
+		|> .leftJoin(Layer::table_name(), "layers", "layers.layer_id=routes.layer_id")
+		|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
+		|> .leftJoin(Service::table_name(), "services", "services.service_id=layers.service_id")
+	;
+	
+	
+	
+	/**
+	 * Extend search filter
+	 */
+	Collection<list> extendSearchFilter(Collection<list> filter) =>
+		filter
+		|> .map
+		(
+			Collection (Collection item)
+			{
+				if (item[0] == "domain_name") item <= 0 <= "routes.domain_name";
+				if (item[0] == "route") item <= 0 <= "routes.route";
+				return item;
+			}
+		)
+	;
 	
 	
 	

@@ -75,8 +75,7 @@ static class LayerCrud extends CrudApi
 		new ReadOnly{ "api_name": "layer_id" },
 		new ReadOnly{ "api_name": "domain_name" },
 		new ReadOnly{ "api_name": "space_name" },
-		new ReadOnly{ "api_name": "layer_uid", "can_create": true },
-		new Required{ "api_name": "layer_name" },
+		new Required{ "api_name": "route" },
 		new Required{ "api_name": "space_id" },
 		new Required{ "api_name": "service_id" },
 		
@@ -137,18 +136,37 @@ static class LayerCrud extends CrudApi
 	 */
 	async Dict convertItem(Dict item)
 	{
-		string layer_uid = item["layer_uid"];
-		bool is_uid_empty = rtl::isEmpty(layer_uid);
-		
 		/* Convert item */
 		item = await parent::convertItem(item);
 		
-		/* Add default value */
-		if (is_uid_empty)
+		string layer_uid = item["layer_uid"];
+		string space_id = item["space_id"];
+		string service_id = item["service_id"];
+		if (rtl::isEmpty(layer_uid))
 		{
-			/* Make layer uid */
-			layer_uid = rtl::time_uid();
-			item <= layer_uid <= layer_uid;
+			Space space = Space::getById(space_id);
+			int count = Layer::select()
+				|> .orm("")
+				|> .fields(["count(*) as c"])
+				|> .filter([
+					["space_id", "=", space_id],
+					["service_id", "=", service_id],
+				])
+				|> await .one()
+				|> attr "c"
+				|> default int 0
+			;
+			
+			if (space != null and space.domain_name != "")
+			{
+				layer_uid = space.domain_name ~ ":layer_" ~ count;
+				item <= layer_uid <= layer_uid;
+			}
+			else
+			{
+				layer_uid = rtl::time_uid();
+				item <= layer_uid <= layer_uid;
+			}
 		}
 		
 		/* Save default route for Cloud OS Layer */

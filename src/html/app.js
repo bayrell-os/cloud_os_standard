@@ -978,46 +978,61 @@ if (typeof module != "undefined" && typeof module.exports != "undefined") module
  */
 if (typeof Bayrell == 'undefined') Bayrell = {};
 if (typeof Bayrell.CloudOS == 'undefined') Bayrell.CloudOS = {};
-Bayrell.CloudOS.MainPageModel = function(ctx)
+if (typeof Bayrell.CloudOS.Dashboard == 'undefined') Bayrell.CloudOS.Dashboard = {};
+Bayrell.CloudOS.Dashboard.MainPageModel = function(ctx)
 {
 	Runtime.BaseStruct.apply(this, arguments);
 };
-Bayrell.CloudOS.MainPageModel.prototype = Object.create(Runtime.BaseStruct.prototype);
-Bayrell.CloudOS.MainPageModel.prototype.constructor = Bayrell.CloudOS.MainPageModel;
-Object.assign(Bayrell.CloudOS.MainPageModel.prototype,
+Bayrell.CloudOS.Dashboard.MainPageModel.prototype = Object.create(Runtime.BaseStruct.prototype);
+Bayrell.CloudOS.Dashboard.MainPageModel.prototype.constructor = Bayrell.CloudOS.Dashboard.MainPageModel;
+Object.assign(Bayrell.CloudOS.Dashboard.MainPageModel.prototype,
 {
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.services = null;
+		this.active = -1;
+		Runtime.BaseStruct.prototype._init.call(this,ctx);
+	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof Bayrell.CloudOS.MainPageModel)
+		if (o instanceof Bayrell.CloudOS.Dashboard.MainPageModel)
 		{
+			this.services = o.services;
+			this.active = o.active;
 		}
 		Runtime.BaseStruct.prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
+		if (k == "services")this.services = v;
+		else if (k == "active")this.active = v;
+		else Runtime.BaseStruct.prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "services")return this.services;
+		else if (k == "active")return this.active;
 		return Runtime.BaseStruct.prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
-		return "Bayrell.CloudOS.MainPageModel";
+		return "Bayrell.CloudOS.Dashboard.MainPageModel";
 	},
 });
-Object.assign(Bayrell.CloudOS.MainPageModel, Runtime.BaseStruct);
-Object.assign(Bayrell.CloudOS.MainPageModel,
+Object.assign(Bayrell.CloudOS.Dashboard.MainPageModel, Runtime.BaseStruct);
+Object.assign(Bayrell.CloudOS.Dashboard.MainPageModel,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Bayrell.CloudOS";
+		return "Bayrell.CloudOS.Dashboard";
 	},
 	getCurrentClassName: function()
 	{
-		return "Bayrell.CloudOS.MainPageModel";
+		return "Bayrell.CloudOS.Dashboard.MainPageModel";
 	},
 	getParentClassName: function()
 	{
@@ -1030,8 +1045,8 @@ Object.assign(Bayrell.CloudOS.MainPageModel,
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Bayrell.CloudOS.MainPageModel",
-			"name": "Bayrell.CloudOS.MainPageModel",
+			"class_name": "Bayrell.CloudOS.Dashboard.MainPageModel",
+			"name": "Bayrell.CloudOS.Dashboard.MainPageModel",
 			"annotations": Collection.from([
 			]),
 		});
@@ -1040,6 +1055,11 @@ Object.assign(Bayrell.CloudOS.MainPageModel,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("services");
+			a.push("active");
+		}
 		return Runtime.Collection.from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -1047,6 +1067,22 @@ Object.assign(Bayrell.CloudOS.MainPageModel,
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
 		var IntrospectionInfo = Runtime.IntrospectionInfo;
+		if (field_name == "services") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.Dashboard.MainPageModel",
+			"t": "Runtime.Collection",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "active") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Bayrell.CloudOS.Dashboard.MainPageModel",
+			"t": "int",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)
@@ -1060,9 +1096,9 @@ Object.assign(Bayrell.CloudOS.MainPageModel,
 		return null;
 	},
 });
-Runtime.rtl.defClass(Bayrell.CloudOS.MainPageModel);
-window["Bayrell.CloudOS.MainPageModel"] = Bayrell.CloudOS.MainPageModel;
-if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.MainPageModel;
+Runtime.rtl.defClass(Bayrell.CloudOS.Dashboard.MainPageModel);
+window["Bayrell.CloudOS.Dashboard.MainPageModel"] = Bayrell.CloudOS.Dashboard.MainPageModel;
+if (typeof module != "undefined" && typeof module.exports != "undefined") module.exports = Bayrell.CloudOS.Dashboard.MainPageModel;
 "use strict;"
 /*
  *  Bayrell Cloud OS
@@ -1399,10 +1435,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersPage,
 			var item = Runtime.rtl.get(ctx, settings, "crud_item");
 			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
 			return uri;
-		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Name","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"UID","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"}),"form":Runtime.Dict.from({"class_name":(ctx, layout, value, settings) => 
-		{
-			return (Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_form_model"), "action") == "create") ? ("Runtime.Web.Input.Input") : ("Runtime.Web.Input.Label");
-		}})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"space_id","primary":true,"label":"Space","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "spaces")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","primary":true,"label":"Service","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "services")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Name","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"UID","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"route","label":"Route","class_name":"Runtime.Web.Input.Input","info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.Label"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"space_id","primary":true,"label":"Space","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "spaces")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_id","primary":true,"label":"Service","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":this.getOptions(ctx, layout, model, params, "services")}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
 		{
 			var item = Runtime.rtl.get(ctx, settings, "crud_item");
 			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
@@ -1637,7 +1670,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersRoutesPage,
 			__v0 = __v0.attr(ctx, "options");
 			__v0 = __v0.call(ctx, Runtime.lib.map(ctx, (ctx, item) => 
 			{
-				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "layer_id"),"value":Runtime.rtl.get(ctx, item, "layer_name") + Runtime.rtl.toStr(" (") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route")) + Runtime.rtl.toStr(")"),"item":item});
+				return Runtime.Dict.from({"id":Runtime.rtl.get(ctx, item, "layer_id"),"value":Runtime.rtl.get(ctx, item, "domain_name") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route")) + Runtime.rtl.toStr(" (") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "layer_uid")) + Runtime.rtl.toStr(") ") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "service_name")),"item":item});
 			}));
 			__v0 = __v0.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			return __v0.value(ctx);
@@ -1654,22 +1687,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersRoutesPage,
 		{
 			var item = Runtime.rtl.get(ctx, settings, "crud_item");
 			return Runtime.rtl.get(ctx, item, "domain_name") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
-		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":layers}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"Layer UID","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
-		{
-			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
-			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
-			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "layer_uid");
-		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_route","label":"Layer route","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
-		{
-			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
-			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
-			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "domain_name") + Runtime.rtl.toStr(Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "route"));
-		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Layer name","class_name":"Runtime.Web.Input.Label","calc":(ctx, layout, value, settings) => 
-		{
-			var layer_id = Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, settings, "crud_item"), "layer_id");
-			var layer = layers.findItem(ctx, Runtime.lib.equalAttr(ctx, "id", layer_id));
-			return Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, layer, "item"), "layer_name");
-		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
+		}})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_id","label":"Layer","class_name":"Runtime.Web.Input.Select","class_settings":Runtime.Dict.from({"show_select_value":true,"options":layers}),"info":Runtime.Dict.from({"table":Runtime.Dict.from({"class_name":"Runtime.Web.Input.SelectText"})})})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_uid","label":"Layer UID","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_route","label":"Layer route","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_name","label":"Layer name","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"layer_domain_name","label":"Layer domain name","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"service_name","label":"Service","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"software_api_name","label":"Software","class_name":"Runtime.Web.Input.Label"})),new Runtime.Web.CRUD.FieldInfo(ctx, Runtime.Dict.from({"api_name":"open","label":"","class_name":"Runtime.Web.Input.Label","info":Runtime.Dict.from({"table":Runtime.Dict.from({"render":(ctx, layout, value, settings) => 
 		{
 			var item = Runtime.rtl.get(ctx, settings, "crud_item");
 			var uri = "http://" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "domain_name")) + Runtime.rtl.toStr(Runtime.rtl.get(ctx, item, "route"));
@@ -1695,7 +1713,7 @@ Object.assign(Bayrell.CloudOS.Design.LayersRoutesPage,
  */
 	getTableFields: function(ctx, layout, model, params)
 	{
-		return Runtime.Collection.from(["number","layer_name","layer_route","layer_uid","domain_route","open","edit-buttons"]);
+		return Runtime.Collection.from(["number","layer_name","layer_domain_name","layer_route","layer_uid","service_name","domain_route","open","edit-buttons"]);
 	},
 	/**
  * Returns view fields
@@ -2790,7 +2808,7 @@ Object.assign(Bayrell.CloudOS.Other.AdminerPage,
 			
 			/* Element 'form' */
 			var __v1; var __v1_childs = [];
-			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "form","attrs": {"id":"adminer_form","method":"post","action":"/admin/database/4.7.6/"}});
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "form","attrs": {"id":"adminer_form","method":"post","action":layout.route_prefix + Runtime.rtl.toStr("/admin/database/4.7.6/")}});
 			
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "element", {"name": "input","attrs": {"type":"hidden","name":"auth[driver]","value":"server"}});
 			

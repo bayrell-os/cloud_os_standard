@@ -25,7 +25,7 @@
 <template>
 	<div>
 		Redirect. Please wait...
-		<form id="adminer_form" method="post" action={ layout.route_prefix ~ "/adminer/4.7.6/" }>
+		<form id="adminer_form" method="post" action={ layout.route_prefix ~ "/admin/database/4.7.6/" }>
 			<input type='hidden' name='auth[driver]' value='server' />
 			<input type='hidden' name='auth[server]' value={ model["db", "host"] } />
 			<input type='hidden' name='auth[username]' value={ model["db", "username"] } />

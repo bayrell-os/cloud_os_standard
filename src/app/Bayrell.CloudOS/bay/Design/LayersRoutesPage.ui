@@ -104,7 +104,8 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 				Dict (Dict item) =>
 				{
 					"id": item["layer_id"],
-					"value": item["layer_name"] ~ " (" ~ item["domain_name"] ~ item["route"] ~ ")"
+					"value": item["domain_name"] ~ item["route"] ~ " (" ~ item["layer_uid"] ~ ") " ~
+						item["service_name"]
 					"item": item,
 				}
 			)
@@ -208,12 +209,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "layer_uid",
 		"label": "Layer UID",
 		"class_name": classof Label,
-		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
-		{
-			int layer_id = settings["crud_item"]["layer_id"];
-			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
-			return layer["item"]["layer_uid"];
-		}
 	},
 	
 	new FieldInfo
@@ -221,12 +216,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "layer_route",
 		"label": "Layer route",
 		"class_name": classof Label,
-		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
-		{
-			int layer_id = settings["crud_item"]["layer_id"];
-			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
-			return layer["item"]["domain_name"] ~ layer["item"]["route"];
-		}
 	},
 	
 	new FieldInfo
@@ -234,12 +223,27 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "layer_name",
 		"label": "Layer name",
 		"class_name": classof Label,
-		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
-		{
-			int layer_id = settings["crud_item"]["layer_id"];
-			Dict layer = layers.findItem( lib::equalAttr("id", layer_id) );
-			return layer["item"]["layer_name"];
-		}
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "layer_domain_name",
+		"label": "Layer domain name",
+		"class_name": classof Label,
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "service_name",
+		"label": "Service",
+		"class_name": classof Label,
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "software_api_name",
+		"label": "Software",
+		"class_name": classof Label,
 	},
 	
 	new FieldInfo
@@ -317,8 +321,10 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 [
 	"number",
 	"layer_name",
+	"layer_domain_name",
 	"layer_route",
 	"layer_uid",
+	"service_name",
 	"domain_route",
 	"open",
 	"edit-buttons"
