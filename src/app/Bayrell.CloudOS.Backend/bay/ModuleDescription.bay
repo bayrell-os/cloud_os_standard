@@ -52,6 +52,7 @@ static class ModuleDescription
 	{
 		/* Backend */
 		#ifdef BACKEND then
+		'Runtime.Cron': '*',
 		'Runtime.Task': '*',
 		'Runtime.Web.Backend': '*',
 		#endif
@@ -72,10 +73,19 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.NginxFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.ServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SpaceCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.TopMenuCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
 		
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
+		
+		/* Render Chain. Route after */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "Bayrell.CloudOS.Backend.Helper::renderChainRouteAfter",
+			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
+		},
 		
 		/* Auth Chain. Check token */
 		new LambdaChain

@@ -19,7 +19,6 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.Core.RemoteCallAnswer;
-use Runtime.ORM.MySQL.Driver as MySQLDriver;
 use Runtime.ORM.MySQL.Settings as MySQLSettings;
 use Runtime.Web.Layout;
 use Runtime.Web.LayoutModel;

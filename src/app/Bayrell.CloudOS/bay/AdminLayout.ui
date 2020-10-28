@@ -188,6 +188,9 @@ span.lpad5{
 					</div>
 					<div class='layout_menu_items'>
 						<ul>
+							<li class={ rs::start(layout["route", "top_menu"], "app.admin.top_menu") ? "active": "" }>
+								<a class='nolink' href='/admin/top_menu/'>{ _("Bayrell.CloudOS", "Top menu") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.services") ? "active": "" }>
 								<a class='nolink' href='/admin/services/'>
 									{ _("Bayrell.CloudOS", "Services") }
@@ -249,9 +252,14 @@ span.lpad5{
 			</div>
 			<div class='layout_content_wrap'>
 				<div class='layout_top_menu'>
-					<div class='layout_top_menu_item'>Main</div>
-					<div class='layout_top_menu_item'>Time planner</div>
-					<div class='layout_top_menu_item'>VCS</div>
+					%var Collection top_menu = layout["keep_data", "top_menu"] |> default Collection [];
+					%for (int i=0; i<top_menu.count(); i++)
+					{
+						%var Dict item = top_menu[i];
+						<div class='layout_top_menu_item'>
+							<a class='nolink' href={ item["href"] } target='_blank'>{ item["name"] }</a>
+						</div>
+					}
 				</div>
 				<div class='layout_title'>{ model.title }</div>
 				<div class='layout_content'>

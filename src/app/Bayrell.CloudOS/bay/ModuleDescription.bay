@@ -123,6 +123,7 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicePage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.TopMenuPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
 		
 		

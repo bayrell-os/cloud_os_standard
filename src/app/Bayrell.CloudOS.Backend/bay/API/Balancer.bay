@@ -30,6 +30,8 @@ use Runtime.Web.Backend.ApiList;
 use Runtime.Web.Backend.ApiMethod;
 use Runtime.Web.Backend.ApiMiddleware;
 use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.Backend.ORM.TopMenu;
+use Bayrell.CloudOS.Backend.ORM.User;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Balancer", "interface_name": "default" }
@@ -53,6 +55,44 @@ static class Balancer
 			|> .asRecord(false)
 			|> await .all()
 			|> .map( lib::intersect(["name", "enable", "content", "timestamp", "is_deleted"]) )
+		;
+		
+		answer = answer::success(answer, files);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Get users
+	 */
+	@ApiMethod{ "method_name": "getUsers" }
+	static async list getUsersAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		Collection<Dict> files = User::select()
+			|> .asRecord(false)
+			|> await .all()
+			|> .map( lib::intersect(["user_id", "login", "name", "banned", "is_deleted"]) )
+		;
+		
+		answer = answer::success(answer, files);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Get top menu
+	 */
+	@ApiMethod{ "method_name": "getTopMenu" }
+	static async list getTopMenuAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		Collection<Dict> files = TopMenu::select()
+			|> .asRecord(false)
+			|> await .all()
+			|> .map( lib::intersect(["id", "name", "href", "pos"]) )
 		;
 		
 		answer = answer::success(answer, files);

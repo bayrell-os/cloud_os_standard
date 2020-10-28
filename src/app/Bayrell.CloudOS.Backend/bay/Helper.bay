@@ -16,13 +16,36 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Backend;
 
-use Runtime.BaseStruct;
+use Runtime.Web.Layout;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Bayrell.CloudOS.Backend.ORM.TopMenu;
 
 
-struct MainPageModel extends BaseStruct
+static class Helper
 {
-	Collection services = null;
-	int active = -1;
+
+	/**
+	 * Render chain. Route after
+	 */
+	pure RenderContainer renderChainRouteAfter(RenderContainer container)
+	{
+		if (container.layout.layout_name == "admin")
+		{
+			Collection<Dict> items = TopMenu::select()
+			|> .order([
+				["pos", "desc"],
+				["href", "asc"],
+			])
+			|> .asRecord(false)
+			|> await .all();
+			
+			container <= layout <= keep_data <= top_menu <= items;
+		}
+		
+		return [ container ];
+	}
+
 }
