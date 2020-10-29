@@ -252,12 +252,12 @@ span.lpad5{
 			</div>
 			<div class='layout_content_wrap'>
 				<div class='layout_top_menu'>
-					%var Collection top_menu = layout["keep_data", "top_menu"] |> default Collection [];
+					%var Collection top_menu = layout["keep_data", "cloud_os_top_menu"] |> default Collection [];
 					%for (int i=0; i<top_menu.count(); i++)
 					{
 						%var Dict item = top_menu[i];
 						<div class='layout_top_menu_item'>
-							<a class='nolink' href={ item["href"] } target='_blank'>{ item["name"] }</a>
+							<a class='nolink' href={ item["href"] } target='_self'>{ item["name"] }</a>
 						</div>
 					}
 				</div>

@@ -35,7 +35,7 @@ use Bayrell.CloudOS.Backend.ORM.User;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Balancer", "interface_name": "default" }
-@ApiMiddleware{ "value": "Bayrell.CloudOS.Backend.ORM.Auth::checkSystemApi" }
+@ApiMiddleware{ "value": "Bayrell.CloudOS.Backend.Helper::checkSystemApi" }
 static class Balancer
 {
 	

@@ -91,7 +91,7 @@ static class ModuleDescription
 		new LambdaChain
 		{
 			"name": AuthBackend::CHAIN_CHECK_TOKEN,
-			"value": "Bayrell.CloudOS.Backend.Auth::chainCheckToken",
+			"value": "Bayrell.CloudOS.Backend.Helper::chainCheckToken",
 			"is_async": true,
 		},
 		
@@ -99,7 +99,7 @@ static class ModuleDescription
 		new LambdaChain
 		{
 			"name": AuthBackend::CHAIN_LOGIN,
-			"value": "Bayrell.CloudOS.Backend.Auth::chainLogin",
+			"value": "Bayrell.CloudOS.Backend.Helper::chainLogin",
 			"is_async": true,
 		},
 		
@@ -107,7 +107,7 @@ static class ModuleDescription
 		new LambdaChain
 		{
 			"name": AuthBackend::CHAIN_LOGOUT,
-			"value": "Bayrell.CloudOS.Backend.Auth::chainLogout",
+			"value": "Bayrell.CloudOS.Backend.Helper::chainLogout",
 			"is_async": true,
 		},
 	];

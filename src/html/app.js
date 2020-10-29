@@ -428,7 +428,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 			var __v3; var __v3_childs = [];
 			[__v3, __v2_childs] = RenderDriver.e(__v2, __v2_childs, "element", {"name": "div","attrs": {"class":["layout_top_menu", this.getCssHash(ctx)].join(" "),"@elem_name":"layout_top_menu"}});
 			
-			var __v4 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, layout, ["keep_data", "top_menu"]));
+			var __v4 = new Runtime.Monad(ctx, Runtime.rtl.attr(ctx, layout, ["keep_data", "cloud_os_top_menu"]));
 			__v4 = __v4.monad(ctx, Runtime.rtl.m_to(ctx, "Runtime.Collection", Runtime.Collection.from([])));
 			var top_menu = __v4.value(ctx);
 			
@@ -442,7 +442,7 @@ Object.assign(Bayrell.CloudOS.AdminLayout,
 				
 				/* Element 'a.nolink' */
 				var __v5; var __v5_childs = [];
-				[__v5, __v4_childs] = RenderDriver.e(__v4, __v4_childs, "element", {"name": "a","attrs": {"href":Runtime.rtl.get(ctx, item, "href"),"target":"_blank","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
+				[__v5, __v4_childs] = RenderDriver.e(__v4, __v4_childs, "element", {"name": "a","attrs": {"href":Runtime.rtl.get(ctx, item, "href"),"target":"_self","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
 				
 				/* Text */
 				[__vnull, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "text", {"content": Runtime.rtl.get(ctx, item, "name")});

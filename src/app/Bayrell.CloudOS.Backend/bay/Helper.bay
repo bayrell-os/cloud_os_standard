@@ -18,10 +18,18 @@
 
 namespace Bayrell.CloudOS.Backend;
 
+use Runtime.lib;
+use Runtime.Exceptions.ApiException;
+use Runtime.Crypt.HASH;
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
+use Runtime.Web.Cookie;
 use Runtime.Web.Layout;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;
+use Runtime.Web.Auth.AuthToken;
 use Bayrell.CloudOS.Backend.ORM.TopMenu;
+use Bayrell.CloudOS.Backend.ORM.User;
 
 
 static class Helper
@@ -42,10 +50,137 @@ static class Helper
 			|> .asRecord(false)
 			|> await .all();
 			
-			container <= layout <= keep_data <= top_menu <= items;
+			container <= layout <= keep_data <= cloud_os_top_menu <= items;
 		}
 		
 		return [ container ];
 	}
-
+	
+	
+	
+	/**
+	 * Check system api
+	 */
+	static async list checkSystemApi(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		if (request.sign == "")
+		{
+			throw new ApiException("Sign check error", rtl::ERROR_VALIDATION);
+		}
+		
+		string text = request.data
+			|> default Dict {}
+			|> .keys()
+			|> lib::sort( lib::sortAsc )
+			|> .prependIm(request.time)
+			|> lib::join("|")
+		;
+		string key = @.env("CLOUD_KEY");
+		
+		bool verify = HASH::verify(text, request.sign, key, "SHA512");
+		if (not verify)
+		{
+			throw new ApiException("Sign check error", rtl::ERROR_VALIDATION);
+		}
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Check token
+	 */
+	async list chainCheckToken(RenderContainer container, AuthToken token)
+	{
+		User user = null;
+		
+		/*
+		AuthToken token = new AuthToken
+		{
+			"user_id": 35,
+			"login": "admin",
+		}
+		*/
+		
+		if (token)
+		{
+			/* Find user */
+			User user = User::select()
+				|> .filter
+				([
+					["user_id", "=", token.user_id],
+					["banned", "=", 0],
+					["is_deleted", "=", 0],
+				])
+				|> await .one()
+			;
+			
+			if (user == null)
+			{
+				token = null;
+			}
+		}
+		
+		/* Set auth settings */
+		container <= layout <= tz <= "GMT+6";
+		container <= api_storage <= { classof User } <= (user != null) ? user.convertToDict
+		([
+			"user_id",
+			"login",
+			"name",
+		]) : null;
+		
+		return [ container, token ];
+	}
+	
+	
+	
+	/**
+	 * Login
+	 */
+	async list chainLogin(string username, string password, AuthToken token)
+	{
+		if (token != null) return [ username, password, token ];
+		
+		/* Find user */
+		User user = User::select()
+			|> .filter
+			([
+				["login", "=", username]
+			])
+			|> await .one()
+		;
+		
+		if (user == null) return [ username, password, token ];
+		if (user.banned) return [ username, password, token ];
+		
+		/* Check password */
+		bool check_password = await User::checkPassword(user.user_id, password);
+		if (not check_password) return [ username, password, token ];
+		
+		/* Create token */
+		int cookie_expire = @.config(["Runtime.Web.Auth", "COOKIE_EXPIRE"]) |> default int 3600;
+		int time = rtl::time();
+		token = new AuthToken
+		{
+			"created": time,
+			"expire": time + cookie_expire,
+			"user_id": user.user_id,
+			"login": username,
+		}
+		
+		return [ username, password, token ];
+	}
+	
+	
+	
+	/**
+	 * Logout
+	 */
+	async list chainLogout(AuthToken token)
+	{
+		return [ token ];
+	}
+	
 }
