@@ -28,6 +28,9 @@ use Runtime.Task.TaskDriver;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
+use Bayrell.CloudOS.Backend.ORM.Domain;
+use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.ORM.Space;
 use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.DockerLib;
 
@@ -52,7 +55,7 @@ class DockerTasks
 	/**
 	 * Sync services
 	 */
-	@CronTimer{ "timer": 15, "alias": "Bayrell.CloudOS.Backend.DockerTasks::sync" } 
+	@CronTimer{ "timer": 15 } 
 	static async void syncServices()
 	{
 		Cursor cursor = null;
@@ -137,8 +140,130 @@ class DockerTasks
 		)
 		await cursor.close();
 		
-		/* Update service nginx */
+		/* Update inc/services_admin_page.inc */
 		await Service::updateNginx();
+	}
+	
+	
+	
+	/**
+	 * Update services admin pages
+	 */
+	@CronTimer{ "timer": 60 }
+	static async void checkSystemLayer()
+	{
+		TaskDriver output = @.getDriver(classof TaskDriver);
+		
+		string CLOUD_DOMAIN = @.env("CLOUD_DOMAIN") |> default string "";
+		string CLOUD_PANEL = @.env("CLOUD_PANEL") |> default string "";
+		
+		/* Find service */
+		Service service = Service::select()
+			|> .filter([
+				["docker_name", "=", CLOUD_PANEL],
+				["enable", "=", 1],
+				["is_deleted", "=", 0],
+			])
+			|> await .one()
+		;
+		
+		if (service != null and CLOUD_DOMAIN != "" and CLOUD_PANEL != "")
+		{
+			
+			/* Create domain if does not exists */
+			Domain domain = await Domain::getById(CLOUD_DOMAIN);
+			if (domain == null)
+			{
+				string nginx_template = "";
+				nginx_template ~= "server {\n";
+				nginx_template ~= "\tlisten 80;\n";
+				nginx_template ~= "\tserver_name %DOMAIN_NAME%;\n";
+				nginx_template ~= "\troot /usr/share/nginx/default;\n";
+				nginx_template ~= "\tindex index.html;\n";
+				nginx_template ~= "\tautoindex off;\n";
+				nginx_template ~= "%ROUTES%\n";
+				nginx_template ~= "%SSL%\n";
+				nginx_template ~= "}";
+				
+				await Domain::save
+				{
+					"domain_name": CLOUD_DOMAIN,
+					"nginx_template": nginx_template,
+				};
+				
+				domain = await Domain::getById(CLOUD_DOMAIN);
+				
+				output.writeln ("Created domain " ~ CLOUD_DOMAIN);
+			}
+			
+			/* Create space if does not exists */
+			Space space = Space::select()
+				|> .filter([["domain_name", "=", CLOUD_DOMAIN]])
+				|> await .one()
+			;
+			if (space == null)
+			{
+				Dict pk = await Space::save
+				{
+					"space_name": CLOUD_DOMAIN,
+					"domain_name": CLOUD_DOMAIN,
+				};
+				
+				space = await Space::getByKey(pk);
+				
+				output.writeln ("Created space " ~ CLOUD_DOMAIN);
+			}
+			
+			/* Create layer if does not exists */
+			bool update = false;
+			Layer layer = Layer::select()
+				|> .filter([
+					["layer_uid", "=", "00000000-0000-0000-0000-000000000000"]
+				])
+				|> await .one()
+			;
+			if (layer == null)
+			{
+				await Layer::save
+				{
+					"layer_uid": "00000000-0000-0000-0000-000000000000",
+					"space_id": space.space_id,
+					"service_id": service.service_id,
+					"route": "/",
+				};
+				update = true;
+			}
+			else
+			{
+				if (layer.service_id != service.service_id)
+				{
+					layer <= service_id <= service.service_id;
+					update = true;
+				}
+				if (layer.space_id != space.space_id)
+				{
+					layer <= space_id <= space.space_id;
+					update = true;
+				}
+				if (layer.route != "/")
+				{
+					layer <= route <= "/";
+					update = true;
+				}
+				if (update)
+				{
+					await Layer::save(layer);
+				}
+			}
+			
+			/* Update domain */
+			if (update)
+			{
+				output.writeln ("Update nginx for domain " ~ CLOUD_DOMAIN);
+				await Domain::updateNginx(CLOUD_DOMAIN);
+			}
+			
+		}
 	}
 	
 	

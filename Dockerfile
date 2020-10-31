@@ -1,4 +1,5 @@
-FROM bayrell/alpine_php_fpm:7.3
+ARG ARCH=
+FROM bayrell/alpine_php_fpm:7.3-1${ARCH}
 
 RUN apk add sudo docker curl; \
 	rm -rf /var/cache/apk/*; \

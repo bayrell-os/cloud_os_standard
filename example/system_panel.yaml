@@ -10,7 +10,7 @@ secrets:
 services:
     
     system_panel:
-        image: bayrell/cloud_os:0.1-20201028_094255
+        image: bayrell/cloud_os_standard:0.1.0
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "system_panel_data:/data"
@@ -20,16 +20,10 @@ services:
             - AUTH_PUBLIC_KEY
             - AUTH_PRIVATE_KEY
         env_file:
-            - common.env
+            - ./env.conf
         environment:
-            MEMCACHED: "memcached1"
-            MYSQL_HOST: "mysql1"
-            MYSQL_USERNAME: "lasto4ka"
-            MYSQL_PASSWORD: "7DF&d7jr!Lk5rZ^b"
+            CLOUD_SOFTWARE_NAME: "bayrell.cloud_os.standard"
             MYSQL_DB: "system_panel"
-            AUTH_COOKIE_NAME: cloud_os_token
-            AUTH_COOKIE_EXPIRE: 86400
-            CLOUD_KEY: mysecretkey
         deploy:
             replicas: 1
             endpoint_mode: dnsrr
@@ -43,7 +37,7 @@ services:
                 window: 120s
             placement:
                 constraints:
-                    - node.hostname == docker0
+                    - node.labels.name == docker0
         networks:
             - backend
             - cloud_router

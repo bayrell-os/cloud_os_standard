@@ -1,5 +1,6 @@
 /example/auth_private.key
 /example/auth_public.key
+/example/env.conf
 /compiler
 /compiler.new
 /node_modules
