@@ -181,6 +181,8 @@ class DockerTasks
 				nginx_template ~= "\troot /usr/share/nginx/default;\n";
 				nginx_template ~= "\tindex index.html;\n";
 				nginx_template ~= "\tautoindex off;\n";
+				nginx_template ~= "\t# Include admin pages\n";
+				nginx_template ~= "\tinclude inc/services_admin_page.inc;\n";
 				nginx_template ~= "%ROUTES%\n";
 				nginx_template ~= "%SSL%\n";
 				nginx_template ~= "}";
