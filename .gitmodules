@@ -19,9 +19,6 @@
 [submodule "src/lib/Runtime.Web.CRUD"]
 	path = src/lib/Runtime.Web.CRUD
 	url = https://github.com/bayrell/Runtime.Web.CRUD
-[submodule "src/lib/Runtime.Web.Backend"]
-	path = src/lib/Runtime.Web.Backend
-	url = https://github.com/bayrell/Runtime.Web.Backend
 [submodule "src/lib/Runtime.Web.Input"]
 	path = src/lib/Runtime.Web.Input
 	url = https://github.com/bayrell/Runtime.Web.Input
@@ -37,3 +34,6 @@
 [submodule "src/lib/Runtime.Cron"]
 	path = src/lib/Runtime.Cron
 	url = https://github.com/bayrell/Runtime.Cron
+[submodule "src/lib/Runtime.Backend"]
+	path = src/lib/Runtime.Backend
+	url = https://github.com/bayrell/Runtime.Backend
