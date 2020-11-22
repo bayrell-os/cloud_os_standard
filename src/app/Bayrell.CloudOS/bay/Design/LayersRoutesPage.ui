@@ -58,31 +58,30 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.LayerRoute";
  */
 @Route{ "uri": "/admin/layers/routes/", "name": "app.admin.layers.routes" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
-static async RenderContainer actionIndex(RenderContainer container)
-{
-	/* Create model */
-	CrudPageModel page_model = await CrudPageModel::crudSearch(static::getCrudObjectName(), container);
-	
-	/* Set title */
-	container <= layout <= title <= "Routes";
-	container <= layout <= layout_name <= "admin";
-	
-	/* Set model */
-	container <= layout <= page_class <= classof LayersRoutesPage;
-	container <= layout <= page_model <= page_model;
-	
-	return [ container ];
-}
+static async RenderContainer actionIndex(RenderContainer container) => [
+	container
+		
+		/* Set title */
+		|> lib::setAttr(["layout", "title"], "Routes")
+		|> lib::setAttr(["layout", "layout_name"], "admin")
+		
+		/* Set model */
+		|> lib::setAttr(["layout", "page_class"], classof LayersRoutesPage)
+		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
+		
+		/* Make api request */
+		|> await static::crudSearch
+];
 
 
 
 /**
  * Returns options
  */
-pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
+pure Collection getOptions(RenderContainer container, string name = "")
 {
 	if (name == "domains")
-		return model
+		return container.layout.page_model
 			|> attr "foreigns", "domains", "options"
 			|> lib::map
 			(
@@ -97,7 +96,7 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 		;
 		
 	if (name == "layers")
-		return model
+		return container.layout.page_model
 			|> attr "foreigns", "layers", "options"
 			|> lib::map
 			(
@@ -112,7 +111,7 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 			|> default Collection []
 		;
 	
-	return parent::getOptions(layout, model, params, name);
+	return parent::getOptions(container, name);
 }
 
 
@@ -120,22 +119,13 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params)
-{
-	Collection layers = static::getOptions(layout, model, params, "layers");
-	
-	return [ new FieldInfo
+pure Collection<FieldInfo> getStruct(RenderContainer container) =>
+[
+	new FieldInfo
 	{
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -147,7 +137,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(layout, model, params, "domains"),
+			"options": static::getOptions(container, "domains"),
 		},
 		"info":
 		{
@@ -178,11 +168,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "domain_route",
 		"label": "Route",
 		"class_name": classof Label,
-		"calc": html (LayoutModel layout, var value, Dict settings) use (layers)
-		{
-			Dict item = settings["crud_item"];
-			return item["domain_name"] ~ item["route"];
-		}
 	},
 	
 	new FieldInfo
@@ -193,7 +178,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": layers,
+			"options": static::getOptions(container, "layers"),
 		},
 		"info":
 		{
@@ -251,26 +236,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "open",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": html (LayoutModel layout, var value, Dict settings)
-				{
-					Dict item = settings["crud_item"];
-					string uri = "http://" ~ item["domain_name"] ~ item["route"];
-					return static::renderButton
-					(
-						layout, settings, "view",
-						{
-							"url": uri,
-							"target": "_blank",
-							"label": "Open",
-						}
-					);
-				},
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -285,15 +250,15 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 				"render": method static::renderButtons,
 			},
 		},
-	} ];
-}
+	}
+];
 
 
 
 /**
  * Returns filter fields
  */
-pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFilterFields(RenderContainer container) =>
 [
 	"layer_id",
 	"domain_name",
@@ -305,7 +270,7 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
 /**
  * Returns form fields
  */
-pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFormFields(RenderContainer container) =>
 [
 	"layer_id",
 	"domain_name",
@@ -317,7 +282,7 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns table fields
  */
-pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
 	"layer_name",
@@ -335,7 +300,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 /**
  * Returns view fields
  */
-pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getViewFields(RenderContainer container) =>
 [
 ];
 
@@ -344,7 +309,7 @@ pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns messages
  */
-pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict<string> getMessages() =>
 {
 	"add": _("Bayrell.TimePlanner", "Add route"),
 	"delete": string (Dict item) =>
@@ -358,7 +323,7 @@ pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict para
 /**
  * Dialog settings
  */
-pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getDialogSettings() =>
 {
 };
 
@@ -367,9 +332,70 @@ pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params
 /**
  * Form settings
  */
-pure Dict getFormSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getFormSettings() =>
 {
 };
+
+
+
+/**
+ * Custom class name
+ */
+pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	return crud_settings["crud_class_name"];
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	/* Route */
+	if (field_name == "domain_route")
+	{
+		Dict item = crud_settings["crud_item"];
+		return item["domain_name"] ~ item["route"];
+	}
+	
+	return value;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, value, crud_settings);
+	
+	/* Open */
+	if (kind == "table" and field_name == "open")
+	{
+		Dict item = crud_settings["crud_item"];
+		string uri = "http://" ~ item["domain_name"] ~ item["route"];
+		return static::renderButton
+		(
+			layout, crud_settings, "view",
+			{
+				"url": uri,
+				"target": "_blank",
+				"label": "Open",
+			}
+		);
+	}
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, value, crud_settings);
+	
+	return null;
+}
 
 
 </script>

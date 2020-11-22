@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -34,11 +35,12 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.CRUD.FormModel" />
+<use name="Runtime.Web.CRUD.TableModel" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
-<use name="Runtime.Web.Table.TableModel" />
 
 
 <script>
@@ -57,42 +59,29 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Service";
  */
 @Route{ "uri": "/admin/services/", "name": "app.admin.services" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
-static async RenderContainer actionIndex(RenderContainer container)
-{
-	/* Create model */
-	CrudPageModel page_model = await CrudPageModel::crudSearch(static::getCrudObjectName(), container);
-	
-	/* Set title */
-	container <= layout <= title <= "Services";
-	container <= layout <= layout_name <= "admin";
-	
-	/* Set model */
-	container <= layout <= page_class <= classof ServicePage;
-	container <= layout <= page_model <= page_model;
-	
-	return [ container ];
-}
-
-
-
-/**
- * Trim name
- */
-pure string trimImageName(string name)
-{
-	int pos = rs::search(name, "@");
-	if (pos != -1) name = rs::substr(name, 0, pos);
-	return name;
-}
+static async RenderContainer actionIndex(RenderContainer container) => [
+	container
+		
+		/* Set title */
+		|> lib::setAttr(["layout", "title"], "Services")
+		|> lib::setAttr(["layout", "layout_name"], "admin")
+		
+		/* Set model */
+		|> lib::setAttr(["layout", "page_class"], classof ServicePage)
+		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
+		
+		/* Make api request */
+		|> await static::crudSearch
+];
 
 
 
 /**
  * Returns options
  */
-pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
+pure Collection getOptions(RenderContainer container, string name = "")
 {
-	return parent::getOptions(layout, model, params, name);
+	return parent::getOptions(container, name);
 }
 
 
@@ -100,7 +89,7 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 [
 	new FieldInfo
 	{
@@ -113,13 +102,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -127,14 +109,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "stack_name",
 		"label": "Stack name",
 		"class_name": classof Label,
-		"info":
-		{
-			"form":
-			{
-				"class_name": string (LayoutModel layout, var model, Dict settings) =>
-					model["action"] == "create" ? classof Input : classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -142,14 +116,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "service_name",
 		"label": "Service name",
 		"class_name": classof Label,
-		"info":
-		{
-			"form":
-			{
-				"class_name": string (LayoutModel layout, var model, Dict settings) =>
-					model["action"] == "create" ? classof Input : classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -185,13 +151,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "docker_replicas",
 		"label": "Replicas",
 		"class_name": classof Label,
-		"calc": string (LayoutModel layout, var model, Dict settings)
-		{
-			Dict item = settings["crud_item"];
-			int work = item["docker_balancer", "State", "Work"] |> default int 0;
-			int total = item["docker_balancer", "State", "Total"] |> default int 0;
-			return work ~ " / " ~ total;
-		},
 	},
 	
 	new FieldInfo
@@ -199,12 +158,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "docker_image",
 		"label": "Docker image",
 		"class_name": classof Label,
-		"calc": string (LayoutModel layout, var model, Dict settings)
-		{
-			Dict item = settings["crud_item"];
-			string image = item["docker_image"];
-			return static::trimImageName(image);
-		},
 	},
 	
 	new FieldInfo
@@ -227,18 +180,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 			"table":
 			{
 				"class_name": classof SelectText,
-				"render": html (LayoutModel layout, var value, Dict settings) =>
-					(value == 0)
-						? "No"
-						: static::renderButton
-						(
-							layout, settings, "view",
-							{
-								"url": "/admin/services/" ~ settings["crud_item"]["docker_name"] ~ "/",
-								"target": "_blank",
-							}
-						)
-				,
 			},
 			"form":
 			{
@@ -248,6 +189,27 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 				},
 			},
 		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "admin_page_settings",
+		"label": "Admin settings",
+		"class_name": classof Label,
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "admin_port",
+		"label": "Admin port",
+		"class_name": classof Input,
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "admin_route",
+		"label": "Admin route",
+		"class_name": classof Input,
 	},
 	
 	new FieldInfo
@@ -286,13 +248,6 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderButtons,
-			},
-		},
 	},
 ];
 
@@ -301,7 +256,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 /**
  * Returns filter fields
  */
-pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFilterFields(RenderContainer container) =>
 [
 	"docker_name",
 	"have_admin_page",
@@ -313,12 +268,14 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
 /**
  * Returns form fields
  */
-pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFormFields(RenderContainer container) =>
 [
 	"stack_name",
 	"service_name",
 	"software_api_name",
 	"have_admin_page",
+	"admin_port",
+	"admin_route",
 ];
 
 
@@ -326,7 +283,7 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns table fields
  */
-pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
 	"docker_name",
@@ -343,7 +300,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 /**
  * Returns view fields
  */
-pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getViewFields(RenderContainer container) =>
 [
 ];
 
@@ -352,7 +309,7 @@ pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns messages
  */
-pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict<string> getMessages() =>
 {
 	"add": _("Bayrell.TimePlanner", "Add service"),
 	"delete": string (Dict item) =>
@@ -364,7 +321,7 @@ pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict para
 /**
  * Dialog settings
  */
-pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getDialogSettings() =>
 {
 };
 
@@ -373,9 +330,117 @@ pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params
 /**
  * Form settings
  */
-pure Dict getFormSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getFormSettings() =>
 {
 };
+
+
+
+/**
+ * Custom class name
+ */
+pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	if (kind == "form" and field_name == "service_name")
+	{
+		FormModel model = crud_settings["crud_form_model"];
+		return model["action"] == "create" ? classof Input : classof Label;
+	}
+	
+	if (kind == "form" and field_name == "stack_name")
+	{
+		FormModel model = crud_settings["crud_form_model"];
+		return model["action"] == "create" ? classof Input : classof Label;
+	}
+	
+	return crud_settings["crud_class_name"];
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	if (field_name == "docker_image")
+	{
+		Dict item = crud_settings["crud_item"];
+		string image = item["docker_image"];
+		return static::trimImageName(image);
+	}
+	
+	if (field_name == "docker_replicas")
+	{
+		Dict item = crud_settings["crud_item"];
+		int work = item["docker_balancer", "State", "Work"] |> default int 0;
+		int total = item["docker_balancer", "State", "Total"] |> default int 0;
+		return work ~ " / " ~ total;
+	}
+	
+	return value;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, value, crud_settings);
+	
+	/* Table have admin page button */
+	if (kind == "table" and field_name == "have_admin_page")
+		return (value == 0)
+			? "No"
+			:
+			<div>
+				<div style='display:inline-block;vertical-align: middle; margin-right: 5px;'>
+				{ static::renderButton
+				(
+					layout, crud_settings, "view",
+					{
+						"url": "/admin/services/" ~ crud_settings["crud_item"]["docker_name"] ~ "/",
+						"target": "_blank",
+					}
+				) }
+				</div>
+				<div style='display:inline-block;vertical-align: middle; margin-left: 5px;'>
+					<div>Port = { item["admin_port"] }</div>
+					<div>Route = { item["admin_route"] }</div>
+				</div>
+			</div>
+		;
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, value, crud_settings);
+	
+	/* Admin page settings */
+	if (kind == "table" and field_name == "admin_page_settings")
+	{
+		return "";
+	}
+	
+	return null;
+}
+
+
+
+/**
+ * Trim name
+ */
+pure string trimImageName(string name)
+{
+	int pos = rs::search(name, "@");
+	if (pos != -1) name = rs::substr(name, 0, pos);
+	return name;
+}
 
 
 </script>

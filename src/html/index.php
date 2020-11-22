@@ -20,7 +20,7 @@ $loader = ( new Loader() )
 	->addIncludePath( ROOT_PATH . "/lib" )
 	->setEnv($env)
 	->setMainModule("Bayrell.CloudOS")
-	->setEntryPoint("Runtime.Web.Backend.CGI")
+	->setEntryPoint("Runtime.Web.CGI")
 	->run();
 
 exit($loader->exit_code);

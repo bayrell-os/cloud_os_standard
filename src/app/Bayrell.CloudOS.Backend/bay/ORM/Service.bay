@@ -55,6 +55,12 @@ struct Service extends Record
 	@BooleanType{}
 	bool have_admin_page = 0;
 	
+	@BigIntType{}
+	int admin_port = 81;
+	
+	@StringType{}
+	string admin_route = "/";
+	
 	@BooleanType{}
 	bool enable;
 	

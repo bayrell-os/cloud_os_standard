@@ -52,9 +52,9 @@ static class ModuleDescription
 	{
 		/* Backend */
 		#ifdef BACKEND then
+		'Runtime.Backend': '*',
 		'Runtime.Cron': '*',
 		'Runtime.Task': '*',
-		'Runtime.Web.Backend': '*',
 		#endif
 	};
 	

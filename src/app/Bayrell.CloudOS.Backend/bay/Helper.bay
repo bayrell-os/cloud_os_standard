@@ -23,7 +23,7 @@ use Runtime.Exceptions.ApiException;
 use Runtime.Crypt.HASH;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
-use Runtime.Web.Cookie;
+use Runtime.Core.Cookie;
 use Runtime.Web.Layout;
 use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderContainer;

@@ -214,6 +214,7 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.admin.users") ? "active": "" }>
 								<a class='nolink' href='/admin/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
+							<!--
 							<li class={ rs::start(layout["route", "name"], "app.admin.roles") ? "active": "" }>
 								<a class='nolink' href='/admin/roles/'>{ _("Bayrell.CloudOS", "Roles") }</a>
 							</li>
@@ -221,7 +222,7 @@ span.lpad5{
 								<a class='nolink' href='/admin/permissions/'>
 									{ _("Bayrell.CloudOS", "Permissions") }
 								</a>
-							</li>
+							</li>-->
 						</ul>
 					</div>
 					

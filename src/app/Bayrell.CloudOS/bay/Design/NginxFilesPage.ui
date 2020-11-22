@@ -21,6 +21,7 @@
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
+<use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -58,30 +59,29 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.NginxFile";
  */
 @Route{ "uri": "/admin/nginx/", "name": "app.admin.nginx" }
 @RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
-static async RenderContainer actionIndex(RenderContainer container)
-{
-	/* Create model */
-	CrudPageModel page_model = await CrudPageModel::crudSearch(static::getCrudObjectName(), container);
-	
-	/* Set title */
-	container <= layout <= title <= "Nginx";
-	container <= layout <= layout_name <= "admin";
-	
-	/* Set model */
-	container <= layout <= page_class <= classof NginxFilesPage;
-	container <= layout <= page_model <= page_model;
-	
-	return [ container ];
-}
+static async RenderContainer actionIndex(RenderContainer container) => [
+	container
+		
+		/* Set title */
+		|> lib::setAttr(["layout", "title"], "Nginx")
+		|> lib::setAttr(["layout", "layout_name"], "admin")
+		
+		/* Set model */
+		|> lib::setAttr(["layout", "page_class"], classof NginxFilesPage)
+		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
+		
+		/* Make api request */
+		|> await static::crudSearch
+];
 
 
 
 /**
  * Returns options
  */
-pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params, string name = "")
+pure Collection getOptions(RenderContainer container, string name = "")
 {
-	return parent::getOptions(layout, model, params, name);
+	return parent::getOptions(container, name);
 }
 
 
@@ -89,20 +89,13 @@ pure Collection getOptions(LayoutModel layout, CrudPageModel model, Dict params,
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 [
 	new FieldInfo
 	{
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -185,7 +178,7 @@ pure Collection<FieldInfo> getStruct(LayoutModel layout, CrudPageModel model, Di
 /**
  * Returns filter fields
  */
-pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFilterFields(RenderContainer container) =>
 [
 	"name",
 	"enable",
@@ -196,7 +189,7 @@ pure Collection<string> getFilterFields(LayoutModel layout, CrudPageModel model,
 /**
  * Returns form fields
  */
-pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getFormFields(RenderContainer container) =>
 [
 	"name",
 	"enable",
@@ -208,7 +201,7 @@ pure Collection<string> getFormFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns table fields
  */
-pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
 	"name",
@@ -221,7 +214,7 @@ pure Collection<string> getTableFields(LayoutModel layout, CrudPageModel model, 
 /**
  * Returns view fields
  */
-pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Collection<string> getViewFields(RenderContainer container) =>
 [
 ];
 
@@ -230,7 +223,7 @@ pure Collection<string> getViewFields(LayoutModel layout, CrudPageModel model, D
 /**
  * Returns messages
  */
-pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict<string> getMessages() =>
 {
 	"add": _("Bayrell.TimePlanner", "Add nginx files"),
 	"delete": string (Dict item) =>
@@ -242,7 +235,7 @@ pure Dict<string> getMessages(LayoutModel layout, CrudPageModel model, Dict para
 /**
  * Dialog settings
  */
-pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getDialogSettings() =>
 {
 	"width": "800px",
 };
@@ -252,10 +245,47 @@ pure Dict getDialogSettings(LayoutModel layout, CrudPageModel model, Dict params
 /**
  * Form settings
  */
-pure Dict getFormSettings(LayoutModel layout, CrudPageModel model, Dict params) =>
+pure Dict getFormSettings() =>
 {
 };
 
+
+
+/**
+ * Custom class name
+ */
+pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	return crud_settings["crud_class_name"];
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	return value;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
+{
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, value, crud_settings);
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, value, crud_settings);
+	
+	return null;
+}
 
 </script>
 

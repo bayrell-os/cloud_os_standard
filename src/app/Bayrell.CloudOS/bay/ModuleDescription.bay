@@ -80,7 +80,7 @@ static class ModuleDescription
 		/* Register RenderController */
 		new Driver
 		{
-			"name": "root-controller",
+			"name": "RootController",
 			"value": classof RenderController,
 			"params":
 			{
@@ -174,7 +174,7 @@ static class ModuleDescription
 			},
 			
 			/* Web Backend settings */
-			"Runtime.Web.Backend":
+			"Runtime.Backend":
 			{
 				"api": true,
 				"external_bus_class": "",

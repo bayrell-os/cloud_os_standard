@@ -23,9 +23,9 @@ use Runtime.lib;
 use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
-use Runtime.Web.Backend.ApiList;
-use Runtime.Web.Backend.ApiMethod;
-use Runtime.Web.Backend.ApiMiddleware;
+use Runtime.Backend.ApiList;
+use Runtime.Backend.ApiMethod;
+use Runtime.Backend.ApiMiddleware;
 use Runtime.Web.ORM.QueryBuilder;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.Rules.AllowFields;
@@ -71,6 +71,8 @@ static class ServiceCrud extends CrudApi
 				"docker_balancer",
 				"software_api_name",
 				"have_admin_page",
+				"admin_port",
+				"admin_route",
 				"enable",
 			]
 		},
