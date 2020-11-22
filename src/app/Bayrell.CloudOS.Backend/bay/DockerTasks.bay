@@ -42,12 +42,12 @@ class DockerTasks
 	/**
 	 * Update services admin pages
 	 */
-	@TaskMethod{}
-	static async void updateServicesAdminPages()
+	@CronTimer{ "timer": 15 }
+	static async void updateNginx()
 	{
 		TaskDriver output = @.getDriver(classof TaskDriver);
+		await static::syncServices();
 		await Service::updateNginx();
-		output.writeln("Ok");
 	}
 	
 	
@@ -55,7 +55,7 @@ class DockerTasks
 	/**
 	 * Sync services
 	 */
-	@CronTimer{ "timer": 15 } 
+	@TaskMethod{}
 	static async void syncServices()
 	{
 		Cursor cursor = null;
@@ -139,9 +139,6 @@ class DockerTasks
 			db_settings
 		)
 		await cursor.close();
-		
-		/* Update inc/services_admin_page.inc */
-		await Service::updateNginx();
 	}
 	
 	

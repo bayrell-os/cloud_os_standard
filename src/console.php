@@ -22,7 +22,7 @@ $loader = ( new Loader() )
 	->addIncludePath( ROOT_PATH . "/lib" )
 	->setArgs($argv)
 	->setEnv($env)
-	->setMainModule("Bayrell.CloudOS.Backend")
+	->setMainModule("Bayrell.CloudOS")
 	->setEntryPoint("Runtime.Task.Entry")
 	->run();
 
