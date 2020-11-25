@@ -1,5 +1,7 @@
 <?php
 
+define("APP_NAME", "Bayrell.CloudOS");
+
 $env = getenv();
 
 /* App mode */

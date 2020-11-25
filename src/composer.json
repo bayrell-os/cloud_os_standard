@@ -1,0 +1,14 @@
+{
+    "name": "bayrell-os/bus_gateway",
+    "type": "project",
+    "license": "Apache-2.0 License",
+    "authors": [
+        {
+            "name": "Ildar Bikmamatov",
+            "email": "ildar@bayrell.org"
+        }
+    ],
+    "require": {
+		"php-amqplib/php-amqplib": ">=2.9.0"
+    }
+}

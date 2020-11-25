@@ -10,7 +10,7 @@ secrets:
 services:
     
     system_panel:
-        image: bayrell/cloud_os_standard:0.1.0
+        image: bayrell/cloud_os_standard:0.1.0-20201125_134343
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "system_panel_data:/data"

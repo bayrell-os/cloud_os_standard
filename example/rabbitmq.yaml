@@ -24,6 +24,11 @@ services:
         networks:
             - backend
             - cloud_router
+        ports:
+          - target: 15672
+            published: 15672
+            protocol: tcp
+            mode: host
         logging:
             driver: journald
 

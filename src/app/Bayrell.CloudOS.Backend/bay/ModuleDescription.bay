@@ -76,6 +76,9 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.TopMenuCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
 		
+		/* System bus */
+		new Entity{ "name": "Bayrell.CloudOS.Backend.BUS.Balancer" },
+		
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
 		

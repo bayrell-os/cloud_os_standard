@@ -17,15 +17,15 @@ case "$1" in
 	
 	amd64)
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-amd64 --file Dockerfile --build-arg ARCH=-amd64
-		docker push bayrell/cloud_os_standard:$VERSION-amd64
 	;;
 	
 	arm32v7)
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm32v7 --file Dockerfile --build-arg ARCH=-arm32v7
-		docker push bayrell/cloud_os_standard:$VERSION-arm32v7
 	;;
 	
 	manifest)
+		docker push bayrell/cloud_os_standard:$VERSION-amd64
+		docker push bayrell/cloud_os_standard:$VERSION-arm32v7
 		docker manifest create --amend bayrell/cloud_os_standard:$VERSION \
 			bayrell/cloud_os_standard:$VERSION-amd64 \
 			bayrell/cloud_os_standard:$VERSION-arm32v7
