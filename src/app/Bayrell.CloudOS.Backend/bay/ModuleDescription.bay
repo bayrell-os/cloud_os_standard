@@ -66,7 +66,6 @@ static class ModuleDescription
 	pure Collection<Dict> entities() => 
 	[
 		/* Register api */
-		new Entity{ "name": "Bayrell.CloudOS.Backend.API.Balancer" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.DomainCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LayerCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.LayerRouteCrud" },
@@ -75,20 +74,13 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.SpaceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.TopMenuCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.Backend.API.UserCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.Backend.API.YamlFiles" },
 		
 		/* System bus */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.BUS.Balancer" },
 		
 		/* Tasks */
 		new Entity{ "name": "Bayrell.CloudOS.Backend.DockerTasks" },
-		
-		/* Render Chain. Route after */
-		new LambdaChain
-		{
-			"name": RenderDriver::RENDER_CHAIN,
-			"value": "Bayrell.CloudOS.Backend.Helper::renderChainRouteAfter",
-			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
-		},
 		
 		/* Auth Chain. Check token */
 		new LambdaChain

@@ -36,7 +36,6 @@ use Bayrell.CloudOS.Backend.ORM.Domain;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Domain", "interface_name": "core.crud" }
-@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::checkAuthMiddlewareApi" }
 static class DomainCrud extends CrudApi
 {
 	

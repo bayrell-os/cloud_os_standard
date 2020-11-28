@@ -58,7 +58,6 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.NginxFile";
  * @return RenderContainer
  */
 @Route{ "uri": "/admin/nginx/", "name": "app.admin.nginx" }
-@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		

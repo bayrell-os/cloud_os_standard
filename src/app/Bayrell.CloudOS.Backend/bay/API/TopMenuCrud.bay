@@ -37,7 +37,6 @@ use Bayrell.CloudOS.Backend.ORM.TopMenu;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.TopMenu", "interface_name": "core.crud" }
-@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::checkAuthMiddlewareApi" }
 static class TopMenuCrud extends CrudApi
 {
 	

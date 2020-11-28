@@ -2,11 +2,11 @@ version: "3.7"
 
 services:
     
-    rabbitmq:
-        image: rabbitmq:3.8.9-management
+    bus_gateway:
+        image: bayrell/bus_gateway:0.1.0-20201126_142630
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
-        volumes:
-            - "rabbitmq_data:/var/lib/rabbitmq"
+        env_file:
+            - ./env.conf
         deploy:
             replicas: 1
             endpoint_mode: dnsrr
@@ -24,16 +24,8 @@ services:
         networks:
             - backend
             - cloud_router
-        ports:
-          - target: 15672
-            published: 15672
-            protocol: tcp
-            mode: host
         logging:
             driver: journald
-
-volumes:
-    rabbitmq_data:
 
 networks:
     

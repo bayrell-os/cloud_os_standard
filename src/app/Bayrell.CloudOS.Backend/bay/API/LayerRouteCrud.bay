@@ -41,7 +41,6 @@ use Bayrell.CloudOS.Backend.ORM.Space;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.LayerRoute", "interface_name": "core.crud" }
-@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::checkAuthMiddlewareApi" }
 static class LayerRouteCrud extends CrudApi
 {
 	

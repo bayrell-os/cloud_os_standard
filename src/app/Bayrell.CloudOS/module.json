@@ -2,11 +2,9 @@
 	"name": "Bayrell.CloudOS",
 	"assets":
 	[
-		"AdminLayout",
 		"DefaultLayout",
 		"Routes",
 		"MainPage",
-		"MainPageModel",
 		"Design/DomainsPage",
 		"Design/LayersPage",
 		"Design/LayersRoutesPage",
@@ -15,6 +13,8 @@
 		"Design/SpacesPage",
 		"Design/TopMenuPage",
 		"Design/UsersPage",
+		"Design/YamlFilesPage",
+		"Installer/InstallerPage",
 		"Other/AdminerPage",
 		"Page404",
 		"ModuleDescription"

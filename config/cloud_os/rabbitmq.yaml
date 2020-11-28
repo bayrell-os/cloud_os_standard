@@ -1,29 +1,12 @@
 version: "3.7"
 
-secrets:
-    AUTH_PUBLIC_KEY:
-        file: ./auth_public.key
-    AUTH_PRIVATE_KEY:
-        file: ./auth_private.key
-
-
 services:
     
-    system_panel:
-        image: bayrell/cloud_os_standard:0.1.0-20201125_134343
+    rabbitmq:
+        image: rabbitmq:3.8.9-management
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
-            - "system_panel_data:/data"
-            - "/var/run/docker.sock:/var/run/docker.sock:ro"
-            - "../src:/var/www"
-        secrets:
-            - AUTH_PUBLIC_KEY
-            - AUTH_PRIVATE_KEY
-        env_file:
-            - ./env.conf
-        environment:
-            CLOUD_SOFTWARE_NAME: "bayrell.cloud_os.standard"
-            MYSQL_DB: "system_panel"
+            - "rabbitmq_data:/var/lib/rabbitmq"
         deploy:
             replicas: 1
             endpoint_mode: dnsrr
@@ -40,17 +23,18 @@ services:
                     - node.labels.name == docker0
         networks:
             - backend
-            - cloud_router
+        ports:
+          - target: 15672
+            published: 15672
+            protocol: tcp
+            mode: host
         logging:
             driver: journald
 
 volumes:
-    system_panel_data:
+    rabbitmq_data:
 
 networks:
-    
-    cloud_router:
-        external: true
     
     backend:
         driver: overlay

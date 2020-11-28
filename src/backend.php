@@ -111,7 +111,7 @@ try
 		true,
 		
 		// Auto delete
-		false,
+		true,
 		
 		// Internal
 		false,

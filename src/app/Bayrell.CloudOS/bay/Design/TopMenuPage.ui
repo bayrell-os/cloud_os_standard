@@ -58,7 +58,6 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.TopMenu";
  * @return RenderContainer
  */
 @Route{ "uri": "/admin/top_menu/", "name": "app.admin.top_menu" }
-@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		

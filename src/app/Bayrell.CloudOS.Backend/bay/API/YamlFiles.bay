@@ -1,0 +1,111 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.API;
+
+use Runtime.rtl;
+use Runtime.lib;
+use Runtime.fs;
+use Runtime.Exceptions.FileNotFound;
+use Runtime.Core.ApiException;
+use Runtime.Core.RemoteCallAnswer;
+use Runtime.Core.RemoteCallRequest;
+use Runtime.Backend.ApiList;
+use Runtime.Backend.ApiMethod;
+use Runtime.Backend.ApiMiddleware;
+use Runtime.Web.ORM.QueryBuilder;
+
+
+@ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "default" }
+static class YamlFiles
+{
+	
+	/**
+	 * Get files
+	 */
+	@ApiMethod{ "method_name": "getFiles" }
+	static async list getFilesAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		Collection<Dict> stacks =
+			await fs::readDir("/data/config")
+			|> .filter( lib::and([ lib::equalNot("."), lib::equalNot("..") ]) )
+			|> .map
+			(
+				Dict (string stack_name) =>
+					new Dict
+					{
+						"name": stack_name
+						"files": [],
+					}
+			)
+		;
+		
+		for (int i=0; i<stacks.count(); i++)
+		{
+			Dict stack = stacks[i];
+			stack <= files <=
+				await fs::readDir("/data/config/" ~ stack["name"])
+				|> .filter( lib::and([ lib::equalNot("."), lib::equalNot("..") ]) )
+			;
+			stacks <= { i } <= stack;
+		}
+		
+		answer = answer::success(answer, stacks);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Open file
+	 */
+	@ApiMethod{ "method_name": "openFile" }
+	static async list openFileAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		
+		/* Check file exists */
+		bool exists = await fs::exists(file_path, "/data/config");
+		if (not exists)
+		{
+			answer = answer::exception(answer, new FileNotFound(file_path));
+			return [ request, answer ];
+		}
+		
+		/* Read file */
+		string content = await fs::readFile(file_path, "utf8", "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name,
+				"file_path": file_path,
+				"content": content,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+}

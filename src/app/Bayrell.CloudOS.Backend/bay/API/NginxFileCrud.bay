@@ -36,7 +36,6 @@ use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.NginxFile", "interface_name": "core.crud" }
-@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::checkAuthMiddlewareApi" }
 static class NginxFileCrud extends CrudApi
 {
 	

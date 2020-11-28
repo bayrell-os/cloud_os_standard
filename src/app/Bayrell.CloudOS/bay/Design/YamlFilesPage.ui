@@ -1,0 +1,241 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class version="1.0"
+	name="Bayrell.CloudOS.Design.YamlFilesPage" extends="Runtime.Web.CRUD.CrudPage" 
+	module="Bayrell.CloudOS" model="Runtime.Dict"
+>
+
+
+<use name="Runtime.lib" />
+<use name="Runtime.Exceptions.RuntimeException" />
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Core.RemoteCallAnswer" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.RenderContainer" />
+<use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.Route" />
+<use name="Runtime.Web.RouteList" />
+<use name="Runtime.Web.RouteMiddleware" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Events.MouseDoubleClickEvent" />
+<use name="Runtime.Web.Dialog.Dialog" component="true" />
+<use name="Runtime.Web.Dialog.DialogModel" />
+<use name="Runtime.Web.Input.Button" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
+
+
+
+<script>
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/admin/yaml_files/", "name": "app.admin.yaml_files" }
+static async RenderContainer actionIndex(RenderContainer container) => [
+	container
+		
+		/* Set title */
+		|> lib::setAttr(["layout", "title"], "Yaml Files")
+		|> lib::setAttr(["layout", "layout_name"], "admin")
+		
+		/* Set model */
+		|> lib::setAttr(["layout", "page_class"], classof YamlFilesPage)
+		|> lib::setAttr(["layout", "page_model"],
+			new Dict
+			{
+				"stacks": [],
+				"current_file": "",
+				"content": "",
+				"dialog": new DialogModel{},
+			}
+		)
+		
+		/* Get yaml files */
+		|> await lib::applyAsync
+		(
+			async RenderContainer (RenderContainer container)
+			{
+				/* Remote call */
+				RemoteCallAnswer answer = await container.externalBusCall
+				{
+					"object_name": "Bayrell.CloudOS.YamlFiles",
+					"interface_name": "default",
+					"method_name": "getFiles",
+				};
+				
+				if (not answer.isSuccess()) return container;
+				
+				container <= layout <= page_model <= stacks <= answer.response;
+				
+				return container;
+			}
+		)
+];
+
+</script>
+
+
+<style>
+.left-panel, .right-content{
+	display: inline-block;
+	vertical-align: top;
+}
+.left-panel{
+	width: 200px;
+	padding-right: 10px;
+}
+.right-content{
+	width: calc(100% - 200px);
+}
+.items{}
+.item{}
+.label{
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+.files{
+	padding-left: 10px;
+}
+.file{
+	padding: 5px;
+	cursor: pointer;
+	user-select: none;
+}
+.file:hover{
+	background-color: #eee;
+}
+.file.active{
+	background-color: ${ vars["colors", "primary", "color"] };
+	color: ${ vars["colors", "primary", "text"] };
+}
+.right-content %(TextArea)input{
+	width: calc(100% - 20px);
+	height: calc(100% - 20px);
+}
+.file_name{
+	padding-bottom: 5px;
+	min-height: 35px;
+}
+.file_name %(Button)button{
+	margin-left: 10px;
+}
+</style>
+
+
+<template name="render">
+	
+	<div class='left-panel'>
+		<div class='items'>
+		%var Dict stacks = model["stacks"] |> default Collection [];
+		%for (int i=0; i<stacks.count(); i++)
+		{
+			%var Dict stack = stacks[i];
+			<div class='item'>
+				<div class='label'>
+					{ stack["name"] }
+				</div>
+				
+				%var Dict files = stack["files"] |> default Collection [];
+				<div class='files'>
+				%for (int j=0; j<files.count(); j++)
+				{
+					%var string checked = "";
+					%if (static::isChecked(stack["name"], files[j], model["current_file"]))
+					{
+						%var checked = "active";
+					}
+					<div class='file' class={ checked } @event:MouseDoubleClickEvent="onOpenFile"
+						stack-name={ stack["name"] } file-name={ files[j] }
+					>
+						{ files[j] }
+					</div>
+				}
+				</div>
+			</div>
+		}
+		</div>
+	</div>
+	
+	<div class='right-content'>
+		<div class='file_name'>
+			{ model["current_file"] }
+			%if (model["current_file"] != "")
+			{
+				<Button @event:MouseClickEvent="onSaveFile">Save</Button>
+			}
+		</div>
+		<TextArea @name="content" />
+	</div>
+	
+	<Dialog @name="dialog" />
+	
+</template>
+
+
+
+<script>
+
+/**
+ * Returns true if checked
+ */
+pure bool isChecked(string stack_name, string file_name, string current_file) =>
+	current_file == stack_name ~ "/" ~ file_name
+;
+
+
+/* Open file */
+async void onOpenFile(Message<MouseDoubleClickEvent> msg)
+{
+	string stack_name = msg.sender.params["stack-name"];
+	string file_name = msg.sender.params["file-name"];
+	
+	/* Call api */
+	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	{
+		"object_name": "Bayrell.CloudOS.YamlFiles",
+		"interface_name": "default",
+		"method_name": "openFile",
+		"data":
+		{
+			"stack_name": stack_name,
+			"file_name": file_name,
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.updateModel("setIm", ["current_file"], stack_name ~ "/" ~ file_name);
+		this.updateModel("setIm", ["content"], answer.response["content"]);
+	}
+}
+
+
+
+/* Save file */
+async void onSaveFile(Message<MouseDoubleClickEvent> msg)
+{
+	Dict model = this.model();
+	this.dialog.update("alert", "File '" ~ model["current_file"] ~ "' saved");
+}
+
+</script>
+
+
+</class>

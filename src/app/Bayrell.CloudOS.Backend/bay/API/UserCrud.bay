@@ -36,7 +36,6 @@ use Bayrell.CloudOS.Backend.ORM.User;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.User", "interface_name": "core.crud" }
-@ApiMiddleware{ "value": "Runtime.Web.Auth.AuthBackend::checkAuthMiddlewareApi" }
 static class UserCrud extends CrudApi
 {
 	

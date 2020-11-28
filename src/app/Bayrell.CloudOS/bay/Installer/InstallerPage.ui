@@ -17,10 +17,13 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.MainPage" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.MainPageModel"
+	name="Bayrell.CloudOS.Installer.InstallerPage" extends="Runtime.Web.CRUD.CrudPage" 
+	module="Bayrell.CloudOS" model="Runtime.Dict"
 >
 
+
+<use name="Runtime.lib" />
+<use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
 <use name="Runtime.Web.LayoutModel" />
@@ -32,36 +35,32 @@
 <use name="Runtime.Web.Events.MouseClickEvent" />
 
 
+
 <script>
 
 /**
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/", "name": "app.dashboard.main" }
-static async RenderContainer MainPage(RenderContainer container)
-{
-	/* Set title */
-	container <= layout <= title <= "Index page";
-	container <= layout <= layout_name <= "admin";
-	
-	/* Set model */
-	container <= layout <= page_class <= classof MainPage;
-	container <= layout <= page_model <= new Dict{};
-	
-	return [ container ];
-}
+@Route{ "uri": "/admin/installer/", "name": "app.admin.installer" }
+static async RenderContainer actionIndex(RenderContainer container) => [
+	container
+		
+		/* Set title */
+		|> lib::setAttr(["layout", "title"], "Installer")
+		|> lib::setAttr(["layout", "layout_name"], "admin")
+		
+		/* Set model */
+		|> lib::setAttr(["layout", "page_class"], classof InstallerPage)
+		|> lib::setAttr(["layout", "page_model"], new Dict{})
+];
 
 </script>
 
 
 
-<style>
-</style>
-
-
 <template name="render">
-	Hello
+	Installer
 </template>
 
 

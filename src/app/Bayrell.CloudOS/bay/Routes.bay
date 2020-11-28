@@ -41,11 +41,42 @@ use Bayrell.CloudOS.Dashboard.MainPageModel;
 use Bayrell.CloudOS.Other.AdminerPage;
 use Bayrell.CloudOS.User.UsersPage;
 use Bayrell.CloudOS.User.UsersPageModel;
+use Bayrell.CloudOS.Backend.ORM.TopMenu;
 
 
 @RouteList{}
 static class Routes
 {
+	
+	#ifdef BACKEND then
+	
+	/**
+	 * Render chain. Route after
+	 */
+	pure RenderContainer renderChainRouteAfter(RenderContainer container)
+	{
+		if (container.layout.layout_name == "admin")
+		{
+			/*
+			Collection<Dict> items = TopMenu::select()
+			|> .order([
+				["pos", "desc"],
+				["href", "asc"],
+			])
+			|> .asRecord(false)
+			|> await .all()
+			|> default Collection [];
+			
+			container <= layout <= keep_data <= cloud_os_top_menu <= items;
+			*/
+		}
+		
+		return [ container ];
+	}
+	
+	#endif
+	
+	
 	
 	/**
 	 * Layout chain
@@ -53,7 +84,7 @@ static class Routes
 	pure LayoutModel layoutChain(LayoutModel layout)
 	{
 		if (layout.layout_name == "default") layout <= layout_class <= classof DefaultLayout;
-		if (layout.layout_name == "admin") layout <= layout_class <= classof AdminLayout;
+		if (layout.layout_name == "admin") layout <= layout_class <= classof DefaultLayout;
 		return [ layout ];
 	}
 	

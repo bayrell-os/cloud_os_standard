@@ -18,8 +18,4 @@ $env["X-SPACE-ID"] = "-1";
 $env["X-LAYER-ID"] = "-1";
 $env["X-LAYER-UID"] = "00000000-0000-0000-0000-000000000000";
 
-/* Set auth params */
-if (!isset($env["AUTH_PRIVATE_KEY"])) $env["AUTH_PRIVATE_KEY"] = file_get_contents("/run/secrets/AUTH_PRIVATE_KEY");
-if (!isset($env["AUTH_PUBLIC_KEY"])) $env["AUTH_PUBLIC_KEY"] = file_get_contents("/run/secrets/AUTH_PUBLIC_KEY");
-
 return $env;

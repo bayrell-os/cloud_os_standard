@@ -125,6 +125,8 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.TopMenuPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Design.YamlFilesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Installer.InstallerPage" },
 		
 		
 		#ifdef BACKEND then
@@ -142,6 +144,14 @@ static class ModuleDescription
 		{
 			"name": "Runtime.ORM.DriverInterface",
 			"value": classof MySQLDriver,
+		},
+		
+		/* Render Chain. Route after */
+		new LambdaChain
+		{
+			"name": RenderDriver::RENDER_CHAIN,
+			"value": "Bayrell.CloudOS.Routes::renderChainRouteAfter",
+			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
 		},
 		
 		#endif

@@ -34,29 +34,6 @@ use Bayrell.CloudOS.Backend.ORM.User;
 
 static class Helper
 {
-
-	/**
-	 * Render chain. Route after
-	 */
-	pure RenderContainer renderChainRouteAfter(RenderContainer container)
-	{
-		if (container.layout.layout_name == "admin")
-		{
-			Collection<Dict> items = TopMenu::select()
-			|> .order([
-				["pos", "desc"],
-				["href", "asc"],
-			])
-			|> .asRecord(false)
-			|> await .all();
-			
-			container <= layout <= keep_data <= cloud_os_top_menu <= items;
-		}
-		
-		return [ container ];
-	}
-	
-	
 	
 	/**
 	 * Check system api

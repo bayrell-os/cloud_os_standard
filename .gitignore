@@ -1,6 +1,5 @@
-/example/auth_private.key
-/example/auth_public.key
-/example/env.conf
+/config/cloud_os/cloud.key
+/config/cloud_os/env.conf
 /compiler
 /compiler.new
 /node_modules
