@@ -3,13 +3,12 @@ version: "3.7"
 services:
     
     standard:
-        image: bayrell/cloud_os_standard:0.1.0-20201125_134343
+        image: bayrell/cloud_os_standard:0.1.0-20201128_145547
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "standard_data:/data"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
-            - "../../config:/data/config"
-            - "../../src:/var/www"
+            - "../src:/var/www"
         env_file:
             - ./env.conf
         environment:

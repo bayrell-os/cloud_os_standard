@@ -35,8 +35,10 @@
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Events.MouseDoubleClickEvent" />
 <use name="Runtime.Web.Dialog.Dialog" component="true" />
+<use name="Runtime.Web.Dialog.DialogEvent" />
 <use name="Runtime.Web.Dialog.DialogModel" />
 <use name="Runtime.Web.Input.Button" component="true" />
+<use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
 
 
@@ -64,6 +66,9 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 				"current_file": "",
 				"content": "",
 				"dialog": new DialogModel{},
+				"create_dialog": new DialogModel{},
+				"create_stack_name": "",
+				"create_file_name": "",
 			}
 		)
 		
@@ -104,7 +109,9 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 .right-content{
 	width: calc(100% - 200px);
 }
-.items{}
+.items{
+	padding-top: 10px;
+}
 .item{}
 .label{
 	font-weight: bold;
@@ -136,12 +143,24 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 .file_name %(Button)button{
 	margin-left: 10px;
 }
+.form-row{
+	padding-bottom: 10px;
+}
+.form-row:last-child{
+	padding-bottom: 0px;
+}
+.form-row label{
+	display: block;
+	padding-bottom: 5px;
+	font-weight: bold;
+}
 </style>
 
 
 <template name="render">
 	
 	<div class='left-panel'>
+		<Button @event:MouseClickEvent="onAddFile">Add file</Button>
 		<div class='items'>
 		%var Dict stacks = model["stacks"] |> default Collection [];
 		%for (int i=0; i<stacks.count(); i++)
@@ -179,12 +198,25 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 			%if (model["current_file"] != "")
 			{
 				<Button @event:MouseClickEvent="onSaveFile">Save</Button>
+				<Button @event:MouseClickEvent="onCompose">Compose</Button>
 			}
 		</div>
 		<TextArea @name="content" />
 	</div>
 	
 	<Dialog @name="dialog" />
+	<Dialog @name="create_dialog" auto_hide={ false }
+		style={ DialogModel::STYLE_CONTENT } @event:DialogEvent="onDialogEvent"
+	>
+		<div class='form-row'>
+			<label>Stack name:</label>
+			<Input @bind="create_stack_name" />
+		</div>
+		<div class='form-row'>
+			<label>File name:</label>
+			<Input @bind="create_file_name" />
+		</div>
+	</Dialog>
 	
 </template>
 
@@ -198,6 +230,66 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 pure bool isChecked(string stack_name, string file_name, string current_file) =>
 	current_file == stack_name ~ "/" ~ file_name
 ;
+
+
+/* Add file */
+async void onAddFile(Message<MouseClickEvent> msg)
+{
+	this.create_dialog.update("show");
+}
+
+
+/* Dialog event */
+async void onDialogEvent(Message<DialogEvent> msg)
+{
+	Dict model = this.model();
+	if (msg.sender == this.create_dialog)
+	{
+		if (msg.data.button_result == "ok")
+		{
+			string create_stack_name = model["create_stack_name"];
+			string create_file_name = model["create_file_name"];
+			
+			if (create_stack_name == "" or create_file_name == "")
+			{
+				this.create_dialog.update("copy", { "error_message": "Stack name or file name is empty" });
+			}
+			else
+			{
+				this.create_dialog.update("copy", { "message": "Wait for file creation" });
+				this.create_dialog.update("copy", { "error_message": "" });
+				
+				/* Call api */
+				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				{
+					"object_name": "Bayrell.CloudOS.YamlFiles",
+					"interface_name": "default",
+					"method_name": "createFile",
+					"data":
+					{
+						"stack_name": create_stack_name,
+						"file_name": create_file_name,
+					},
+				};
+				
+				this.create_dialog.update("copy", { "message": "" });
+				if (answer.isSuccess())
+				{
+					this.create_dialog.update("hide");
+				}
+				else
+				{
+					this.create_dialog.update("copy", { "error_message": answer.error_message });
+				}
+				
+			}
+		}
+		else if (msg.data.button_result == "cancel")
+		{
+			this.create_dialog.update("hide");
+		}
+	}
+}
 
 
 /* Open file */
@@ -229,11 +321,48 @@ async void onOpenFile(Message<MouseDoubleClickEvent> msg)
 
 
 /* Save file */
-async void onSaveFile(Message<MouseDoubleClickEvent> msg)
+async void onSaveFile(Message<MouseClickEvent> msg)
 {
 	Dict model = this.model();
-	this.dialog.update("alert", "File '" ~ model["current_file"] ~ "' saved");
+	string current_file = model["current_file"];
+	Collection arr = rs::split("/", current_file);
+	string stack_name = arr[0];
+	string file_name = arr[1];
+	string content = model["content"];
+	
+	this.dialog.update("alert", "Process save file '" ~ model["current_file"] ~ "'");
+	
+	/* Call api */
+	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	{
+		"object_name": "Bayrell.CloudOS.YamlFiles",
+		"interface_name": "default",
+		"method_name": "saveFile",
+		"data":
+		{
+			"stack_name": stack_name,
+			"file_name": file_name,
+			"content": content,
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.dialog.update("alert", "File '" ~ model["current_file"] ~ "' saved");
+	}
+	else
+	{
+		this.dialog.update("alert", "Error: " ~ answer.error_message);
+	}
 }
+
+
+
+/* Compose */
+async void onCompose(Message<MouseClickEvent> msg)
+{
+}
+
 
 </script>
 

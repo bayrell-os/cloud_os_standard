@@ -1,5 +1,5 @@
-/config/cloud_os/cloud.key
-/config/cloud_os/env.conf
+/example/cloud.key
+/example/env.conf
 /compiler
 /compiler.new
 /node_modules

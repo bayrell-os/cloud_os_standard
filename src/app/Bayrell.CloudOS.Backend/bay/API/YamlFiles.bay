@@ -108,4 +108,87 @@ static class YamlFiles
 		return [ request, answer ];
 	}
 	
+	
+	
+	/**
+	 * Save file
+	 */
+	@ApiMethod{ "method_name": "saveFile" }
+	static async list saveFileAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string content = request.data["content"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		
+		/* Make dir */
+		await fs::mkdir(rs::dirname(file_path), "/data/config", "777");
+		
+		/* Save file */
+		await fs::saveFile(file_path, content, "utf8", "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name,
+				"file_path": file_path,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Create file
+	 */
+	@ApiMethod{ "method_name": "createFile" }
+	static async list createFileAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		
+		/* Check file exists */
+		bool exists = await fs::exists(file_path, "/data/config");
+		if (exists)
+		{
+			/* Answer */
+			answer = answer::success
+			(
+				answer,
+				{
+					"stack_name": stack_name,
+					"file_name": file_name,
+					"file_path": file_path,
+				}
+			);
+			
+			return [ request, answer ];
+		}
+		
+		/* Make dir */
+		await fs::mkdir(rs::dirname(file_path), "/data/config", "0777");
+		
+		/* Save file */
+		await fs::saveFile(file_path, "", "utf8", "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name,
+				"file_path": file_path,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
 }
