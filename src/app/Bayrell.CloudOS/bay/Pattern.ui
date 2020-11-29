@@ -28,6 +28,7 @@
 <head>
 <title>{ RenderDriver::chainTitle(layout, layout.title) }</title>
 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+<link rel='stylesheet' href={ layout.route_prefix ~ "/assets/Assets.FontAwesome/resources/css/all.min.css?_=" ~ layout.f_inc } />
 <link rel='stylesheet' href={ layout.route_prefix ~ "/assets/core.css?_=" ~ layout.f_inc } />
 <style id='root_style'>@raw{ rs::spaceless( RenderDriver::getLayoutCSS(layout) ) }</style>
 </head>

@@ -67,8 +67,12 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 				"content": "",
 				"dialog": new DialogModel{},
 				"create_dialog": new DialogModel{},
+				"edit_dialog": new DialogModel{},
+				"delete_dialog": new DialogModel{},
 				"create_stack_name": "",
 				"create_file_name": "",
+				"edit_file_name": "",
+				"current_dialog_file": "",
 			}
 		)
 		
@@ -112,7 +116,12 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 .items{
 	padding-top: 10px;
 }
-.item{}
+.item{
+	padding-bottom: 10px;
+}
+.item:last-child{
+	padding-bottom: 0px;
+}
 .label{
 	font-weight: bold;
 	padding-bottom: 10px;
@@ -132,15 +141,32 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 	background-color: ${ vars["colors", "primary", "color"] };
 	color: ${ vars["colors", "primary", "text"] };
 }
+.file-name, .file-icons{
+	display: inline-block;
+	vertical-align: top;
+}
+.file-name{
+	width: calc(100% - 40px);
+}
+.file-icons{
+	width: 40px;
+}
+.file-icons .far{
+	display: none;
+	margin-left: 5px;
+}
+.file:hover .file-icons .far, .file.active .file-icons .far{
+	display: inline-block;
+}
 .right-content %(TextArea)input{
 	width: calc(100% - 20px);
 	height: calc(100% - 20px);
 }
-.file_name{
+.content_file_name{
 	padding-bottom: 5px;
 	min-height: 35px;
 }
-.file_name %(Button)button{
+.content_file_name %(Button)button{
 	margin-left: 10px;
 }
 .form-row{
@@ -180,10 +206,19 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 					{
 						%var checked = "active";
 					}
-					<div class='file' class={ checked } @event:MouseDoubleClickEvent="onOpenFile"
-						stack-name={ stack["name"] } file-name={ files[j] }
+					%var Dict attrs =
+					{
+						"stack-name": stack["name"],
+						"file-name": files[j],
+					};
+					<div class='file' class={ checked } @event:MouseClickEvent="onOpenFile"
+						...attrs
 					>
-						{ files[j] }
+						<span class='file-name'>{ files[j] }</span>
+						<span class='file-icons'>
+							<i class="far fa-edit" @event:MouseClickEvent="onEditFile" ...attrs></i>
+							<i class="far fa-trash-alt" @event:MouseClickEvent="onDeleteFile" ...attrs></i>
+						</span>
 					</div>
 				}
 				</div>
@@ -193,7 +228,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 	</div>
 	
 	<div class='right-content'>
-		<div class='file_name'>
+		<div class='content_file_name'>
 			{ model["current_file"] }
 			%if (model["current_file"] != "")
 			{
@@ -217,6 +252,15 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 			<Input @bind="create_file_name" />
 		</div>
 	</Dialog>
+	<Dialog @name="edit_dialog" auto_hide={ false }
+		style={ DialogModel::STYLE_CONTENT } @event:DialogEvent="onDialogEvent"
+	>
+		<div class='form-row'>
+			<label>File name:</label>
+			<Input @bind="edit_file_name" />
+		</div>
+	</Dialog>
+	<Dialog @name="delete_dialog" auto_hide={ false } @event:DialogEvent="onDialogEvent" />
 	
 </template>
 
@@ -232,17 +276,69 @@ pure bool isChecked(string stack_name, string file_name, string current_file) =>
 ;
 
 
+
+/* Reload file list */
+async void reloadFileList()
+{
+	/* Remote call */
+	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	{
+		"object_name": "Bayrell.CloudOS.YamlFiles",
+		"interface_name": "default",
+		"method_name": "getFiles",
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.update("copy", { "stacks": answer.response });
+	}
+}
+
+
+
 /* Add file */
 async void onAddFile(Message<MouseClickEvent> msg)
 {
+	this.update("copy", { "create_stack_name": "", "create_file_name": "" });
 	this.create_dialog.update("show");
 }
+
+
+
+/* Edit file name */
+async void onEditFile(Message<MouseClickEvent> msg)
+{
+	msg.cancel();
+	
+	string stack_name = msg.sender.params["stack-name"];
+	string file_name = msg.sender.params["file-name"];
+	string current_dialog_file = stack_name ~ "/" ~ file_name;
+	this.update("copy", { "current_dialog_file": current_dialog_file, "edit_file_name": file_name });
+	this.edit_dialog.update("show");
+}
+
+
+
+/* Delete file name */
+async void onDeleteFile(Message<MouseClickEvent> msg)
+{
+	msg.cancel();
+	
+	string stack_name = msg.sender.params["stack-name"];
+	string file_name = msg.sender.params["file-name"];
+	string current_dialog_file = stack_name ~ "/" ~ file_name;
+	this.update("copy", { "current_dialog_file": current_dialog_file });
+	this.delete_dialog.update("confirm", "Do you realy want to delete " ~ current_dialog_file);
+}
+
 
 
 /* Dialog event */
 async void onDialogEvent(Message<DialogEvent> msg)
 {
 	Dict model = this.model();
+	
+	/* Create dialog */
 	if (msg.sender == this.create_dialog)
 	{
 		if (msg.data.button_result == "ok")
@@ -272,13 +368,14 @@ async void onDialogEvent(Message<DialogEvent> msg)
 					},
 				};
 				
-				this.create_dialog.update("copy", { "message": "" });
 				if (answer.isSuccess())
 				{
+					await this.reloadFileList();
 					this.create_dialog.update("hide");
 				}
 				else
 				{
+					this.create_dialog.update("copy", { "message": "" });
 					this.create_dialog.update("copy", { "error_message": answer.error_message });
 				}
 				
@@ -289,11 +386,110 @@ async void onDialogEvent(Message<DialogEvent> msg)
 			this.create_dialog.update("hide");
 		}
 	}
+	
+	/* Edit dialog */
+	else if (msg.sender == this.edit_dialog)
+	{
+		if (msg.data.button_result == "ok")
+		{
+			string current_file = model["current_file"];
+			string edit_file_name = model["edit_file_name"];
+			string current_dialog_file = model["current_dialog_file"];
+			Collection arr = rs::split("/", current_dialog_file);
+			string current_stack_name = arr[0];
+			string current_file_name = arr[1];
+	
+			this.edit_dialog.update("copy", { "message": "Wait for file rename" });
+			this.edit_dialog.update("copy", { "error_message": "" });
+			
+			/* Call api */
+			RemoteCallAnswer answer = await RenderDriver::externalBusCall
+			{
+				"object_name": "Bayrell.CloudOS.YamlFiles",
+				"interface_name": "default",
+				"method_name": "renameFile",
+				"data":
+				{
+					"stack_name": current_stack_name,
+					"file_name": current_file_name,
+					"file_name_new": edit_file_name,
+				},
+			};
+			
+			if (answer.isSuccess())
+			{
+				await this.reloadFileList();
+				if (current_file == current_dialog_file)
+				{
+					this.update("copy", { "current_file": current_stack_name ~ "/" ~ edit_file_name });
+				}
+				this.edit_dialog.update("hide");
+			}
+			else
+			{
+				this.edit_dialog.update("copy", { "message": "" });
+				this.edit_dialog.update("copy", { "error_message": answer.error_message });
+			}
+		}
+		else if (msg.data.button_result == "cancel")
+		{
+			this.edit_dialog.update("hide");
+		}
+	}
+	
+	/* Delete dialog */
+	else if (msg.sender == this.delete_dialog)
+	{
+		if (msg.data.button_result == "ok")
+		{
+			string current_file = model["current_file"];
+			string current_dialog_file = model["current_dialog_file"];
+			Collection arr = rs::split("/", current_dialog_file);
+			string current_stack_name = arr[0];
+			string current_file_name = arr[1];
+			
+			this.delete_dialog.update("copy", { "message": "Wait for file rename" });
+			this.delete_dialog.update("copy", { "error_message": "" });
+			
+			/* Call api */
+			RemoteCallAnswer answer = await RenderDriver::externalBusCall
+			{
+				"object_name": "Bayrell.CloudOS.YamlFiles",
+				"interface_name": "default",
+				"method_name": "deleteFile",
+				"data":
+				{
+					"stack_name": current_stack_name,
+					"file_name": current_file_name,
+				},
+			};
+			
+			if (answer.isSuccess())
+			{
+				await this.reloadFileList();
+				if (current_file == current_dialog_file)
+				{
+					this.update("copy", { "current_file": "", "content": "" });
+				}
+				this.delete_dialog.update("hide");
+			}
+			else
+			{
+				this.delete_dialog.update("copy", { "message": "" });
+				this.delete_dialog.update("copy", { "error_message": answer.error_message });
+			}
+		}
+		else if (msg.data.button_result == "cancel")
+		{
+			this.delete_dialog.update("hide");
+		}
+	}
 }
 
 
+
 /* Open file */
-async void onOpenFile(Message<MouseDoubleClickEvent> msg)
+async void onOpenFile(Message<MouseClickEvent> msg)
 {
 	string stack_name = msg.sender.params["stack-name"];
 	string file_name = msg.sender.params["file-name"];
@@ -361,6 +557,14 @@ async void onSaveFile(Message<MouseClickEvent> msg)
 /* Compose */
 async void onCompose(Message<MouseClickEvent> msg)
 {
+	Dict model = this.model();
+	string current_file = model["current_file"];
+	Collection arr = rs::split("/", current_file);
+	string stack_name = arr[0];
+	string file_name = arr[1];
+	string content = model["content"];
+	
+	this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\nPlease wait.");
 }
 
 

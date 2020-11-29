@@ -191,4 +191,64 @@ static class YamlFiles
 		return [ request, answer ];
 	}
 	
+	
+	
+	/**
+	 * Rename file
+	 */
+	@ApiMethod{ "method_name": "renameFile" }
+	static async list renameFileAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string file_name_new = request.data["file_name_new"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		string file_path_new = fs::concat(stack_name, file_name_new);
+		
+		/* Save file */
+		await fs::renameFile(file_path, file_path_new, "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name_new,
+				"file_path": file_path_new,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Delete file
+	 */
+	@ApiMethod{ "method_name": "deleteFile" }
+	static async list deleteFileAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		
+		/* Save file */
+		await fs::unlink(file_path, "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name,
+				"file_path": file_path,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
 }

@@ -146,19 +146,6 @@ Object.assign(Bayrell.CloudOS.DefaultLayout,
 			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Yaml files")});
 			RenderDriver.p(__v7, __v7_childs);
 			RenderDriver.p(__v6, __v6_childs);
-			
-			/* Element 'li' */
-			var __v6; var __v6_childs = [];
-			[__v6, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "li","attrs": {"class":[((Runtime.rs.start(ctx, Runtime.rtl.attr(ctx, layout, ["route", "name"]), "app.admin.installer")) ? ("active") : ("")), this.getCssHash(ctx)].join(" ")}});
-			
-			/* Element 'a.nolink' */
-			var __v7; var __v7_childs = [];
-			[__v7, __v6_childs] = RenderDriver.e(__v6, __v6_childs, "element", {"name": "a","attrs": {"href":"/admin/installer/","class":["nolink", this.getCssHash(ctx)].join(" "),"@elem_name":"nolink"}});
-			
-			/* Text */
-			[__vnull, __v7_childs] = RenderDriver.e(__v7, __v7_childs, "text", {"content": ctx.translate(ctx, "Bayrell.CloudOS", "Installer")});
-			RenderDriver.p(__v7, __v7_childs);
-			RenderDriver.p(__v6, __v6_childs);
 			RenderDriver.p(__v5, __v5_childs);
 			RenderDriver.p(__v4, __v4_childs);
 			
@@ -2867,15 +2854,47 @@ Bayrell.CloudOS.Design.YamlFilesPage.prototype = Object.create(Runtime.Web.CRUD.
 Bayrell.CloudOS.Design.YamlFilesPage.prototype.constructor = Bayrell.CloudOS.Design.YamlFilesPage;
 Object.assign(Bayrell.CloudOS.Design.YamlFilesPage.prototype,
 {
+	/* Reload file list */
+	reloadFileList: async function(ctx)
+	{
+		/* Remote call */
+		var answer = await Runtime.Web.RenderDriver.externalBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.YamlFiles","interface_name":"default","method_name":"getFiles"}));
+		if (answer.isSuccess(ctx))
+		{
+			this.update(ctx, "copy", Runtime.Dict.from({"stacks":answer.response}));
+		}
+	},
 	/* Add file */
 	onAddFile: async function(ctx, msg)
 	{
+		this.update(ctx, "copy", Runtime.Dict.from({"create_stack_name":"","create_file_name":""}));
 		this.create_dialog.update(ctx, "show");
+	},
+	/* Edit file name */
+	onEditFile: async function(ctx, msg)
+	{
+		msg.cancel(ctx);
+		var stack_name = Runtime.rtl.get(ctx, msg.sender.params, "stack-name");
+		var file_name = Runtime.rtl.get(ctx, msg.sender.params, "file-name");
+		var current_dialog_file = stack_name + Runtime.rtl.toStr("/") + Runtime.rtl.toStr(file_name);
+		this.update(ctx, "copy", Runtime.Dict.from({"current_dialog_file":current_dialog_file,"edit_file_name":file_name}));
+		this.edit_dialog.update(ctx, "show");
+	},
+	/* Delete file name */
+	onDeleteFile: async function(ctx, msg)
+	{
+		msg.cancel(ctx);
+		var stack_name = Runtime.rtl.get(ctx, msg.sender.params, "stack-name");
+		var file_name = Runtime.rtl.get(ctx, msg.sender.params, "file-name");
+		var current_dialog_file = stack_name + Runtime.rtl.toStr("/") + Runtime.rtl.toStr(file_name);
+		this.update(ctx, "copy", Runtime.Dict.from({"current_dialog_file":current_dialog_file}));
+		this.delete_dialog.update(ctx, "confirm", "Do you realy want to delete " + Runtime.rtl.toStr(current_dialog_file));
 	},
 	/* Dialog event */
 	onDialogEvent: async function(ctx, msg)
 	{
 		var model = this.model(ctx);
+		/* Create dialog */
 		if (msg.sender == this.create_dialog)
 		{
 			if (msg.data.button_result == "ok")
@@ -2892,13 +2911,14 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage.prototype,
 					this.create_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":""}));
 					/* Call api */
 					var answer = await Runtime.Web.RenderDriver.externalBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.YamlFiles","interface_name":"default","method_name":"createFile","data":Runtime.Dict.from({"stack_name":create_stack_name,"file_name":create_file_name})}));
-					this.create_dialog.update(ctx, "copy", Runtime.Dict.from({"message":""}));
 					if (answer.isSuccess(ctx))
 					{
+						await this.reloadFileList(ctx);
 						this.create_dialog.update(ctx, "hide");
 					}
 					else
 					{
+						this.create_dialog.update(ctx, "copy", Runtime.Dict.from({"message":""}));
 						this.create_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":answer.error_message}));
 					}
 				}
@@ -2906,6 +2926,73 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage.prototype,
 			else if (msg.data.button_result == "cancel")
 			{
 				this.create_dialog.update(ctx, "hide");
+			}
+		}
+		else if (msg.sender == this.edit_dialog)
+		{
+			if (msg.data.button_result == "ok")
+			{
+				var current_file = Runtime.rtl.get(ctx, model, "current_file");
+				var edit_file_name = Runtime.rtl.get(ctx, model, "edit_file_name");
+				var current_dialog_file = Runtime.rtl.get(ctx, model, "current_dialog_file");
+				var arr = Runtime.rs.split(ctx, "/", current_dialog_file);
+				var current_stack_name = Runtime.rtl.get(ctx, arr, 0);
+				var current_file_name = Runtime.rtl.get(ctx, arr, 1);
+				this.edit_dialog.update(ctx, "copy", Runtime.Dict.from({"message":"Wait for file rename"}));
+				this.edit_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":""}));
+				/* Call api */
+				var answer = await Runtime.Web.RenderDriver.externalBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.YamlFiles","interface_name":"default","method_name":"renameFile","data":Runtime.Dict.from({"stack_name":current_stack_name,"file_name":current_file_name,"file_name_new":edit_file_name})}));
+				if (answer.isSuccess(ctx))
+				{
+					await this.reloadFileList(ctx);
+					if (current_file == current_dialog_file)
+					{
+						this.update(ctx, "copy", Runtime.Dict.from({"current_file":current_stack_name + Runtime.rtl.toStr("/") + Runtime.rtl.toStr(edit_file_name)}));
+					}
+					this.edit_dialog.update(ctx, "hide");
+				}
+				else
+				{
+					this.edit_dialog.update(ctx, "copy", Runtime.Dict.from({"message":""}));
+					this.edit_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":answer.error_message}));
+				}
+			}
+			else if (msg.data.button_result == "cancel")
+			{
+				this.edit_dialog.update(ctx, "hide");
+			}
+		}
+		else if (msg.sender == this.delete_dialog)
+		{
+			if (msg.data.button_result == "ok")
+			{
+				var current_file = Runtime.rtl.get(ctx, model, "current_file");
+				var current_dialog_file = Runtime.rtl.get(ctx, model, "current_dialog_file");
+				var arr = Runtime.rs.split(ctx, "/", current_dialog_file);
+				var current_stack_name = Runtime.rtl.get(ctx, arr, 0);
+				var current_file_name = Runtime.rtl.get(ctx, arr, 1);
+				this.delete_dialog.update(ctx, "copy", Runtime.Dict.from({"message":"Wait for file rename"}));
+				this.delete_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":""}));
+				/* Call api */
+				var answer = await Runtime.Web.RenderDriver.externalBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.YamlFiles","interface_name":"default","method_name":"deleteFile","data":Runtime.Dict.from({"stack_name":current_stack_name,"file_name":current_file_name})}));
+				if (answer.isSuccess(ctx))
+				{
+					await this.reloadFileList(ctx);
+					if (current_file == current_dialog_file)
+					{
+						this.update(ctx, "copy", Runtime.Dict.from({"current_file":"","content":""}));
+					}
+					this.delete_dialog.update(ctx, "hide");
+				}
+				else
+				{
+					this.delete_dialog.update(ctx, "copy", Runtime.Dict.from({"message":""}));
+					this.delete_dialog.update(ctx, "copy", Runtime.Dict.from({"error_message":answer.error_message}));
+				}
+			}
+			else if (msg.data.button_result == "cancel")
+			{
+				this.delete_dialog.update(ctx, "hide");
 			}
 		}
 	},
@@ -2946,6 +3033,13 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage.prototype,
 	/* Compose */
 	onCompose: async function(ctx, msg)
 	{
+		var model = this.model(ctx);
+		var current_file = Runtime.rtl.get(ctx, model, "current_file");
+		var arr = Runtime.rs.split(ctx, "/", current_file);
+		var stack_name = Runtime.rtl.get(ctx, arr, 0);
+		var file_name = Runtime.rtl.get(ctx, arr, 1);
+		var content = Runtime.rtl.get(ctx, model, "content");
+		this.dialog.update(ctx, "alert", "Process compose file '" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, model, "current_file")) + Runtime.rtl.toStr("'.\nPlease wait."));
 	},
 	assignObject: function(ctx,o)
 	{
@@ -2981,7 +3075,7 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 		__v0 = __v0.call(ctx, Runtime.lib.setAttr(ctx, Runtime.Collection.from(["layout","title"]), "Yaml Files"));
 		__v0 = __v0.call(ctx, Runtime.lib.setAttr(ctx, Runtime.Collection.from(["layout","layout_name"]), "admin"));
 		__v0 = __v0.call(ctx, Runtime.lib.setAttr(ctx, Runtime.Collection.from(["layout","page_class"]), "Bayrell.CloudOS.Design.YamlFilesPage"));
-		__v0 = __v0.call(ctx, Runtime.lib.setAttr(ctx, Runtime.Collection.from(["layout","page_model"]), new Runtime.Dict(ctx, Runtime.Dict.from({"stacks":Runtime.Collection.from([]),"current_file":"","content":"","dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"create_dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"create_stack_name":"","create_file_name":""}))));
+		__v0 = __v0.call(ctx, Runtime.lib.setAttr(ctx, Runtime.Collection.from(["layout","page_model"]), new Runtime.Dict(ctx, Runtime.Dict.from({"stacks":Runtime.Collection.from([]),"current_file":"","content":"","dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"create_dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"edit_dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"delete_dialog":new Runtime.Web.Dialog.DialogModel(ctx, Runtime.Dict.from({})),"create_stack_name":"","create_file_name":"","edit_file_name":"","current_dialog_file":""}))));
 		__v0 = await __v0.callAsync(ctx, Runtime.lib.applyAsync(ctx, async (ctx, container) => 
 		{
 			/* Remote call */
@@ -2997,7 +3091,7 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 	},
 	css: function(ctx, vars)
 	{
-		return ".left-panel.h-0b09, .right-content.h-0b09{" + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.left-panel.h-0b09{") + Runtime.rtl.toStr("width: 200px;padding-right: 10px;") + Runtime.rtl.toStr("}.right-content.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 200px);") + Runtime.rtl.toStr("}.items.h-0b09{") + Runtime.rtl.toStr("padding-top: 10px;") + Runtime.rtl.toStr("}.item.h-0b09{") + Runtime.rtl.toStr("}.label.h-0b09{") + Runtime.rtl.toStr("font-weight: bold;padding-bottom: 10px;") + Runtime.rtl.toStr("}.files.h-0b09{") + Runtime.rtl.toStr("padding-left: 10px;") + Runtime.rtl.toStr("}.file.h-0b09{") + Runtime.rtl.toStr("padding: 5px;cursor: pointer;user-select: none;") + Runtime.rtl.toStr("}.file.h-0b09:hover{") + Runtime.rtl.toStr("background-color: #eee;") + Runtime.rtl.toStr("}.file.h-0b09.active{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "color"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.right-content.h-0b09 .input.h-106c{") + Runtime.rtl.toStr("width: calc(100% - 20px);height: calc(100% - 20px);") + Runtime.rtl.toStr("}.file_name.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 5px;min-height: 35px;") + Runtime.rtl.toStr("}.file_name.h-0b09 .button.h-de49{") + Runtime.rtl.toStr("margin-left: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.form-row.h-0b09 label{") + Runtime.rtl.toStr("display: block;padding-bottom: 5px;font-weight: bold;") + Runtime.rtl.toStr("}");
+		return ".left-panel.h-0b09, .right-content.h-0b09{" + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.left-panel.h-0b09{") + Runtime.rtl.toStr("width: 200px;padding-right: 10px;") + Runtime.rtl.toStr("}.right-content.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 200px);") + Runtime.rtl.toStr("}.items.h-0b09{") + Runtime.rtl.toStr("padding-top: 10px;") + Runtime.rtl.toStr("}.item.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.item.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.label.h-0b09{") + Runtime.rtl.toStr("font-weight: bold;padding-bottom: 10px;") + Runtime.rtl.toStr("}.files.h-0b09{") + Runtime.rtl.toStr("padding-left: 10px;") + Runtime.rtl.toStr("}.file.h-0b09{") + Runtime.rtl.toStr("padding: 5px;cursor: pointer;user-select: none;") + Runtime.rtl.toStr("}.file.h-0b09:hover{") + Runtime.rtl.toStr("background-color: #eee;") + Runtime.rtl.toStr("}.file.h-0b09.active{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "color"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.file-name.h-0b09, .file-icons.h-0b09{") + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.file-name.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 40px);") + Runtime.rtl.toStr("}.file-icons.h-0b09{") + Runtime.rtl.toStr("width: 40px;") + Runtime.rtl.toStr("}.file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: none;margin-left: 5px;") + Runtime.rtl.toStr("}.file.h-0b09:hover .file-icons.h-0b09 .far.h-0b09, .file.h-0b09.active .file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: inline-block;") + Runtime.rtl.toStr("}.right-content.h-0b09 .input.h-106c{") + Runtime.rtl.toStr("width: calc(100% - 20px);height: calc(100% - 20px);") + Runtime.rtl.toStr("}.content_file_name.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 5px;min-height: 35px;") + Runtime.rtl.toStr("}.content_file_name.h-0b09 .button.h-de49{") + Runtime.rtl.toStr("margin-left: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.form-row.h-0b09 label{") + Runtime.rtl.toStr("display: block;padding-bottom: 5px;font-weight: bold;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3063,12 +3157,28 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 						checked = "active";
 					}
 					
+					var attrs = Runtime.Dict.from({"stack-name":Runtime.rtl.get(ctx, stack, "name"),"file-name":Runtime.rtl.get(ctx, files, j)});
+					
 					/* Element 'div.file' */
 					var __v4; var __v4_childs = [];
-					[__v4, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "element", {"name": "div","attrs": {"@event:Runtime.Web.Events.MouseDoubleClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onOpenFile"],"stack-name":Runtime.rtl.get(ctx, stack, "name"),"file-name":Runtime.rtl.get(ctx, files, j),"class":["file", checked, this.getCssHash(ctx)].join(" "),"@elem_name":"file"}});
+					[__v4, __v3_childs] = RenderDriver.e(__v3, __v3_childs, "element", {"name": "div","attrs": this.mergeAttrs(ctx, {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onOpenFile"],"class":["file", checked, this.getCssHash(ctx)].join(" "),"@elem_name":"file"},attrs)});
+					
+					/* Element 'span.file-name' */
+					var __v5; var __v5_childs = [];
+					[__v5, __v4_childs] = RenderDriver.e(__v4, __v4_childs, "element", {"name": "span","attrs": {"class":["file-name", this.getCssHash(ctx)].join(" "),"@elem_name":"file-name"}});
 					
 					/* Text */
-					[__vnull, __v4_childs] = RenderDriver.e(__v4, __v4_childs, "text", {"content": Runtime.rtl.get(ctx, files, j)});
+					[__vnull, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "text", {"content": Runtime.rtl.get(ctx, files, j)});
+					RenderDriver.p(__v5, __v5_childs);
+					
+					/* Element 'span.file-icons' */
+					var __v5; var __v5_childs = [];
+					[__v5, __v4_childs] = RenderDriver.e(__v4, __v4_childs, "element", {"name": "span","attrs": {"class":["file-icons", this.getCssHash(ctx)].join(" "),"@elem_name":"file-icons"}});
+					
+					[__vnull, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "i","attrs": this.mergeAttrs(ctx, {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onEditFile"],"class":["far fa-edit", this.getCssHash(ctx)].join(" "),"@elem_name":"far"},attrs)});
+					
+					[__vnull, __v5_childs] = RenderDriver.e(__v5, __v5_childs, "element", {"name": "i","attrs": this.mergeAttrs(ctx, {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onDeleteFile"],"class":["far fa-trash-alt", this.getCssHash(ctx)].join(" "),"@elem_name":"far"},attrs)});
+					RenderDriver.p(__v5, __v5_childs);
 					RenderDriver.p(__v4, __v4_childs);
 				}
 				RenderDriver.p(__v3, __v3_childs);
@@ -3081,9 +3191,9 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 			var __v0; var __v0_childs = [];
 			[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["right-content", this.getCssHash(ctx)].join(" "),"@elem_name":"right-content"}});
 			
-			/* Element 'div.file_name' */
+			/* Element 'div.content_file_name' */
 			var __v1; var __v1_childs = [];
-			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["file_name", this.getCssHash(ctx)].join(" "),"@elem_name":"file_name"}});
+			[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "div","attrs": {"class":["content_file_name", this.getCssHash(ctx)].join(" "),"@elem_name":"content_file_name"}});
 			
 			/* Text */
 			[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": Runtime.rtl.get(ctx, model, "current_file")});
@@ -3159,6 +3269,32 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 				
 				return __control_childs;
 			}});
+			
+			/* Component 'Dialog' */
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Dialog.Dialog","attrs": {"@name":["Bayrell.CloudOS.Design.YamlFilesPage","edit_dialog"],"auto_hide":false,"style":Runtime.Web.Dialog.DialogModel.STYLE_CONTENT,"@event:Runtime.Web.Dialog.DialogEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onDialogEvent"]}, "layout": layout, "content": (__control) =>
+			{
+				var __vnull = null;
+				var __control_childs = [];
+				
+				/* Element 'div.form-row' */
+				var __v0; var __v0_childs = [];
+				[__v0, __control_childs] = RenderDriver.e(__control, __control_childs, "element", {"name": "div","attrs": {"class":["form-row", this.getCssHash(ctx)].join(" "),"@elem_name":"form-row"}});
+				
+				/* Element 'label' */
+				var __v1; var __v1_childs = [];
+				[__v1, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "element", {"name": "label","attrs": {}});
+				
+				/* Text */
+				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "text", {"content": "File name:"});
+				RenderDriver.p(__v1, __v1_childs);
+				
+				[__vnull, __v0_childs] = RenderDriver.e(__v0, __v0_childs, "component", {"name": "Runtime.Web.Input.Input","attrs": {"@bind":["Bayrell.CloudOS.Design.YamlFilesPage","edit_file_name"]}, "layout": layout});
+				RenderDriver.p(__v0, __v0_childs);
+				
+				return __control_childs;
+			}});
+			
+			[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "component", {"name": "Runtime.Web.Dialog.Dialog","attrs": {"@name":["Bayrell.CloudOS.Design.YamlFilesPage","delete_dialog"],"auto_hide":false,"@event:Runtime.Web.Dialog.DialogEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onDialogEvent"]}, "layout": layout});
 			
 			return __control_childs;
 		};

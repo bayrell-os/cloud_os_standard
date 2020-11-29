@@ -166,11 +166,6 @@ span.lpad5{
 									{ _("Bayrell.CloudOS", "Yaml files") }
 								</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.installer") ? "active": "" }>
-								<a class='nolink' href='/admin/installer/'>
-									{ _("Bayrell.CloudOS", "Installer") }
-								</a>
-							</li>
 						</ul>
 					</div>
 					

@@ -37,3 +37,6 @@
 [submodule "src/lib/Runtime.Backend"]
 	path = src/lib/Runtime.Backend
 	url = https://github.com/bayrell/Runtime.Backend
+[submodule "src/lib/Assets.FontAwesome"]
+	path = src/lib/Assets.FontAwesome
+	url = https://github.com/bayrell/Assets.FontAwesome
