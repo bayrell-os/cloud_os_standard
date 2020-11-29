@@ -161,6 +161,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 .right-content %(TextArea)input{
 	width: calc(100% - 20px);
 	height: calc(100% - 20px);
+	outline: 0;
 }
 .content_file_name{
 	padding-bottom: 5px;
@@ -233,7 +234,10 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 			%if (model["current_file"] != "")
 			{
 				<Button @event:MouseClickEvent="onSaveFile">Save</Button>
-				<Button @event:MouseClickEvent="onCompose">Compose</Button>
+				%if (static::canCompose(model["current_file"]))
+				{
+					<Button @event:MouseClickEvent="onCompose">Compose</Button>
+				}
 			}
 		</div>
 		<TextArea @name="content" />
@@ -267,6 +271,14 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 
 
 <script>
+
+/**
+ * Can compose
+ */
+pure bool canCompose(string file_name) =>
+	rs::extname(file_name) == "yaml"
+;
+
 
 /**
  * Returns true if checked
@@ -562,9 +574,32 @@ async void onCompose(Message<MouseClickEvent> msg)
 	Collection arr = rs::split("/", current_file);
 	string stack_name = arr[0];
 	string file_name = arr[1];
-	string content = model["content"];
 	
-	this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\nPlease wait.");
+	this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\n\nPlease wait.");
+	
+	/* Call api */
+	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	{
+		"object_name": "Bayrell.CloudOS.YamlFiles",
+		"interface_name": "default",
+		"method_name": "compose",
+		"data":
+		{
+			"stack_name": stack_name,
+			"file_name": file_name,
+		},
+	};
+	
+	if (answer.isSuccess())
+	{
+		this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\n\n" ~
+			answer.success_message);
+	}
+	else
+	{
+		this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\n\n" ~
+			"Error: " ~ answer.error_message);
+	}
 }
 
 

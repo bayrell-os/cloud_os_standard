@@ -3038,8 +3038,17 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage.prototype,
 		var arr = Runtime.rs.split(ctx, "/", current_file);
 		var stack_name = Runtime.rtl.get(ctx, arr, 0);
 		var file_name = Runtime.rtl.get(ctx, arr, 1);
-		var content = Runtime.rtl.get(ctx, model, "content");
-		this.dialog.update(ctx, "alert", "Process compose file '" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, model, "current_file")) + Runtime.rtl.toStr("'.\nPlease wait."));
+		this.dialog.update(ctx, "alert", "Process compose file '" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, model, "current_file")) + Runtime.rtl.toStr("'.\n\nPlease wait."));
+		/* Call api */
+		var answer = await Runtime.Web.RenderDriver.externalBusCall(ctx, Runtime.Dict.from({"object_name":"Bayrell.CloudOS.YamlFiles","interface_name":"default","method_name":"compose","data":Runtime.Dict.from({"stack_name":stack_name,"file_name":file_name})}));
+		if (answer.isSuccess(ctx))
+		{
+			this.dialog.update(ctx, "alert", "Process compose file '" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, model, "current_file")) + Runtime.rtl.toStr("'.\n\n") + Runtime.rtl.toStr(answer.success_message));
+		}
+		else
+		{
+			this.dialog.update(ctx, "alert", "Process compose file '" + Runtime.rtl.toStr(Runtime.rtl.get(ctx, model, "current_file")) + Runtime.rtl.toStr("'.\n\n") + Runtime.rtl.toStr("Error: ") + Runtime.rtl.toStr(answer.error_message));
+		}
 	},
 	assignObject: function(ctx,o)
 	{
@@ -3091,7 +3100,7 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 	},
 	css: function(ctx, vars)
 	{
-		return ".left-panel.h-0b09, .right-content.h-0b09{" + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.left-panel.h-0b09{") + Runtime.rtl.toStr("width: 200px;padding-right: 10px;") + Runtime.rtl.toStr("}.right-content.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 200px);") + Runtime.rtl.toStr("}.items.h-0b09{") + Runtime.rtl.toStr("padding-top: 10px;") + Runtime.rtl.toStr("}.item.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.item.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.label.h-0b09{") + Runtime.rtl.toStr("font-weight: bold;padding-bottom: 10px;") + Runtime.rtl.toStr("}.files.h-0b09{") + Runtime.rtl.toStr("padding-left: 10px;") + Runtime.rtl.toStr("}.file.h-0b09{") + Runtime.rtl.toStr("padding: 5px;cursor: pointer;user-select: none;") + Runtime.rtl.toStr("}.file.h-0b09:hover{") + Runtime.rtl.toStr("background-color: #eee;") + Runtime.rtl.toStr("}.file.h-0b09.active{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "color"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.file-name.h-0b09, .file-icons.h-0b09{") + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.file-name.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 40px);") + Runtime.rtl.toStr("}.file-icons.h-0b09{") + Runtime.rtl.toStr("width: 40px;") + Runtime.rtl.toStr("}.file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: none;margin-left: 5px;") + Runtime.rtl.toStr("}.file.h-0b09:hover .file-icons.h-0b09 .far.h-0b09, .file.h-0b09.active .file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: inline-block;") + Runtime.rtl.toStr("}.right-content.h-0b09 .input.h-106c{") + Runtime.rtl.toStr("width: calc(100% - 20px);height: calc(100% - 20px);") + Runtime.rtl.toStr("}.content_file_name.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 5px;min-height: 35px;") + Runtime.rtl.toStr("}.content_file_name.h-0b09 .button.h-de49{") + Runtime.rtl.toStr("margin-left: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.form-row.h-0b09 label{") + Runtime.rtl.toStr("display: block;padding-bottom: 5px;font-weight: bold;") + Runtime.rtl.toStr("}");
+		return ".left-panel.h-0b09, .right-content.h-0b09{" + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.left-panel.h-0b09{") + Runtime.rtl.toStr("width: 200px;padding-right: 10px;") + Runtime.rtl.toStr("}.right-content.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 200px);") + Runtime.rtl.toStr("}.items.h-0b09{") + Runtime.rtl.toStr("padding-top: 10px;") + Runtime.rtl.toStr("}.item.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.item.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.label.h-0b09{") + Runtime.rtl.toStr("font-weight: bold;padding-bottom: 10px;") + Runtime.rtl.toStr("}.files.h-0b09{") + Runtime.rtl.toStr("padding-left: 10px;") + Runtime.rtl.toStr("}.file.h-0b09{") + Runtime.rtl.toStr("padding: 5px;cursor: pointer;user-select: none;") + Runtime.rtl.toStr("}.file.h-0b09:hover{") + Runtime.rtl.toStr("background-color: #eee;") + Runtime.rtl.toStr("}.file.h-0b09.active{") + Runtime.rtl.toStr("background-color: " + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "color"])) + Runtime.rtl.toStr(";color: ") + Runtime.rtl.toStr(Runtime.rtl.attr(ctx, vars, ["colors", "primary", "text"])) + Runtime.rtl.toStr(";")) + Runtime.rtl.toStr("}.file-name.h-0b09, .file-icons.h-0b09{") + Runtime.rtl.toStr("display: inline-block;vertical-align: top;") + Runtime.rtl.toStr("}.file-name.h-0b09{") + Runtime.rtl.toStr("width: calc(100% - 40px);") + Runtime.rtl.toStr("}.file-icons.h-0b09{") + Runtime.rtl.toStr("width: 40px;") + Runtime.rtl.toStr("}.file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: none;margin-left: 5px;") + Runtime.rtl.toStr("}.file.h-0b09:hover .file-icons.h-0b09 .far.h-0b09, .file.h-0b09.active .file-icons.h-0b09 .far.h-0b09{") + Runtime.rtl.toStr("display: inline-block;") + Runtime.rtl.toStr("}.right-content.h-0b09 .input.h-106c{") + Runtime.rtl.toStr("width: calc(100% - 20px);height: calc(100% - 20px);outline: 0;") + Runtime.rtl.toStr("}.content_file_name.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 5px;min-height: 35px;") + Runtime.rtl.toStr("}.content_file_name.h-0b09 .button.h-de49{") + Runtime.rtl.toStr("margin-left: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09{") + Runtime.rtl.toStr("padding-bottom: 10px;") + Runtime.rtl.toStr("}.form-row.h-0b09:last-child{") + Runtime.rtl.toStr("padding-bottom: 0px;") + Runtime.rtl.toStr("}.form-row.h-0b09 label{") + Runtime.rtl.toStr("display: block;padding-bottom: 5px;font-weight: bold;") + Runtime.rtl.toStr("}");
 	},
 	render: function(ctx, layout, model, params, content)
 	{
@@ -3212,17 +3221,20 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 					return __control_childs;
 				}});
 				
-				/* Component 'Button' */
-				[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onCompose"]}, "layout": layout, "content": (__control) =>
+				if (this.canCompose(ctx, Runtime.rtl.get(ctx, model, "current_file")))
 				{
-					var __vnull = null;
-					var __control_childs = [];
-					
-					/* Text */
-					[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Compose"});
-					
-					return __control_childs;
-				}});
+					/* Component 'Button' */
+					[__vnull, __v1_childs] = RenderDriver.e(__v1, __v1_childs, "component", {"name": "Runtime.Web.Input.Button","attrs": {"@event:Runtime.Web.Events.MouseClickEvent":["Bayrell.CloudOS.Design.YamlFilesPage","onCompose"]}, "layout": layout, "content": (__control) =>
+					{
+						var __vnull = null;
+						var __control_childs = [];
+						
+						/* Text */
+						[__vnull, __control_childs] = RenderDriver.e(__control, __control_childs, "text", {"content": "Compose"});
+						
+						return __control_childs;
+					}});
+				}
 			}
 			RenderDriver.p(__v1, __v1_childs);
 			
@@ -3298,6 +3310,13 @@ Object.assign(Bayrell.CloudOS.Design.YamlFilesPage,
 			
 			return __control_childs;
 		};
+	},
+	/**
+ * Can compose
+ */
+	canCompose: function(ctx, file_name)
+	{
+		return Runtime.rs.extname(ctx, file_name) == "yaml";
 	},
 	/**
  * Returns true if checked

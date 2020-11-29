@@ -21,14 +21,15 @@ namespace Bayrell.CloudOS.Backend.API;
 use Runtime.rtl;
 use Runtime.lib;
 use Runtime.fs;
+use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.FileNotFound;
-use Runtime.Core.ApiException;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
 use Runtime.Backend.ApiList;
 use Runtime.Backend.ApiMethod;
 use Runtime.Backend.ApiMiddleware;
 use Runtime.Web.ORM.QueryBuilder;
+use Bayrell.CloudOS.Backend.DockerLib;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "default" }
@@ -86,8 +87,7 @@ static class YamlFiles
 		bool exists = await fs::exists(file_path, "/data/config");
 		if (not exists)
 		{
-			answer = answer::exception(answer, new FileNotFound(file_path));
-			return [ request, answer ];
+			throw new FileNotFound(file_path);
 		}
 		
 		/* Read file */
@@ -246,6 +246,43 @@ static class YamlFiles
 				"file_name": file_name,
 				"file_path": file_path,
 			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	@ApiMethod{ "method_name": "compose" }
+	static async list composeAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string file_name = request.data["file_name"] |> default string "";
+		string file_path = fs::concat(stack_name, file_name);
+		string ext_name = rs::extname(file_name);
+		
+		if (ext_name != "yaml")
+		{
+			throw new ApiException("File must have yaml extension");
+		}
+		
+		string yaml_file_path = fs::concat("/data/config", file_path);
+		string cmd = "sudo docker stack deploy -c " ~ yaml_file_path ~ " " ~ stack_name ~ " --with-registry-auth";
+		string result = await DockerLib::exec(cmd ~ " 2>/dev/null");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
+				"file_name": file_name,
+				"file_path": file_path,
+			},
+			result
 		);
 		
 		return [ request, answer ];
