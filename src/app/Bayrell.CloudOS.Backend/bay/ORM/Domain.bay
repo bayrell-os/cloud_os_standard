@@ -50,6 +50,9 @@ struct Domain extends Record
 	string nginx_template;
 	
 	
+	@BigIntType{ "nullable": true }
+	int space_id;
+	
 	
 	/**
 	 * Returns table name
@@ -66,6 +69,17 @@ struct Domain extends Record
 		new Primary
 		{
 			"keys": ["domain_name"],
+		},
+		new ForeignKey
+		{
+			"name": "space_id",
+			"class_name": classof Space,
+			"keys":
+			[
+				{"src": "space_id", "dest": "space_id"},
+			],
+			"delete": Record::SET_NULL,
+			"update": Record::CASCADE,
 		},
 	];
 	

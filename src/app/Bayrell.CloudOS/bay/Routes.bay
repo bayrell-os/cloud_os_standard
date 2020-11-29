@@ -154,7 +154,6 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/admin/database/", "name": "app.admin.database" }
-	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerPage(RenderContainer container)
 	{
 		MySQLSettings settings = @.config(["Runtime.ORM.MySQL", "default"]);
@@ -179,7 +178,6 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/admin/env/", "name": "app.admin.env" }
-	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerEnvPage(RenderContainer container)
 	{
 		string content = "";
@@ -206,7 +204,6 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/admin/phpinfo/", "name": "app.admin.phpinfo" }
-	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerInfoPage(RenderContainer container)
 	{
 		string content = "";
@@ -230,7 +227,6 @@ static class Routes
 	 * @return WebContainer
 	 */
 	@Route{ "uri": "/admin/database/{version}/", "name": "app.admin.database.version" }
-	@RouteMiddleware{ "value": "Runtime.Web.Auth.AuthFrontend::checkAuthMiddleware" }
 	static async RenderContainer adminerVersionPage(RenderContainer container)
 	{
 		string content = "";

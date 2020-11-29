@@ -37,24 +37,14 @@ use Bayrell.CloudOS.Backend.ORM.Space;
 
 struct Layer extends Record
 {
-	@AutoIncrement{}
-	@BigIntType{}
-	int layer_id;
-	
-	@BigIntType{}
-	int space_id;
-	
-	@BigIntType{}
-	int service_id;
-	
 	@StringType{}
 	string layer_uid;
 	
 	@StringType{}
 	string layer_name;
 	
-	@StringType{}
-	string route;
+	@BigIntType{ "nullable": true }
+	int space_id;
 	
 	
 	/**
@@ -71,18 +61,7 @@ struct Layer extends Record
 	[
 		new Primary
 		{
-			"keys": ["layer_id"],
-		},
-		new ForeignKey
-		{
-			"name": "service_name",
-			"class_name": classof Domain,
-			"keys":
-			[
-				{"src": "service_name", "dest": "service_name"},
-			],
-			"delete": Record::RESTRICT,
-			"update": Record::CASCADE,
+			"keys": ["layer_uid"],
 		},
 		new ForeignKey
 		{
@@ -92,7 +71,7 @@ struct Layer extends Record
 			[
 				{"src": "space_id", "dest": "space_id"},
 			],
-			"delete": Record::RESTRICT,
+			"delete": Record::SET_NULL,
 			"update": Record::CASCADE,
 		},
 	];

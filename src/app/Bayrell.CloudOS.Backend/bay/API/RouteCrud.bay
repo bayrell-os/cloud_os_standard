@@ -35,19 +35,18 @@ use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
-use Bayrell.CloudOS.Backend.ORM.LayerRoute;
+use Bayrell.CloudOS.Backend.ORM.Route;
 use Bayrell.CloudOS.Backend.ORM.Service;
-use Bayrell.CloudOS.Backend.ORM.Space;
 
 
-@ApiList{ "object_name": "Bayrell.CloudOS.LayerRoute", "interface_name": "core.crud" }
-static class LayerRouteCrud extends CrudApi
+@ApiList{ "object_name": "Bayrell.CloudOS.Route", "interface_name": "core.crud" }
+static class RouteCrud extends CrudApi
 {
 	
 	/**
 	 * Returns orm class name
 	 */
-	pure string getORM() => classof LayerRoute;
+	pure string getORM() => classof Route;
 	
 	
 	
@@ -60,25 +59,18 @@ static class LayerRouteCrud extends CrudApi
 		{
 			"fields":
 			[
+				"id",
+				"enable",
+				"protocol",
 				"domain_name",
 				"route",
-				"layer_id",
+				"docker_name",
+				"target_port",
+				"route_prefix",
 				"layer_uid",
-				"layer_name",
-				"layer_domain_name",
-				"layer_route",
-				"service_name",
-				"software_api_name",
 			]
 		},
-		new ReadOnly{ "api_name": "layer_uid" },
-		new ReadOnly{ "api_name": "layer_name" },
-		new ReadOnly{ "api_name": "layer_domain_name" },
-		new ReadOnly{ "api_name": "layer_route" },
-		new ReadOnly{ "api_name": "service_name" },
-		new ReadOnly{ "api_name": "software_api_name" },
-		new Required{ "api_name": "domain_name" },
-		new Required{ "api_name": "route" },
+		new ReadOnly{ "api_name": "id" },
 		
 		/* Add domains dictionary */
 		new Dictionary
@@ -87,36 +79,18 @@ static class LayerRouteCrud extends CrudApi
 			"class_name": classof Domain,
 		},
 		
+		/* Add services dictionary */
+		new Dictionary
+		{
+			"name": "services",
+			"class_name": classof Service,
+		},
+		
 		/* Add layers dictionary */
 		new Dictionary
 		{
 			"name": "layers",
 			"class_name": classof Layer,
-			"fields":
-			[
-				"layer_id",
-				"layer_name",
-				"layer_uid",
-				"route",
-				"domain_name",
-				"service_name",
-				"software_api_name",
-			],
-			"buildSearchQuery": QueryBuilder (QueryBuilder q)
-			{
-				return q
-					|> .alias("layers")
-					|> .fields
-					([
-						"layers.*",
-						"spaces.domain_name as domain_name",
-						"services.docker_name as service_name",
-						"services.software_api_name as software_api_name",
-					])
-					|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
-					|> .leftJoin(Service::table_name(), "services", "services.service_id=layers.service_id")
-				;
-			},
 		},
 	];
 	
@@ -128,7 +102,7 @@ static class LayerRouteCrud extends CrudApi
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
 		["domain_name", "asc"],
-		["route", "asc"]
+		["route", "asc"],
 	];
 	
 	
@@ -136,41 +110,7 @@ static class LayerRouteCrud extends CrudApi
 	/**
 	 * Build query
 	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) =>
-		parent::buildSearchQuery(q)
-		|> .alias("routes")
-		|> .fields
-		([
-			"routes.*",
-			"layers.layer_uid",
-			"layers.layer_name",
-			"spaces.domain_name as layer_domain_name",
-			"layers.route as layer_route",
-			"services.docker_name as service_name",
-			"services.software_api_name as software_api_name",
-		])
-		|> .leftJoin(Layer::table_name(), "layers", "layers.layer_id=routes.layer_id")
-		|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id=layers.space_id")
-		|> .leftJoin(Service::table_name(), "services", "services.service_id=layers.service_id")
-	;
-	
-	
-	
-	/**
-	 * Extend search filter
-	 */
-	Collection<list> extendSearchFilter(Collection<list> filter) =>
-		filter
-		|> .map
-		(
-			Collection (Collection item)
-			{
-				if (item[0] == "domain_name") item <= 0 <= "routes.domain_name";
-				if (item[0] == "route") item <= 0 <= "routes.route";
-				return item;
-			}
-		)
-	;
+	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
 	
 	
 	
@@ -201,13 +141,9 @@ static class LayerRouteCrud extends CrudApi
 	{
 		await parent::after();
 		
-		/* If is modify success */
-		if (this.isSuccess() and this.isModify())
+		/* If is success */
+		if (this.isSuccess())
 		{
-			string old_domain_name = this.old_item["domain_name"];
-			string new_domain_name = this.new_item["domain_name"];
-			await Domain::updateNginx(old_domain_name);
-			if (new_domain_name != old_domain_name) await Domain::updateNginx(new_domain_name);
 		}
 	}
 	

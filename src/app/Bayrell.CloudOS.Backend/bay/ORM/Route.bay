@@ -30,29 +30,47 @@ use Runtime.ORM.Annotations.Unique;
 use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
+use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.Domain;
-use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.Domain;
 
 
-struct LayerRoute extends Record
+struct Route extends Record
 {
+	@AutoIncrement{}
+	@BigIntType{}
+	int id;
+	
+	@BooleanType{}
+	bool enable;
+	
+	@StringType{}
+	string protocol;
+	
 	@StringType{}
 	string domain_name;
 	
 	@StringType{}
 	string route;
 	
+	@StringType{}
+	string docker_name;
+	
 	@BigIntType{}
-	int layer_id;
+	int target_port;
+	
+	@StringType{}
+	string route_prefix;
+	
+	@StringType{}
+	string layer_uid;
 	
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string table_name() => "layers_routes";
-	
+	pure string table_name() => "routes";
 	
 	
 	/**
@@ -62,7 +80,7 @@ struct LayerRoute extends Record
 	[
 		new Primary
 		{
-			"keys": ["domain_name", "route"],
+			"keys": ["id"],
 		},
 		new ForeignKey
 		{
@@ -71,17 +89,6 @@ struct LayerRoute extends Record
 			"keys":
 			[
 				{"src": "domain_name", "dest": "domain_name"},
-			],
-			"delete": Record::CASCADE,
-			"update": Record::CASCADE,
-		},
-		new ForeignKey
-		{
-			"name": "layer_id",
-			"class_name": classof Layer,
-			"keys":
-			[
-				{"src": "layer_id", "dest": "layer_id"},
 			],
 			"delete": Record::CASCADE,
 			"update": Record::CASCADE,

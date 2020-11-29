@@ -44,10 +44,10 @@ struct Space extends Record
 	int space_id;
 	
 	@StringType{}
-	string space_name;
+	string api_name;
 	
-	@StringType{ "nullable": true }
-	string domain_name;
+	@StringType{}
+	string name;
 	
 	
 	/**
@@ -65,21 +65,6 @@ struct Space extends Record
 		new Primary
 		{
 			"keys": ["space_id"],
-		},
-		new Unique
-		{
-			"keys": ["domain_name"],
-		},
-		new ForeignKey
-		{
-			"name": "domain_name",
-			"class_name": classof Domain,
-			"keys":
-			[
-				{"src": "domain_name", "dest": "domain_name"},
-			],
-			"delete": Record::RESTRICT,
-			"update": Record::CASCADE,
 		},
 	];
 	

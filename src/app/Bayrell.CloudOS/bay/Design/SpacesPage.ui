@@ -79,21 +79,6 @@ static async RenderContainer actionIndex(RenderContainer container) => [
  */
 pure Collection getOptions(RenderContainer container, string name = "")
 {
-	if (name == "domains")
-		return container.layout.page_model
-			|> attr "foreigns", "domains", "options"
-			|> lib::map
-			(
-				Dict (Dict item) =>
-				{
-					"id": item["domain_name"],
-					"value": item["domain_name"],
-					"item": item,
-				}
-			)
-			|> default Collection []
-		;
-	
 	return parent::getOptions(container, name);
 }
 
@@ -119,8 +104,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "space_name",
-		"label": "Space name",
+		"api_name": "api_name",
+		"label": "Api name",
 		"class_name": classof Input,
 		"info":
 		{
@@ -133,19 +118,14 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "domain_name",
-		"label": "Domain name",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "domains"),
-		},
+		"api_name": "name",
+		"label": "Space name",
+		"class_name": classof Input,
 		"info":
 		{
 			"table":
 			{
-				"class_name": classof SelectText,
+				"class_name": classof Label,
 			},
 		},
 	},
@@ -172,8 +152,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
  */
 pure Collection<string> getFilterFields(RenderContainer container) =>
 [
-	"space_name",
-	"domain_name",
+	"api_name",
+	"name",
 ];
 
 
@@ -183,8 +163,8 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
  */
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
-	"space_name",
-	"domain_name",
+	"api_name",
+	"name",
 ];
 
 
@@ -195,8 +175,8 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
-	"space_name",
-	"domain_name",
+	"api_name",
+	"name",
 	"edit-buttons"
 ];
 

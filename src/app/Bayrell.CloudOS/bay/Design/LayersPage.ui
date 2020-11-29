@@ -56,7 +56,7 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Layer";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/layers/", "name": "app.admin.layers.index" }
+@Route{ "uri": "/admin/layers/", "name": "app.admin.layers" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		
@@ -87,31 +87,13 @@ pure Collection getOptions(RenderContainer container, string name = "")
 				Dict (Dict item) =>
 				{
 					"id": item["space_id"],
-					"value":
-						not rtl::isEmpty(item["domain_name"])
-							? item["domain_name"] ~ " (" ~ item["space_name"] ~ ")"
-							: item["space_name"],
+					"value": item["api_name"],
 					"item": item,
 				}
 			)
 			|> default Collection []
 		;
 		
-	if (name == "services")
-		return container.layout.page_model
-			|> attr "foreigns", "services", "options"
-			|> lib::map
-			(
-				Dict (Dict item) =>
-				{
-					"id": item["service_id"],
-					"value": item["docker_name"],
-					"item": item,
-				}
-			)
-			|> default Collection []
-		;	
-	
 	return parent::getOptions(container, name);
 }
 
@@ -124,21 +106,23 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 [
 	new FieldInfo
 	{
-		"api_name": "layer_id",
+		"api_name": "layer_uid",
 		"primary": true,
+		"label": "Layer UID",
+		"class_name": classof Input,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
+			},
+		},
 	},
 	
 	new FieldInfo
 	{
 		"api_name": "number",
 		"label": "",
-		"class_name": classof Label,
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "layer_href",
-		"label": "Route",
 		"class_name": classof Label,
 	},
 	
@@ -158,36 +142,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "layer_uid",
-		"label": "UID",
-		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "route",
-		"label": "Route",
-		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
 		"api_name": "space_id",
-		"primary": true,
 		"label": "Space",
 		"class_name": classof Select,
 		"class_settings":
@@ -206,33 +161,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "service_id",
-		"primary": true,
-		"label": "Service",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "services"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "open",
-		"label": "",
-		"class_name": classof Label,
-	},
-	
-	new FieldInfo
-	{
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
@@ -247,7 +175,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 pure Collection<string> getFilterFields(RenderContainer container) =>
 [
 	"space_id",
-	"service_id",
 	"layer_uid",
 ];
 
@@ -259,8 +186,6 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
 	"space_id",
-	"service_id",
-	"route",
 	"layer_name",
 	"layer_uid",
 ];
@@ -273,11 +198,9 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
-	"layer_href",
-	"service_id",
+	"space_id",
 	"layer_name",
 	"layer_uid",
-	"open",
 	"edit-buttons"
 ];
 

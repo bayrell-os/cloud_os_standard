@@ -34,9 +34,7 @@ use Runtime.Web.CRUD.Rules.Dictionary;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
-use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
-use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.ORM.Space;
 
 
@@ -60,48 +58,18 @@ static class LayerCrud extends CrudApi
 		{
 			"fields":
 			[
-				"layer_id",
 				"layer_uid",
 				"layer_name",
 				"space_id",
-				"service_id",
-				"route",
-				"domain_name",
-				"space_name",
 			]
 		},
-		new DefaultValue{ "api_name": "route", "value": "/" },
-		new ReadOnly{ "api_name": "layer_id" },
-		new ReadOnly{ "api_name": "domain_name" },
-		new ReadOnly{ "api_name": "space_name" },
-		new Required{ "api_name": "route" },
 		new Required{ "api_name": "space_id" },
-		new Required{ "api_name": "service_id" },
 		
-		/* Add services dictionary */
-		new Dictionary
-		{
-			"name": "services",
-			"class_name": classof Service,
-			"fields":
-			[
-				"service_id",
-				"docker_name",
-				"software_api_name",
-			],
-		},
-		
-		/* Add spaces dictionary */
+		/* Add domains dictionary */
 		new Dictionary
 		{
 			"name": "spaces",
 			"class_name": classof Space,
-			"fields":
-			[
-				"space_id",
-				"domain_name",
-				"space_name",
-			],
 		},
 	];
 	
@@ -112,8 +80,7 @@ static class LayerCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["spaces.domain_name", "asc"],
-		["layers.route", "asc"],
+		["layer_uid", "asc"],
 	];
 	
 	
@@ -123,9 +90,6 @@ static class LayerCrud extends CrudApi
 	 */
 	QueryBuilder buildSearchQuery(QueryBuilder q) =>
 		parent::buildSearchQuery(q)
-		|> .fields(["layers.*", "spaces.domain_name", "spaces.space_name"])
-		|> .alias("layers")
-		|> .leftJoin(Space::table_name(), "spaces", "spaces.space_id = layers.space_id")
 	;
 	
 	
@@ -140,7 +104,6 @@ static class LayerCrud extends CrudApi
 		
 		string layer_uid = item["layer_uid"];
 		string space_id = item["space_id"];
-		string service_id = item["service_id"];
 		if (rtl::isEmpty(layer_uid))
 		{
 			Space space = Space::getById(space_id);
@@ -149,16 +112,15 @@ static class LayerCrud extends CrudApi
 				|> .fields(["count(*) as c"])
 				|> .filter([
 					["space_id", "=", space_id],
-					["service_id", "=", service_id],
 				])
 				|> await .one()
 				|> attr "c"
 				|> default int 0
 			;
 			
-			if (space != null and space.domain_name != "")
+			if (space != null and space.api_name != "")
 			{
-				layer_uid = space.domain_name ~ ":layer_" ~ count;
+				layer_uid = space.api_name ~ ":layer_" ~ count;
 				item <= layer_uid <= layer_uid;
 			}
 			else
@@ -166,12 +128,6 @@ static class LayerCrud extends CrudApi
 				layer_uid = rtl::time_uid();
 				item <= layer_uid <= layer_uid;
 			}
-		}
-		
-		/* Save default route for Cloud OS Layer */
-		if (layer_uid == "00000000-0000-0000-0000-000000000000")
-		{
-			item <= route <= "/";
 		}
 		
 		return item;
@@ -209,17 +165,6 @@ static class LayerCrud extends CrudApi
 		/* If is success */
 		if (this.isSuccess() and this.isModify())
 		{
-			string old_space_id = this.old_item["space_id"];
-			string new_space_id = this.new_item["space_id"];
-			
-			Space old_space = await Space::getById(old_space_id);
-			Space new_space = await Space::getById(new_space_id);
-			
-			string old_domain_name = old_space["domain_name"];
-			string new_domain_name = new_space["domain_name"];
-			
-			await Domain::updateNginx(old_domain_name);
-			if (new_domain_name != old_domain_name) await Domain::updateNginx(new_domain_name);
 		}
 	}
 	

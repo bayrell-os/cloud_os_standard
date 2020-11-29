@@ -42,7 +42,7 @@ class DockerTasks
 	/**
 	 * Update services admin pages
 	 */
-	@CronTimer{ "timer": 15 }
+	/*@CronTimer{ "timer": 15 }*/
 	static async void updateNginx()
 	{
 		TaskDriver output = @.getDriver(classof TaskDriver);
@@ -146,7 +146,7 @@ class DockerTasks
 	/**
 	 * Update services admin pages
 	 */
-	@CronTimer{ "timer": 60 }
+	/*@CronTimer{ "timer": 60 }*/
 	static async void checkSystemLayer()
 	{
 		TaskDriver output = @.getDriver(classof TaskDriver);

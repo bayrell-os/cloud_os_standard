@@ -53,15 +53,8 @@ static class SpaceCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["space_id", "space_name", "domain_name"] },
+		new AllowFields{ "fields": ["space_id", "api_name", "name"] },
 		new ReadOnly{ "api_name": "space_id" },
-		
-		/* Add domains dictionary */
-		new Dictionary
-		{
-			"name": "domains",
-			"class_name": classof Domain,
-		},
 	];
 	
 	
@@ -71,8 +64,7 @@ static class SpaceCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
-		["domain_name", "asc"],
-		["space_id", "asc"]
+		["api_name", "asc"],
 	];
 	
 	
