@@ -36,6 +36,8 @@ $callback = function ($msg)
 {
 	if ($msg->has('reply_to') && $msg->has('correlation_id'))
 	{
+		// Send acknowledgment
+		$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 		
 		// Call bus
 		try
@@ -194,7 +196,7 @@ try
 		false,
 		
 		// No ack. The broker won't expect an acknowledgement of messages delivered to this consumer
-		true,
+		false,
 		
 		// Exclusive. The broker won't let anyone else consume from this queue
 		false,

@@ -3,7 +3,7 @@ version: "3.7"
 services:
     
     standard:
-        image: bayrell/cloud_os_standard:0.1.0-20201130_171549
+        image: bayrell/cloud_os_standard:0.1.0-20201130_185158
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "standard_data:/data"
