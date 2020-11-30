@@ -69,29 +69,4 @@ struct Space extends Record
 	];
 	
 	
-	
-	/**
-	 * Process item to database
-	 */
-	static async Dict toDatabase(Connection conn, Dict item)
-	{
-		item = await parent::toDatabase(conn, item);
-		
-		/* Check domain_name */
-		if (item.has("domain_name"))
-		{
-			string domain_name = item["domain_name"];
-			if (rtl::isEmpty(domain_name))
-			{
-				item <= domain_name <= null;
-			}
-			else
-			{
-				item <= domain_name <= rs::trim(domain_name);
-			}
-		}
-		
-		return item;
-	}
-	
 }

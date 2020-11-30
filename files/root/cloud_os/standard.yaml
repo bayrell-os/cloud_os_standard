@@ -28,6 +28,7 @@ services:
                     - node.labels.name == docker0
         networks:
             - backend
+            - cloud_admin
         ports:
           - target: 80
             published: 8080
@@ -44,6 +45,9 @@ volumes:
     standard_data:
 
 networks:
+    
+    cloud_admin:
+        external: true
     
     backend:
         driver: overlay

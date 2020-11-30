@@ -34,7 +34,6 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.NginxFile;
 
 
 struct Service extends Record
@@ -60,6 +59,9 @@ struct Service extends Record
 	
 	@StringType{}
 	string admin_route = "/";
+	
+	@TextType{}
+	string admin_custom_nginx = "";
 	
 	@BooleanType{}
 	bool enable;
@@ -116,157 +118,38 @@ struct Service extends Record
 	
 	
 	/**
-	 * Update nginx file
+	 * Get ip addresses
 	 */
-	static async void updateNginx(Dict db_settings = null)
+	Collection<string> getIpAddresses(string network_name)
 	{
-		string nginx_file_table_name = NginxFile::table_name();
+		Vector<string> ip_res = new Vector();
+		string service_name = this.docker_name;
 		
-		/* Connect to database */
-		Connection conn = await static::connect(db_settings);
-		
-		/* Get items having admin page */
-		Collection<Record> services = static::select()
-			|> await .all(db_settings)
-		;
-		
-		/* Update conf.d/99-upstreams.conf */
-		string upstreams = services
-			|> .filter
-			(
-				lib::and
-				([
-					lib::equalAttr("enable", true),
-					lib::equalAttr("is_deleted", false),
-					lib::equalAttrNot("docker_name", ""),
-				])
-			)
-			|> .map
-			(
-				string (Record item)
+		Collection tasks = this["docker_balancer", "Tasks"] |> default Collection [];
+		for (int tasks_inc=0; tasks_inc<tasks.count(); tasks_inc++)
+		{
+			Dict task = tasks[tasks_inc];
+			string state = task["Status", "State"] |> default string "";
+			string desired_state = task["DesiredState"] |> default string "";
+			if (desired_state == "running" and state == "running")
+			{
+				Collection networks = task["Networks"] |> default Collection [];
+				for (int networks_inc=0; networks_inc<networks.count(); networks_inc++)
 				{
-					string s = "";
-					string service_name = item.docker_name;
-					
-					Collection tasks = item["docker_balancer", "Tasks"] |> default Collection [];
-					for (int tasks_inc=0; tasks_inc<tasks.count(); tasks_inc++)
+					if (networks[networks_inc, "Name"] == network_name)
 					{
-						Dict task = tasks[tasks_inc];
-						string state = task["Status", "State"] |> default string "";
-						string desired_state = task["DesiredState"] |> default string "";
-						if (desired_state == "running" and state == "running")
+						Collection ip_arr = networks[networks_inc, "Addresses"];
+						for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
 						{
-							Collection networks = task["Networks"] |> default Collection [];
-							for (int networks_inc=0; networks_inc<networks.count(); networks_inc++)
-							{
-								if (networks[networks_inc, "Name"] == "cloud_router")
-								{
-									Collection ip_arr = networks[networks_inc, "Addresses"]
-										|> default Collection []
-										|> .map
-										(
-											string (string ip)
-											{
-												Collection arr = rs::split("\\/", ip);
-												return arr[0];
-											}
-										)
-									;
-									
-									/* Add 80 port */
-									s ~= "upstream " ~ service_name ~ ".test {\n";
-									for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
-									{
-										string ip = ip_arr[ip_arr_inc];
-										s ~= "\tserver " ~ ip ~ ";\n";
-									}
-									s ~= "}\n";
-									
-									/* If has admin page */
-									if (item.have_admin_page)
-									{
-										int admin_port = item.admin_port;
-										s ~= "upstream " ~ service_name ~ ".admin.test {\n";
-										for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
-										{
-											string ip = ip_arr[ip_arr_inc];
-											s ~= "\tserver " ~ ip ~ ":" ~ admin_port ~ ";\n";
-										}
-										s ~= "}\n";
-									}
-									
-								}
-							}
+							Collection arr = rs::split("\\/", ip_arr[ip_arr_inc]);
+							ip_res.pushValue(arr[0]);
 						}
 					}
-				
-					return rs::trim(s);
 				}
-			)
-			|> lib::filter( lib::equalNot("") )
-			|> lib::join("\n")
-		;
-		
-		/* Find nginx file */
-		NginxFile file = await NginxFile::getById("conf.d/99-upstreams.conf", db_settings);
-		if (file == null) file = new NginxFile{ "name": "conf.d/99-upstreams.conf" };
-		
-		/* Update nginx file */
-		if (file.content != upstreams or file.is_deleted or file.enable != 1)
-		{
-			file <= content <= upstreams;
-			file <= timestamp <= rtl::time();
-			file <= enable <= true;
-			file <= is_deleted <= false;
-			
-			/* Save file */
-			await NginxFile::save(file, db_settings);
+			}
 		}
 		
-		/* Update inc/services_admin_page.inc */
-		Collection<string> locations = services
-			|> .filter
-			(
-				lib::and
-				([
-					lib::equalAttr("have_admin_page", true),
-					lib::equalAttr("enable", true),
-					lib::equalAttr("is_deleted", false),
-					lib::equalAttrNot("docker_name", ""),
-				])
-			)
-			|> .sortIm( lib::sortAttr("docker_name", "asc") )
-			|> .map
-			(
-				string (Record item)
-				{
-					string service_name = item.docker_name;
-					string s = "";
-					s ~= "location /admin/services/" ~ service_name ~ "/ {\n";
-					s ~= "\tproxy_pass http://" ~ service_name ~ ".admin.test/;\n";
-					s ~= "\tinclude proxy_params;\n";
-					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/admin/services/" ~ service_name ~ "\";\n";
-					s ~= "}";
-					return s;
-				}
-			)
-		;
-		
-		/* Find nginx file */
-		NginxFile file = await NginxFile::getById("inc/services_admin_page.inc", db_settings);
-		if (file == null) file = new NginxFile{ "name": "inc/services_admin_page.inc" };
-		
-		/* Update nginx file */
-		string new_content = rs::join("\n", locations);
-		if (file.content != new_content or file.is_deleted or file.enable != 1)
-		{
-			file <= content <= new_content;
-			file <= timestamp <= rtl::time();
-			file <= enable <= true;
-			file <= is_deleted <= false;
-			
-			/* Save file */
-			await NginxFile::save(file, db_settings);
-		}
+		return ip_res.toCollection();
 	}
+	
 }

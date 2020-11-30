@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Backend;
 
+use Runtime.fs;
 use Runtime.lib;
 use Runtime.RuntimeUtils;
 use Runtime.Task.CronTask;
@@ -30,6 +31,8 @@ use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
 use Bayrell.CloudOS.Backend.ORM.Domain;
 use Bayrell.CloudOS.Backend.ORM.Layer;
+use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.Backend.ORM.Route;
 use Bayrell.CloudOS.Backend.ORM.Space;
 use Bayrell.CloudOS.Backend.ORM.Service;
 use Bayrell.CloudOS.Backend.DockerLib;
@@ -42,12 +45,22 @@ class DockerTasks
 	/**
 	 * Update services admin pages
 	 */
-	/*@CronTimer{ "timer": 15 }*/
+	@CronTimer{ "timer": 15, "alias": "update_nginx" }
 	static async void updateNginx()
 	{
-		TaskDriver output = @.getDriver(classof TaskDriver);
+		/* Sync services */
 		await static::syncServices();
-		await Service::updateNginx();
+		
+		/* Update nginx */
+		await static::updateUpstreams();
+		await static::updateDomains();
+		
+		/* Reload nginx */
+		bool reload = await static::updateNginxFiles();
+		if (reload)
+		{
+			await static::reloadNginx();
+		}
 	}
 	
 	
@@ -55,7 +68,7 @@ class DockerTasks
 	/**
 	 * Sync services
 	 */
-	@TaskMethod{}
+	@TaskMethod{ "alias": "sync_services" }
 	static async void syncServices()
 	{
 		Cursor cursor = null;
@@ -144,130 +157,6 @@ class DockerTasks
 	
 	
 	/**
-	 * Update services admin pages
-	 */
-	/*@CronTimer{ "timer": 60 }*/
-	static async void checkSystemLayer()
-	{
-		TaskDriver output = @.getDriver(classof TaskDriver);
-		
-		string CLOUD_DOMAIN = @.env("CLOUD_DOMAIN") |> default string "";
-		string CLOUD_PANEL = @.env("CLOUD_PANEL") |> default string "";
-		
-		/* Find service */
-		Service service = Service::select()
-			|> .filter([
-				["docker_name", "=", CLOUD_PANEL],
-				["enable", "=", 1],
-				["is_deleted", "=", 0],
-			])
-			|> await .one()
-		;
-		
-		if (service != null and CLOUD_DOMAIN != "" and CLOUD_PANEL != "")
-		{
-			
-			/* Create domain if does not exists */
-			Domain domain = await Domain::getById(CLOUD_DOMAIN);
-			if (domain == null)
-			{
-				string nginx_template = "";
-				nginx_template ~= "server {\n";
-				nginx_template ~= "\tlisten 80;\n";
-				nginx_template ~= "\tserver_name %DOMAIN_NAME%;\n";
-				nginx_template ~= "\troot /usr/share/nginx/default;\n";
-				nginx_template ~= "\tindex index.html;\n";
-				nginx_template ~= "\tautoindex off;\n";
-				nginx_template ~= "\t# Include admin pages\n";
-				nginx_template ~= "\tinclude inc/services_admin_page.inc;\n";
-				nginx_template ~= "%ROUTES%\n";
-				nginx_template ~= "%SSL%\n";
-				nginx_template ~= "}";
-				
-				await Domain::save
-				{
-					"domain_name": CLOUD_DOMAIN,
-					"nginx_template": nginx_template,
-				};
-				
-				domain = await Domain::getById(CLOUD_DOMAIN);
-				
-				output.writeln ("Created domain " ~ CLOUD_DOMAIN);
-			}
-			
-			/* Create space if does not exists */
-			Space space = Space::select()
-				|> .filter([["domain_name", "=", CLOUD_DOMAIN]])
-				|> await .one()
-			;
-			if (space == null)
-			{
-				Dict pk = await Space::save
-				{
-					"space_name": CLOUD_DOMAIN,
-					"domain_name": CLOUD_DOMAIN,
-				};
-				
-				space = await Space::getByKey(pk);
-				
-				output.writeln ("Created space " ~ CLOUD_DOMAIN);
-			}
-			
-			/* Create layer if does not exists */
-			bool update = false;
-			Layer layer = Layer::select()
-				|> .filter([
-					["layer_uid", "=", "00000000-0000-0000-0000-000000000000"]
-				])
-				|> await .one()
-			;
-			if (layer == null)
-			{
-				await Layer::save
-				{
-					"layer_uid": "00000000-0000-0000-0000-000000000000",
-					"space_id": space.space_id,
-					"service_id": service.service_id,
-					"route": "/",
-				};
-				update = true;
-			}
-			else
-			{
-				if (layer.service_id != service.service_id)
-				{
-					layer <= service_id <= service.service_id;
-					update = true;
-				}
-				if (layer.space_id != space.space_id)
-				{
-					layer <= space_id <= space.space_id;
-					update = true;
-				}
-				if (layer.route != "/")
-				{
-					layer <= route <= "/";
-					update = true;
-				}
-				if (update)
-				{
-					await Layer::save(layer);
-				}
-			}
-			
-			/* Update domain */
-			if (update)
-			{
-				output.writeln ("Update nginx for domain " ~ CLOUD_DOMAIN);
-				await Domain::updateNginx(CLOUD_DOMAIN);
-			}
-			
-		}
-	}
-	
-	
-	
-	/**
 	 * Returns balancer data
 	 */
 	pure Dict getBalancerData(Dict json, Collection tasks, Dict nodes)
@@ -345,4 +234,302 @@ class DockerTasks
 		return res;
 	}
 	
+	
+	
+	/**
+	 * Update nginx files
+	 */
+	static async bool updateNginxFiles()
+	{
+		bool res = false;
+		if (await static::updateNginxFile("/conf.d/99-cloud-admin-upstreams.conf")) res = true;
+		if (await static::updateNginxFile("/inc/services_admin_page.inc")) res = true;
+		return res;
+	}
+	
+	
+	
+	/**
+	 * Update nginx file
+	 */
+	static async bool updateNginxFile(string file_name)
+	{
+		TaskDriver output = @.getDriver(classof TaskDriver);
+		
+		string old_content = "";
+		string new_content = "";
+		
+		NginxFile file = NginxFile::getById(file_name);
+		if (file) new_content = file.content;
+		
+		if (await fs::exists(file_name, "/etc/nginx"))
+		{
+			old_content = await fs::readFile(file_name, "/etc/nginx");
+		}
+		
+		if (new_content != old_content)
+		{
+			output.writeln ("Updated nginx file " ~ file_name);
+			await fs::saveFile(file_name, new_content, "/etc/nginx");
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Reload nginx files
+	 */
+	static async void reloadNginx()
+	{
+		TaskDriver output = @.getDriver(classof TaskDriver);
+		output.writeln ("Nginx reload");
+		DockerLib::exec("/usr/sbin/nginx -s reload");
+	}
+	
+	
+	
+	/**
+	 * Update upstreams
+	 */
+	@TaskMethod{ "alias": "update_upstreams" }
+	static async void updateUpstreams(Dict db_settings = null)
+	{
+		string nginx_file_table_name = NginxFile::table_name();
+		
+		/* Get all services */
+		Collection<Service> services = Service::select()
+			|> await .all(db_settings)
+		;
+		
+		/* Get admin upstreams */
+		Collection<Service> admin_upstreams = services
+			|> .filter
+			(
+				lib::and
+				([
+					lib::equalAttr("have_admin_page", true),
+					lib::equalAttr("enable", true),
+					lib::equalAttr("is_deleted", false),
+					lib::equalAttrNot("docker_name", ""),
+					lib::equalAttrNot("admin_port", 0),
+				])
+			)
+			|> .sortIm( lib::sortAttr("docker_name", "asc") )
+		;
+		
+		/* Update /conf.d/99-cloud-os-upstreams.conf */
+		string upstreams = admin_upstreams
+			|> .map
+			(
+				string (Service service)
+				{
+					string s = "";
+					
+					string docker_name = service.docker_name;
+					int admin_port = service.admin_port;
+					Collection ip_arr = service.getIpAddresses("cloud_admin");
+					
+					if (ip_arr.count() > 0)
+					{
+						s ~= "upstream " ~ admin_port ~ "." ~ docker_name ~ ".cloud_admin.example {\n";
+						for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
+						{
+							string ip = ip_arr[ip_arr_inc];
+							s ~= "\tserver " ~ ip ~ ":" ~ admin_port ~ ";\n";
+						}
+						s ~= "}\n";
+					}
+					
+					return rs::trim(s);
+				}
+			)
+			|> lib::filter( lib::equalNot("") )
+			|> lib::join("\n")
+		;
+		
+		/* Update nginx file */
+		await NginxFile::updateFile("/conf.d/99-cloud-admin-upstreams.conf", upstreams, db_settings);
+		
+		/* Update /inc/services_admin_page.inc */
+		string content = admin_upstreams
+			|> .map
+			(
+				string (Service service)
+				{
+					string docker_name = service.docker_name;
+					int admin_port = service.admin_port;
+					string admin_custom_nginx = service.admin_custom_nginx;
+					
+					if (admin_custom_nginx != "") return admin_custom_nginx;
+					
+					string s = "";
+					s ~= "location /admin/services/" ~ docker_name ~ "/ {\n";
+					s ~= "\tproxy_pass http://" ~ admin_port ~ "." ~ docker_name ~ ".cloud_admin.example/;\n";
+					s ~= "\tinclude proxy_params;\n";
+					s ~= "\tproxy_set_header X-ROUTE-PREFIX \"/admin/services/" ~ docker_name ~ "\";\n";
+					s ~= "}";
+					
+					return s;
+				}
+			)
+			|> lib::filter( lib::equalNot("") )
+			|> lib::join("\n")
+		;
+		
+		/* Update nginx file */
+		await NginxFile::updateFile("/inc/services_admin_page.inc", content, db_settings);
+		
+		/* Update conf.d/99-cloud-router-upstreams.conf */
+		Collection<Route> routes = Route::select()
+			|> .filter
+			([
+				["enable", "=", true],
+			])
+			|> await .all(db_settings)
+		;
+		
+		string upstreams = services
+			|> .filter
+			(
+				lib::and
+				([
+					lib::equalAttr("enable", true),
+					lib::equalAttr("is_deleted", false),
+					lib::equalAttrNot("docker_name", ""),
+				])
+			)
+			|> .sortIm( lib::sortAttr("docker_name", "asc") )
+			|> .map
+			(
+				string (Service service) use (routes)
+				{
+					string s = "";
+					
+					string docker_name = service.docker_name;
+					Collection ip_arr = service.getIpAddresses("cloud_router");
+					
+					Map upstreams = new Map();
+					Collection<Route> current_routes = routes
+						|> .filter
+						(
+							lib::and
+							([
+								lib::equalAttr("docker_name", docker_name)
+							])
+						)
+					;
+					
+					for (int current_routes_inc=0; current_routes_inc<current_routes.count(); current_routes_inc++)
+					{
+						Route route = current_routes[current_routes_inc];
+						string upstream_name = route.target_port ~ "." ~ docker_name ~ ".cloud_router.example";
+						if (upstreams.has(upstream_name))
+						{
+							continue;
+						}
+						
+						if (ip_arr.count() > 0)
+						{
+							s ~= "upstream " ~ upstream_name ~ " {\n";
+							for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
+							{
+								string ip = ip_arr[ip_arr_inc];
+								s ~= "\tserver " ~ ip ~ ":" ~ route.target_port ~ ";\n";
+							}
+							s ~= "}\n";
+						}
+						
+					}
+					
+					return rs::trim(s);
+				}
+			)
+			|> lib::filter( lib::equalNot("") )
+			|> lib::join("\n")
+		;
+		
+		/* Update nginx file */
+		await NginxFile::updateFile("/conf.d/99-cloud-router-upstreams.conf", upstreams, db_settings);
+	}
+	
+	
+	
+	/**
+	 * Update domains
+	 */
+	@TaskMethod{ "alias": "update_domains" }
+	static async void updateDomains(Dict db_settings = null)
+	{
+		Collection<Domain> domains = Domain::select()
+			|> await .all()
+		;
+		
+		for (int domains_inc=0; domains_inc<domains.count(); domains_inc++)
+		{
+			Domain domain = domains[domains_inc];
+			
+			/* Get all domain routes */
+			Collection<Route> domain_routes = Route::select()
+				|> .filter
+				([
+					["enable", "=", true],
+					["domain_name", "=", domain.domain_name],
+					["protocol", "=", "http"],
+				])
+				|> await .all(db_settings)
+			;
+			
+			Vector<string> nginx_routes = new Vector();
+			for (int domain_routes_inc=0; domain_routes_inc<domain_routes.count(); domain_routes_inc++)
+			{
+				Route domain_route = domain_routes[domain_routes_inc];
+				
+				string nginx_route = "";
+				string upstream_name = domain_route.target_port ~ "." ~ domain_route.docker_name ~ 
+					".cloud_router.example"
+				;
+				
+				nginx_route ~= "\tlocation " ~ domain_route.route ~ " {\n";
+				nginx_route ~= "\t\tproxy_pass http://" ~ upstream_name ~ domain_route.route_prefix ~ ";\n";
+				nginx_route ~= "\t\tinclude proxy_params;\n";
+				
+				/* Add route prefix */
+				if (domain_route.route_prefix != "")
+				{
+					nginx_route ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ domain_route.route_prefix ~ "\";\n";
+				}
+				
+				/* Add space id */
+				if (domain.space_id != "")
+				{
+					nginx_route ~= "\t\tproxy_set_header X-SPACE-ID \"" ~ domain.space_id ~ "\";\n";
+				}
+				
+				/* Add layer uid */
+				if (domain_route.layer_uid != "")
+				{
+					nginx_route ~= "\t\tproxy_set_header X-LAYER-UID \"" ~ domain_route.layer_uid ~ "\";\n";
+				}
+				
+				nginx_route ~= "\t}";
+				
+				nginx_routes.pushValue(nginx_route);
+			}
+			
+			/* Create nginx files */
+			string nginx_content = domain.nginx_template;
+			nginx_content = rs::replace("%DOMAIN_NAME%", domain.domain_name, nginx_content);
+			nginx_content = rs::replace("%ROUTES%", rs::join("\n", nginx_routes), nginx_content);
+			nginx_content = rs::replace("%SSL%", "", nginx_content);
+			
+			/* Update nginx file */
+			await NginxFile::updateFile("/domains/" ~ domain.domain_name ~ ".conf", nginx_content, db_settings);
+		}
+		
+		
+		
+	}
 }

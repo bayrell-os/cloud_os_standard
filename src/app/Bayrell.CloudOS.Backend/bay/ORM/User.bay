@@ -195,7 +195,7 @@ struct User extends Record
 		NginxFile file = await NginxFile::save
 		(
 			{
-				"name": "inc/htpasswd.inc",
+				"name": "/inc/htpasswd.inc",
 				"content": htpasswd,
 				"timestamp": rtl::time(),
 				"enable": true,

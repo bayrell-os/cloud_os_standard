@@ -23,11 +23,7 @@ services:
                     - node.labels.name == docker0
         networks:
             - backend
-        ports:
-          - target: 15672
-            published: 15672
-            protocol: tcp
-            mode: host
+            - cloud_admin
         logging:
             driver: journald
 
@@ -35,6 +31,9 @@ volumes:
     rabbitmq_data:
 
 networks:
+    
+    cloud_admin:
+        external: true
     
     backend:
         driver: overlay

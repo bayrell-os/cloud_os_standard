@@ -38,8 +38,10 @@ case "$1" in
 	create_network)
 		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable cloud_router -o "com.docker.network.bridge.name"="cloud_router"
 		
+		docker network create --subnet 172.22.0.1/16 --driver=overlay --attachable cloud_admin -o "com.docker.network.bridge.name"="cloud_admin"
+		
 		sleep 2
-
+		
 		docker network ls
 	;;
 	
@@ -52,16 +54,9 @@ case "$1" in
 	;;
 	
 	setup)
-		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable cloud_router -o "com.docker.network.bridge.name"="cloud_router"
-		
-		sleep 2
-		
-		docker network ls
-		
-		sleep 2
-		
-		generate
-		docker stack deploy -c example/standard.yaml cloud_os --with-registry-auth
+		$0 create_network
+		$0 generate
+		$0 compose
 	;;
 	
 	*)

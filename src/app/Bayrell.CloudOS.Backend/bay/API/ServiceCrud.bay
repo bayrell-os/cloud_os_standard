@@ -72,6 +72,7 @@ static class ServiceCrud extends CrudApi
 				"have_admin_page",
 				"admin_port",
 				"admin_route",
+				"admin_custom_nginx",
 				"enable",
 			]
 		},

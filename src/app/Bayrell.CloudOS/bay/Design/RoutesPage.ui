@@ -349,6 +349,7 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
  */
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
+	"enable",
 	"protocol",
 	"domain_name",
 	"route",
@@ -366,6 +367,7 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
+	"enable",
 	"protocol",
 	"domain_name",
 	"route",

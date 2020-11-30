@@ -70,4 +70,27 @@ struct NginxFile extends Record
 		},
 	];
 	
+	
+	/**
+	 * Update nginx file
+	 */
+	async static void updateFile(string file_name, string content, Dict db_settings = null)
+	{
+		/* Find nginx file */
+		NginxFile file = await static::getById(file_name, db_settings);
+		if (file == null) file = new NginxFile{ "name": file_name };
+
+		/* Update nginx file */
+		if (file.content != content or file.is_deleted or file.enable != 1)
+		{
+			file <= content <= content;
+			file <= timestamp <= rtl::time();
+			file <= enable <= true;
+			file <= is_deleted <= false;
+			
+			/* Save file */
+			await static::save(file, db_settings);
+		}
+	}
+	
 }

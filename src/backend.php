@@ -20,8 +20,8 @@ define('AMQP_APP_EXCHANGE', 'Bayrell.CloudOS');
 define('AMQP_APP_QUEUE', 'Bayrell.CloudOS');
 $AMQP_HOST = isset($env['AMQP_HOST']) ? $env['AMQP_HOST'] : "";
 $AMQP_PORT = isset($env['AMQP_PORT']) ? $env['AMQP_PORT'] : "";
-$AMQP_LOGIN = isset($env['AMQP_LOGIN']) ? $env['AMQP_LOGIN'] : "";
-$AMQP_PASSWORD = isset($env['AMQP_PASSWORD']) ? $env['AMQP_PASSWORD'] : "";
+$AMQP_LOGIN = isset($env['AMQP_LOGIN']) ? $env['AMQP_LOGIN'] : "guest";
+$AMQP_PASSWORD = isset($env['AMQP_PASSWORD']) ? $env['AMQP_PASSWORD'] : "guest";
 $AMQP_RESPONSE_TIME = 20000;
 $AMQP_MESSAGE_TTL = 10000;
 

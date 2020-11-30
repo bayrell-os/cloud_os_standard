@@ -91,7 +91,7 @@ static class YamlFiles
 		}
 		
 		/* Read file */
-		string content = await fs::readFile(file_path, "utf8", "/data/config");
+		string content = await fs::readFile(file_path, "/data/config");
 		
 		/* Answer */
 		answer = answer::success
@@ -125,7 +125,7 @@ static class YamlFiles
 		await fs::mkdir(rs::dirname(file_path), "/data/config", "777");
 		
 		/* Save file */
-		await fs::saveFile(file_path, content, "utf8", "/data/config");
+		await fs::saveFile(file_path, content, "/data/config");
 		
 		/* Answer */
 		answer = answer::success
@@ -175,7 +175,7 @@ static class YamlFiles
 		await fs::mkdir(rs::dirname(file_path), "/data/config", "0777");
 		
 		/* Save file */
-		await fs::saveFile(file_path, "", "utf8", "/data/config");
+		await fs::saveFile(file_path, "", "/data/config");
 		
 		/* Answer */
 		answer = answer::success

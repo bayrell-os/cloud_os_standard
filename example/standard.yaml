@@ -3,7 +3,7 @@ version: "3.7"
 services:
     
     standard:
-        image: bayrell/cloud_os_standard:0.1.0-20201128_145547
+        image: bayrell/cloud_os_standard:0.1.0-20201130_171549
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "standard_data:/data"
@@ -29,6 +29,7 @@ services:
                     - node.labels.name == docker0
         networks:
             - backend
+            - cloud_admin
         ports:
           - target: 80
             published: 8080
@@ -45,6 +46,9 @@ volumes:
     standard_data:
 
 networks:
+    
+    cloud_admin:
+        external: true
     
     backend:
         driver: overlay

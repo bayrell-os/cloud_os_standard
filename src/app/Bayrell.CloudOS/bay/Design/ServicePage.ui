@@ -41,6 +41,7 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
+<use name="Runtime.Web.Input.TextArea" component="true" />
 
 
 <script>
@@ -213,6 +214,13 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
+		"api_name": "admin_custom_nginx",
+		"label": "Admin custom nginx",
+		"class_name": classof TextArea,
+	},
+	
+	new FieldInfo
+	{
 		"api_name": "enable",
 		"label": "Enable",
 		"class_name": classof Select,
@@ -271,10 +279,10 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 [
 	"stack_name",
 	"service_name",
-	"software_api_name",
 	"have_admin_page",
 	"admin_port",
 	"admin_route",
+	"admin_custom_nginx",
 ];
 
 
@@ -287,7 +295,6 @@ pure Collection<string> getTableFields(RenderContainer container) =>
 	"number",
 	"docker_name",
 	"docker_image",
-	"software_api_name",
 	"docker_replicas",
 	"enable",
 	"have_admin_page",
@@ -322,6 +329,7 @@ pure Dict<string> getMessages() =>
  */
 pure Dict getDialogSettings() =>
 {
+	"width": "800px",
 };
 
 
