@@ -1,14 +1,12 @@
 version: "3.7"
 
 services:
-    
-    http:
-        image: bayrell/cloud_router_http:0.1.0
+
+    gateway:
+        image: bayrell/bus_gateway:0.1.0-20201201_125846
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
-        volumes:
-            - "router_data:/data"
         env_file:
-            - env.conf
+            - ./env.conf
         deploy:
             replicas: 1
             endpoint_mode: dnsrr
@@ -24,19 +22,11 @@ services:
                 constraints:
                     - node.labels.name == docker0
         networks:
-            - cloud_router
-        ports:
-          - target: 80
-            published: 80
-            protocol: tcp
-            mode: host
+            - cloud_admin
         logging:
             driver: journald
 
-volumes:
-    router_data:
-
 networks:
     
-    cloud_router:
+    cloud_admin:
         external: true

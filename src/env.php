@@ -5,7 +5,7 @@ define("APP_NAME", "Bayrell.CloudOS");
 $env = getenv();
 
 /* App mode */
-if (!isset($env["APP_MODE"])) $env["APP_MODE"] = "dev";
+if (!isset($env["APP_MODE"])) $env["APP_MODE"] = "prod";
 
 /* Enable metrika */
 if (!isset($env["METRIKA"])) $env["METRIKA"] = false;

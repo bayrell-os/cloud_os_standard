@@ -11,6 +11,7 @@
 		"Design/NginxFilesPage",
 		"Design/RoutesPage",
 		"Design/ServicePage",
+		"Design/ServicePageModel",
 		"Design/SpacesPage",
 		"Design/TopMenuPage",
 		"Design/UsersPage",

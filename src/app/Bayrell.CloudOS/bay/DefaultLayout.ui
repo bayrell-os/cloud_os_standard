@@ -166,22 +166,8 @@ span.lpad5{
 									{ _("Bayrell.CloudOS", "Yaml files") }
 								</a>
 							</li>
-						</ul>
-					</div>
-					
-					<div class='layout_menu_label'>
-						{ _("Bayrell.CloudOS", "Design") }
-					</div>
-					<div class='layout_menu_items'>
-						<ul>
 							<li class={ rs::start(layout["route", "name"], "app.admin.domains") ? "active": "" }>
 								<a class='nolink' href='/admin/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
-							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.spaces") ? "active": "" }>
-								<a class='nolink' href='/admin/spaces/'>{ _("Bayrell.CloudOS", "Spaces") }</a>
-							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.layers") ? "active": "" }>
-								<a class='nolink' href='/admin/layers/'>{ _("Bayrell.CloudOS", "Layers") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.routes") ? "active": "" }>
 								<a class='nolink' href='/admin/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
@@ -192,27 +178,9 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.admin.users") ? "active": "" }>
 								<a class='nolink' href='/admin/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
-						</ul>
-					</div>
-					
-					<div class='layout_menu_label'>
-						{ _("Bayrell.CloudOS", "Admin") }
-					</div>
-					<div class='layout_menu_items'>
-						<ul>
 							<li>
 								<a class='nolink' href='/admin/database/' target="_self">
 									{ _("Bayrell.CloudOS", "Adminer") }
-								</a>
-							</li>
-							<li>
-								<a class='nolink' href='/admin/env/' target="_self">
-									{ _("Bayrell.CloudOS", "Env") }
-								</a>
-							</li>
-							<li>
-								<a class='nolink' href='/admin/phpinfo/' target="_self">
-									{ _("Bayrell.CloudOS", "PHP Info") }
 								</a>
 							</li>
 						</ul>

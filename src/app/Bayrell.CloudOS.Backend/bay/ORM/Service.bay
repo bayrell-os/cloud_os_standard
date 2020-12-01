@@ -79,7 +79,7 @@ struct Service extends Record
 	Dict docker_json;
 
 	@JsonType{ "nullable": true }
-	Dict docker_tasks;
+	Collection<Dict> docker_tasks;
 
 	@JsonType{ "nullable": true }
 	Dict docker_balancer;	

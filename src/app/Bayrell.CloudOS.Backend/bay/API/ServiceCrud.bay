@@ -32,6 +32,7 @@ use Runtime.Web.CRUD.Rules.AllowFields;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.Backend.DockerLib;
 use Bayrell.CloudOS.Backend.ORM.Service;
 
 
@@ -214,4 +215,68 @@ static class ServiceCrud extends CrudApi
 		return await parent::deleteAction(request, answer);
 	}
 	
+	
+	
+	/**
+	 * Stop
+	 */
+	@ApiMethod{ "method_name": "stop" }
+	static async list stopAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		/* Create api */
+		CrudApi api = rtl::newInstance(static::getCurrentClassName());
+		
+		/* Get data from request */
+		api.action = "stop";
+		api.answer = answer;
+		api.request = request;
+		api.pk = request.data["pk"] |> default Dict {};
+		
+		/* Find item */
+		api.old_item = await api.findItemByKey(api.pk);
+		if (api.old_item == null)
+		{
+			throw new ApiException
+			(
+				_("Runtime.Web.CRUD", "Item not found"),
+				rtl::ERROR_ITEM_NOT_FOUND
+			);
+		}
+		
+		/* Stop docker service */
+		string service_id = api.old_item.docker_json["ID"];
+		string url_api = "/services/" ~ service_id;
+		string content = await DockerLib::dockerApi(url_api, "DELETE");
+		
+		/* Set disabled */
+		Service new_item = api.old_item;
+		new_item <= enable <= 0;
+		await Service::save(new_item);
+		
+		/* Find new item */
+		api.new_item = await api.findItemByKey(api.pk);
+		
+		/* Process item */
+		Dict new_item = api.new_item, old_item = api.old_item;
+		old_item = await api.processItem(old_item);
+		if (api.new_item != api.old_item and api.new_item != null)
+		{
+			new_item = await api.processItem(new_item);
+		}
+		else
+		{
+			new_item = old_item;
+		}
+		
+		/* Create response */
+		Dict response =
+		{
+			"pk": api.pk,
+			"new_item": new_item,
+			"old_item": old_item,
+		};
+		answer = answer::success(answer, response);
+		
+		return [ request, answer ];
+	}
 }

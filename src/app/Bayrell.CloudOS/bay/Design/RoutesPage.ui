@@ -339,7 +339,6 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
 	"protocol",
 	"domain_name",
 	"docker_name",
-	"layer_uid",
 ];
 
 
@@ -356,7 +355,6 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 	"docker_name",
 	"target_port",
 	"route_prefix",
-	"layer_uid",
 ];
 
 
@@ -374,7 +372,6 @@ pure Collection<string> getTableFields(RenderContainer container) =>
 	"docker_name",
 	"target_port",
 	"route_prefix",
-	"layer_uid",
 	"edit-buttons"
 ];
 

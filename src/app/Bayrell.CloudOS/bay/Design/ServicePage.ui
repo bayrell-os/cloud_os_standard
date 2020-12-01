@@ -18,7 +18,7 @@
 
 <class version="1.0"
 	name="Bayrell.CloudOS.Design.ServicePage" extends="Runtime.Web.CRUD.CrudPage" 
-	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.ServicePageModel"
 >
 
 <use name="Runtime.lib" />
@@ -37,6 +37,10 @@
 <use name="Runtime.Web.CRUD.FieldInfo" />
 <use name="Runtime.Web.CRUD.FormModel" />
 <use name="Runtime.Web.CRUD.TableModel" />
+<use name="Runtime.Web.Dialog.Dialog" component="true" />
+<use name="Runtime.Web.Dialog.DialogEvent" />
+<use name="Runtime.Web.Dialog.DialogModel" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
@@ -68,7 +72,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 		
 		/* Set model */
 		|> lib::setAttr(["layout", "page_class"], classof ServicePage)
-		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
+		|> lib::setAttr(["layout", "page_model"], new ServicePageModel())
 		
 		/* Make api request */
 		|> await static::crudSearch
@@ -396,6 +400,8 @@ pure html calcField(LayoutModel layout, string kind, string field_name, var valu
 pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
 {
 	Dict item = crud_settings["crud_item"];
+	Collection<FieldInfo> struct = crud_settings["crud_struct"];
+	int index = crud_settings["crud_index"]
 	
 	/* Table number */
 	if (kind == "table" and field_name == "number")
@@ -404,9 +410,9 @@ pure html renderField(LayoutModel layout, string kind, string field_name, var va
 	/* Table have admin page button */
 	if (kind == "table" and field_name == "have_admin_page")
 		return (value == 0)
-			? "No"
+			? <div @key={ "No" }>No</div>
 			:
-			<div>
+			<div @key={ "Yes" }>
 				<div style='display:inline-block;vertical-align: middle; margin-right: 5px;'>
 				{ static::renderButton
 				(
@@ -426,7 +432,12 @@ pure html renderField(LayoutModel layout, string kind, string field_name, var va
 	
 	/* Table edit buttons */
 	if (kind == "table" and field_name == "edit-buttons")
-		return static::renderButtons(layout, value, crud_settings);
+		return [
+			static::renderButton(layout, crud_settings, "edit"),
+			(item["enable"] == true) ?
+				static::renderButton(layout, crud_settings, "stop") :
+				static::renderButton(layout, crud_settings, "delete")
+		];
 	
 	/* Admin page settings */
 	if (kind == "table" and field_name == "admin_page_settings")
@@ -452,6 +463,104 @@ pure string trimImageName(string name)
 
 </script>
 
+
+<template name="renderButton" args="LayoutModel layout, Dict settings, string button_type, Dict options = null">
+	%var Collection<FieldInfo> struct = settings["crud_struct"];
+	%var TableModel table_model = settings["crud_table_model"];
+	%var Dict item = settings["crud_item"];
+	%var int index = settings["crud_index"];
+	%if (button_type == "stop")
+	{
+		<Button type='small danger' data-index={ index } data-pk={ static::getPrimaryKey(struct, item) }
+			@event:MouseClickEvent="onStopClick" @key="compose"
+		>
+			{ _("Runtime.Web.CRUD", "Stop") }
+		</Button>
+	}
+	%else
+	{
+		%render parent(layout, settings, button_type, options);
+	}
+</template>
+
+
+<template name="renderDialog" args="LayoutModel layout, CrudPageModel model, Dict params">
+	%render parent(layout, model, params);
+	<div class='dialogs'>
+		<Dialog @name="dialog_stop" auto_hide={ false } @event:DialogEvent="onStopDialogEvent">
+		</Dialog>
+	</div>
+</template>
+
+
+<script>
+
+/**
+ * Stop
+ */
+async void onStopClick(Message<MouseClickEvent> msg)
+{
+	Dict pk = msg.sender.params["data-pk"];
+	Dict item = this.call("getFirstItem", pk);
+	
+	this.dialog_stop.update("confirm", "Do you realy want to stop '" ~ item["docker_name"] ~ "' ?")
+	this.dialog_stop.update
+	(
+		"copy",
+		{
+			"tag":
+			{
+				"pk": pk,
+				"item": item,
+			}
+		}
+	);
+}
+
+
+/**
+ * Stop dialog event
+ */
+async void onStopDialogEvent(Message<DialogEvent> msg)
+{
+	if (msg.data.button_result == "ok")
+	{
+		Dict pk = this.dialog_stop.model(["tag", "pk"]);
+		this.dialog_stop.update("copy", { "message": "Wait for stop service" });
+		this.dialog_stop.update("copy", { "error_message": "" });
+		
+		/* Call api */
+		RemoteCallAnswer answer = await RenderDriver::externalBusCall
+		{
+			"object_name": static::getCrudObjectName(),
+			"interface_name": "core.crud",
+			"method_name": "stop",
+			"data":
+			{
+				"pk": pk,
+			},
+		};
+		
+		if (answer.isSuccess())
+		{
+			if (answer.response.has("new_item"))
+			{
+				this.update("setItem", pk, answer.response["new_item"]);
+			}
+			this.dialog_stop.update("hide");
+		}
+		else
+		{
+			this.dialog_stop.update("copy", { "message": "" });
+			this.dialog_stop.update("copy", { "error_message": answer.error_message });
+		}
+	}
+	else if (msg.data.button_result == "cancel")
+	{
+		this.dialog_stop.update("hide");
+	}
+}
+</script>
 
 
 </class>

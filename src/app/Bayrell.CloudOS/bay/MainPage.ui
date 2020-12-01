@@ -61,7 +61,7 @@ static async RenderContainer MainPage(RenderContainer container)
 
 
 <template name="render">
-	Hello
+	Cloud OS Version 0.2
 </template>
 
 

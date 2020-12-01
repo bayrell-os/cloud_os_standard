@@ -50,7 +50,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleVersion() => "0.1.0";
+	pure string getModuleVersion() => "0.2.0";
 	
 	
 	
@@ -168,8 +168,7 @@ static class ModuleDescription
 		{
 			"Runtime.Web":
 			{
-				/*"f_inc": (@.env("APP_MODE", "prod") == "prod") ? 1 : rtl::utime(),*/
-				"f_inc": "1",
+				"f_inc": (@.env("APP_MODE", "prod") == "prod") ? 2 : rtl::utime(),
 			},
 			
 			#ifdef BACKEND then

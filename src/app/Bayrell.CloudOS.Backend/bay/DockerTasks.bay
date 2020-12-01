@@ -409,7 +409,7 @@ class DockerTasks
 					string s = "";
 					
 					string docker_name = service.docker_name;
-					Collection ip_arr = service.getIpAddresses("cloud_router");
+					Collection ip_arr = service.getIpAddresses("load_balancer");
 					
 					Map upstreams = new Map();
 					Collection<Route> current_routes = routes
@@ -425,7 +425,7 @@ class DockerTasks
 					for (int current_routes_inc=0; current_routes_inc<current_routes.count(); current_routes_inc++)
 					{
 						Route route = current_routes[current_routes_inc];
-						string upstream_name = route.target_port ~ "." ~ docker_name ~ ".cloud_router.example";
+						string upstream_name = route.target_port ~ "." ~ docker_name ~ ".load_balancer.example";
 						if (upstreams.has(upstream_name))
 						{
 							continue;
@@ -452,7 +452,7 @@ class DockerTasks
 		;
 		
 		/* Update nginx file */
-		await NginxFile::updateFile("/conf.d/99-cloud-router-upstreams.conf", upstreams, db_settings);
+		await NginxFile::updateFile("/conf.d/99-load-balancer-upstreams.conf", upstreams, db_settings);
 	}
 	
 	
@@ -489,7 +489,7 @@ class DockerTasks
 				
 				string nginx_route = "";
 				string upstream_name = domain_route.target_port ~ "." ~ domain_route.docker_name ~ 
-					".cloud_router.example"
+					".load_balancer.example"
 				;
 				
 				nginx_route ~= "\tlocation " ~ domain_route.route ~ " {\n";

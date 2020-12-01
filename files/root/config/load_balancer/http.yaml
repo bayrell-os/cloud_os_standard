@@ -2,11 +2,13 @@ version: "3.7"
 
 services:
     
-    bus_gateway:
-        image: bayrell/bus_gateway:0.1.0-20201126_142630
+    http:
+        image: bayrell/load_balancer_http:0.1.0-20201201_125925
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
+        volumes:
+            - "http_data:/data"
         env_file:
-            - ./env.conf
+            - env.conf
         deploy:
             replicas: 1
             endpoint_mode: dnsrr
@@ -22,20 +24,23 @@ services:
                 constraints:
                     - node.labels.name == docker0
         networks:
-            - backend
             - cloud_admin
-            - cloud_router
+            - load_balancer
+        ports:
+          - target: 80
+            published: 80
+            protocol: tcp
+            mode: host
         logging:
             driver: journald
 
+volumes:
+    http_data:
+
 networks:
-    
+
     cloud_admin:
         external: true
-    
-    cloud_router:
+
+    load_balancer:
         external: true
-    
-    backend:
-        driver: overlay
-        attachable: true

@@ -19,35 +19,21 @@ DROP TABLE IF EXISTS `domains`;
 CREATE TABLE `domains` (
   `domain_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `nginx_template` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`domain_name`)
+  `space_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`domain_name`),
+  KEY `space_id` (`space_id`),
+  CONSTRAINT `domains_ibfk_1` FOREIGN KEY (`space_id`) REFERENCES `spaces` (`space_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 DROP TABLE IF EXISTS `layers`;
 CREATE TABLE `layers` (
-  `layer_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `layer_uid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `layer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `space_id` bigint(20) NOT NULL,
-  `service_id` bigint(20) NOT NULL,
-  `route` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`layer_id`),
+  `space_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`layer_uid`),
   KEY `space_id` (`space_id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `layers_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON UPDATE CASCADE,
-  CONSTRAINT `layers_ibfk_2` FOREIGN KEY (`space_id`) REFERENCES `spaces` (`space_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `layers_routes`;
-CREATE TABLE `layers_routes` (
-  `domain_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `route` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `layer_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`domain_name`,`route`),
-  KEY `layer_id` (`layer_id`),
-  CONSTRAINT `layers_routes_ibfk_1` FOREIGN KEY (`domain_name`) REFERENCES `domains` (`domain_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `layers_routes_ibfk_2` FOREIGN KEY (`layer_id`) REFERENCES `layers` (`layer_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `layers_ibfk_1` FOREIGN KEY (`space_id`) REFERENCES `spaces` (`space_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -73,6 +59,23 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+DROP TABLE IF EXISTS `routes`;
+CREATE TABLE `routes` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `enable` tinyint(4) NOT NULL,
+  `protocol` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `domain_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `route` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `docker_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `target_port` int(11) NOT NULL,
+  `route_prefix` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `layer_uid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `domain_name` (`domain_name`),
+  CONSTRAINT `routes_ibfk_1` FOREIGN KEY (`domain_name`) REFERENCES `domains` (`domain_name`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 DROP TABLE IF EXISTS `services`;
 CREATE TABLE `services` (
   `service_id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -80,6 +83,9 @@ CREATE TABLE `services` (
   `service_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `software_api_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `have_admin_page` tinyint(4) NOT NULL,
+  `admin_port` int(11) NOT NULL,
+  `admin_route` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin_custom_nginx` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `enable` tinyint(4) NOT NULL,
   `is_deleted` tinyint(4) NOT NULL,
   `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data`)),
@@ -99,11 +105,9 @@ CREATE TABLE `services` (
 DROP TABLE IF EXISTS `spaces`;
 CREATE TABLE `spaces` (
   `space_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `space_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `domain_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`space_id`),
-  UNIQUE KEY `domain` (`domain_name`),
-  CONSTRAINT `spaces_ibfk_2` FOREIGN KEY (`domain_name`) REFERENCES `domains` (`domain_name`) ON UPDATE CASCADE
+  `api_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`space_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -144,4 +148,4 @@ CREATE TABLE `users_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2020-10-31 12:01:32
+-- 2020-12-01 14:41:36

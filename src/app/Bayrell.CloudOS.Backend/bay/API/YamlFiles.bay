@@ -42,7 +42,7 @@ static class YamlFiles
 	@ApiMethod{ "method_name": "getFiles" }
 	static async list getFilesAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
-		Collection<Dict> stacks =
+		Collection<Dict> arr =
 			await fs::readDir("/data/config")
 			|> .filter( lib::and([ lib::equalNot("."), lib::equalNot("..") ]) )
 			|> .map
@@ -56,17 +56,22 @@ static class YamlFiles
 			)
 		;
 		
-		for (int i=0; i<stacks.count(); i++)
+		Vector<Dict> stacks = new Vector();
+		for (int i=0; i<arr.count(); i++)
 		{
-			Dict stack = stacks[i];
+			Dict stack = arr[i];
+			if (not await fs::isDir(stack["name"], "/data/config/"))
+			{
+				continue;
+			}
 			stack <= files <=
-				await fs::readDir("/data/config/" ~ stack["name"])
+				await fs::readDir(stack["name"], "/data/config/")
 				|> .filter( lib::and([ lib::equalNot("."), lib::equalNot("..") ]) )
 			;
-			stacks <= { i } <= stack;
+			stacks.pushValue(stack);
 		}
 		
-		answer = answer::success(answer, stacks);
+		answer = answer::success(answer, stacks.toCollection());
 		
 		return [ request, answer ];
 	}
@@ -205,7 +210,14 @@ static class YamlFiles
 		string file_path = fs::concat(stack_name, file_name);
 		string file_path_new = fs::concat(stack_name, file_name_new);
 		
-		/* Save file */
+		/* Check file exists */
+		bool exists = await fs::exists(file_path, "/data/config");
+		if (not exists)
+		{
+			throw new FileNotFound(file_path);
+		}
+		
+		/* Rename file */
 		await fs::renameFile(file_path, file_path_new, "/data/config");
 		
 		/* Answer */
@@ -234,7 +246,14 @@ static class YamlFiles
 		string file_name = request.data["file_name"] |> default string "";
 		string file_path = fs::concat(stack_name, file_name);
 		
-		/* Save file */
+		/* Check file exists */
+		bool exists = await fs::exists(file_path, "/data/config");
+		if (not exists)
+		{
+			throw new FileNotFound(file_path);
+		}
+		
+		/* Delete file */
 		await fs::unlink(file_path, "/data/config");
 		
 		/* Answer */
@@ -245,6 +264,79 @@ static class YamlFiles
 				"stack_name": stack_name,
 				"file_name": file_name,
 				"file_path": file_path,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Rename stack
+	 */
+	@ApiMethod{ "method_name": "editStack" }
+	static async list editStackAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		string stack_name_new = request.data["stack_name_new"] |> default string "";
+		
+		/* Check file exists */
+		bool exists = await fs::exists(stack_name, "/data/config");
+		if (not exists)
+		{
+			throw new FileNotFound(stack_name);
+		}
+		
+		/* Rename file */
+		await fs::renameFile(stack_name, stack_name_new, "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name_new,
+			}
+		);
+		
+		return [ request, answer ];
+	}
+	
+	
+	
+	/**
+	 * Delete stack
+	 */
+	@ApiMethod{ "method_name": "deleteStack" }
+	static async list deleteStackAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		string stack_name = request.data["stack_name"] |> default string "";
+		
+		/* Check file exists */
+		bool exists = await fs::exists(stack_name, "/data/config");
+		if (not exists)
+		{
+			throw new FileNotFound(stack_name);
+		}
+		
+		Collection<string> arr = await fs::readDir(stack_name, "/data/config")
+			|> .filter( lib::and([ lib::equalNot("."), lib::equalNot("..") ]) )
+		;
+		if (arr.count() > 0)
+		{
+			throw new ApiException("Stack does not empty");
+		}
+		
+		/* Delete file */
+		await fs::unlink(stack_name, "/data/config");
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"stack_name": stack_name,
 			}
 		);
 		
