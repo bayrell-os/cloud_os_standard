@@ -5,7 +5,7 @@ SCRIPT_PATH=`dirname $SCRIPT`
 BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
-VERSION=0.1.0
+VERSION=0.2.0
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in
@@ -24,6 +24,7 @@ case "$1" in
 	;;
 	
 	manifest)
+		rm -rf ~/.docker/manifests/docker.io_cloud_os_standard-*
 		docker push bayrell/cloud_os_standard:$VERSION-amd64
 		docker push bayrell/cloud_os_standard:$VERSION-arm32v7
 		docker manifest create --amend bayrell/cloud_os_standard:$VERSION \

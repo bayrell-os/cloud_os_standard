@@ -3,7 +3,7 @@ version: "3.7"
 services:
     
     http:
-        image: bayrell/load_balancer_http:0.1.0-20201201_125925
+        image: bayrell/load_balancer_http:0.2.0
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         volumes:
             - "http_data:/data"

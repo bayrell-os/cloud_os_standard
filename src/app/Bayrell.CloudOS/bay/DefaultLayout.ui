@@ -179,7 +179,7 @@ span.lpad5{
 								<a class='nolink' href='/admin/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
 							<li>
-								<a class='nolink' href='/admin/database/' target="_self">
+								<a class='nolink' href='/admin/database/' target="_blank">
 									{ _("Bayrell.CloudOS", "Adminer") }
 								</a>
 							</li>

@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
     gateway:
-        image: bayrell/bus_gateway:0.1.0-20201201_125846
+        image: bayrell/bus_gateway:0.2.0
         hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
         env_file:
             - ./env.conf
