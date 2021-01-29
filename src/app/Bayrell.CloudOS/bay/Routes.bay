@@ -81,6 +81,11 @@ static class Routes
 	/**
 	 * Layout chain
 	 */
+	@LambdaChain
+	{
+		"name": RenderDriver::LAYOUT_CHAIN,
+		"pos": 10
+	}
 	pure LayoutModel layoutChain(LayoutModel layout)
 	{
 		if (layout.layout_name == "default") layout <= layout_class <= classof DefaultLayout;
@@ -107,6 +112,10 @@ static class Routes
 	/**
 	 * Title chain
 	 */
+	@LambdaChain
+	{
+		"name": RenderDriver::LAYOUT_CHAIN
+	}
 	pure RenderContainer titleChain(LayoutModel layout, string title)
 	{
 		title = title ~ " | Bayrell Cloud OS";
@@ -120,6 +129,12 @@ static class Routes
 	 * Page not found
 	 * @return RenderContainer
 	 */
+	@LambdaChain
+	{
+		"name": RenderDriver::RENDER_CHAIN,
+		"pos": RenderDriver::RENDER_CHAIN_CALL_PAGE_NOT_FOUND,
+		"is_async": true
+	}
 	static async RenderContainer Page404(RenderContainer container)
 	{
 		if (container == null or container.isResponseExists() or container.isPageExists()) return [ container ];

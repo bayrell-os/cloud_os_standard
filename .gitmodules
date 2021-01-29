@@ -25,9 +25,6 @@
 [submodule "src/lib/Runtime.Task"]
 	path = src/lib/Runtime.Task
 	url = https://github.com/bayrell/Runtime.Task
-[submodule "src/lib/Runtime.Web.Auth"]
-	path = src/lib/Runtime.Web.Auth
-	url = https://github.com/bayrell/Runtime.Web.Auth
 [submodule "src/lib/Runtime.Cron"]
 	path = src/lib/Runtime.Cron
 	url = https://github.com/bayrell/Runtime.Cron

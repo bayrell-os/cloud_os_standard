@@ -19,9 +19,9 @@ $loader = ( new Loader() )
 	->addIncludePath( ROOT_PATH . "/app" )
 	->addIncludePath( ROOT_PATH . "/lib" )
 	->setEnv($env)
-	->setAppName(APP_NAME)
 	->setMainModule("Bayrell.CloudOS")
-	->setEntryPoint("Runtime.Web.CGI")
+	->setMainClass("Bayrell.CloudOS.Backend")
+	->setEntryPoint("Runtime.Web.App.CGI")
 	->run();
 
 exit($loader->exit_code);

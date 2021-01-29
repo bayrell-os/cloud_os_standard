@@ -21,8 +21,8 @@ $loader = ( new Loader() )
 	->addIncludePath( ROOT_PATH . "/lib" )
 	->setArgs($argv)
 	->setEnv($env)
-	->setAppName(APP_NAME)
 	->setMainModule("Bayrell.CloudOS")
+	->setMainClass("Bayrell.CloudOS.Backend")
 ;
 
 /* Create context */
