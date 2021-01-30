@@ -17,8 +17,8 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.ServicePage" extends="Runtime.Web.CRUD.CrudPage" 
-	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Design.ServicePageModel"
+	name="Bayrell.CloudOS.Page.ServicePage" extends="Runtime.Web.CRUD.CrudPage" 
+	module="Bayrell.CloudOS" model="Bayrell.CloudOS.Page.ServicePageModel"
 >
 
 <use name="Runtime.lib" />

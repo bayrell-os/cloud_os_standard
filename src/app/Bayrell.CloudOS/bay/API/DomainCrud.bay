@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.API;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
 use Runtime.lib;

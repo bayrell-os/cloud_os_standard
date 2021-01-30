@@ -18,19 +18,20 @@
 
 <class version="1.0"
 	name="Bayrell.CloudOS.Pattern" extends="Runtime.Web.Component" 
-	module="Runtime.Web.Backend" model="Runtime.Web.LayoutModel"
+	module="Runtime.Web.Backend" model="Runtime.Web.App.LayoutModel"
 >
 
 <use name="Runtime.Web.RenderDriver" />
+<use name="Runtime.Web.App.WebApp" />
 
 <template name="render" args="RenderContainer container, LayoutModel layout, Dict params, var content">
 <html>
 <head>
-<title>{ RenderDriver::chainTitle(layout, layout.title) }</title>
+<title>{ WebApp::callTitleChain(layout, layout.title) }</title>
 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 <link rel='stylesheet' href={ layout.route_prefix ~ "/assets/Assets.FontAwesome/resources/css/all.min.css?_=" ~ layout.f_inc } />
-<link rel='stylesheet' href={ layout.route_prefix ~ "/assets/core.css?_=" ~ layout.f_inc } />
-<style id='root_style'>@raw{ rs::spaceless( RenderDriver::getLayoutCSS(layout) ) }</style>
+<link rel='stylesheet' href={ layout.route_prefix ~ "/assets/app.css?_=" ~ layout.f_inc } />
+<style id='root_style'>@raw{ rs::spaceless( WebApp::getLayoutCSS(layout) ) }</style>
 </head>
 <body>
 
@@ -41,13 +42,11 @@
 <input id='root_model' type='hidden' value={ model_encoded } />
 <input id='frontend_storage' type='hidden' value={ frontend_storage } />
 
-<script src={ layout.route_prefix ~ "/assets/runtime.js?_=" ~ layout.f_inc }></script>
+<script src={ layout.route_prefix ~ "/assets/render.js?_=" ~ layout.f_inc }></script>
 <script src={ layout.route_prefix ~ "/assets/components.js?_=" ~ layout.f_inc }></script>
-<script src={ layout.route_prefix ~ "/app.js?_=" ~ layout.f_inc }></script>
+<script src={ layout.route_prefix ~ "/assets/app.js?_=" ~ layout.f_inc }></script>
 
-<script>
-runWebApp(@json{ @.main_module }, @json{ container.frontend_env });
-</script>
+<script>runWebApp(@json{ container.frontend_env }, "Bayrell.CloudOS", "Bayrell.CloudOS.Frontend");</script>
 
 </body>
 </html>

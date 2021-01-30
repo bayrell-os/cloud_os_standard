@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.DomainsPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Page.NginxFilesPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
@@ -49,7 +49,7 @@
 /**
  * Returns object name
  */
-pure string getCrudObjectName() => "Bayrell.CloudOS.Domain";
+pure string getCrudObjectName() => "Bayrell.CloudOS.NginxFile";
 
 
 
@@ -57,16 +57,16 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Domain";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/domains/", "name": "app.admin.domains" }
+@Route{ "uri": "/admin/nginx/", "name": "app.admin.nginx" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		
 		/* Set title */
-		|> lib::setAttr(["layout", "title"], "Domains")
+		|> lib::setAttr(["layout", "title"], "Nginx")
 		|> lib::setAttr(["layout", "layout_name"], "admin")
 		
 		/* Set model */
-		|> lib::setAttr(["layout", "page_class"], classof DomainsPage)
+		|> lib::setAttr(["layout", "page_class"], classof NginxFilesPage)
 		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
 		
 		/* Make api request */
@@ -80,20 +80,6 @@ static async RenderContainer actionIndex(RenderContainer container) => [
  */
 pure Collection getOptions(RenderContainer container, string name = "")
 {
-	if (name == "spaces")
-		return container.layout.page_model
-			|> attr "foreigns", "spaces", "options"
-			|> lib::map
-			(
-				Dict (Dict item) =>
-				{
-					"id": item["space_id"],
-					"value": item["api_name"],
-					"item": item,
-				}
-			)
-			|> default Collection []
-		;
 	return parent::getOptions(container, name);
 }
 
@@ -109,20 +95,13 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
 	{
-		"api_name": "domain_name",
+		"api_name": "name",
 		"primary": true,
-		"label": "Domain name",
+		"label": "File name",
 		"class_name": classof Input,
 		"info":
 		{
@@ -135,26 +114,45 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "nginx_template",
-		"label": "Nginx temlate",
-		"class_name": classof TextArea,
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "space_id",
-		"label": "Space name",
+		"api_name": "enable",
+		"label": "Enable",
 		"class_name": classof Select,
 		"class_settings":
 		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "spaces"),
+			"show_select_value_filter": true,
+			"show_select_value": false,
+			"options":
+			[
+				{"id": 0, "value": "No"},
+				{"id": 1, "value": "Yes"},
+			],
 		},
 		"info":
 		{
 			"table":
 			{
 				"class_name": classof SelectText,
+			},
+			"form":
+			{
+				"class_settings":
+				{
+					"default": 0,
+				},
+			},
+		},
+	},
+	
+	new FieldInfo
+	{
+		"api_name": "content",
+		"label": "Content",
+		"class_name": classof TextArea,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
 			},
 		},
 	},
@@ -181,7 +179,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
  */
 pure Collection<string> getFilterFields(RenderContainer container) =>
 [
-	"domain_name",
+	"name",
+	"enable",
 ];
 
 
@@ -191,8 +190,9 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
  */
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
-	"domain_name",
-	"nginx_template",
+	"name",
+	"enable",
+	"content",
 ];
 
 
@@ -203,7 +203,8 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
-	"domain_name",
+	"name",
+	"enable",
 	"edit-buttons"
 ];
 
@@ -223,9 +224,9 @@ pure Collection<string> getViewFields(RenderContainer container) =>
  */
 pure Dict<string> getMessages() =>
 {
-	"add": _("Bayrell.TimePlanner", "Add domain"),
+	"add": _("Bayrell.TimePlanner", "Add nginx files"),
 	"delete": string (Dict item) =>
-		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["domain_name"] } ),
+		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["name"] } ),
 };
 
 

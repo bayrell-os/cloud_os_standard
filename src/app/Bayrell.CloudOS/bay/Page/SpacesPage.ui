@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.UsersPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Page.SpacesPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
@@ -48,7 +48,7 @@
 /**
  * Returns object name
  */
-pure string getCrudObjectName() => "Bayrell.CloudOS.User";
+pure string getCrudObjectName() => "Bayrell.CloudOS.Space";
 
 
 
@@ -56,16 +56,16 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.User";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/users/", "name": "app.admin.users" }
+@Route{ "uri": "/admin/spaces/", "name": "app.admin.spaces" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		
 		/* Set title */
-		|> lib::setAttr(["layout", "title"], "Users")
+		|> lib::setAttr(["layout", "title"], "Spaces")
 		|> lib::setAttr(["layout", "layout_name"], "admin")
 		
 		/* Set model */
-		|> lib::setAttr(["layout", "page_class"], classof UsersPage)
+		|> lib::setAttr(["layout", "page_class"], classof SpacesPage)
 		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
 		
 		/* Make api request */
@@ -91,7 +91,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 [
 	new FieldInfo
 	{
-		"api_name": "user_id",
+		"api_name": "space_id",
 		"primary": true,
 	},
 	
@@ -104,8 +104,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "login",
-		"label": "Login",
+		"api_name": "api_name",
+		"label": "Api name",
 		"class_name": classof Input,
 		"info":
 		{
@@ -119,44 +119,13 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	new FieldInfo
 	{
 		"api_name": "name",
-		"label": "Name",
+		"label": "Space name",
 		"class_name": classof Input,
 		"info":
 		{
 			"table":
 			{
 				"class_name": classof Label,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "banned",
-		"label": "Banned",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value_filter": true,
-			"show_select_value": false,
-			"options":
-			[
-				{"id": 0, "value": "No"},
-				{"id": 1, "value": "Yes"},
-			],
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-			"form":
-			{
-				"class_settings":
-				{
-					"default": 0,
-				},
 			},
 		},
 	},
@@ -174,28 +143,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 			},
 		},
 	},
-	
-	new FieldInfo
-	{
-		"api_name": "password1",
-		"label": "Password",
-		"class_name": classof Input,
-		"class_settings":
-		{
-			"type": "password",
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "password2",
-		"label": "Password",
-		"class_name": classof Input,
-		"class_settings":
-		{
-			"type": "password",
-		},
-	},
 ];
 
 
@@ -205,8 +152,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
  */
 pure Collection<string> getFilterFields(RenderContainer container) =>
 [
-	"login",
-	"banned",
+	"api_name",
+	"name",
 ];
 
 
@@ -216,11 +163,8 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
  */
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
-	"login",
+	"api_name",
 	"name",
-	"banned",
-	"password1",
-	"password2",
 ];
 
 
@@ -231,9 +175,8 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
-	"login",
+	"api_name",
 	"name",
-	"banned",
 	"edit-buttons"
 ];
 
@@ -253,9 +196,9 @@ pure Collection<string> getViewFields(RenderContainer container) =>
  */
 pure Dict<string> getMessages() =>
 {
-	"add": _("Bayrell.TimePlanner", "Add user"),
+	"add": _("Bayrell.TimePlanner", "Add space"),
 	"delete": string (Dict item) =>
-		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["login"] } ),
+		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["space_name"] } ),
 };
 
 

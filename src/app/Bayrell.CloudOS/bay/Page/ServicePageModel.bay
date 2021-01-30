@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Design;
+namespace Bayrell.CloudOS.Page;
 
 use Runtime.Web.CRUD.CrudPageModel;
 use Runtime.Web.Dialog.DialogModel;

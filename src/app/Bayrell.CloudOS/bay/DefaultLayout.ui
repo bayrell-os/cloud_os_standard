@@ -18,12 +18,10 @@
 
 <class version="1.0"
 	name="Bayrell.CloudOS.DefaultLayout" extends="Runtime.Web.Component" 
-	module="Bayrell.CloudOS" model="Runtime.Web.LayoutModel"
+	module="Bayrell.CloudOS" model="Runtime.Web.App.LayoutModel"
 >
 
 <use name="Runtime.Core.Message" />
-<use name="Runtime.Web.RenderDriver" />
-<use name="Runtime.Web.Auth.AuthToken" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Bayrell.CloudOS.ModuleDescription" />
 

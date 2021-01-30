@@ -18,22 +18,17 @@
 
 namespace Bayrell.CloudOS;
 
-use Runtime.Core.Context;
-use Runtime.Core.Driver;
-use Runtime.Core.Entity;
-use Runtime.Core.LambdaChain;
+use Runtime.Driver;
+use Runtime.Entity;
+use Runtime.LambdaChain;
+use Runtime.LambdaChainClass;
+use Runtime.LambdaChainDeclare;
 use Runtime.ORM.MySQL.Driver as MySQLDriver;
 use Runtime.ORM.MySQL.Settings as MySQLSettings;
-use Runtime.Web.Layout;
-use Runtime.Web.LayoutModel;
-use Runtime.Web.RenderController;
-use Runtime.Web.RenderDriver;
-use Runtime.Web.Route;
-use Runtime.Web.RouteController;
-use Runtime.Web.RouteList;
+use Runtime.Web.App.Route;
+use Runtime.Web.App.RouteList;
 use Bayrell.CloudOS.Backend;
 use Bayrell.CloudOS.Frontend;
-use Bayrell.CloudOS.Routes;
 
 
 static class ModuleDescription
@@ -63,7 +58,6 @@ static class ModuleDescription
 	{
 		"Runtime": ">=0.3",
 		"Runtime.Web.App": "*",
-		"Runtime.Web.Auth": "*",
 		"Runtime.Web.CRUD": "*",
 		
 		/* Backend */
@@ -80,13 +74,11 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		/* Chains */
-		new LambdaChainClass{ "name": "Bayrell.CloudOS.Routes" },
-		
 		/* Register routes */
 		new Entity{ "name": "Bayrell.CloudOS.Routes" },
-		new RouteList{ "name": "Bayrell.CloudOS.MainPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.DomainsPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.MainPage" },
+		
+		/*new RouteList{ "name": "Bayrell.CloudOS.Design.DomainsPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.RoutesPage" },
@@ -95,7 +87,7 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Design.YamlFilesPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Installer.InstallerPage" },
-		
+		*/
 		
 		#ifdef BACKEND then
 		
@@ -107,7 +99,7 @@ static class ModuleDescription
 		},
 		
 		/* Register api */
-		new Entity{ "name": "Bayrell.CloudOS.API.DomainCrud" },
+		/*new Entity{ "name": "Bayrell.CloudOS.API.DomainCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.LayerCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.LayerRouteCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.NginxFileCrud" },
@@ -117,28 +109,12 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.API.TopMenuCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.UserCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.YamlFiles" },
-		
+		*/
 		/* System bus */
-		new Entity{ "name": "Bayrell.CloudOS.BUS.Balancer" },
+		/* new Entity{ "name": "Bayrell.CloudOS.BUS.Balancer" }, */
 		
 		/* Tasks */
-		new Entity{ "name": "Bayrell.CloudOS.DockerTasks" },
-		
-		/* Render Chain. Pattern */
-		new LambdaChain
-		{
-			"name": RenderDriver::RENDER_CHAIN,
-			"value": "Bayrell.CloudOS.Routes::renderChainPatternDefault",
-			"pos": RenderDriver::RENDER_CHAIN_RESPONSE_BEFORE,
-		},
-		
-		/* Render Chain. Route after */
-		new LambdaChain
-		{
-			"name": RenderDriver::RENDER_CHAIN,
-			"value": "Bayrell.CloudOS.Routes::renderChainRouteAfter",
-			"pos": RenderDriver::RENDER_CHAIN_CALL_ROUTE_AFTER,
-		},
+		/*new Entity{ "name": "Bayrell.CloudOS.DockerTasks" },*/
 		
 		#endif
 		
@@ -149,7 +125,7 @@ static class ModuleDescription
 		new Entity{ "name": classof Frontend },
 		new Driver
 		{
-			"name": "App",
+			"name": "WebApp",
 			"value": classof Frontend,
 			"global": true,
 			"params":
@@ -162,10 +138,10 @@ static class ModuleDescription
 		
 		#ifdef BACKEND then
 		
-		new Entity{ "name": classof Frontend },
+		new Entity{ "name": classof Backend },
 		new Driver
 		{
-			"name": "App",
+			"name": "WebApp",
 			"value": classof Backend,
 			"global": true,
 			"params":

@@ -2,23 +2,11 @@
 	"name": "Bayrell.CloudOS",
 	"assets":
 	[
+		"Page/MainPage",
 		"DefaultLayout",
-		"Routes",
-		"MainPage",
-		"Design/DomainsPage",
-		"Design/LayersPage",
-		"Design/LayersRoutesPage",
-		"Design/NginxFilesPage",
-		"Design/RoutesPage",
-		"Design/ServicePage",
-		"Design/ServicePageModel",
-		"Design/SpacesPage",
-		"Design/TopMenuPage",
-		"Design/UsersPage",
-		"Design/YamlFilesPage",
-		"Installer/InstallerPage",
-		"Other/AdminerPage",
+		"Frontend",
 		"Page404",
+		"Routes",
 		"ModuleDescription"
 	]
 }

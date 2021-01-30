@@ -17,7 +17,7 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.RoutesPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Page.LayersPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Web.CRUD.CrudPageModel"
 >
 
@@ -39,7 +39,6 @@
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
 <use name="Runtime.Web.Input.SelectText" component="true" />
-<use name="Runtime.Web.Input.TextArea" component="true" />
 <use name="Runtime.Web.Table.TableModel" />
 
 
@@ -49,7 +48,7 @@
 /**
  * Returns object name
  */
-pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
+pure string getCrudObjectName() => "Bayrell.CloudOS.Layer";
 
 
 
@@ -57,16 +56,16 @@ pure string getCrudObjectName() => "Bayrell.CloudOS.Route";
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/routes/", "name": "app.admin.routes" }
+@Route{ "uri": "/admin/layers/", "name": "app.admin.layers" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		
 		/* Set title */
-		|> lib::setAttr(["layout", "title"], "Routes")
+		|> lib::setAttr(["layout", "title"], "Layers")
 		|> lib::setAttr(["layout", "layout_name"], "admin")
 		
 		/* Set model */
-		|> lib::setAttr(["layout", "page_class"], classof RoutesPage)
+		|> lib::setAttr(["layout", "page_class"], classof LayersPage)
 		|> lib::setAttr(["layout", "page_model"], new CrudPageModel())
 		
 		/* Make api request */
@@ -80,64 +79,21 @@ static async RenderContainer actionIndex(RenderContainer container) => [
  */
 pure Collection getOptions(RenderContainer container, string name = "")
 {
-	if (name == "enable")
-		return
-		[
-			{"id": 0, "value": "No"},
-			{"id": 1, "value": "Yes"},
-		];
-	
-	if (name == "protocol")
-		return
-		[
-			{"id": "http", "value": "HTTP"},
-		];
-	
-	if (name == "domains")
+	if (name == "spaces")
 		return container.layout.page_model
-			|> attr "foreigns", "domains", "options"
+			|> attr "foreigns", "spaces", "options"
 			|> lib::map
 			(
 				Dict (Dict item) =>
 				{
-					"id": item["domain_name"],
-					"value": item["domain_name"],
-					"item": item,
-				}
-			)
-			|> default Collection []
-		;
-	
-	if (name == "services")
-		return container.layout.page_model
-			|> attr "foreigns", "services", "options"
-			|> lib::map
-			(
-				Dict (Dict item) =>
-				{
-					"id": item["docker_name"],
-					"value": item["docker_name"],
+					"id": item["space_id"],
+					"value": item["api_name"],
 					"item": item,
 				}
 			)
 			|> default Collection []
 		;
 		
-	if (name == "layers")
-		return container.layout.page_model
-			|> attr "foreigns", "layers", "options"
-			|> lib::map
-			(
-				Dict (Dict item) =>
-				{
-					"id": item["layer_uid"],
-					"value": item["layer_uid"],
-					"item": item,
-				}
-			)
-			|> default Collection []
-		;
-	
 	return parent::getOptions(container, name);
 }
 
@@ -150,8 +106,17 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 [
 	new FieldInfo
 	{
-		"api_name": "id",
+		"api_name": "layer_uid",
 		"primary": true,
+		"label": "Layer UID",
+		"class_name": classof Input,
+		"info":
+		{
+			"table":
+			{
+				"class_name": classof Label,
+			},
+		},
 	},
 	
 	new FieldInfo
@@ -159,58 +124,12 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
 	{
-		"api_name": "enable",
-		"label": "Enable",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value_filter": true,
-			"show_select_value": false,
-			"options": static::getOptions(container, "enable"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "protocol",
-		"label": "Protocol",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "protocol"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "route",
-		"label": "Route",
+		"api_name": "layer_name",
+		"label": "Name",
 		"class_name": classof Input,
 		"info":
 		{
@@ -223,41 +142,13 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 	
 	new FieldInfo
 	{
-		"api_name": "target_port",
-		"label": "Target port",
-		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "route_prefix",
-		"label": "Route prefix",
-		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "domain_name",
-		"label": "Domain name",
+		"api_name": "space_id",
+		"label": "Space",
 		"class_name": classof Select,
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(container, "domains"),
+			"options": static::getOptions(container, "spaces"),
 		},
 		"info":
 		{
@@ -266,51 +157,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 				"class_name": classof SelectText,
 			},
 		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "docker_name",
-		"label": "Docker name",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "services"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "layer_uid",
-		"label": "Layer",
-		"class_name": classof Select,
-		"class_settings":
-		{
-			"show_select_value": true,
-			"options": static::getOptions(container, "layers"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
-	},
-	
-	new FieldInfo
-	{
-		"api_name": "nginx_template",
-		"label": "Nginx temlate",
-		"class_name": classof TextArea,
 	},
 	
 	new FieldInfo
@@ -318,13 +164,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderButtons,
-			},
-		},
 	},
 ];
 
@@ -335,10 +174,8 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
  */
 pure Collection<string> getFilterFields(RenderContainer container) =>
 [
-	"enable",
-	"protocol",
-	"domain_name",
-	"docker_name",
+	"space_id",
+	"layer_uid",
 ];
 
 
@@ -348,13 +185,9 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
  */
 pure Collection<string> getFormFields(RenderContainer container) =>
 [
-	"enable",
-	"protocol",
-	"domain_name",
-	"route",
-	"docker_name",
-	"target_port",
-	"route_prefix",
+	"space_id",
+	"layer_name",
+	"layer_uid",
 ];
 
 
@@ -365,13 +198,9 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 pure Collection<string> getTableFields(RenderContainer container) =>
 [
 	"number",
-	"enable",
-	"protocol",
-	"domain_name",
-	"route",
-	"docker_name",
-	"target_port",
-	"route_prefix",
+	"space_id",
+	"layer_name",
+	"layer_uid",
 	"edit-buttons"
 ];
 
@@ -391,9 +220,9 @@ pure Collection<string> getViewFields(RenderContainer container) =>
  */
 pure Dict<string> getMessages() =>
 {
-	"add": _("Bayrell.TimePlanner", "Add route"),
+	"add": _("Bayrell.TimePlanner", "Add layer"),
 	"delete": string (Dict item) =>
-		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["domain_name"] } ),
+		_("Runtime.Web.CRUD", "Do you realy want to delete '%name%' ?", { "name": item["layer_name"] } ),
 };
 
 
@@ -403,7 +232,6 @@ pure Dict<string> getMessages() =>
  */
 pure Dict getDialogSettings() =>
 {
-	"width": "800px",
 };
 
 
@@ -446,12 +274,37 @@ pure html renderField(LayoutModel layout, string kind, string field_name, var va
 	if (kind == "table" and field_name == "number")
 		return static::renderNumber(layout, value, crud_settings);
 	
+	/* Href */
+	if (kind == "table" and field_name == "layer_href")
+	{
+		Dict item = crud_settings["crud_item"];
+		string uri = "http://" ~ item["domain_name"] ~ item["route"];
+		return uri;
+	}
+	
+	/* Open button */
+	if (kind == "table" and field_name == "open")
+	{
+		Dict item = crud_settings["crud_item"];
+		string uri = "http://" ~ item["domain_name"] ~ item["route"];
+		return static::renderButton
+		(
+			layout, crud_settings, "view",
+			{
+				"url": uri,
+				"target": "_blank",
+				"label": "Open",
+			}
+		);
+	}
+	
 	/* Table edit buttons */
 	if (kind == "table" and field_name == "edit-buttons")
 		return static::renderButtons(layout, value, crud_settings);
 	
 	return null;
 }
+
 
 </script>
 

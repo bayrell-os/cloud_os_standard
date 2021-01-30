@@ -17,10 +17,9 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Design.YamlFilesPage" extends="Runtime.Web.CRUD.CrudPage" 
+	name="Bayrell.CloudOS.Page.YamlFilesPage" extends="Runtime.Web.CRUD.CrudPage" 
 	module="Bayrell.CloudOS" model="Runtime.Dict"
 >
-
 
 <use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />

@@ -17,18 +17,17 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.MainPage" extends="Runtime.Web.Component" 
+	name="Bayrell.CloudOS.Page.MainPage" extends="Runtime.Web.Component" 
 	module="Bayrell.CloudOS" model="Bayrell.CloudOS.MainPageModel"
 >
 
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
-<use name="Runtime.Web.LayoutModel" />
-<use name="Runtime.Web.RenderContainer" />
-<use name="Runtime.Web.RenderDriver" />
-<use name="Runtime.Web.Route" />
-<use name="Runtime.Web.RouteList" />
-<use name="Runtime.Web.RouteMiddleware" />
+<use name="Runtime.Web.App.LayoutModel" />
+<use name="Runtime.Web.App.RenderContainer" />
+<use name="Runtime.Web.App.Route" />
+<use name="Runtime.Web.App.RouteList" />
+<use name="Runtime.Web.App.RouteMiddleware" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 
 
@@ -45,9 +44,8 @@ static async RenderContainer MainPage(RenderContainer container)
 	container <= layout <= title <= "Index page";
 	container <= layout <= layout_name <= "admin";
 	
-	/* Set model */
-	container <= layout <= page_class <= classof MainPage;
-	container <= layout <= page_model <= new Dict{};
+	/* Set page */
+	container = container.setPage(classof MainPage, new Dict{});
 	
 	return [ container ];
 }

@@ -16,14 +16,17 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend;
+namespace Bayrell.CloudOS;
 
 use Runtime.BaseDriver;
+use Runtime.BaseStruct;
+use Runtime.Context;
 use Runtime.LambdaChainClass;
+use Runtime.Web.App.WebApp;
 
 
 @LambdaChainClass{}
-class Backend extends BaseDriver
+class Backend extends WebApp
 {
 	
 	/**

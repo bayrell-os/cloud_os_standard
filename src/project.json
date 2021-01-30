@@ -6,13 +6,13 @@
 	[
 		{
 			"name": "runtime",
-			"dest": "assets/runtime.js",
+			"dest": "assets/render.js",
 			"lang": "es6",
 			"modules":
 			[
 				"Runtime",
-				"Runtime.Core",
-				"Runtime.Web"
+				"Runtime.Web",
+				"Runtime.Web.App"
 			]
 		},
 		{
@@ -21,26 +21,22 @@
 			"lang": "es6",
 			"modules":
 			[
-				"Runtime.Web.Auth",
 				"Runtime.Web.Dialog",
-				"Runtime.Web.Form",
-				"Runtime.Web.Input",
-				"Runtime.Web.Table",
 				"Runtime.Web.CRUD"
 			]
 		},
 		{
-			"name": "core.css",
-			"dest": "assets/core.css",
+			"name": "app.css",
+			"dest": "assets/app.css",
 			"lang": "css",
 			"modules":
 			[
-				"Runtime.Web"
+				"@Bayrell.CloudOS/core.css"
 			]
 		},
 		{
-			"name": "app",
-			"dest": "html/app.js",
+			"name": "app.js",
+			"dest": "assets/app.js",
 			"lang": "es6",
 			"modules":
 			[

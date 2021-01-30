@@ -19,11 +19,14 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.BaseDriver;
+use Runtime.BaseStruct;
+use Runtime.Context;
 use Runtime.LambdaChainClass;
+use Runtime.Web.App.WebApp;
 
 
 @LambdaChainClass{}
-class Frontend extends BaseDriver
+class Frontend extends WebApp
 {
 	
 	/**
@@ -61,4 +64,12 @@ class Frontend extends BaseDriver
 		await parent::startDriver();
 	}
 	
+	
+	
+	/**
+	 * Frontend Run
+	 */
+	static async void appRun()
+	{
+	}
 }

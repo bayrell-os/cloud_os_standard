@@ -18,42 +18,66 @@
 
 namespace Bayrell.CloudOS;
 
-use Runtime.Core.RemoteCallAnswer;
-use Runtime.Core.Request;
-use Runtime.Core.Response;
+use Runtime.LambdaChain;
+use Runtime.LambdaChainClass;
+use Runtime.LambdaChainDeclare;
 use Runtime.ORM.MySQL.Settings as MySQLSettings;
-use Runtime.Web.Layout;
-use Runtime.Web.LayoutModel;
-use Runtime.Web.RenderContainer;
 use Runtime.Web.RenderDriver;
-use Runtime.Web.Route;
-use Runtime.Web.RouteList;
-use Runtime.Web.RouteMiddleware;
-use Runtime.Web.Auth.AuthToken;
-use Runtime.Web.CRUD.CrudPageModel;
-use Runtime.Web.Table.TableModel;
-use Bayrell.CloudOS.AdminLayout;
+use Runtime.Web.App.LayoutModel;
+use Runtime.Web.App.RenderContainer;
+use Runtime.Web.App.Response;
+use Runtime.Web.App.Route;
+use Runtime.Web.App.RouteList;
+use Runtime.Web.App.WebApp;
 use Bayrell.CloudOS.DefaultLayout;
 use Bayrell.CloudOS.Page404;
 use Bayrell.CloudOS.Pattern;
-use Bayrell.CloudOS.Dashboard.MainPage;
-use Bayrell.CloudOS.Dashboard.MainPageModel;
-use Bayrell.CloudOS.Other.AdminerPage;
-use Bayrell.CloudOS.User.UsersPage;
-use Bayrell.CloudOS.User.UsersPageModel;
-use Bayrell.CloudOS.Backend.ORM.TopMenu;
+use Bayrell.CloudOS.Page.AdminerPage;
 
 
 @RouteList{}
+@LambdaChainClass{}
 static class Routes
 {
 	
+	@LambdaChain
+	{
+		"name": RenderDriver::COMPONENTS_CHAIN,
+	}
+	pure list componentsChain(Collection components) => [ components ];
+	
+	
 	#ifdef BACKEND then
+	
+	
+	/**
+	 * Render chain. Set default pattern
+	 */
+	@LambdaChain
+	{
+		"name": WebApp::RENDER_CHAIN,
+		"pos": WebApp::RENDER_CHAIN_RESPONSE_BEFORE
+	}
+	pure RenderContainer renderChain_PatternDefault(RenderContainer container)
+	{
+		if (container.pattern_name == "default" and container.pattern_class == "" or container.pattern_class == "")
+		{
+			container <= pattern_class <= classof Pattern;
+		}
+		return [ container ];
+	}
+	
+	
 	
 	/**
 	 * Render chain. Route after
 	 */
-	pure RenderContainer renderChainRouteAfter(RenderContainer container)
+	@LambdaChain
+	{
+		"name": WebApp::RENDER_CHAIN,
+		"pos": WebApp::RENDER_CHAIN_CALL_ROUTE_AFTER
+	}
+	pure RenderContainer renderChain_RouteAfter(RenderContainer container)
 	{
 		if (container.layout.layout_name == "admin")
 		{
@@ -79,11 +103,41 @@ static class Routes
 	
 	
 	/**
+	 * Render chain
+	 * Page not found
+	 * @return RenderContainer
+	 */
+	@LambdaChain
+	{
+		"name": WebApp::RENDER_CHAIN,
+		"pos": WebApp::RENDER_CHAIN_CALL_PAGE_NOT_FOUND,
+		"is_async": true
+	}
+	static async RenderContainer renderChain_Page404(RenderContainer container)
+	{
+		if (container == null or container.isResponseExists() or container.isPageExists()) return [ container ];
+		
+		/* Set title */
+		container <= layout <= title <= "Page not found";
+		container <= layout <= layout_name <= "default";
+		
+		/* Set page */
+		container = container.setPage(classof Page404, null);
+		
+		/* Set 404 code */
+		container <= new_http_code <= 404;
+		
+		return [ container ];
+	}
+	
+	
+	
+	/**
 	 * Layout chain
 	 */
 	@LambdaChain
 	{
-		"name": RenderDriver::LAYOUT_CHAIN,
+		"name": WebApp::LAYOUT_CHAIN,
 		"pos": 10
 	}
 	pure LayoutModel layoutChain(LayoutModel layout)
@@ -96,68 +150,16 @@ static class Routes
 	
 	
 	/**
-	 * Render chain. Set default pattern
-	 */
-	pure RenderContainer renderChainPatternDefault(RenderContainer container)
-	{
-		if (container.pattern_name == "default" and container.pattern_class == "" or container.pattern_class == "")
-		{
-			container <= pattern_class <= classof Pattern;
-		}
-		return [ container ];
-	}
-	
-	
-	
-	/**
 	 * Title chain
 	 */
 	@LambdaChain
 	{
-		"name": RenderDriver::LAYOUT_CHAIN
+		"name": WebApp::TITLE_CHAIN
 	}
 	pure RenderContainer titleChain(LayoutModel layout, string title)
 	{
 		title = title ~ " | Bayrell Cloud OS";
 		return [ layout, title ];
-	}
-	
-	
-	
-	/**
-	 * Render chain
-	 * Page not found
-	 * @return RenderContainer
-	 */
-	@LambdaChain
-	{
-		"name": RenderDriver::RENDER_CHAIN,
-		"pos": RenderDriver::RENDER_CHAIN_CALL_PAGE_NOT_FOUND,
-		"is_async": true
-	}
-	static async RenderContainer Page404(RenderContainer container)
-	{
-		if (container == null or container.isResponseExists() or container.isPageExists()) return [ container ];
-		
-		/* Set title */
-		container <= layout <= title <= "Page not found";
-		container <= layout <= layout_name <= "default";
-		
-		/* Set model */
-		container <= layout <= page_class <= classof Page404;
-		container <= layout <= page_model <= null;
-		
-		/* Set 404 code */
-		container <= new_http_code <= 404;
-		
-		/* Set admin page if login */
-		AuthToken auth_token = container.layout.keep_data[classof AuthToken] |> default AuthToken null;
-		if (auth_token)
-		{
-			container <= layout <= layout_name <= "admin";
-		}
-		
-		return [ container ];
 	}
 	
 	
