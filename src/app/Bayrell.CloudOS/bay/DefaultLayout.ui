@@ -191,7 +191,7 @@ span.lpad5{
 				<div class='layout_content'>
 					%if (not rtl::isEmpty(class_name))
 					{
-						<{class_name} @bind="page_model" @key="view"></{class_name}>
+						<{class_name} @bind={["model", class_name]} @key="view"></{class_name}>
 					}
 				</div>
 			</div>

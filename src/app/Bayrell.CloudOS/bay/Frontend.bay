@@ -67,9 +67,10 @@ class Frontend extends WebApp
 	
 	
 	/**
-	 * Frontend Run
+	 * Web App Run
 	 */
 	static async void appRun()
 	{
+		await parent::appRun();
 	}
 }

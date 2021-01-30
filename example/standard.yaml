@@ -38,7 +38,7 @@ services:
           - target: 22
             published: 8022
             protocol: tcp
-            mode: host            
+            mode: host
         logging:
             driver: journald
 

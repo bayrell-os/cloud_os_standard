@@ -59,7 +59,7 @@ static async RenderContainer MainPage(RenderContainer container)
 
 
 <template name="render">
-	Cloud OS Version 0.2
+	<div>Cloud OS Version 0.2</div>
 </template>
 
 
