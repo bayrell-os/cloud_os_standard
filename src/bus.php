@@ -10,13 +10,13 @@ set_time_limit(10);
 // require ROOT_PATH . "/vendor/autoload.php";
 
 /* Include loader */
-include ROOT_PATH . "/lib/Runtime/php/loader.php";
+include ROOT_PATH . "/lib/Runtime/php/Loader.php";
 
 /* Include enviroments */
 $env = include ROOT_PATH . "/env.php";
 
 /* Run app */
-$loader = ( new Loader() )
+$loader = ( new \Runtime\Loader() )
 	->addIncludePath( ROOT_PATH . "/app" )
 	->addIncludePath( ROOT_PATH . "/lib" )
 	->setArgs($argv)

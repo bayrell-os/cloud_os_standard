@@ -50,6 +50,24 @@ static async RenderContainer MainPage(RenderContainer container)
 	return [ container ];
 }
 
+
+/**
+ * Route Action
+ * @return RenderContainer
+ */
+@Route{ "uri": "/test/", "name": "app.dashboard.test" }
+static async RenderContainer TestPage(RenderContainer container)
+{
+	/* Set title */
+	container <= layout <= title <= "Index page";
+	container <= layout <= layout_name <= "admin";
+	
+	/* Set page */
+	container = container.setPage(classof MainPage, new Dict{});
+	
+	return [ container ];
+}
+
 </script>
 
 
@@ -59,6 +77,7 @@ static async RenderContainer MainPage(RenderContainer container)
 
 
 <template name="render">
+	<div>{ layout.uri }</div>
 	<div>Cloud OS Version 0.2</div>
 </template>
 

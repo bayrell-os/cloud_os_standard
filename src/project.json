@@ -64,7 +64,7 @@
 		{
 			"php":
 			{
-				"enable_check_types": true,
+				"enable_check_types": false,
 				"enable_context": true,
 				"backend": true,
 				"frontend": false
@@ -75,8 +75,8 @@
 				"use_strict": true,
 				"enable_async_await": true,
 				"emulate_async_await": false,
-				"enable_check_types": true,
-				"enable_context": true,
+				"enable_check_types": false,
+				"enable_context": false,
 				"backend": false,
 				"frontend": true
 			}

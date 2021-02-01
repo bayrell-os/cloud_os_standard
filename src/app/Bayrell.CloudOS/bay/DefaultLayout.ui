@@ -154,6 +154,9 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.dashboard.main") ? "active": "" }>
 								<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Main") }</a>
 							</li>
+							<li class={ rs::start(layout["route", "name"], "app.dashboard.test") ? "active": "" }>
+								<a class='nolink' href='/test/'>{ _("Bayrell.CloudOS", "Test") }</a>
+							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.services") ? "active": "" }>
 								<a class='nolink' href='/admin/services/'>
 									{ _("Bayrell.CloudOS", "Services") }
