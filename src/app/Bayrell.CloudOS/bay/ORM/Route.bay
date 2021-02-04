@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.ORM;
+namespace Bayrell.CloudOS.ORM;
 
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
@@ -32,7 +32,7 @@ use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.DriverInterface as ORMDriver;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.Domain;
+use Bayrell.CloudOS.Domain;
 
 
 struct Route extends Record

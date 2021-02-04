@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.API;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
 use Runtime.lib;
@@ -25,11 +25,11 @@ use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.FileNotFound;
 use Runtime.Core.RemoteCallAnswer;
 use Runtime.Core.RemoteCallRequest;
-use Runtime.Backend.ApiList;
-use Runtime.Backend.ApiMethod;
-use Runtime.Backend.ApiMiddleware;
-use Runtime.Web.ORM.QueryBuilder;
-use Bayrell.CloudOS.Backend.DockerLib;
+use Runtime.ORM.QueryBuilder;
+use Runtime.Web.App.ApiList;
+use Runtime.Web.App.ApiMethod;
+use Runtime.Web.App.ApiMiddleware;
+use Bayrell.CloudOS.DockerLib;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.YamlFiles", "interface_name": "default" }

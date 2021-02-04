@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.ORM;
+namespace Bayrell.CloudOS.ORM;
 
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
@@ -31,8 +31,8 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.Domain;
-use Bayrell.CloudOS.Backend.ORM.Space;
+use Bayrell.CloudOS.ORM.Domain;
+use Bayrell.CloudOS.ORM.Space;
 
 
 struct Layer extends Record

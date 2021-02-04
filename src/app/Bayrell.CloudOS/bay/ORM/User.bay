@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.ORM;
+namespace Bayrell.CloudOS.ORM;
 
 use Runtime.Crypt.Password;
 use Runtime.ORM.Annotations.AutoIncrement;
@@ -32,7 +32,7 @@ use Runtime.ORM.Annotations.Virtual;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.ORM.NginxFile;
 
 
 struct User extends Record

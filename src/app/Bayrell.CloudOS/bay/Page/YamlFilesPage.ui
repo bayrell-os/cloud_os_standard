@@ -23,22 +23,26 @@
 
 <use name="Runtime.lib" />
 <use name="Runtime.Exceptions.RuntimeException" />
-<use name="Runtime.Core.Message" />
-<use name="Runtime.Core.RemoteCallAnswer" />
-<use name="Runtime.Web.LayoutModel" />
-<use name="Runtime.Web.RenderContainer" />
-<use name="Runtime.Web.RenderDriver" />
-<use name="Runtime.Web.Route" />
-<use name="Runtime.Web.RouteList" />
-<use name="Runtime.Web.RouteMiddleware" />
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.App.LayoutModel" />
+<use name="Runtime.Web.App.RemoteCallAnswer" />
+<use name="Runtime.Web.App.RenderContainer" />
+<use name="Runtime.Web.App.Route" />
+<use name="Runtime.Web.App.RouteList" />
+<use name="Runtime.Web.App.RouteMiddleware" />
+<use name="Runtime.Web.App.WebApp" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Web.Events.MouseDoubleClickEvent" />
-<use name="Runtime.Web.Dialog.Dialog" component="true" />
+<use name="Runtime.Web.CRUD.CrudPage" component="true" />
+<use name="Runtime.Web.CRUD.CrudPageModel" />
+<use name="Runtime.Web.CRUD.FieldInfo" />
 <use name="Runtime.Web.Dialog.DialogEvent" />
 <use name="Runtime.Web.Dialog.DialogModel" />
-<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
+<use name="Runtime.Web.Input.Label" component="true" />
+<use name="Runtime.Web.Input.Select" component="true" />
+<use name="Runtime.Web.Input.SelectText" component="true" />
 <use name="Runtime.Web.Input.TextArea" component="true" />
+<use name="Runtime.Web.Table.TableModel" />
 
 
 
@@ -48,7 +52,7 @@
  * Route Action
  * @return RenderContainer
  */
-@Route{ "uri": "/admin/yaml_files/", "name": "app.admin.yaml_files" }
+@Route{ "uri": "/yaml_files/", "name": "app.admin.yaml_files" }
 static async RenderContainer actionIndex(RenderContainer container) => [
 	container
 		
@@ -337,7 +341,7 @@ pure bool isChecked(string stack_name, string file_name, string current_file) =>
 async void reloadFileList()
 {
 	/* Remote call */
-	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	RemoteCallAnswer answer = await WebApp::externalBusCall
 	{
 		"object_name": "Bayrell.CloudOS.YamlFiles",
 		"interface_name": "default",
@@ -439,7 +443,7 @@ async void onDialogEvent(Message<DialogEvent> msg)
 				this.create_dialog.update("copy", { "error_message": "" });
 				
 				/* Call api */
-				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				RemoteCallAnswer answer = await WebApp::externalBusCall
 				{
 					"object_name": "Bayrell.CloudOS.YamlFiles",
 					"interface_name": "default",
@@ -487,7 +491,7 @@ async void onDialogEvent(Message<DialogEvent> msg)
 				this.edit_dialog.update("copy", { "error_message": "" });
 				
 				/* Call api */
-				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				RemoteCallAnswer answer = await WebApp::externalBusCall
 				{
 					"object_name": "Bayrell.CloudOS.YamlFiles",
 					"interface_name": "default",
@@ -522,7 +526,7 @@ async void onDialogEvent(Message<DialogEvent> msg)
 				this.edit_dialog.update("copy", { "error_message": "" });
 				
 				/* Call api */
-				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				RemoteCallAnswer answer = await WebApp::externalBusCall
 				{
 					"object_name": "Bayrell.CloudOS.YamlFiles",
 					"interface_name": "default",
@@ -572,7 +576,7 @@ async void onDialogEvent(Message<DialogEvent> msg)
 				this.delete_dialog.update("copy", { "error_message": "" });
 				
 				/* Call api */
-				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				RemoteCallAnswer answer = await WebApp::externalBusCall
 				{
 					"object_name": "Bayrell.CloudOS.YamlFiles",
 					"interface_name": "default",
@@ -604,7 +608,7 @@ async void onDialogEvent(Message<DialogEvent> msg)
 				this.delete_dialog.update("copy", { "error_message": "" });
 				
 				/* Call api */
-				RemoteCallAnswer answer = await RenderDriver::externalBusCall
+				RemoteCallAnswer answer = await WebApp::externalBusCall
 				{
 					"object_name": "Bayrell.CloudOS.YamlFiles",
 					"interface_name": "default",
@@ -648,7 +652,7 @@ async void onOpenFile(Message<MouseClickEvent> msg)
 	string file_name = msg.sender.params["file-name"];
 	
 	/* Call api */
-	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	RemoteCallAnswer answer = await WebApp::externalBusCall
 	{
 		"object_name": "Bayrell.CloudOS.YamlFiles",
 		"interface_name": "default",
@@ -682,7 +686,7 @@ async void onSaveFile(Message<MouseClickEvent> msg)
 	this.dialog.update("alert", "Process save file '" ~ model["current_file"] ~ "'");
 	
 	/* Call api */
-	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	RemoteCallAnswer answer = await WebApp::externalBusCall
 	{
 		"object_name": "Bayrell.CloudOS.YamlFiles",
 		"interface_name": "default",
@@ -719,7 +723,7 @@ async void onCompose(Message<MouseClickEvent> msg)
 	this.dialog.update("alert", "Process compose file '" ~ model["current_file"] ~ "'.\n\nPlease wait.");
 	
 	/* Call api */
-	RemoteCallAnswer answer = await RenderDriver::externalBusCall
+	RemoteCallAnswer answer = await WebApp::externalBusCall
 	{
 		"object_name": "Bayrell.CloudOS.YamlFiles",
 		"interface_name": "default",

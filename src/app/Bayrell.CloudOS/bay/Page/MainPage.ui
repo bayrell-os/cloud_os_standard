@@ -21,8 +21,6 @@
 	module="Bayrell.CloudOS" model="Bayrell.CloudOS.MainPageModel"
 >
 
-<use name="Runtime.Core.Message" />
-<use name="Runtime.Core.RemoteCallAnswer" />
 <use name="Runtime.Web.App.LayoutModel" />
 <use name="Runtime.Web.App.RenderContainer" />
 <use name="Runtime.Web.App.Route" />
@@ -77,8 +75,7 @@ static async RenderContainer TestPage(RenderContainer container)
 
 
 <template name="render">
-	<div>{ layout.uri }</div>
-	<div>Cloud OS Version 0.2</div>
+	<div>Cloud OS Version 0.3</div>
 </template>
 
 

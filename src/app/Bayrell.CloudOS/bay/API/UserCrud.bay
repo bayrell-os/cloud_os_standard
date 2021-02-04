@@ -16,23 +16,25 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.API;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
 use Runtime.lib;
-use Runtime.Core.ApiException;
-use Runtime.Core.RemoteCallAnswer;
-use Runtime.Core.RemoteCallRequest;
-use Runtime.Backend.ApiList;
-use Runtime.Backend.ApiMethod;
-use Runtime.Backend.ApiMiddleware;
-use Runtime.Web.ORM.QueryBuilder;
+use Runtime.Exceptions.ApiException;
+use Runtime.ORM.QueryBuilder;
+use Runtime.Web.App.ApiList;
+use Runtime.Web.App.ApiMethod;
+use Runtime.Web.App.ApiMiddleware;
+use Runtime.Web.App.RemoteCallAnswer;
+use Runtime.Web.App.RemoteCallRequest;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.Rules.AllowFields;
+use Runtime.Web.CRUD.Rules.DefaultValue;
+use Runtime.Web.CRUD.Rules.Dictionary;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
-use Bayrell.CloudOS.Backend.ORM.User;
+use Bayrell.CloudOS.ORM.User;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.User", "interface_name": "core.crud" }
@@ -83,6 +85,39 @@ static class UserCrud extends CrudApi
 		parent::buildSearchQuery(q)
 		|> .addFilter(["is_deleted", "=", 0])
 	;
+	
+	
+	
+	/**
+	 * Find existing item for create
+	 */
+	async User findItemForCreating()
+	{
+		User item = null;
+		string login = this.item["login"] |> default string "";
+		if (login != "")
+		{
+			item = User::select()
+				|> .filter([
+					["login", "=", login]
+				])
+				|> await .one()
+			;
+		}
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		item = await parent::convertItem(item);
+		item <= is_deleted <= false;
+		return item;
+	}
 	
 	
 	

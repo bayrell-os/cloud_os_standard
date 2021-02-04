@@ -16,23 +16,25 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.API;
+namespace Bayrell.CloudOS.API;
 
 use Runtime.rtl;
 use Runtime.lib;
-use Runtime.Core.ApiException;
-use Runtime.Core.RemoteCallAnswer;
-use Runtime.Core.RemoteCallRequest;
-use Runtime.Backend.ApiList;
-use Runtime.Backend.ApiMethod;
-use Runtime.Backend.ApiMiddleware;
-use Runtime.Web.ORM.QueryBuilder;
+use Runtime.Exceptions.ApiException;
+use Runtime.ORM.QueryBuilder;
+use Runtime.Web.App.ApiList;
+use Runtime.Web.App.ApiMethod;
+use Runtime.Web.App.ApiMiddleware;
+use Runtime.Web.App.RemoteCallAnswer;
+use Runtime.Web.App.RemoteCallRequest;
 use Runtime.Web.CRUD.CrudApi;
 use Runtime.Web.CRUD.Rules.AllowFields;
+use Runtime.Web.CRUD.Rules.DefaultValue;
+use Runtime.Web.CRUD.Rules.Dictionary;
 use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
-use Bayrell.CloudOS.Backend.ORM.NginxFile;
+use Bayrell.CloudOS.ORM.NginxFile;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.NginxFile", "interface_name": "core.crud" }

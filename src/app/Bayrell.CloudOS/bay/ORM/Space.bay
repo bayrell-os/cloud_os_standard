@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.ORM;
+namespace Bayrell.CloudOS.ORM;
 
 use Runtime.lib;
 use Runtime.ORM.Annotations.AutoIncrement;
@@ -34,7 +34,7 @@ use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.QueryBuilder;
 use Runtime.ORM.Record;
-use Bayrell.CloudOS.Backend.ORM.Domain;
+use Bayrell.CloudOS.ORM.Domain;
 
 
 struct Space extends Record

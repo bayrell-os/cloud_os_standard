@@ -154,33 +154,30 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.dashboard.main") ? "active": "" }>
 								<a class='nolink' href='/'>{ _("Bayrell.CloudOS", "Main") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.dashboard.test") ? "active": "" }>
-								<a class='nolink' href='/test/'>{ _("Bayrell.CloudOS", "Test") }</a>
+							<li class={ rs::start(layout["route", "name"], "app.admin.applications") ? "active": "" }>
+								<a class='nolink' href='/applications/'>
+									{ _("Bayrell.CloudOS", "Applications") }
+								</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.services") ? "active": "" }>
-								<a class='nolink' href='/admin/services/'>
+								<a class='nolink' href='/services/'>
 									{ _("Bayrell.CloudOS", "Services") }
 								</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.yaml_files") ? "active": "" }>
-								<a class='nolink' href='/admin/yaml_files/'>
-									{ _("Bayrell.CloudOS", "Yaml files") }
-								</a>
-							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.domains") ? "active": "" }>
-								<a class='nolink' href='/admin/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
+								<a class='nolink' href='/domains/'>{ _("Bayrell.CloudOS", "Domains") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.routes") ? "active": "" }>
-								<a class='nolink' href='/admin/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
+								<a class='nolink' href='/routes/'>{ _("Bayrell.CloudOS", "Routes") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.nginx") ? "active": "" }>
-								<a class='nolink' href='/admin/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>
+								<a class='nolink' href='/nginx/'>{ _("Bayrell.CloudOS", "Nginx Files") }</a>
 							</li>
 							<li class={ rs::start(layout["route", "name"], "app.admin.users") ? "active": "" }>
-								<a class='nolink' href='/admin/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
+								<a class='nolink' href='/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
 							<li>
-								<a class='nolink' href='/admin/database/' target="_blank">
+								<a class='nolink' href='/database/' target="_blank">
 									{ _("Bayrell.CloudOS", "Adminer") }
 								</a>
 							</li>

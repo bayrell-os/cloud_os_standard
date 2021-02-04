@@ -170,7 +170,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/admin/database/", "name": "app.admin.database" }
+	@Route{ "uri": "/database/", "name": "app.admin.database" }
 	static async RenderContainer adminerPage(RenderContainer container)
 	{
 		MySQLSettings settings = @.config(["Runtime.ORM.MySQL", "default"]);
@@ -178,12 +178,8 @@ static class Routes
 		/* Set title */
 		container <= layout <= title <= "Admin database";
 		
-		/* Create model */
-		container <= layout <= page_class <= classof AdminerPage;
-		container <= layout <= page_model <= new Dict
-		{
-			"db": settings.toDict(),
-		};
+		/* Set page */
+		container = container.setPage(classof AdminerPage, new Dict{ "db": settings.toDict() });
 		
 		return [ container ];
 	}
@@ -194,7 +190,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/admin/env/", "name": "app.admin.env" }
+	@Route{ "uri": "/env/", "name": "app.admin.env" }
 	static async RenderContainer adminerEnvPage(RenderContainer container)
 	{
 		string content = "";
@@ -220,7 +216,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/admin/phpinfo/", "name": "app.admin.phpinfo" }
+	@Route{ "uri": "/phpinfo/", "name": "app.admin.phpinfo" }
 	static async RenderContainer adminerInfoPage(RenderContainer container)
 	{
 		string content = "";
@@ -243,7 +239,7 @@ static class Routes
 	 * Route Action
 	 * @return WebContainer
 	 */
-	@Route{ "uri": "/admin/database/{version}/", "name": "app.admin.database.version" }
+	@Route{ "uri": "/database/{version}/", "name": "app.admin.database.version" }
 	static async RenderContainer adminerVersionPage(RenderContainer container)
 	{
 		string content = "";

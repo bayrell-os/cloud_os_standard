@@ -17,15 +17,15 @@
 -->
 
 <class version="1.0"
-	name="Bayrell.CloudOS.Other.AdminerPage" extends="Runtime.Web.Component" 
+	name="Bayrell.CloudOS.Page.AdminerPage" extends="Runtime.Web.Component" 
 	module="Bayrell.CloudOS" model="Runtime.Dict"
 >
 
 
 <template>
 	<div>
-		Redirect. Please wait...
-		<form id="adminer_form" method="post" action={ layout.route_prefix ~ "/admin/database/4.7.6/" }>
+		<div>Redirect. Please wait...</div>
+		<form id="adminer_form" method="post" action={ layout.route_prefix ~ "/database/4.7.6/" }>
 			<input type='hidden' name='auth[driver]' value='server' />
 			<input type='hidden' name='auth[server]' value={ model["db", "host"] } />
 			<input type='hidden' name='auth[username]' value={ model["db", "username"] } />
@@ -41,7 +41,7 @@
 /**
  * On component created
  */
-public void onCreated()
+public void onCreate()
 {
 	#ifcode JAVASCRIPT then
 	adminer_form.submit();

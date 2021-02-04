@@ -76,18 +76,17 @@ static class ModuleDescription
 	[
 		/* Register routes */
 		new Entity{ "name": "Bayrell.CloudOS.Routes" },
-		new RouteList{ "name": "Bayrell.CloudOS.Page.MainPage" },
 		
-		/*new RouteList{ "name": "Bayrell.CloudOS.Design.DomainsPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.LayersPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.NginxFilesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.RoutesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.ServicePage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.SpacesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.UsersPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Design.YamlFilesPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Installer.InstallerPage" },
-		*/
+		new RouteList{ "name": "Bayrell.CloudOS.Page.DomainsPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.MainPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.NginxFilesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.RoutesPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.ServicePage" },
+		/* new RouteList{ "name": "Bayrell.CloudOS.Page.SpacesPage" }, */
+		new RouteList{ "name": "Bayrell.CloudOS.Page.UsersPage" },
+		new RouteList{ "name": "Bayrell.CloudOS.Page.YamlFilesPage" },
+		/* new RouteList{ "name": "Bayrell.CloudOS.Installer.InstallerPage" }, */
+		
 		
 		#ifdef BACKEND then
 		
@@ -99,16 +98,18 @@ static class ModuleDescription
 		},
 		
 		/* Register api */
-		/*new Entity{ "name": "Bayrell.CloudOS.API.DomainCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.API.LayerCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.API.LayerRouteCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.API.DomainCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.NginxFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.RouteCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.ServiceCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.API.SpaceCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.API.TopMenuCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.UserCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.YamlFiles" },
+		
+		/*
+		new Entity{ "name": "Bayrell.CloudOS.API.LayerCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.API.LayerRouteCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.API.SpaceCrud" },
+		new Entity{ "name": "Bayrell.CloudOS.API.TopMenuCrud" },
 		*/
 		/* System bus */
 		/* new Entity{ "name": "Bayrell.CloudOS.BUS.Balancer" }, */
@@ -170,7 +171,7 @@ static class ModuleDescription
 			#ifdef BACKEND then
 			
 			/* Web Backend settings */
-			"Runtime.Backend":
+			"Runtime.Web.App":
 			{
 				"api": true,
 				"external_bus_class": "",
