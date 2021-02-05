@@ -100,13 +100,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"primary": true,
 		"label": "File name",
 		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -123,20 +116,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 				{"id": 0, "value": "No"},
 				{"id": 1, "value": "Yes"},
 			],
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-			"form":
-			{
-				"class_settings":
-				{
-					"default": 0,
-				},
-			},
 		},
 	},
 	
@@ -159,15 +138,63 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderButtons,
-			},
-		},
 	},
 ];
+
+
+
+/**
+ * Custom class name
+ */
+pure string customSettings(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	
+	if (kind == "table" and
+		(field_name == "enable")
+	)
+	{
+		crud_settings <= crud_field_class_name <= classof SelectText;
+	}
+	
+	if (kind == "table" and
+		(field_name == "content" or field_name == "name")
+	)
+	{
+		crud_settings <= crud_field_class_name <= classof Label;
+	}
+	
+	if (kind == "form" and field_name == "enable") crud_settings <= default <= 0;
+	
+	return crud_settings;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	Collection<FieldInfo> struct = crud_settings["crud_params", "struct"];
+	int index = crud_settings["crud_index"];
+	var value = crud_settings["value"];
+	
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, crud_settings);
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, crud_settings);
+	
+	return null;
+}
 
 
 
@@ -263,24 +290,6 @@ pure string customClassName(LayoutModel layout, string kind, string field_name, 
 pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
 {
 	return value;
-}
-
-
-
-/**
- * Custom field render
- */
-pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	/* Table number */
-	if (kind == "table" and field_name == "number")
-		return static::renderNumber(layout, value, crud_settings);
-	
-	/* Table edit buttons */
-	if (kind == "table" and field_name == "edit-buttons")
-		return static::renderButtons(layout, value, crud_settings);
-	
-	return null;
 }
 
 </script>

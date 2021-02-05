@@ -267,19 +267,21 @@ pure string customSettings(LayoutModel layout, Dict crud_settings)
 	if (field_name == "have_admin_page")
 	{
 		if (kind == "table") crud_settings <= crud_field_class_name <= classof SelectText;
-		if (kind == "filter")
+		else if (kind == "filter")
 		{
 			crud_settings <= show_select_value <= true;
 		}
+		else crud_settings <= default <= 0;
 	}
 	
 	if (field_name == "enable")
 	{
 		if (kind == "table") crud_settings <= crud_field_class_name <= classof SelectText;
-		if (kind == "filter")
+		else if (kind == "filter")
 		{
 			crud_settings <= show_select_value <= true;
 		}
+		else crud_settings <= default <= 0;
 	}
 	
 	return crud_settings;

@@ -105,13 +105,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -120,13 +113,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"primary": true,
 		"label": "Domain name",
 		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -146,13 +132,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 			"show_select_value": true,
 			"options": static::getOptions(container, "spaces"),
 		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -160,15 +139,57 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderButtons,
-			},
-		},
 	},
 ];
+
+
+
+/**
+ * Custom class name
+ */
+pure string customSettings(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	
+	if (field_name == "domain_name" and kind == "table")
+	{
+		crud_settings <= crud_field_class_name <= classof Label;
+	}
+	
+	if (field_name == "space_id" and kind == "table")
+	{
+		crud_settings <= crud_field_class_name <= classof SelectText;
+	}
+	
+	return crud_settings;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	Collection<FieldInfo> struct = crud_settings["crud_params", "struct"];
+	int index = crud_settings["crud_index"];
+	var value = crud_settings["value"];
+	
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, crud_settings);
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, crud_settings);
+	
+	return null;
+}
 
 
 
@@ -243,43 +264,6 @@ pure Dict getFormSettings() =>
 {
 };
 
-
-
-/**
- * Custom class name
- */
-pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return crud_settings["crud_class_name"];
-}
-
-
-
-/**
- * Custom field render
- */
-pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return value;
-}
-
-
-
-/**
- * Custom field render
- */
-pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	/* Table number */
-	if (kind == "table" and field_name == "number")
-		return static::renderNumber(layout, value, crud_settings);
-	
-	/* Table edit buttons */
-	if (kind == "table" and field_name == "edit-buttons")
-		return static::renderButtons(layout, value, crud_settings);
-	
-	return null;
-}
 
 </script>
 

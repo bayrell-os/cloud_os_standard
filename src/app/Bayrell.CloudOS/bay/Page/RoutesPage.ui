@@ -91,7 +91,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		];
 	
 	if (name == "domains")
-		return container.layout.page_model
+		return container.getPageModel()
 			|> attr "foreigns", "domains", "options"
 			|> lib::map
 			(
@@ -106,7 +106,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		;
 	
 	if (name == "services")
-		return container.layout.page_model
+		return container.getPageModel()
 			|> attr "foreigns", "services", "options"
 			|> lib::map
 			(
@@ -121,7 +121,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		;
 		
 	if (name == "layers")
-		return container.layout.page_model
+		return container.getPageModel()
 			|> attr "foreigns", "layers", "options"
 			|> lib::map
 			(
@@ -156,13 +156,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "number",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderNumber,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -176,13 +169,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 			"show_select_value": false,
 			"options": static::getOptions(container, "enable"),
 		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -195,13 +181,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 			"show_select_value": true,
 			"options": static::getOptions(container, "protocol"),
 		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -209,13 +188,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "route",
 		"label": "Route",
 		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -223,13 +195,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "target_port",
 		"label": "Target port",
 		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -237,13 +202,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "route_prefix",
 		"label": "Route prefix",
 		"class_name": classof Input,
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof Label,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -255,13 +213,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		{
 			"show_select_value": true,
 			"options": static::getOptions(container, "domains"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
 		},
 	},
 	
@@ -275,13 +226,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 			"show_select_value": true,
 			"options": static::getOptions(container, "services"),
 		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
-		},
 	},
 	
 	new FieldInfo
@@ -293,13 +237,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		{
 			"show_select_value": true,
 			"options": static::getOptions(container, "layers"),
-		},
-		"info":
-		{
-			"table":
-			{
-				"class_name": classof SelectText,
-			},
 		},
 	},
 	
@@ -315,15 +252,64 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"api_name": "edit-buttons",
 		"label": "",
 		"class_name": classof Label,
-		"info":
-		{
-			"table":
-			{
-				"render": method static::renderButtons,
-			},
-		},
 	},
 ];
+
+
+
+/**
+ * Custom class name
+ */
+pure string customSettings(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	
+	if (kind == "table" and
+		(field_name == "enable" or field_name == "protocol" or field_name == "domain_name" or
+		field_name == "docker_name" or field_name == "layer_uid")
+	)
+	{
+		crud_settings <= crud_field_class_name <= classof SelectText;
+	}
+	
+	if (kind == "table" and
+		(field_name == "route" or field_name == "target_port" or field_name == "route_prefix")
+	)
+	{
+		crud_settings <= crud_field_class_name <= classof Label;
+	}
+	
+	if (kind == "form" and field_name == "enable") crud_settings <= default <= 0;
+	
+	return crud_settings;
+}
+
+
+
+/**
+ * Custom field render
+ */
+pure html renderField(LayoutModel layout, Dict crud_settings)
+{
+	Dict item = crud_settings["crud_item"];
+	string kind = crud_settings["crud_kind"];
+	string field_name = crud_settings["crud_field_name"];
+	Collection<FieldInfo> struct = crud_settings["crud_params", "struct"];
+	int index = crud_settings["crud_index"];
+	var value = crud_settings["value"];
+	
+	/* Table number */
+	if (kind == "table" and field_name == "number")
+		return static::renderNumber(layout, crud_settings);
+	
+	/* Table edit buttons */
+	if (kind == "table" and field_name == "edit-buttons")
+		return static::renderButtons(layout, crud_settings);
+	
+	return null;
+}
 
 
 
@@ -411,45 +397,6 @@ pure Dict getDialogSettings() =>
 pure Dict getFormSettings() =>
 {
 };
-
-
-
-/**
- * Custom class name
- */
-pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return crud_settings["crud_class_name"];
-}
-
-
-
-/**
- * Custom field render
- */
-pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return value;
-}
-
-
-
-/**
- * Custom field render
- */
-pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	/* Table number */
-	if (kind == "table" and field_name == "number")
-		return static::renderNumber(layout, value, crud_settings);
-	
-	/* Table edit buttons */
-	if (kind == "table" and field_name == "edit-buttons")
-		return static::renderButtons(layout, value, crud_settings);
-	
-	return null;
-}
-
 </script>
 
 
