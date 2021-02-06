@@ -3,6 +3,7 @@
 	"assets":
 	[
 		"Page/AdminerPage",
+		"Page/ApplicationPage",
 		"Page/DomainsPage",
 		"Page/MainPage",
 		"Page/NginxFilesPage",

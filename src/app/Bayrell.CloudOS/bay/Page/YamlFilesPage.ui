@@ -35,8 +35,10 @@
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
 <use name="Runtime.Web.CRUD.FieldInfo" />
+<use name="Runtime.Web.Dialog.Dialog" component="true" />
 <use name="Runtime.Web.Dialog.DialogEvent" />
 <use name="Runtime.Web.Dialog.DialogModel" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Input.Input" component="true" />
 <use name="Runtime.Web.Input.Label" component="true" />
 <use name="Runtime.Web.Input.Select" component="true" />
@@ -62,7 +64,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 		
 		/* Set model */
 		|> lib::setAttr(["layout", "page_class"], classof YamlFilesPage)
-		|> lib::setAttr(["layout", "page_model"],
+		|> .setPageModel(
 			new Dict
 			{
 				"stacks": [],
@@ -95,7 +97,9 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 				
 				if (not answer.isSuccess()) return container;
 				
-				container <= layout <= page_model <= stacks <= answer.response;
+				Dict page_model = container.getPageModel();
+				page_model <= stacks <= answer.response;
+				container = container.setPageModel(page_model);
 				
 				return container;
 			}

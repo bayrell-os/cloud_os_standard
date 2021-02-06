@@ -1,0 +1,171 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.API;
+
+use Runtime.rtl;
+use Runtime.lib;
+use Runtime.Exceptions.ApiException;
+use Runtime.ORM.QueryBuilder;
+use Runtime.Web.App.ApiList;
+use Runtime.Web.App.ApiMethod;
+use Runtime.Web.App.ApiMiddleware;
+use Runtime.Web.App.RemoteCallAnswer;
+use Runtime.Web.App.RemoteCallRequest;
+use Runtime.Web.CRUD.CrudApi;
+use Runtime.Web.CRUD.Rules.AllowFields;
+use Runtime.Web.CRUD.Rules.DefaultValue;
+use Runtime.Web.CRUD.Rules.Dictionary;
+use Runtime.Web.CRUD.Rules.ReadOnly;
+use Runtime.Web.CRUD.Rules.Required;
+use Runtime.Web.CRUD.Rules.Rule;
+use Bayrell.CloudOS.ORM.Application;
+
+
+@ApiList{ "object_name": "Bayrell.CloudOS.Application", "interface_name": "core.crud" }
+static class ApplicationCrud extends CrudApi
+{
+	
+	/**
+	 * Returns orm class name
+	 */
+	pure string getORM() => classof Application;
+	
+	
+	
+	/**
+	 * Returns current rules
+	 */
+	Collection<Rule> rules() =>
+	[
+		new AllowFields{ "fields": ["id", "type", "name", "content"] },
+		new ReadOnly{ "api_name": "id" },
+		new Required{ "api_name": "name" },
+		new DefaultValue{ "api_name": "type", "value": "yaml" },
+	];
+	
+	
+	
+	/**
+	 * Returns table field value
+	 */
+	Collection<Collection<string>> getDefaultOrder() =>
+	[ 
+		["name", "asc"],
+	];
+	
+	
+	
+	/**
+	 * Build query
+	 */
+	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
+	
+	
+	
+	/**
+	 * Convert item before save to database
+	 */
+	async Dict convertItem(Dict item)
+	{
+		/* Convert item */
+		item = await parent::convertItem(item);
+		
+		return item;
+	}
+	
+	
+	
+	/**
+	 * Init request
+	 */
+	async void init()
+	{
+		await parent::init();
+	}
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	async void validate()
+	{
+		await parent::validate();
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async void after()
+	{
+		await parent::after();
+		
+		/* If is success */
+		if (this.isSuccess() and this.isModify())
+		{
+		}
+	}
+	
+	
+	
+	/**
+	 * Search api
+	 */
+	@ApiMethod{ "method_name": "search" }
+	static async list searchAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::searchAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Create
+	 */
+	@ApiMethod{ "method_name": "create" }
+	static async list createAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::createAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Update
+	 */
+	@ApiMethod{ "method_name": "update" }
+	static async list updateAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::updateAction(request, answer);
+	}
+	
+	
+	
+	/**
+	 * Delete
+	 */
+	@ApiMethod{ "method_name": "delete" }
+	static async list deleteAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		return await parent::deleteAction(request, answer);
+	}
+	
+}

@@ -77,6 +77,7 @@ static class ModuleDescription
 		/* Register routes */
 		new Entity{ "name": "Bayrell.CloudOS.Routes" },
 		
+		new RouteList{ "name": "Bayrell.CloudOS.Page.ApplicationPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Page.DomainsPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Page.MainPage" },
 		new RouteList{ "name": "Bayrell.CloudOS.Page.NginxFilesPage" },
@@ -98,6 +99,7 @@ static class ModuleDescription
 		},
 		
 		/* Register api */
+		new Entity{ "name": "Bayrell.CloudOS.API.ApplicationCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.DomainCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.NginxFileCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.RouteCrud" },

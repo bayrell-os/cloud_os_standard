@@ -77,7 +77,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 pure Collection getOptions(RenderContainer container, string name = "")
 {
 	if (name == "spaces")
-		return container.layout.page_model
+		return container.getPageModel()
 			|> attr "foreigns", "spaces", "options"
 			|> lib::map
 			(
