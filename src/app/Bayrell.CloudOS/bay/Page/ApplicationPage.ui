@@ -31,6 +31,7 @@
 <use name="Runtime.Web.App.RouteList" />
 <use name="Runtime.Web.App.RouteMiddleware" />
 <use name="Runtime.Web.App.WebApp" />
+<use name="Runtime.Web.Events.ChangeEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.CRUD.CrudPage" component="true" />
 <use name="Runtime.Web.CRUD.CrudPageModel" />
@@ -75,6 +76,16 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 		
 		/* Make api request */
 		|> await static::crudSearch
+		
+		|> await lib::apply
+		(
+			RenderContainer (RenderContainer container)
+			{
+				CrudPageModel model = container.getPageModel();
+				model <= data <= dialog <= new DialogModel{};
+				return container.setPageModel(model);
+			}
+		)
 ];
 
 
@@ -309,6 +320,7 @@ pure Dict getFormSettings() =>
 }
 .item_name{
 	width: calc(100% - 40px);
+	overflow-wrap: break-word;
 }
 .item_icons{
 	display: none;
@@ -326,7 +338,7 @@ pure Dict getFormSettings() =>
 	min-height: 35px;
 }
 .content_file_name %(Button)button{
-	margin-left: 10px;
+	margin-right: 10px;
 }
 .right_content %(TextArea)input{
 	width: calc(100% - 20px);
@@ -389,23 +401,53 @@ pure Dict getFormSettings() =>
 	%var Dict selected_item = model.table.rows[selected_index];
 	<div class='right_content'>
 		<div class='content_file_name'>
+			<Button @event:MouseClickEvent="onSaveClick">Save</Button>
+			<Button @event:MouseClickEvent="onComposeClick">Compose</Button>
 			%if (selected_item)
 			{
 				<span class='name'>{ selected_item["stack_name"] }/{ selected_item["name"] }</span>
 			}
-			<Button @event:MouseClickEvent="onSaveClick">Save</Button>
-			<Button @event:MouseClickEvent="onComposeClick">Compose</Button>
 		</div>
-		<CodeMirror @ref="content" @bind=["table", "rows", selected_index, "content"] />
+		<CodeMirror @ref="content" @model=["table", "rows", selected_index, "content"]
+			@event:ChangeEvent="onEditorChange"
+			data-id={ selected_index }
+		/>
 	</div>
+	
+	<Dialog @ref="dialog_compose" @bind=["data", "dialog"] @event:DialogEvent="onDialogComposeEvent"
+		auto_hide={ false }
+		buttons=
+		[
+			{
+				"value": "Yes",
+				"data-action": "yes",
+			},
+			{
+				"value": "No",
+				"data-action": "no",
+			}
+		]
+	/>
 	
 </template>
 
 
 <script>
 
+/**
+ * onEditorChange
+ */
+async void onEditorChange(Message<ChangeEvent> msg)
+{
+	int selected_index = msg.sender.params["data-id"] |> default int -1;
+	if (selected_index == -1) return;
+	this.update("setAttr", ["table", "rows", selected_index, "content"], msg.data.value);
+}
 
-/* Open file */
+
+/**
+ * Open file
+ */
 async void onOpenClick(Message<MouseClickEvent> msg)
 {
 	string id = msg.sender.params["data-id"];
@@ -420,6 +462,7 @@ async void onOpenClick(Message<MouseClickEvent> msg)
  */
 async void onRowEditClick(Message<MouseClickEvent> msg)
 {
+	msg.cancel();
 	string id = msg.sender.params["data-id"];
 	Dict item = this.call("getFirstItem", {"id": id});
 	if (item)
@@ -438,6 +481,7 @@ async void onRowEditClick(Message<MouseClickEvent> msg)
  */
 async void onRowDeleteClick(Message<MouseClickEvent> msg)
 {
+	msg.cancel();
 	string id = msg.sender.params["data-id"];
 	Dict item = this.call("getFirstItem", {"id": id});
 	
@@ -509,7 +553,48 @@ async void onSaveClick(Message<MouseClickEvent> msg)
 /* Compose file */
 async void onComposeClick(Message<MouseClickEvent> msg)
 {
+	CrudPageModel model = this.model();
+	Dict item = model.getSelectedItem();
+	if (item == null) return;
+	
+	string text = item["stack_name"] + "/" + item["name"];
+	this.dialog_compose.update("show", {"text": "Compose file " ~ text ~ "?", "tag": item});
 }
+
+
+/* DialogComposeEvent */
+async void onDialogComposeEvent(Message<DialogEvent> msg)
+{
+	if (msg.data.button_result == "no")
+	{
+		this.dialog_compose.update("hide");
+	}
+	else if (msg.data.button_result == "yes")
+	{
+		this.dialog_compose.update("setWaitMessage");
+		
+		Dict item = msg.data["tag"];
+		RemoteCallAnswer answer = await WebApp::externalBusCall
+		{
+			"object_name": static::getCrudObjectName(),
+			"interface_name": "core.crud",
+			"method_name": "compose",
+			"data":
+			{
+				"item": item,
+			},
+		};
+		if (answer.isSuccess())
+		{
+			this.dialog_compose.update("hide");
+		}
+		else
+		{
+			this.dialog_compose.update("setAnswer", answer);
+		}
+	}
+}
+
 
 </script>
 

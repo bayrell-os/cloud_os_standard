@@ -169,4 +169,15 @@ static class ApplicationCrud extends CrudApi
 		return await parent::deleteAction(request, answer);
 	}
 	
+	
+	
+	/**
+	 * Compose
+	 */
+	@ApiMethod{ "method_name": "compose" }
+	static async list composeAction(RemoteCallRequest request, RemoteCallAnswer answer)
+	{
+		answer = answer::fail(answer, null, "Error");
+		return [request, answer];
+	}
 }
