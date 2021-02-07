@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend;
+namespace Bayrell.CloudOS;
 
 use Runtime.lib;
 use Runtime.RuntimeUtils;
@@ -47,17 +47,16 @@ class DockerLib
 	}
 	
 	
+	
 	/**
 	 * Send docker command
 	 */
 	static async string exec(string cmd)
 	{
 		string content = "";
-		
 		#ifcode PHP then
 		$content = @shell_exec($cmd);
 		#endif
-		
 		return content;
 	}
 	

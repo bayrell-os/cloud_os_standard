@@ -18,9 +18,11 @@
 
 namespace Bayrell.CloudOS.API;
 
+use Runtime.fs;
 use Runtime.rtl;
 use Runtime.lib;
 use Runtime.Exceptions.ApiException;
+use Runtime.ORM.CursorInterface as Cursor;
 use Runtime.ORM.QueryBuilder;
 use Runtime.Web.App.ApiList;
 use Runtime.Web.App.ApiMethod;
@@ -35,6 +37,7 @@ use Runtime.Web.CRUD.Rules.ReadOnly;
 use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.ORM.Application;
+use Bayrell.CloudOS.DockerLib;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Application", "interface_name": "core.crud" }
@@ -177,7 +180,65 @@ static class ApplicationCrud extends CrudApi
 	@ApiMethod{ "method_name": "compose" }
 	static async list composeAction(RemoteCallRequest request, RemoteCallAnswer answer)
 	{
-		answer = answer::fail(answer, null, "Error");
+		int id = request.data["id"] |> default int 0;
+		string file_name = request.data["name"] |> default string "";
+		string stack_name = request.data["stack_name"] |> default string "";
+		string extname = rs::extname(file_name);
+		
+		if (extname == ".yaml")
+		{
+			answer = answer::fail
+			(
+				answer,
+				{
+					"file_name": file_name,
+					"stack_name": stack_name,
+				},
+				"Compose " ~ file_name ~ " are not allowed"
+			);
+			return [request, answer];
+		}
+		
+		Cursor cursor = Application::select()
+			|> await .execute()
+		;
+		
+		while (true)
+		{
+			Dict row = await cursor.fetch();
+			if (row == null)
+			{
+				break;
+			}
+			string row_name = row["name"] |> default string "";
+			string row_stack_name = row["stack_name"] |> default string "";
+			string row_content = row["content"] |> default string "";
+			string file_path = row_name ~ "/" ~ row_stack_name;
+			string file_dirname = rs::dirname(file_path);
+			await fs::mkdir(row_stack_name, "/data/yaml");
+			await fs::saveFile(row_stack_name ~ "/" ~ row_name, row_content, "/data/yaml");
+		}
+		
+		await cursor.close();
+		
+		string yaml_file_path = fs::concat("/data/yaml", stack_name ~ "/" ~ file_name);
+		string cmd = "sudo docker stack deploy -c " ~ yaml_file_path ~ " " ~ stack_name ~ " --with-registry-auth"
+		/*string cmd = "sudo docker stack deploy -c /data/config/dev/php.yaml dev --with-registry-auth"*/
+		string result = await DockerLib::exec(cmd ~ " 2>&1");
+		
+		/* if (result == "") result = "OK"; */
+		
+		/* Answer */
+		answer = answer::success
+		(
+			answer,
+			{
+				"file_name": file_name,
+				"stack_name": stack_name,
+			},
+			result
+		);
+		
 		return [request, answer];
 	}
 }

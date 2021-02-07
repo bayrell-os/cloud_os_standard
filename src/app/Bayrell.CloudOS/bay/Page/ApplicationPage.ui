@@ -423,7 +423,7 @@ pure Dict getFormSettings() =>
 				"data-action": "yes",
 			},
 			{
-				"value": "No",
+				"value": "Close",
 				"data-action": "no",
 			}
 		]
@@ -581,17 +581,12 @@ async void onDialogComposeEvent(Message<DialogEvent> msg)
 			"method_name": "compose",
 			"data":
 			{
-				"item": item,
+				"id": item["id"],
+				"name": item["name"],
+				"stack_name": item["stack_name"],
 			},
 		};
-		if (answer.isSuccess())
-		{
-			this.dialog_compose.update("hide");
-		}
-		else
-		{
-			this.dialog_compose.update("setAnswer", answer);
-		}
+		this.dialog_compose.update("setAnswer", answer);
 	}
 }
 
