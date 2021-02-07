@@ -21,6 +21,7 @@
 			"lang": "es6",
 			"modules":
 			[
+				"Assets.CodeMirror",
 				"Runtime.Web.Dialog",
 				"Runtime.Web.CRUD",
 				"Runtime.Web.Input"
@@ -32,6 +33,7 @@
 			"lang": "css",
 			"modules":
 			[
+				"Assets.CodeMirror",
 				"@Bayrell.CloudOS/core.css"
 			]
 		},

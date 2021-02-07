@@ -137,14 +137,15 @@ static class Routes
 	 */
 	@LambdaChain
 	{
-		"name": WebApp::LAYOUT_CHAIN,
-		"pos": 10
+		"name": WebApp::RENDER_CHAIN,
+		"pos": WebApp::RENDER_CHAIN_LAYOUT + 10,
 	}
-	pure LayoutModel layoutChain(LayoutModel layout)
+	pure LayoutModel renderChain_Layout(RenderContainer container)
 	{
-		if (layout.layout_name == "default") layout <= layout_class <= classof DefaultLayout;
-		if (layout.layout_name == "admin") layout <= layout_class <= classof DefaultLayout;
-		return [ layout ];
+		if (container.layout.layout_name == "default") container <= layout <= layout_class <= classof DefaultLayout;
+		if (container.layout.layout_name == "admin") container <= layout <= layout_class <= classof DefaultLayout;
+		if (container.layout.layout_class == "") container <= layout <= layout_class <= classof DefaultLayout;
+		return [ container ];
 	}
 	
 	

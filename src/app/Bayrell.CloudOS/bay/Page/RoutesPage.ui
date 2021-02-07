@@ -165,7 +165,6 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_name": classof Select,
 		"class_settings":
 		{
-			"show_select_value_filter": true,
 			"show_select_value": false,
 			"options": static::getOptions(container, "enable"),
 		},
@@ -282,6 +281,7 @@ pure string customSettings(LayoutModel layout, Dict crud_settings)
 	}
 	
 	if (kind == "form" and field_name == "enable") crud_settings <= default <= 0;
+	if (kind == "filter" and field_name == "enable") crud_settings <= show_select_value <= true;
 	
 	return crud_settings;
 }

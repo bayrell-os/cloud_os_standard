@@ -47,7 +47,7 @@ struct Application extends Record
 	int id;
 	
 	@StringType{}
-	string type;
+	string stack_name;
 	
 	@StringType{}
 	string name;

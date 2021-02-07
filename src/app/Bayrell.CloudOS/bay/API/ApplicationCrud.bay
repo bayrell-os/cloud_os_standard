@@ -53,10 +53,10 @@ static class ApplicationCrud extends CrudApi
 	 */
 	Collection<Rule> rules() =>
 	[
-		new AllowFields{ "fields": ["id", "type", "name", "content"] },
+		new AllowFields{ "fields": ["id", "stack_name", "name", "content"] },
 		new ReadOnly{ "api_name": "id" },
+		new Required{ "api_name": "stack_name" },
 		new Required{ "api_name": "name" },
-		new DefaultValue{ "api_name": "type", "value": "yaml" },
 	];
 	
 	
@@ -66,6 +66,7 @@ static class ApplicationCrud extends CrudApi
 	 */
 	Collection<Collection<string>> getDefaultOrder() =>
 	[ 
+		["stack_name", "asc"],
 		["name", "asc"],
 	];
 	

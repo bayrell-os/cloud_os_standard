@@ -34,3 +34,6 @@
 [submodule "src/lib/Runtime.Web.App"]
 	path = src/lib/Runtime.Web.App
 	url = https://github.com/bayrell/Runtime.Web.App
+[submodule "src/lib/Assets.CodeMirror"]
+	path = src/lib/Assets.CodeMirror
+	url = https://github.com/bayrell/Assets.CodeMirror
