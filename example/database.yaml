@@ -3,7 +3,7 @@ version: "3.7"
 services:
   
   mysql_node1:
-    image: bayrell/alpine_mariadb:10.4
+    image: bayrell/alpine_mariadb:10.5
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G
     hostname: "{{.Service.Name}}.{{.Task.ID}}.local"
     volumes:

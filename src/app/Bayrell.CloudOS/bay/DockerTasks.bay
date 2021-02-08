@@ -416,6 +416,7 @@ class DockerTasks
 						{
 							continue;
 						}
+						upstreams.setValue(upstream_name, upstream_name);
 						
 						if (ip_arr.count() > 0)
 						{
