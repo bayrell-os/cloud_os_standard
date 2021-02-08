@@ -16,26 +16,25 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend;
+namespace Bayrell.CloudOS;
 
 use Runtime.fs;
 use Runtime.lib;
-use Runtime.RuntimeUtils;
-use Runtime.Task.CronTask;
-use Runtime.Task.CronTimer;
-use Runtime.Task.TaskList;
-use Runtime.Task.TaskMethod;
-use Runtime.Task.TaskDriver;
+use Runtime.DateTime;
 use Runtime.ORM.ConnectionInterface as Connection;
 use Runtime.ORM.CursorInterface as Cursor;
-use Runtime.ORM.DriverInterface as ORMDriver;
-use Bayrell.CloudOS.Backend.ORM.Domain;
-use Bayrell.CloudOS.Backend.ORM.Layer;
-use Bayrell.CloudOS.Backend.ORM.NginxFile;
-use Bayrell.CloudOS.Backend.ORM.Route;
-use Bayrell.CloudOS.Backend.ORM.Space;
-use Bayrell.CloudOS.Backend.ORM.Service;
-use Bayrell.CloudOS.Backend.DockerLib;
+use Runtime.ORM.Record;
+use Runtime.Task.CronTimer;
+use Runtime.Task.TaskDriver;
+use Runtime.Task.TaskList;
+use Runtime.Task.TaskMethod;
+use Bayrell.CloudOS.ORM.Domain;
+use Bayrell.CloudOS.ORM.Layer;
+use Bayrell.CloudOS.ORM.NginxFile;
+use Bayrell.CloudOS.ORM.Route;
+use Bayrell.CloudOS.ORM.Space;
+use Bayrell.CloudOS.ORM.Service;
+use Bayrell.CloudOS.DockerLib;
 
 
 @TaskList{}
@@ -45,22 +44,18 @@ class DockerTasks
 	/**
 	 * Update services admin pages
 	 */
-	@CronTimer{ "timer": 15, "alias": "update_nginx" }
-	static async void updateNginx()
+	@CronTimer{ "timer": 15, "alias": "clous_os_cron", "description": "Cloud OS update cron task" }
+	static async void cron()
 	{
 		/* Sync services */
-		await static::syncServices();
+		await static::syncServices(true);
 		
 		/* Update nginx */
 		await static::updateUpstreams();
 		await static::updateDomains();
 		
 		/* Reload nginx */
-		bool reload = await static::updateNginxFiles();
-		if (reload)
-		{
-			await static::reloadNginx();
-		}
+		await static::updateNginxFiles();
 	}
 	
 	
@@ -68,29 +63,28 @@ class DockerTasks
 	/**
 	 * Sync services
 	 */
-	@TaskMethod{ "alias": "sync_services" }
-	static async void syncServices()
+	@TaskMethod{ "alias": "sync_services", "description": "Sync services table" }
+	static async void syncServices(bool output_log = false)
 	{
 		Cursor cursor = null;
 		TaskDriver output = @.getDriver(classof TaskDriver);
 		
 		/* Connect to database */
 		Dict db_settings = {};
-		string driver_name = db_settings["driver"] |> default string classof ORMDriver;
-		Connection conn = @.getDriver(driver_name) |> await .connect(db_settings);
+		Connection conn = await Record::connect(db_settings);
 		
 		int time = rtl::time();
 		
 		/* Get nodes */
 		string s = await DockerLib::dockerApi("/nodes");
 		Dict nodes = s
-			|> RuntimeUtils::json_decode
+			|> rtl::json_decode
 			|> lib::transition( list (Dict node) => [ node, node["ID"] ] )
 		;
 		
 		/* Get services */
 		string s = await DockerLib::dockerApi("/services");
-		Collection services = RuntimeUtils::json_decode(s);
+		Collection services = rtl::json_decode(s);
 		
 		for (int i=0; i<services.count(); i++)
 		{
@@ -101,12 +95,12 @@ class DockerTasks
 			string service_image = json |> attr "Spec", "TaskTemplate", "ContainerSpec", "Image" |> default string "";
 			string service_short_name = rs::substr(service_name, rs::Strlen(stack_name) + 1);
 			
-			output.writeln ("Update service " ~ service_name);
+			if (output_log) output.writeln ("Update service " ~ service_name);
 			string tasks_str = await DockerLib::dockerApi("/tasks?filters=" ~
 				rs::url_encode('{"service":{"' ~ service_name ~ '":true}}'))
 			;
 			
-			Dict tasks = RuntimeUtils::json_decode(tasks_str);
+			Dict tasks = rtl::json_decode(tasks_str);
 			
 			/* Insert or update */
 			await conn.insert_or_update
@@ -122,32 +116,20 @@ class DockerTasks
 					"is_deleted": 0,
 					"enable": 1,
 					"timestamp": time,
-					"docker_json": RuntimeUtils::json_encode(json),
+					"docker_json": rtl::json_encode(json),
 					"docker_tasks": tasks_str,
-					"docker_balancer": RuntimeUtils::json_encode( static::getBalancerData(json, tasks, nodes) ),
+					"docker_balancer": rtl::json_encode( static::getBalancerData(json, tasks, nodes) ),
 				},
 				db_settings
 			);
 		}
 		
-		/* Disable old services */
-		cursor = await conn.query
-		(
-			"update services set enable=0 where timestamp != :timestamp",
-			{
-				"timestamp": time,
-			},
-			db_settings
-		);
-		await cursor.close();
-		
-		
 		/* Delete old services */
 		cursor = await conn.query
 		(
-			"delete from services where is_deleted=1 and timestamp < :timestamp",
+			"update services set is_deleted=1, enable=0 where timestamp != :timestamp",
 			{
-				"timestamp": time - 24*60*60,
+				"timestamp": time,
 			},
 			db_settings
 		)
@@ -179,8 +161,8 @@ class DockerTasks
 		(
 			bool (Dict a, Dict b)
 			{
-				int time_a = rtl::timestamp( rs::substr(a["Status", "Timestamp"], 0, 19) );
-				int time_b = rtl::timestamp( rs::substr(b["Status", "Timestamp"], 0, 19) );
+				int time_a = DateTime::strtotime( rs::substr(a["Status", "Timestamp"], 0, 19) );
+				int time_b = DateTime::strtotime( rs::substr(b["Status", "Timestamp"], 0, 19) );
 				return time_a < time_b;
 			}
 		);
@@ -239,12 +221,16 @@ class DockerTasks
 	/**
 	 * Update nginx files
 	 */
-	static async bool updateNginxFiles()
+	@TaskMethod{ "alias": "update_nginx_files" }
+	static async void updateNginxFiles()
 	{
 		bool res = false;
-		if (await static::updateNginxFile("/conf.d/99-cloud-admin-upstreams.conf")) res = true;
+		if (await static::updateNginxFile("/conf.d/99-cloud-backend-upstreams.conf")) res = true;
 		if (await static::updateNginxFile("/inc/services_admin_page.inc")) res = true;
-		return res;
+		if (res)
+		{
+			await static::reloadNginx();
+		}
 	}
 	
 	
@@ -320,7 +306,7 @@ class DockerTasks
 			|> .sortIm( lib::sortAttr("docker_name", "asc") )
 		;
 		
-		/* Update /conf.d/99-cloud-os-upstreams.conf */
+		/* Update /conf.d/99-cloud-backend-upstreams.conf */
 		string upstreams = admin_upstreams
 			|> .map
 			(
@@ -330,11 +316,11 @@ class DockerTasks
 					
 					string docker_name = service.docker_name;
 					int admin_port = service.admin_port;
-					Collection ip_arr = service.getIpAddresses("cloud_admin");
+					Collection ip_arr = service.getIpAddresses("cloud_backend");
 					
 					if (ip_arr.count() > 0)
 					{
-						s ~= "upstream " ~ admin_port ~ "." ~ docker_name ~ ".cloud_admin.example {\n";
+						s ~= "upstream " ~ admin_port ~ "." ~ docker_name ~ ".cloud_backend.example {\n";
 						for (int ip_arr_inc=0; ip_arr_inc<ip_arr.count(); ip_arr_inc++)
 						{
 							string ip = ip_arr[ip_arr_inc];
@@ -350,8 +336,8 @@ class DockerTasks
 			|> lib::join("\n")
 		;
 		
-		/* Update nginx file */
-		await NginxFile::updateFile("/conf.d/99-cloud-admin-upstreams.conf", upstreams, db_settings);
+		/* Update /conf.d/99-cloud-backend-upstreams.conf */
+		await NginxFile::updateFile("/conf.d/99-cloud-backend-upstreams.conf", upstreams, db_settings);
 		
 		/* Update /inc/services_admin_page.inc */
 		string content = admin_upstreams
@@ -379,10 +365,10 @@ class DockerTasks
 			|> lib::join("\n")
 		;
 		
-		/* Update nginx file */
+		/* Update /inc/services_admin_page.inc */
 		await NginxFile::updateFile("/inc/services_admin_page.inc", content, db_settings);
 		
-		/* Update conf.d/99-cloud-router-upstreams.conf */
+		/* Update conf.d/99-cloud-frontend-upstreams.conf */
 		Collection<Route> routes = Route::select()
 			|> .filter
 			([
@@ -409,7 +395,7 @@ class DockerTasks
 					string s = "";
 					
 					string docker_name = service.docker_name;
-					Collection ip_arr = service.getIpAddresses("load_balancer");
+					Collection ip_arr = service.getIpAddresses("cloud_frontend");
 					
 					Map upstreams = new Map();
 					Collection<Route> current_routes = routes
@@ -425,7 +411,7 @@ class DockerTasks
 					for (int current_routes_inc=0; current_routes_inc<current_routes.count(); current_routes_inc++)
 					{
 						Route route = current_routes[current_routes_inc];
-						string upstream_name = route.target_port ~ "." ~ docker_name ~ ".load_balancer.example";
+						string upstream_name = route.target_port ~ "." ~ docker_name ~ ".cloud_frontend.example";
 						if (upstreams.has(upstream_name))
 						{
 							continue;
@@ -451,8 +437,8 @@ class DockerTasks
 			|> lib::join("\n")
 		;
 		
-		/* Update nginx file */
-		await NginxFile::updateFile("/conf.d/99-load-balancer-upstreams.conf", upstreams, db_settings);
+		/* Update conf.d/99-cloud-frontend-upstreams.conf */
+		await NginxFile::updateFile("/conf.d/99-cloud-frontend-upstreams.conf", upstreams, db_settings);
 	}
 	
 	
@@ -489,7 +475,7 @@ class DockerTasks
 				
 				string nginx_route = "";
 				string upstream_name = domain_route.target_port ~ "." ~ domain_route.docker_name ~ 
-					".load_balancer.example"
+					".cloud_frontend.example"
 				;
 				
 				nginx_route ~= "\tlocation " ~ domain_route.route ~ " {\n";

@@ -85,7 +85,6 @@ static class ModuleDescription
 		new RouteList{ "name": "Bayrell.CloudOS.Page.ServicePage" },
 		/* new RouteList{ "name": "Bayrell.CloudOS.Page.SpacesPage" }, */
 		new RouteList{ "name": "Bayrell.CloudOS.Page.UsersPage" },
-		new RouteList{ "name": "Bayrell.CloudOS.Page.YamlFilesPage" },
 		/* new RouteList{ "name": "Bayrell.CloudOS.Installer.InstallerPage" }, */
 		
 		
@@ -105,7 +104,6 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.API.RouteCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.ServiceCrud" },
 		new Entity{ "name": "Bayrell.CloudOS.API.UserCrud" },
-		new Entity{ "name": "Bayrell.CloudOS.API.YamlFiles" },
 		
 		/*
 		new Entity{ "name": "Bayrell.CloudOS.API.LayerCrud" },
@@ -114,10 +112,10 @@ static class ModuleDescription
 		new Entity{ "name": "Bayrell.CloudOS.API.TopMenuCrud" },
 		*/
 		/* System bus */
-		/* new Entity{ "name": "Bayrell.CloudOS.BUS.Balancer" }, */
+		new Entity{ "name": "Bayrell.CloudOS.BUS.Balancer" },
 		
 		/* Tasks */
-		/*new Entity{ "name": "Bayrell.CloudOS.DockerTasks" },*/
+		new Entity{ "name": "Bayrell.CloudOS.DockerTasks" },
 		
 		#endif
 		

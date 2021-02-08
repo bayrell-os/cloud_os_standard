@@ -176,9 +176,6 @@ span.lpad5{
 							<li class={ rs::start(layout["route", "name"], "app.admin.users") ? "active": "" }>
 								<a class='nolink' href='/users/'>{ _("Bayrell.CloudOS", "Users") }</a>
 							</li>
-							<li class={ rs::start(layout["route", "name"], "app.admin.yaml_files") ? "active": "" }>
-								<a class='nolink' href='/yaml_files/'>{ _("Bayrell.CloudOS", "Yaml files") }</a>
-							</li>
 							<li>
 								<a class='nolink' href='/database/' target="_blank">
 									{ _("Bayrell.CloudOS", "Adminer") }

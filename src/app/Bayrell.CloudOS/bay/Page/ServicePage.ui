@@ -333,8 +333,7 @@ pure html renderField(LayoutModel layout, Dict crud_settings)
 		return [
 			static::renderButton(layout, crud_settings, "edit"),
 			(item["enable"] == true) ?
-				static::renderButton(layout, crud_settings, "stop") :
-				static::renderButton(layout, crud_settings, "delete")
+				static::renderButton(layout, crud_settings, "stop") : ""
 		];
 	
 	/* Admin page settings */
@@ -444,6 +443,10 @@ pure Dict getFormSettings() =>
 </script>
 
 
+<template name="renderTopButtons" args="LayoutModel layout, CrudPageModel model, Dict params">
+</template>
+
+
 <template name="renderButton" args="LayoutModel layout, Dict settings, string button_type, Dict options = null">
 	%var Collection<FieldInfo> struct = settings["crud_params", "struct"];
 	%var TableModel table_model = settings["crud_table_model"];
@@ -523,10 +526,7 @@ async void onStopDialogEvent(Message<DialogEvent> msg)
 		
 		if (answer.isSuccess())
 		{
-			if (answer.response.has("new_item"))
-			{
-				this.update("setItem", pk, answer.response["new_item"]);
-			}
+			this.update("removeItem", pk);
 			this.dialog_stop.update("hide");
 		}
 		else

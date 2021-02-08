@@ -29,14 +29,14 @@ $loader = ( new \Runtime\Loader() )
 $context = $loader->startContext();
 
 /* Get bus */
-$bus = $context->getDriver($context, "default:system_bus");
+$bus = $context->getDriver($context, "system_bus");
 
 /* Settings */
 $input = file_get_contents("php://stdin");
-$obj = \Runtime\RuntimeUtils::json_decode($context, $input);
+$obj = \Runtime\rtl::json_decode($context, $input);
 
 /* Create request */
-$request = new \Runtime\Core\RemoteCallRequest($context, $obj);
+$request = new \Runtime\Web\App\RemoteCallRequest($context, $obj);
 
 /* Call bus */
 $answer = $bus->remoteBusCall($context, $request);

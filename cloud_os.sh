@@ -36,9 +36,9 @@ function generate {
 case "$1" in
 	
 	create_network)
-		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable load_balancer -o "com.docker.network.bridge.name"="load_balancer"
+		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable cloud_frontend -o "com.docker.network.bridge.name"="cloud_frontend"
 		
-		docker network create --subnet 172.22.0.1/16 --driver=overlay --attachable cloud_admin -o "com.docker.network.bridge.name"="cloud_admin"
+		docker network create --subnet 172.22.0.1/16 --driver=overlay --attachable cloud_backend -o "com.docker.network.bridge.name"="cloud_backend"
 		
 		sleep 2
 		
@@ -50,17 +50,26 @@ case "$1" in
 	;;
 	
 	compose)
+		docker stack deploy -c example/database.yaml database --with-registry-auth
 		docker stack deploy -c example/standard.yaml cloud_os --with-registry-auth
 	;;
 	
-	setup)
+	compose_database)
+		docker stack deploy -c example/database.yaml database --with-registry-auth
+	;;
+	
+	compose_cloud_os)
+		docker stack deploy -c example/standard.yaml cloud_os --with-registry-auth
+	;;
+	
+	run)
 		$0 create_network
 		$0 generate
 		$0 compose
 	;;
 	
 	*)
-		echo "Usage: $SCRIPT_EXEC {setup|create_network|generate|compose|setup}"
+		echo "Usage: $SCRIPT_EXEC {create_network|generate|compose|compose_database|compose_cloud_os|run}"
 		RETVAL=1
 
 esac

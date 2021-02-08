@@ -38,6 +38,7 @@ use Runtime.Web.CRUD.Rules.Required;
 use Runtime.Web.CRUD.Rules.Rule;
 use Bayrell.CloudOS.ORM.Application;
 use Bayrell.CloudOS.DockerLib;
+use Bayrell.CloudOS.DockerTasks;
 
 
 @ApiList{ "object_name": "Bayrell.CloudOS.Application", "interface_name": "core.crud" }
@@ -223,10 +224,10 @@ static class ApplicationCrud extends CrudApi
 		
 		string yaml_file_path = fs::concat("/data/yaml", stack_name ~ "/" ~ file_name);
 		string cmd = "sudo docker stack deploy -c " ~ yaml_file_path ~ " " ~ stack_name ~ " --with-registry-auth"
-		/*string cmd = "sudo docker stack deploy -c /data/config/dev/php.yaml dev --with-registry-auth"*/
 		string result = await DockerLib::exec(cmd ~ " 2>&1");
 		
-		/* if (result == "") result = "OK"; */
+		/* Sync services */
+		DockerTasks::syncServices();
 		
 		/* Answer */
 		answer = answer::success

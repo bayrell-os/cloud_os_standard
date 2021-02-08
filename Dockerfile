@@ -1,5 +1,5 @@
 ARG ARCH=
-FROM bayrell/alpine_php_fpm:7.3-3${ARCH}
+FROM bayrell/alpine_php_fpm:7.4-1${ARCH}
 
 RUN apk add sudo docker dnsmasq curl php7-curl; \
 	rm -rf /var/cache/apk/*; \
