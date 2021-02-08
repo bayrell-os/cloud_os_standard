@@ -8,5 +8,5 @@ if [ ! -d /data/yaml ]; then
 	sed -i "s|CLOUD_KEY=.*|CLOUD_KEY=${CLOUD_KEY}|g" $ENV_PATH
 	
 	echo $CLOUD_KEY > /data/yaml/cloud_os/cloud.key
-	chown -R www:www /data/config
+	chown -R www:www /data/yaml
 fi
