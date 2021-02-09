@@ -478,15 +478,19 @@ class DockerTasks
 				string upstream_name = domain_route.target_port ~ "." ~ domain_route.docker_name ~ 
 					".cloud_frontend.example"
 				;
+				string domain_route_url = domain_route.route;
+				string domain_route_prefix = domain_route.route_prefix;
+				if (domain_route_url == "") domain_route_url = "/";
+				if (domain_route_prefix == "/") domain_route_prefix = "";
 				
-				nginx_route ~= "\tlocation " ~ domain_route.route ~ " {\n";
-				nginx_route ~= "\t\tproxy_pass http://" ~ upstream_name ~ domain_route.route_prefix ~ ";\n";
+				nginx_route ~= "\tlocation " ~ domain_route_url ~ " {\n";
+				nginx_route ~= "\t\tproxy_pass http://" ~ upstream_name ~ domain_route_prefix ~ ";\n";
 				nginx_route ~= "\t\tinclude proxy_params;\n";
 				
 				/* Add route prefix */
-				if (domain_route.route_prefix != "")
+				if (domain_route_prefix != "")
 				{
-					nginx_route ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ domain_route.route_prefix ~ "\";\n";
+					nginx_route ~= "\t\tproxy_set_header X-ROUTE-PREFIX \"" ~ domain_route_prefix ~ "\";\n";
 				}
 				
 				/* Add space id */
