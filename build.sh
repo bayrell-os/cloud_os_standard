@@ -19,28 +19,37 @@ case "$1" in
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-amd64 --file Dockerfile --build-arg ARCH=-amd64
 	;;
 	
+	arm64v8)
+		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8 --file Dockerfile --build-arg ARCH=-arm64v8
+	;;
+	
 	arm32v7)
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm32v7 --file Dockerfile --build-arg ARCH=-arm32v7
 	;;
 	
 	manifest)
 		rm -rf ~/.docker/manifests/docker.io_cloud_os_standard-*
+		
 		docker push bayrell/cloud_os_standard:$VERSION-amd64
+		docker push bayrell/cloud_os_standard:$VERSION-arm64v8
 		docker push bayrell/cloud_os_standard:$VERSION-arm32v7
+		
 		docker manifest create --amend bayrell/cloud_os_standard:$VERSION \
 			bayrell/cloud_os_standard:$VERSION-amd64 \
+			bayrell/cloud_os_standard:$VERSION-arm64v8 \
 			bayrell/cloud_os_standard:$VERSION-arm32v7
 		docker manifest push --purge bayrell/cloud_os_standard:$VERSION
 	;;
 	
 	all)
 		$0 amd64
+		$0 arm64v8
 		$0 arm32v7
 		$0 manifest
 	;;
 	
 	*)
-		echo "Usage: $0 {amd64|arm32v7|manifest|all|test}"
+		echo "Usage: $0 {amd64|arm64v8|arm32v7|manifest|all|test}"
 		RETVAL=1
 
 esac
