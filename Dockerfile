@@ -1,7 +1,7 @@
 ARG ARCH=
-FROM bayrell/alpine_php_fpm:7.3-4${ARCH}
+FROM bayrell/alpine_php_fpm:7.3-5${ARCH}
 
-RUN apk add sudo docker dnsmasq curl php7-curl; \
+RUN apk add sudo docker dnsmasq curl php7-curl mariadb-client; \
 	rm -rf /var/cache/apk/*; \
 	sed -i 's|# %wheel ALL=(ALL) NOPASSWD: ALL|%wheel ALL=(ALL) NOPASSWD: ALL|g' /etc/sudoers; \
 	adduser www docker; \
