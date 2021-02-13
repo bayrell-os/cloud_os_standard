@@ -92,7 +92,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 	
 	if (name == "domains")
 		return container.getPageModel()
-			|> attr "foreigns", "domains", "options"
+			|> attr "options", "domains"
 			|> lib::map
 			(
 				Dict (Dict item) =>
@@ -107,7 +107,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 	
 	if (name == "services")
 		return container.getPageModel()
-			|> attr "foreigns", "services", "options"
+			|> attr "options", "services"
 			|> lib::map
 			(
 				Dict (Dict item) =>
@@ -122,7 +122,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		
 	if (name == "layers")
 		return container.getPageModel()
-			|> attr "foreigns", "layers", "options"
+			|> attr "options", "layers"
 			|> lib::map
 			(
 				Dict (Dict item) =>

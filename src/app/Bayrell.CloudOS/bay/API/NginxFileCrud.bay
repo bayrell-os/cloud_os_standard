@@ -69,16 +69,6 @@ static class NginxFileCrud extends CrudApi
 	
 	
 	/**
-	 * Build query
-	 */
-	QueryBuilder buildSearchQuery(QueryBuilder q) =>
-		parent::buildSearchQuery(q)
-		|> .addFilter(["is_deleted", "=", 0])
-	;
-	
-	
-	
-	/**
 	 * Force delete items
 	 */
 	bool isForceDelete() => false;
@@ -88,33 +78,7 @@ static class NginxFileCrud extends CrudApi
 	/**
 	 * Find existing item for create
 	 */
-	async NginxFile findItemForCreating()
-	{
-		NginxFile item = null;
-		string name = this.item["name"] |> default string "";
-		if (name != "")
-		{
-			item = NginxFile::select()
-				|> .filter([
-					["name", "=", name]
-				])
-				|> await .one()
-			;
-		}
-		return item;
-	}
-	
-	
-	
-	/**
-	 * Convert item before save to database
-	 */
-	async Dict convertItem(Dict item)
-	{
-		item = await parent::convertItem(item);
-		item <= is_deleted <= false;
-		return item;
-	}
+	async NginxFile findItemForCreating() => this.findItemByField( "name", this.item["name"] );
 	
 	
 	

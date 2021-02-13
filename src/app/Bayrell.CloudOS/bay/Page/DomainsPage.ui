@@ -78,7 +78,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 {
 	if (name == "spaces")
 		return container.getPageModel()
-			|> attr "foreigns", "spaces", "options"
+			|> attr "options", "spaces"
 			|> lib::map
 			(
 				Dict (Dict item) =>

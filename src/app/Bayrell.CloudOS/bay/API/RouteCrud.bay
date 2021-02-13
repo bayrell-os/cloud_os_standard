@@ -78,6 +78,11 @@ static class RouteCrud extends CrudApi
 		{
 			"name": "domains",
 			"class_name": classof Domain,
+			"fields":
+			[
+				"domain_name",
+				"space_id",
+			],
 		},
 		
 		/* Add services dictionary */
@@ -85,13 +90,14 @@ static class RouteCrud extends CrudApi
 		{
 			"name": "services",
 			"class_name": classof Service,
-		},
-		
-		/* Add layers dictionary */
-		new Dictionary
-		{
-			"name": "layers",
-			"class_name": classof Layer,
+			"fields":
+			[
+				"service_id",
+				"service_name",
+				"stack_name",
+				"docker_name",
+				"enable",
+			],
 		},
 	];
 	

@@ -79,6 +79,13 @@ static class DomainCrud extends CrudApi
 	
 	
 	/**
+	 * Find existing item for create
+	 */
+	async Domain findItemForCreating() => this.findItemByField( "domain_name", this.item["domain_name"] );
+	
+	
+	
+	/**
 	 * Build query
 	 */
 	QueryBuilder buildSearchQuery(QueryBuilder q) => parent::buildSearchQuery(q);
