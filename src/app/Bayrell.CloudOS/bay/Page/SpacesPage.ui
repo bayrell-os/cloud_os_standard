@@ -22,6 +22,7 @@
 >
 
 <use name="Runtime.lib" />
+<use name="Runtime.BaseStruct" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Core.RemoteCallAnswer" />
@@ -77,9 +78,9 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 /**
  * Returns options
  */
-pure Collection getOptions(RenderContainer container, string name = "")
+pure Collection getOptions(BaseStruct layout, CrudPageModel model, Dict params, string name = "")
 {
-	return parent::getOptions(container, name);
+	return parent::getOptions(layout, model, params, name);
 }
 
 
@@ -87,7 +88,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(RenderContainer container) =>
+pure Collection<FieldInfo> getStruct(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	new FieldInfo
 	{
@@ -150,7 +151,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 /**
  * Returns filter fields
  */
-pure Collection<string> getFilterFields(RenderContainer container) =>
+pure Collection<string> getFilterFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"api_name",
 	"name",
@@ -161,7 +162,7 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
 /**
  * Returns form fields
  */
-pure Collection<string> getFormFields(RenderContainer container) =>
+pure Collection<string> getFormFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"api_name",
 	"name",
@@ -172,7 +173,7 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 /**
  * Returns table fields
  */
-pure Collection<string> getTableFields(RenderContainer container) =>
+pure Collection<string> getTableFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"number",
 	"api_name",
@@ -185,7 +186,7 @@ pure Collection<string> getTableFields(RenderContainer container) =>
 /**
  * Returns view fields
  */
-pure Collection<string> getViewFields(RenderContainer container) =>
+pure Collection<string> getViewFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 ];
 
@@ -218,44 +219,6 @@ pure Dict getDialogSettings() =>
 pure Dict getFormSettings() =>
 {
 };
-
-
-
-/**
- * Custom class name
- */
-pure string customClassName(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return crud_settings["crud_class_name"];
-}
-
-
-
-/**
- * Custom field render
- */
-pure html calcField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	return value;
-}
-
-
-
-/**
- * Custom field render
- */
-pure html renderField(LayoutModel layout, string kind, string field_name, var value, Dict crud_settings)
-{
-	/* Table number */
-	if (kind == "table" and field_name == "number")
-		return static::renderNumber(layout, value, crud_settings);
-	
-	/* Table edit buttons */
-	if (kind == "table" and field_name == "edit-buttons")
-		return static::renderButtons(layout, value, crud_settings);
-	
-	return null;
-}
 
 </script>
 

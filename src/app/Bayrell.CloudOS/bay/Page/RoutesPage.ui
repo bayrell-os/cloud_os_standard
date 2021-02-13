@@ -22,6 +22,7 @@
 >
 
 <use name="Runtime.lib" />
+<use name="Runtime.BaseStruct" />
 <use name="Runtime.Exceptions.RuntimeException" />
 <use name="Runtime.Web.App.LayoutModel" />
 <use name="Runtime.Web.App.RenderContainer" />
@@ -75,7 +76,7 @@ static async RenderContainer actionIndex(RenderContainer container) => [
 /**
  * Returns options
  */
-pure Collection getOptions(RenderContainer container, string name = "")
+pure Collection getOptions(BaseStruct layout, CrudPageModel model, Dict params, string name = "")
 {
 	if (name == "enable")
 		return
@@ -91,7 +92,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		];
 	
 	if (name == "domains")
-		return container.getPageModel()
+		return model
 			|> attr "options", "domains"
 			|> lib::map
 			(
@@ -106,7 +107,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		;
 	
 	if (name == "services")
-		return container.getPageModel()
+		return model
 			|> attr "options", "services"
 			|> lib::map
 			(
@@ -121,7 +122,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 		;
 		
 	if (name == "layers")
-		return container.getPageModel()
+		return model
 			|> attr "options", "layers"
 			|> lib::map
 			(
@@ -135,7 +136,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 			|> default Collection []
 		;
 	
-	return parent::getOptions(container, name);
+	return parent::getOptions(layout, model, params, name);
 }
 
 
@@ -143,7 +144,7 @@ pure Collection getOptions(RenderContainer container, string name = "")
 /**
  * Returns crud struct
  */
-pure Collection<FieldInfo> getStruct(RenderContainer container) =>
+pure Collection<FieldInfo> getStruct(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	new FieldInfo
 	{
@@ -166,7 +167,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_settings":
 		{
 			"show_select_value": false,
-			"options": static::getOptions(container, "enable"),
+			"options": static::getOptions(layout, model, params, "enable"),
 		},
 	},
 	
@@ -178,7 +179,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(container, "protocol"),
+			"options": static::getOptions(layout, model, params, "protocol"),
 		},
 	},
 	
@@ -211,7 +212,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(container, "domains"),
+			"options": static::getOptions(layout, model, params, "domains"),
 		},
 	},
 	
@@ -223,7 +224,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(container, "services"),
+			"options": static::getOptions(layout, model, params, "services"),
 		},
 	},
 	
@@ -235,7 +236,7 @@ pure Collection<FieldInfo> getStruct(RenderContainer container) =>
 		"class_settings":
 		{
 			"show_select_value": true,
-			"options": static::getOptions(container, "layers"),
+			"options": static::getOptions(layout, model, params, "layers"),
 		},
 	},
 	
@@ -316,7 +317,7 @@ pure html renderField(LayoutModel layout, Dict crud_settings)
 /**
  * Returns filter fields
  */
-pure Collection<string> getFilterFields(RenderContainer container) =>
+pure Collection<string> getFilterFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"enable",
 	"protocol",
@@ -329,7 +330,7 @@ pure Collection<string> getFilterFields(RenderContainer container) =>
 /**
  * Returns form fields
  */
-pure Collection<string> getFormFields(RenderContainer container) =>
+pure Collection<string> getFormFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"enable",
 	"protocol",
@@ -345,7 +346,7 @@ pure Collection<string> getFormFields(RenderContainer container) =>
 /**
  * Returns table fields
  */
-pure Collection<string> getTableFields(RenderContainer container) =>
+pure Collection<string> getTableFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 	"number",
 	"enable",
@@ -363,7 +364,7 @@ pure Collection<string> getTableFields(RenderContainer container) =>
 /**
  * Returns view fields
  */
-pure Collection<string> getViewFields(RenderContainer container) =>
+pure Collection<string> getViewFields(BaseStruct layout, CrudPageModel model, Dict params) =>
 [
 ];
 
@@ -397,6 +398,7 @@ pure Dict getDialogSettings() =>
 pure Dict getFormSettings() =>
 {
 };
+
 </script>
 
 
