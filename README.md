@@ -1,4 +1,4 @@
-# Cloud OS
+# BAYRELL Cloud OS (Standard Edition)
 
 
 
