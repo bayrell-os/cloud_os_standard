@@ -29,12 +29,10 @@ class Instance extends \TinyPHP\App
 	public function init()
 	{
 		/* Includes routes */
-		$this->addRoute(\App\Routes\Targets::class);
-		$this->addRoute(\App\Routes\Tasks::class);
+		$this->addRoute(\App\Routes\DomainsCrud::class);
 
 		/* Includes models */
-		$this->addModel(\App\Models\Target::class);
-		$this->addModel(\App\Models\Task::class);
+		$this->addModel(\App\Models\Domain::class);
 
 		/* Includes console commands */
 		$this->addConsoleCommand(\App\Console\Hello::class);

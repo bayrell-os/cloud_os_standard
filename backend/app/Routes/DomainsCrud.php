@@ -20,7 +20,7 @@
 
 namespace App\Routes;
 
-use App\Models\Task;
+use App\Models\Domain;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,16 +29,16 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class Tasks extends \TinyPHP\ApiRoute
+class DomainsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Task::class;
-    var $api_path = "tasks";
+	var $class_name = Domain::class;
+	var $api_path = "domains";
 
 	
 	/**
 	 * Get rules
 	 */
-	function rules()
+	function getRules()
 	{
 		return
 		[
@@ -46,17 +46,8 @@ class Tasks extends \TinyPHP\ApiRoute
 			([
 				"fields" =>
 				[
-					"id",
-					"target_id",
-					"name",
-					"gmdate",
-					"status",
-					"user_id",
+					"domain_name",
 				]
-			]),
-			new ReadOnly
-			([
-				"api_name" => "id",
 			])
 		];
 	}

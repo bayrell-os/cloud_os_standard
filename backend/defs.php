@@ -24,7 +24,7 @@ use Psr\Container\ContainerInterface;
 return
 [
 	"App" => DI\create(\App\Instance::class),
-	"db" => DI\factory([\App\Instance::class, 'createDatabase']),
+	"db" => DI\factory([\App\Instance::class, 'connectToDatabase']),
 	
 	\FastRoute\RouteParser::class => DI\create(\FastRoute\RouteParser\Std::class),
 	\FastRoute\DataGenerator::class => DI\create(\FastRoute\DataGenerator\GroupCountBased::class),
@@ -35,4 +35,7 @@ return
 			$router = $c->get(\FastRoute\RouteCollector::class);
 			return new \FastRoute\Dispatcher\GroupCountBased( $router->getData() );
 		},
+	
+	\TinyPHP\ApiResult::class => DI\create(\TinyPHP\ApiResult::class),
+	\TinyPHP\RenderContainer::class => DI\create(\TinyPHP\RenderContainer::class),
 ];
