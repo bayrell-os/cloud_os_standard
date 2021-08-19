@@ -1,0 +1,9 @@
+{
+    "editor.trimAutoWhitespace": false,
+    "rest-client.environmentVariables":
+    {
+        "$shared": {
+            "app_url": "http://cloud.docker0",
+        },
+    }
+}
