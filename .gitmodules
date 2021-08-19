@@ -1,0 +1,3 @@
+[submodule "backend/tiny-php"]
+	path = backend/tiny-php
+	url = https://github.com/bayrell/tiny-php

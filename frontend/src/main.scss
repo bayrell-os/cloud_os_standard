@@ -1,0 +1,59 @@
+*{ box-sizing: border-box; }
+html, body{
+	margin:0; padding:0;
+	font-family: Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 14px;
+	text-align: left;
+	color: #2c3e50;
+}
+a{
+	text-decoration: underline;
+	color: #0000d0;
+	cursor: pointer;
+}
+a:hover,a:visited:hover{
+	text-decoration: underline;
+	color: red;
+}
+a:visited{
+	text-decoration: underline;
+	color: #900060;
+}
+a.link{
+	text-decoration: none;
+	color: #0000d0;
+	cursor: pointer;
+}
+a.link:hover,a.link:visited:hover{
+	text-decoration: underline;
+	color: red;
+}
+a.link:visited{
+	text-decoration: none;
+	color: #0000d0;
+}
+a.link2{
+	text-decoration: none;
+	color: inherit;
+}
+a.link2:hover,a.link2:visited,a.link2:visited:hover{
+	text-decoration: underline;
+	color: inherit;
+}
+a.link2:visited{
+	text-decoration: none;
+	color: inherit;
+}
+a.nolink{
+	text-decoration: inherit;
+	color: inherit;
+}
+a.nolink:hover,a.nolink:visited,a.nolink:visited:hover{
+	text-decoration: inherit;
+	color: inherit;
+}
+.cursor{
+	cursor:pointer;
+}
