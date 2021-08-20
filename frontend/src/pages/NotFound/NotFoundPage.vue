@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,16 +14,31 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-import { Store } from "vuex";
-import { AppState } from "./AppState";
-import * as dayjs from 'dayjs'
+<style lang="scss" scoped>
+</style>
 
-/**
- * Create test store
- */
-export function initTestStore (store: Store<AppState>)
-{
-	
-}
+<template>
+    Page not found
+</template>
+
+<script lang="js">
+
+import { defineComponent } from 'vue';
+import { mixin } from "vue-helper";
+
+export default defineComponent({
+	mixins: [ mixin ],
+	computed:
+	{
+	},
+	methods:
+	{
+	},
+	mounted() {
+		this.setPageTitle("Page not found");
+	}
+});
+
+</script>

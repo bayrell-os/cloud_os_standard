@@ -1,5 +1,6 @@
 /example/cloud.key
 /example/env.conf
+/tmp
 
 # Backend
 backend/vendor
@@ -10,6 +11,7 @@ backend_py/routes/__pycache__
 # Frontend
 frontend/var
 frontend/html/dist
+frontend/tmp
 
 # Logs
 frontend/logs
