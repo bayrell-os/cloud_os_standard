@@ -18,33 +18,54 @@
  *  limitations under the License.
  */
 
-namespace App\Console;
+namespace App\Console\Docker;
 
+use App\Docker;
+use App\Models\Service;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Illuminate\Database\Capsule\Manager as DB;
+use TinyPHP\Utils;
 
-class Hello extends Command
+
+class ServicesUpdate extends Command
 {
-    protected static $defaultName = 'app:hello';
+    protected static $defaultName = 'docker:services:update';
 
     protected function configure(): void
     {
         $this
 			// the short description
-			->setDescription('Prints hello world')
+			->setDescription('Update docker services into database')
 
 			// the full command description shown when running the command with
 			// the "--help" option
-			->setHelp('This command prints hello world')
+			->setHelp('Update docker services into database')
 		;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$output->writeln([
-			'Hello world',
-		]);
+		$current_timestamp = time();
+		$nodes = Docker::getNodes();
+		$services = Docker::getServices();
+		foreach ($services as $service)
+		{
+			$result = Docker::updateServiceIntoDatabase($service,
+				["nodes" => $nodes, "current_timestamp" => $current_timestamp]
+			);
+			
+			if ($result)
+			{
+				$service_name = Utils::attr($service, ["Spec", "Name"]);
+				$output->writeln("Update service " . $service_name);
+			}
+		}
+		
+		Docker::deleteOldServicesFromDatabase($current_timestamp);
+		
         return Command::SUCCESS;
     }
+	
 }

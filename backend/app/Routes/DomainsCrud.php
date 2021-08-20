@@ -1,7 +1,7 @@
 <?php
 
 /*!
- *  Bayrell Time Planner
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -47,6 +47,10 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"domain_name",
+					"nginx_template",
+					"space_id",
+					"gmtime_created",
+					"gmtime_updated",
 				]
 			])
 		];

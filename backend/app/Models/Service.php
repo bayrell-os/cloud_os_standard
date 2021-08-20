@@ -23,11 +23,14 @@ namespace App\Models;
 use TinyPHP\Model;
 
 
-class Domain extends Model
+class Service extends Model
 {
-	protected $table = "domains";
-	protected $primaryKey = "domain_name";
+	protected $table = "services";
+	protected $primaryKey = "service_id";
 	public $incrementing = false;
 	protected $attributes = [
+	];
+    protected $fillable = [
+        "docker_name",
 	];
 }

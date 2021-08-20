@@ -3,7 +3,8 @@
 
 ### Get domains
 
-GET {{app_url}}/api/domains/crud/search/?start=0&limit=10 HTTP/1.1
+GET {{app_url}}/api/domains/crud/search/
+  ?start=0&limit=10 HTTP/1.1
 
 
 ### Answer:
@@ -122,7 +123,8 @@ Content-Type: application/json
 {
   "item":
   {
-    "domain_name": "test3.local"
+    "domain_name": "test.local",
+    "nginx_template": "123"
   }
 }
 

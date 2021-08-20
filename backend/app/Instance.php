@@ -1,7 +1,7 @@
 <?php
 
 /*!
- *  Bayrell Time Planner
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -24,10 +24,12 @@ class Instance extends \TinyPHP\App
 {
 	
 	/**
-	 * Init instance
+	 * Init app
 	 */
 	public function init()
 	{
+		parent::init();
+		
 		/* Includes routes */
 		$this->addRoute(\App\Routes\DomainsCrud::class);
 
@@ -35,6 +37,7 @@ class Instance extends \TinyPHP\App
 		$this->addModel(\App\Models\Domain::class);
 
 		/* Includes console commands */
+		$this->addConsoleCommand(\App\Console\Docker\ServicesUpdate::class);
 		$this->addConsoleCommand(\App\Console\Hello::class);
 
 		/* Phinx */
@@ -50,8 +53,6 @@ class Instance extends \TinyPHP\App
 		$this->addConsoleCommand(\Phinx\Console\Command\Status::class);
 		$this->addConsoleCommand(\Phinx\Console\Command\Test::class);
 		*/
-		/* Connect to database */
-		$this->get("db");
 	}
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*!
- *  Bayrell Time Planner
+ *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -24,7 +24,8 @@ use Psr\Container\ContainerInterface;
 return
 [
 	"App" => DI\create(\App\Instance::class),
-	"db" => DI\factory([\App\Instance::class, 'connectToDatabase']),
+	"connectToDatabase" => DI\factory([\App\Instance::class, 'connectToDatabase']),
+	"db" => DI\create(\Illuminate\Database\Capsule\Manager::class),
 	
 	\FastRoute\RouteParser::class => DI\create(\FastRoute\RouteParser\Std::class),
 	\FastRoute\DataGenerator::class => DI\create(\FastRoute\DataGenerator\GroupCountBased::class),
@@ -38,4 +39,6 @@ return
 	
 	\TinyPHP\ApiResult::class => DI\create(\TinyPHP\ApiResult::class),
 	\TinyPHP\RenderContainer::class => DI\create(\TinyPHP\RenderContainer::class),
+	\Illuminate\Events\Dispatcher::class => DI\create(\Illuminate\Events\Dispatcher::class),
+	\Illuminate\Container\Container::class => DI\create(\Illuminate\Container\Container::class),
 ];
