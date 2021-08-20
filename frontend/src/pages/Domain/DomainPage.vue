@@ -20,13 +20,28 @@
 </style>
 
 <template>
-	Domains
+	<table class="table">
+		<tr class="header">
+			<th></th>
+			<th>Domain name</th>
+			<th></th>
+		</tr>
+		<tr class="row" v-for="item, index in model.items" :key="item.id">
+			<td>{{ index + 1 }}</td>
+			<td>{{ item.domain_name }}</td>
+			<td>
+				<button class="button small">Edit</button>
+				<button class="button small danger">Delete</button>
+			</td>
+		</tr>
+	</table>
 </template>
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
+import axios from "axios";
 
 export default defineComponent({
 	mixins: [ mixin ],
@@ -38,6 +53,7 @@ export default defineComponent({
 	},
 	mounted() {
 		this.setPageTitle("Domains");
+		this.model.constructor.loadData(this);
 	}
 });
 

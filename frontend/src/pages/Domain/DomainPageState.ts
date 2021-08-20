@@ -16,6 +16,8 @@
  *  limitations under the License.
  */
 
+import axios, { AxiosResponse } from 'axios';
+import type { DefineComponent } from 'vue'
 import { BaseObject } from "vue-helper";
 
 
@@ -58,9 +60,39 @@ export class Domain extends BaseObject
 	}
 }
 
+
 export class DomainPageState
 {
 	items: Array<Domain> = new Array<Domain>();
+	
+	
+	/**
+	 * Load items
+	 */
+	loadItems(items: Array<any>)
+	{
+		for (let i = 0; i < items.length; i++)
+		{
+			this.items.push(new Domain().assignValues(items[i]));
+		}
+	}
+	
+	
+	/**
+	 * Load data
+	 */
+	static async loadData(component: DefineComponent)
+	{
+		let model:DomainPageState = component.model;
+		
+		let url = "/api/domains/crud/search/";
+		let response:AxiosResponse = await axios.get(url);
+		if (response.data.error.code == 1)
+		{
+			model.items = new Array();
+			model.loadItems(response.data.result.items);
+		}
+	}
 	
 	
 	/**
@@ -73,11 +105,11 @@ export class DomainPageState
 		];
 		return res;
 	}
- 
- 
-	 /**
-	  * Returns modules
-	  */
+	
+	
+	/**
+	 * Returns modules
+	 */
 	static modules(): Record<string, any>
 	{
 		let res: Record<string, any> =
