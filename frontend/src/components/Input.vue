@@ -26,9 +26,11 @@
 }
 </style>
 
+
 <template>
-	<input v-bind:name="name" v-bind:type="type" v-bind:value="value" />
+	<input class="input" v-bind:name="name" v-bind:type="type" v-bind:value="value" />
 </template>
+
 
 <script lang="js">
 

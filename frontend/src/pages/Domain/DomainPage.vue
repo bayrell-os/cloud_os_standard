@@ -34,7 +34,16 @@
 .dialog_buttons button{
 	margin: 0 5px;
 }
+.form_buttons{
+	text-align: center;
+	margin-top: 10px;
+}
+.form_buttons button{
+	margin-left: 10px;
+	margin-right: 10px;
+}
 </style>
+
 
 <template>
 	<div class="top_buttons">
@@ -55,19 +64,20 @@
 			</td>
 		</tr>
 	</table>
-	<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px">
+	<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
 		<template v-slot:title>
 			Добавить запись
 		</template>
 		<template v-slot:content>
 			<Form v-bind:store_path="store_path.concat('form')">
 				<template v-slot:buttons>
-					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+					<div class="form_buttons">
+						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+						<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+					</div>
 				</template>
 			</Form>
 		</template>
-		<template v-slot:buttons></template>
 	</Dialog>
 	<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 		<template v-slot:title>
@@ -82,6 +92,7 @@
 		</template>
 	</Dialog>
 </template>
+
 
 <script lang="js">
 

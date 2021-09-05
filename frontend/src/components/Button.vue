@@ -64,9 +64,11 @@ button.success:hover{
 }
 </style>
 
+
 <template>
 	<button v-bind:class="getButtonClass" @click="onClick"><slot/></button>
 </template>
+
 
 <script lang="js">
 

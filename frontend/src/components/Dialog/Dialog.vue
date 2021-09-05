@@ -95,6 +95,7 @@
 }
 </style>
 
+
 <template>
 	<div class="dialog_box" v-bind:class="{ 'open': model.open }">
 		<div class='dialog_shadow'></div>
@@ -113,7 +114,7 @@
 				<div class='dialog_content'>
 					<slot name="content"/>
 				</div>
-				<div class='dialog_buttons'>
+				<div class='dialog_buttons' v-if="showButtons()">
 					<slot name="buttons">
 						<Button v-for="button, index in model.buttons" v-bind:data-action="button.action"
 						@click="onButtonClick(button.action, $event)" v-bind:type="button.type"
@@ -126,6 +127,7 @@
 	</div>
 </template>
 
+
 <script lang="js">
 
 import { defineComponent } from 'vue';
@@ -135,12 +137,17 @@ import Button from '@/components/Button.vue';
 
 export default defineComponent({
 	mixins: [ mixin ],
-	props: [ "width" ],
+	props: [ "width", "buttons" ],
 	computed:
 	{
 	},
 	methods:
 	{
+		showButtons: function()
+		{
+			if (this.buttons == "false") return false;
+			return true;
+		},
 		getDialogStyle: function()
 		{
 			let s = {};

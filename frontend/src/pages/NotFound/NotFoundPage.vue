@@ -19,9 +19,11 @@
 <style lang="scss" scoped>
 </style>
 
+
 <template>
     Page not found
 </template>
+
 
 <script lang="js">
 

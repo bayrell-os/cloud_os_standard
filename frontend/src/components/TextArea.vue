@@ -27,9 +27,11 @@
 }
 </style>
 
+
 <template>
-	<textarea v-bind:name="name" v-bind:type="type" v-bind:value="value"></textarea>
+	<textarea class="textarea" v-bind:name="name" v-bind:type="type" v-bind:value="value"></textarea>
 </template>
+
 
 <script lang="js">
 

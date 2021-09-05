@@ -23,16 +23,9 @@
 .form_row:last-child{
 	padding-bottom: 0px;
 }
-.form_label{
+.form_row_label{
 	font-weight: bold;
 	padding-bottom: 5px;
-}
-.form_value input, .form_value textarea, .form_value select{
-	width: 100%;
-	padding: 5px 10px;
-}
-.form_value textarea{
-	height: 400px;
 }
 .form_buttons{
 	text-align: center;
@@ -53,6 +46,7 @@
 	color: red;
 }
 </style>
+
 
 <template>
 	<div class="form">
@@ -82,8 +76,7 @@
 		</slot>
 		
 		<slot name="buttons">
-			<div class="form_buttons">
-			</div>
+			<div class="form_buttons"></div>
 		</slot>
 		
 		<slot name="result">
@@ -96,6 +89,7 @@
 		
 	</div>
 </template>
+
 
 <script lang="js">
 

@@ -19,11 +19,13 @@
 <style lang="scss" scoped>
 </style>
 
+
 <template>
 	<div class="page_home">
 		Cloud OS Version 0.4
 	</div>
 </template>
+
 
 <script lang="js">
 
