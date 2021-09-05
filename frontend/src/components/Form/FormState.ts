@@ -26,6 +26,8 @@ export class FormState extends BaseObject
 	fields: Array<FieldInfo> = [];
 	item: Record<string, any> = {};
 	item_original: Record<string, any> = {};
+	error_code: number = 0;
+	message: string = "";
 	
 	
 	/**
@@ -69,5 +71,38 @@ export class FormState extends BaseObject
 	setItemValue(api_name: string, value: string)
 	{
 		this.item[api_name] = value;
+	}
+	
+	
+	/**
+	 * Clear
+	 */
+	clear()
+	{
+		this.title = "";
+		this.error_code = 0;
+		this.message = "";
+		this.item = {};
+		this.item_original = {};
+	}
+	
+	
+	/**
+	 * Set wait response
+	 */
+	setWaitResponse()
+	{
+		this.error_code = 0;
+		this.message = "Please wait";
+	}
+	
+	
+	/**
+	 * Set response
+	 */
+	setResponse(response: any)
+	{
+		this.error_code = response["error"]["code"];
+		this.message = response["error"]["str"];
 	}
 }

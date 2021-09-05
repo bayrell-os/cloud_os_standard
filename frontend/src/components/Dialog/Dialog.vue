@@ -66,6 +66,7 @@
 	width: 100%;
 }
 .dialog_text{
+	text-align: center;
 	white-space: pre-wrap;
 }
 .dialog_buttons{

@@ -99,6 +99,7 @@ export class DomainPageState
 	 */
 	showForm()
 	{
+		this.form.clear();
 		if (this.current_item != null)
 		{
 			this.form.item = deepClone(this.current_item);
@@ -175,6 +176,17 @@ export class DomainPageState
 			model.items = new Array();
 			model.loadItems(response.data.result.items);
 		}
+	}
+	
+	
+	
+	/**
+	 * Save form
+	 */
+	static async saveForm(component: DefineComponent)
+	{
+		let model:DomainPageState = component.model;
+		model.form.setWaitResponse();
 	}
 	
 }

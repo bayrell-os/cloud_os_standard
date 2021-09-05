@@ -61,19 +61,20 @@
 		</template>
 		<template v-slot:content>
 			<Form v-bind:store_path="store_path.concat('form')">
+				<template v-slot:buttons>
+					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+				</template>
 			</Form>
 		</template>
-		<template v-slot:buttons>
-			<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-			<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-		</template>
+		<template v-slot:buttons></template>
 	</Dialog>
 	<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 		<template v-slot:title>
 			Удалить домен
 		</template>
-		<template v-slot:content>
-			Вы действительно хотите удалить домен?
+		<template v-slot:text>
+			Вы действительно хотите удалить домен "{{ model.current_item ? model.current_item.domain_name : '' }}" ?
 		</template>
 		<template v-slot:buttons>
 			<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
@@ -111,13 +112,15 @@ export default defineComponent({
 		},
 		onShowDelete: function(domain_name)
 		{
+			let item = this.model.findItemByDomainName(domain_name);
+			this.model.setCurrentItem(item);
 			this.model.showDelete();
 		},
 		onDialogFormButtonClick: function(action)
 		{
 			if (action == "save")
 			{
-				console.log(action);
+				this.model.constructor.saveForm(this);
 			}
 			else if (action == "cancel")
 			{

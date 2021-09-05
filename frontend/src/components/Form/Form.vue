@@ -42,11 +42,6 @@
 	margin-left: 10px;
 	margin-right: 10px;
 }
-.form_error{
-	text-align: center;
-	padding-top: 5px;
-	color: red;
-}
 .form_result{
 	padding-top: 10px;
 	text-align: center;
@@ -73,16 +68,14 @@
 					v-for="field in model.fields" :key="field.api_name"
 					v-bind:data-name="field.api_name"
 				>
-					<div class="form_label">{{ field.label }}</div>
-					<div class="form_value">
-						
+					<div class="form_row_label">{{ field.label }}</div>
+					<div class="form_row_value">
 						<component v-bind:is="field.component"
 							v-bind:value="model.getItemValue(field.api_name)"
 							@change="onChangeItem(field.api_name, $event)"
 						/>
-						
 					</div>
-					<div class="form_error"></div>
+					<div class="form_row_result"></div>
 				</div>
 				
 			</div>
@@ -92,6 +85,15 @@
 			<div class="form_buttons">
 			</div>
 		</slot>
+		
+		<slot name="result">
+			<div class="form_result"
+				v-bind:class="{
+					error: model.error_code < 0,
+					success: model.error_code > 0,
+				}">{{ model.message }}</div>
+		</slot>
+		
 	</div>
 </template>
 
