@@ -16,10 +16,12 @@
  *  limitations under the License.
  */
 
+import { FieldInfo } from '@/components/Crud';
 import { DialogButton, DialogState } from '@/components/Dialog/DialogState';
+import { FormState } from '@/components/Form/FormState';
 import axios, { AxiosResponse } from 'axios';
 import type { DefineComponent } from 'vue'
-import { BaseObject } from "vue-helper";
+import { BaseObject, deepClone } from "vue-helper";
 
 
 export class Domain extends BaseObject
@@ -64,9 +66,77 @@ export class Domain extends BaseObject
 
 export class DomainPageState
 {
+	fields: Array<FieldInfo> = [];
+	current_item: Domain | null = null;
 	items: Array<Domain> = new Array<Domain>();
+	form: FormState = new FormState();
 	dialog_delete: DialogState = new DialogState();
 	dialog_form: DialogState = new DialogState();
+	
+	
+	constructor()
+	{
+		this.fields.push(new FieldInfo().assignValues({
+			"api_name": "domain_name",
+			"label": "Domain name",
+		}));
+		this.form.fields = this.fields.slice();
+		this.form.fields = this.fields.slice();
+	}
+	
+	
+	/**
+	 * Show form
+	 */
+	showForm()
+	{
+		if (this.current_item != null)
+		{
+			this.form.item = deepClone(this.current_item);
+			this.form.item_original = deepClone(this.current_item);
+		}
+		else
+		{
+			this.form.item = new Domain();
+			this.form.item_original = new Domain();
+		}
+		this.dialog_form.show();
+	}
+	
+	
+	/**
+	 * Show delete
+	 */
+	showDelete()
+	{
+		if (this.current_item != null)
+		{
+			this.dialog_delete.show();
+		}
+	}
+	
+	 
+	/**
+	 * Find item by domain name
+	 */
+	findItemByDomainName(domain_name: string): Domain | null
+	{
+		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
+		if (index != -1)
+		{
+			return this.items[index];
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Set current item
+	 */
+	setCurrentItem(item: Domain | null)
+	{
+		this.current_item = item;
+	}
 	
 	
 	/**
@@ -79,6 +149,7 @@ export class DomainPageState
 			this.items.push(new Domain().assignValues(items[i]));
 		}
 	}
+	
 	
 	
 	/**

@@ -60,7 +60,8 @@
 			Добавить запись
 		</template>
 		<template v-slot:content>
-			Форма
+			<Form v-bind:store_path="store_path.concat('form')">
+			</Form>
 		</template>
 		<template v-slot:buttons>
 			<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
@@ -88,6 +89,7 @@ import { mixin } from "vue-helper";
 import axios from "axios";
 import Button from '@/components/Button/Button.vue';
 import Dialog from '@/components/Dialog/Dialog.vue';
+import Form from '@/components/Form/Form.vue';
 
 export default defineComponent({
 	mixins: [ mixin ],
@@ -98,15 +100,18 @@ export default defineComponent({
 	{
 		onShowAdd: function()
 		{
-			this.model.dialog_form.show();
+			this.model.setCurrentItem(null);
+			this.model.showForm();
 		},
-		onShowEdit: function(domain_nam)
+		onShowEdit: function(domain_name)
 		{
-			this.model.dialog_form.show();
+			let item = this.model.findItemByDomainName(domain_name);
+			this.model.setCurrentItem(item);
+			this.model.showForm();
 		},
-		onShowDelete: function(domain_nam)
+		onShowDelete: function(domain_name)
 		{
-			this.model.dialog_delete.show();
+			this.model.showDelete();
 		},
 		onDialogFormButtonClick: function(action)
 		{
@@ -132,6 +137,7 @@ export default defineComponent({
 	{
 		Button,
 		Dialog,
+		Form,
 	},
 	mounted() {
 		this.setPageTitle("Domains");
