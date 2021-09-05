@@ -98,7 +98,7 @@
 	<div class="dialog_box" v-bind:class="{ 'open': model.open }">
 		<div class='dialog_shadow'></div>
 		<table class='dialog_wrap'><tr><td>
-			<div class='dialog'>
+			<div class='dialog' v-bind:style="getDialogStyle()">
 				<div class='dialog_title'>
 					<slot name="title">
 						{{ model.title }}
@@ -130,16 +130,22 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 import { DialogButtonClickEvent } from '@/components/Dialog/DialogState.ts';
-import Button from '@/components/Button/Button.vue';
+import Button from '@/components/Button.vue';
 
 export default defineComponent({
 	mixins: [ mixin ],
-	props: [],
+	props: [ "width" ],
 	computed:
 	{
 	},
 	methods:
 	{
+		getDialogStyle: function()
+		{
+			let s = {};
+			if (this.width != "") s["max-width"] = this.width;
+			return s;
+		},
 		onButtonClick: function(action, $event)
 		{
 			if (action == "cancel") this.model.hide();

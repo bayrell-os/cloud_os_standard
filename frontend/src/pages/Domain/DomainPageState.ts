@@ -23,7 +23,6 @@ import axios, { AxiosResponse } from 'axios';
 import type { DefineComponent } from 'vue'
 import { BaseObject, deepClone } from "vue-helper";
 
-
 export class Domain extends BaseObject
 {
 	domain_name: string = "";
@@ -76,10 +75,20 @@ export class DomainPageState
 	
 	constructor()
 	{
+		/* Domain name field */
 		this.fields.push(new FieldInfo().assignValues({
 			"api_name": "domain_name",
 			"label": "Domain name",
+			"component": "Input",
 		}));
+		
+		/* Nginx template */
+		this.fields.push(new FieldInfo().assignValues({
+			"api_name": "nginx_template",
+			"label": "Nginx template",
+			"component": "TextArea",
+		}));
+		
 		this.form.fields = this.fields.slice();
 		this.form.fields = this.fields.slice();
 	}

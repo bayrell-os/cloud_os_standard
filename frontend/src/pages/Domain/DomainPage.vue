@@ -55,7 +55,7 @@
 			</td>
 		</tr>
 	</table>
-	<Dialog v-bind:store_path="store_path.concat('dialog_form')">
+	<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px">
 		<template v-slot:title>
 			Добавить запись
 		</template>
@@ -87,7 +87,7 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 import axios from "axios";
-import Button from '@/components/Button/Button.vue';
+import Button from '@/components/Button.vue';
 import Dialog from '@/components/Dialog/Dialog.vue';
 import Form from '@/components/Form/Form.vue';
 

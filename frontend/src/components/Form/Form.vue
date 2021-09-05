@@ -75,10 +75,12 @@
 				>
 					<div class="form_label">{{ field.label }}</div>
 					<div class="form_value">
-						<input v-bind:name="field.api_name"
+						
+						<component v-bind:is="field.component"
 							v-bind:value="model.getItemValue(field.api_name)"
 							@change="onChangeItem(field.api_name, $event)"
-							/>
+						/>
+						
 					</div>
 					<div class="form_error"></div>
 				</div>
@@ -98,6 +100,14 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 import axios from "axios";
+import Input from '@/components/Input.vue';
+import TextArea from '@/components/TextArea.vue';
+
+export let COMPONENTS =
+{
+	Input,
+	TextArea,
+};
 
 export default defineComponent({
 	mixins: [ mixin ],
@@ -109,12 +119,12 @@ export default defineComponent({
 	{
 		onChangeItem(api_name, $event)
 		{
-			this.model.setItemValue(api_name, $event.target.value)
+			console.log(api_name);
+			console.log($event);
+			//this.model.setItemValue(api_name, $event.target.value)
 		}
 	},
-	components:
-	{
-	}
+	components: COMPONENTS,
 });
 
 </script>

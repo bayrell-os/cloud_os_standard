@@ -22,7 +22,7 @@ export class FieldInfo extends BaseObject
 {
     api_name: string = "";
     label: string = "";
-    component_name: string = "";
+    component: any = null;
     
     
     /**
@@ -32,7 +32,7 @@ export class FieldInfo extends BaseObject
 	{
 		this.api_name = String(params["api_name"] || this.api_name);
 		this.label = String(params["label"] || this.label);
-		this.component_name = String(params["component_name"] || this.component_name);
+		this.component = String(params["component"] || this.component);
 		super.assignValues(params);
 		return this;
 	}
@@ -46,7 +46,7 @@ export class FieldInfo extends BaseObject
 		return {
 			"api_name": this.api_name,
 			"label": this.label,
-			"component_name": this.component_name,
+			"component": this.component,
 		};
 	}
 }
