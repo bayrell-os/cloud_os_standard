@@ -16,6 +16,7 @@
  *  limitations under the License.
  */
 
+import { DialogButton, DialogState } from '@/components/Dialog/DialogState';
 import axios, { AxiosResponse } from 'axios';
 import type { DefineComponent } from 'vue'
 import { BaseObject } from "vue-helper";
@@ -64,6 +65,8 @@ export class Domain extends BaseObject
 export class DomainPageState
 {
 	items: Array<Domain> = new Array<Domain>();
+	dialog_delete: DialogState = new DialogState();
+	dialog_form: DialogState = new DialogState();
 	
 	
 	/**
@@ -94,27 +97,4 @@ export class DomainPageState
 		}
 	}
 	
-	
-	/**
-	 * Returns methods list
-	 */
-	static mutations(): Array<string>
-	{
-		let res: Array<string> =
-		[
-		];
-		return res;
-	}
-	
-	
-	/**
-	 * Returns modules
-	 */
-	static modules(): Record<string, any>
-	{
-		let res: Record<string, any> =
-		{
-		};
-		return res;
-	}
 }
