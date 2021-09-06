@@ -82,15 +82,15 @@
 .dialog_row:last-child{
 	padding-bottom: 0px;
 }
-.dialog_result{
+.dialog_result_message{
 	text-align: center;
 	padding-top: 12px;
 	white-space: break-spaces;
 }
-.dialog_result.success{
+.dialog_result_message.success{
 	color: green;
 }
-.dialog_result.error{
+.dialog_result_message.error{
 	color: red;
 }
 </style>
@@ -101,19 +101,19 @@
 		<div class='dialog_shadow'></div>
 		<table class='dialog_wrap'><tr><td>
 			<div class='dialog' v-bind:style="getDialogStyle()">
+				
 				<div class='dialog_title'>
-					<slot name="title">
-						{{ model.title }}
-					</slot>
+					<slot name="title">{{ model.title }}</slot>
 				</div>
+				
 				<div class='dialog_text'>
-					<slot name="text">
-						{{ model.text }}
-					</slot>
+					<slot name="text">{{ model.text }}</slot>
 				</div>
+				
 				<div class='dialog_content'>
-					<slot name="content"/>
+					<slot name="content"></slot>
 				</div>
+				
 				<div class='dialog_buttons' v-if="showButtons()">
 					<slot name="buttons">
 						<Button v-for="button, index in model.buttons" v-bind:data-action="button.action"
@@ -122,6 +122,18 @@
 						>{{ button.label }}</Button>
 					</slot>
 				</div>
+				
+				<div class="dialog_result">
+					<slot name="result">
+						<div class="dialog_result_message" v-if="model.message != ''"
+							v-bind:class="{
+								error: model.error_code < 0,
+								success: model.error_code > 0,
+							}"
+						>{{ model.message }}</div>
+					</slot>
+				</div>
+				
 			</div>
 		</td></tr></table>
 	</div>

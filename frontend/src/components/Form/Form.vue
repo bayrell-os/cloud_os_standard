@@ -35,14 +35,14 @@
 	margin-left: 10px;
 	margin-right: 10px;
 }
-.form_result{
+.form_result_message{
 	padding-top: 10px;
 	text-align: center;
 }
-.form_result.success{
+.form_result_message.success{
 	color: green;
 }
-.form_result.error{
+.form_result_message.error{
 	color: red;
 }
 </style>
@@ -51,13 +51,12 @@
 <template>
 	<div class="form">
 		
-		<slot name="title">
-			<div class="form_title">{{ model.title }}</div>
-		</slot>
+		<div class="form_title">
+			<slot name="title">{{ model.title }}</slot>
+		</div>
 		
-		<slot name="rows">
-			<div class="form_rows">
-				
+		<div class="form_rows">
+			<slot name="rows">
 				<div class="form_row"
 					v-for="field in model.fields" :key="field.api_name"
 					v-bind:data-name="field.api_name"
@@ -71,21 +70,22 @@
 					</div>
 					<div class="form_row_result"></div>
 				</div>
-				
-			</div>
-		</slot>
+			</slot>
+		</div>
 		
-		<slot name="buttons">
-			<div class="form_buttons"></div>
-		</slot>
+		<div class="form_buttons">
+			<slot name="buttons"></slot>
+		</div>
 		
-		<slot name="result">
-			<div class="form_result"
-				v-bind:class="{
-					error: model.error_code < 0,
-					success: model.error_code > 0,
-				}">{{ model.message }}</div>
-		</slot>
+		<div class="form_result">
+			<slot name="result">
+				<div class="form_result_message"
+					v-bind:class="{
+						error: model.error_code < 0,
+						success: model.error_code > 0,
+					}">{{ model.message }}</div>
+			</slot>
+		</div>
 		
 	</div>
 </template>
@@ -115,9 +115,9 @@ export default defineComponent({
 	{
 		onChangeItem(api_name, $event)
 		{
-			console.log(api_name);
-			console.log($event);
-			//this.model.setItemValue(api_name, $event.target.value)
+			//console.log(api_name);
+			//console.log($event);
+			this.model.setItemValue(api_name, $event.target.value)
 		}
 	},
 	components: COMPONENTS,

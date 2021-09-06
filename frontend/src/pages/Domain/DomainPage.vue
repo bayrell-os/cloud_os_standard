@@ -71,10 +71,8 @@
 		<template v-slot:content>
 			<Form v-bind:store_path="store_path.concat('form')">
 				<template v-slot:buttons>
-					<div class="form_buttons">
-						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-						<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-					</div>
+					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
 				</template>
 			</Form>
 		</template>
@@ -139,7 +137,7 @@ export default defineComponent({
 			}
 			else if (action == "yes")
 			{
-				console.log(action);
+				this.model.constructor.deleteForm(this);
 			}
 			else if (action == "no")
 			{

@@ -61,7 +61,9 @@ export class DialogState extends BaseObject
     open: boolean = false;
     title: string = "";
     buttons: Array<DialogButton> = [];
-    
+    error_code: number = 0;
+	message: string = "";
+	
     
     /**
 	 * Show dialog
@@ -106,4 +108,35 @@ export class DialogState extends BaseObject
 			"buttons": this.buttons,
 		};
 	}
+	
+	
+	
+	/**
+	 * Set wait response
+	 */
+	setWaitResponse()
+	{
+		this.error_code = 0;
+		this.message = "Please wait";
+	}
+	
+	
+	
+	/**
+	 * Set response
+	 */
+	setResponse(data: any)
+	{
+		if (typeof(data) == "object")
+		{
+			this.error_code = data["error"]["code"];
+			this.message = data["error"]["str"];
+		}
+		else
+		{
+			this.error_code = -1;
+			this.message = "System error";
+		}
+	}
+	
 }

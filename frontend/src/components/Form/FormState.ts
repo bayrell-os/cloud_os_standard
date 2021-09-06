@@ -18,6 +18,7 @@
 
 import { BaseObject } from "vue-helper";
 import { FieldInfo } from "@/components/Crud";
+import { AxiosResponse } from "axios";
 
 
 export class FormState extends BaseObject
@@ -25,7 +26,7 @@ export class FormState extends BaseObject
 	title: string = "";
 	fields: Array<FieldInfo> = [];
 	item: Record<string, any> = {};
-	item_original: Record<string, any> = {};
+	item_original: Record<string, any> | null = null;
 	error_code: number = 0;
 	message: string = "";
 	
@@ -100,9 +101,17 @@ export class FormState extends BaseObject
 	/**
 	 * Set response
 	 */
-	setResponse(response: any)
+	setResponse(data: any)
 	{
-		this.error_code = response["error"]["code"];
-		this.message = response["error"]["str"];
+		if (typeof(data) == "object")
+		{
+			this.error_code = data["error"]["code"];
+			this.message = data["error"]["str"];
+		}
+		else
+		{
+			this.error_code = -1;
+			this.message = "System error";
+		}
 	}
 }

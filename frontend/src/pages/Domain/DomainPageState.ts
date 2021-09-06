@@ -39,7 +39,8 @@ export class Domain extends BaseObject
 	{
 		this.domain_name = String(params["domain_name"] || this.domain_name);
 		this.nginx_template = String(params["nginx_template"] || this.nginx_template);
-		this.space_id = Number(params["space_id"] || this.space_id);
+		this.space_id = this.space_id != null ?
+			(Number(params["space_id"] || this.space_id)) : null;
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		super.assignValues(params);
@@ -94,6 +95,7 @@ export class DomainPageState
 	}
 	
 	
+	
 	/**
 	 * Show form
 	 */
@@ -108,10 +110,11 @@ export class DomainPageState
 		else
 		{
 			this.form.item = new Domain();
-			this.form.item_original = new Domain();
+			this.form.item_original = null;
 		}
 		this.dialog_form.show();
 	}
+	
 	
 	
 	/**
@@ -124,6 +127,7 @@ export class DomainPageState
 			this.dialog_delete.show();
 		}
 	}
+	
 	
 	 
 	/**
@@ -140,6 +144,7 @@ export class DomainPageState
 	}
 	
 	
+	
 	/**
 	 * Set current item
 	 */
@@ -147,6 +152,46 @@ export class DomainPageState
 	{
 		this.current_item = item;
 	}
+	
+	
+	
+	/**
+	 * Set change item
+	 */
+	setChangeItem(domain_name: string, item: Domain)
+	{
+		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
+		if (index != -1)
+		{
+			this.items[index] = item;
+		}
+	}
+	
+	
+	
+	/**
+	 * Add new item
+	 */
+	addNewItem(data: any)
+	{
+		let item:Domain = new Domain().assignValues(data);
+		this.items.unshift(item);
+	}
+	
+	
+	
+	/**
+	 * Delete item
+	 */
+	deleteItem(domain_name: string)
+	{
+		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
+		if (index != -1)
+		{
+			this.items.splice(index, 1);
+		}
+	}
+	
 	
 	
 	/**
@@ -171,7 +216,8 @@ export class DomainPageState
 		
 		let url = "/api/domains/crud/search/";
 		let response:AxiosResponse = await axios.get(url);
-		if (response.data.error.code == 1)
+		
+		if (typeof(response.data) == "object" && response.data.error.code == 1)
 		{
 			model.items = new Array();
 			model.loadItems(response.data.result.items);
@@ -186,7 +232,94 @@ export class DomainPageState
 	static async saveForm(component: DefineComponent)
 	{
 		let model:DomainPageState = component.model;
+		let response:AxiosResponse;
+		let item:Domain = model.form.item as Domain;
+		let item_original:Domain = model.form.item_original as Domain;
+		
 		model.form.setWaitResponse();
+		
+		if (item_original == null)
+		{
+			let url = "/api/domains/crud/create/";
+			
+			try
+			{
+				response = await axios.post(url, {"item": item});
+			}
+			catch (e)
+			{
+				response = e.response;
+			}
+			
+			model = component.model;
+			model.form.setResponse(response.data);
+			
+			if (response.data.error.code == 1)
+			{
+				model.addNewItem(response.data.result.item);
+				model.dialog_form.hide();
+			}
+		}
+		else
+		{
+			let url = "/api/domains/crud/edit/" + item_original.domain_name + "/";
+			
+			try
+			{
+				response = await axios.post(url, {"item": item});
+			}
+			catch (e)
+			{
+				response = e.response;
+			}
+			
+			model = component.model;
+			model.form.setResponse(response.data);
+			
+			if (typeof(response.data) == "object" && response.data.error.code == 1)
+			{
+				model.setChangeItem(item_original.domain_name, response.data.result.item);
+				model.dialog_form.hide();
+			}
+		}
+		
 	}
 	
+	
+	
+	/**
+	 * Delete form
+	 */
+	static async deleteForm(component: DefineComponent)
+	{
+		let model:DomainPageState = component.model;
+		let response:AxiosResponse;
+		let item:Domain = model.current_item as Domain;
+		
+		model.dialog_delete.setWaitResponse();
+		
+		if (item)
+		{
+			let url = "/api/domains/crud/delete/" + item.domain_name + "/";
+			
+			try
+			{
+				response = await axios.delete(url);
+			}
+			catch (e)
+			{
+				response = e.response;
+			}
+			
+			model = component.model;
+			model.dialog_delete.setResponse(response.data);
+			
+			if (typeof(response.data) == "object" && response.data.error.code == 1)
+			{
+				model.deleteItem(item.domain_name);
+				model.dialog_delete.hide();
+			}
+		}
+		
+	}
 }
