@@ -16,145 +16,33 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.table{
-	border-collapse: collapse;
-    border: 1px #ccc solid;
-    margin-top: 10px
-}
-.table td, .table th{
-	border: 1px #ccc solid;
-    padding: 5px;
-    text-align: center;
-}
-.buttons button{
-	margin-left: 2px;
-    margin-right: 2px;
-}
-.dialog_buttons button{
-	margin: 0 5px;
-}
-.form_buttons{
-	text-align: center;
-	margin-top: 10px;
-}
-.form_buttons button{
-	margin-left: 10px;
-	margin-right: 10px;
-}
-</style>
-
-
 <template>
-	<div class="top_buttons">
-		<Button type="primary" @click="onShowAdd()">Add domain</Button>
-	</div>
-	<table class="table">
-		<tr class="header">
-			<th></th>
-			<th>Domain name</th>
-			<th></th>
-		</tr>
-		<tr class="row" v-for="item, index in model.items" :key="item.domain_name">
-			<td>{{ index + 1 }}</td>
-			<td>{{ item.domain_name }}</td>
-			<td class="buttons">
-				<Button type="default" small="true" @click="onShowEdit(item.domain_name)">Edit</Button>
-				<Button type="danger" small="true" @click="onShowDelete(item.domain_name)">Delete</Button>
-			</td>
-		</tr>
-	</table>
-	<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
-		<template v-slot:title>
-			Добавить запись
-		</template>
-		<template v-slot:content>
-			<Form v-bind:store_path="store_path.concat('form')">
-				<template v-slot:buttons>
-					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-				</template>
-			</Form>
-		</template>
-	</Dialog>
-	<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
-		<template v-slot:title>
-			Удалить домен
-		</template>
-		<template v-slot:text>
-			Вы действительно хотите удалить домен "{{ model.current_item ? model.current_item.domain_name : '' }}" ?
-		</template>
-		<template v-slot:buttons>
-			<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
-			<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
-		</template>
-	</Dialog>
+	<Crud v-bind:store_path="store_path" />
 </template>
-
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
-import axios from "axios";
-import Button from '@/components/Button.vue';
-import Dialog from '@/components/Dialog/Dialog.vue';
-import Form from '@/components/Form/Form.vue';
+import { mixin, componentExtend } from "vue-helper";
+import { Crud } from '@/components/Crud.vue';
+import { DomainPageState } from './DomainPageState';
 
-export default defineComponent({
-	mixins: [ mixin ],
-	computed:
-	{
-	},
+
+export const DomainPage =
+{
+	name: "DomainPage",
+	mixins: [mixin],
 	methods:
 	{
-		onShowAdd: function()
-		{
-			this.model.setCurrentItem(null);
-			this.model.showForm();
-		},
-		onShowEdit: function(domain_name)
-		{
-			let item = this.model.findItemByDomainName(domain_name);
-			this.model.setCurrentItem(item);
-			this.model.showForm();
-		},
-		onShowDelete: function(domain_name)
-		{
-			let item = this.model.findItemByDomainName(domain_name);
-			this.model.setCurrentItem(item);
-			this.model.showDelete();
-		},
-		onDialogFormButtonClick: function(action)
-		{
-			if (action == "save")
-			{
-				this.model.constructor.saveForm(this);
-			}
-			else if (action == "cancel")
-			{
-				this.model.dialog_form.hide();
-			}
-			else if (action == "yes")
-			{
-				this.model.constructor.deleteForm(this);
-			}
-			else if (action == "no")
-			{
-				this.model.dialog_delete.hide();
-			}
-		},
 	},
-	components:
+	mounted()
 	{
-		Button,
-		Dialog,
-		Form,
-	},
-	mounted() {
 		this.setPageTitle("Domains");
-		this.model.constructor.loadData(this);
+		this.model.constructor.apiLoadData(this);
 	}
-});
+}
+
+componentExtend(DomainPage, Crud);
+export default defineComponent(DomainPage);
 
 </script>

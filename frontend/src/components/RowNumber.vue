@@ -17,11 +17,18 @@
 -->
 
 <style lang="scss" scoped>
+.input{
+	width: 100%;
+	padding: 6px 12px;
+	background-color: white;
+	border: 1px #ccc solid;
+	outline: transparent;
+}
 </style>
 
 
 <template>
-    Page not found
+	<div v-bind:data-name="name" >{{ crud_index + 1 }}</div>
 </template>
 
 
@@ -30,20 +37,23 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 
-export const NotFoundPage =
+
+export const RowNumber =
 {
+    name: "RowNumber",
 	mixins: [ mixin ],
+	props: [ "crud_index", "name" ],
 	computed:
 	{
 	},
 	methods:
 	{
 	},
-	mounted() {
-		this.setPageTitle("Page not found");
-	}
+	components:
+	{
+	},
 };
 
-export default defineComponent(NotFoundPage);
+export default defineComponent(RowNumber);
 
 </script>

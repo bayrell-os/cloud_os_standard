@@ -75,7 +75,8 @@ button.success:hover{
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 
-export default defineComponent({
+export const Button =
+{
 	mixins: [ mixin ],
     props: ["type", "small"],
 	computed:
@@ -98,6 +99,8 @@ export default defineComponent({
 	components:
 	{
 	},
-});
+};
+
+export default defineComponent(Button);
 
 </script>

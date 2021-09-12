@@ -16,14 +16,11 @@
  *  limitations under the License.
  */
 
-import { FieldInfo } from '@/components/Crud';
-import { DialogButton, DialogState } from '@/components/Dialog/DialogState';
-import { FormState } from '@/components/Form/FormState';
-import axios, { AxiosResponse } from 'axios';
-import type { DefineComponent } from 'vue'
-import { BaseObject, deepClone } from "vue-helper";
+import { CrudItem, CrudState, FieldInfo } from '@/components/CrudState';
+import { deepClone } from "vue-helper";
 
-export class Domain extends BaseObject
+
+export class Domain extends CrudItem
 {
 	domain_name: string = "";
 	nginx_template: string = "";
@@ -53,273 +50,150 @@ export class Domain extends BaseObject
 	 */
 	getValues(): Record<string, any>
 	{
-		return {
+		let res: Record<string, any> = super.getValues();
+		return Object.assign(res, {
 			"domain_name": this.domain_name,
 			"nginx_template": this.nginx_template,
 			"space_id": this.space_id,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
-		};
+		});
 	}
 }
 
 
-export class DomainPageState
+
+export class DomainPageState extends CrudState
 {
-	fields: Array<FieldInfo> = [];
-	current_item: Domain | null = null;
-	items: Array<Domain> = new Array<Domain>();
-	form: FormState = new FormState();
-	dialog_delete: DialogState = new DialogState();
-	dialog_form: DialogState = new DialogState();
+	
+	/**
+	 * Returns new item
+	 */
+	createNewItem(): Domain
+	{
+		return new Domain();
+	}
 	
 	
-	constructor()
+	
+	/**
+	 * Returns api object name
+	 */
+	getApiObjectName()
+	{
+		return "domains";
+	}
+	
+	
+	
+	/**
+	 * Return api search url
+	 */
+	getApiUrlSearch()
+	{
+		return "/api/" + this.getApiObjectName() + "/crud/search/";
+	}
+	
+	
+	
+	/**
+	 * Return api create url
+	 */
+	getApiUrlCreate()
+	{
+		return "/api/" + this.getApiObjectName() + "/crud/create/";
+	}
+	
+	
+	
+	/**
+	 * Return api update url
+	 */
+	getApiUrlUpdate(item: Domain)
+	{
+		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.domain_name + "/";
+	}
+	
+	
+	
+	/**
+	 * Return api delete url
+	 */
+	getApiUrlDelete(item: Domain)
+	{
+		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.domain_name + "/";
+	}
+	
+	
+	
+	/**
+	 * Crud init
+	 */
+	crudInit()
 	{
 		/* Domain name field */
-		this.fields.push(new FieldInfo().assignValues({
-			"api_name": "domain_name",
-			"label": "Domain name",
-			"component": "Input",
-		}));
+		let domain_name = new FieldInfo();
+		domain_name.api_name = "domain_name";
+		domain_name.label = "Domain name";
+		domain_name.component = "Input";
+		domain_name.primary = true;
+		this.fields.push( deepClone(domain_name) );
 		
 		/* Nginx template */
-		this.fields.push(new FieldInfo().assignValues({
-			"api_name": "nginx_template",
-			"label": "Nginx template",
-			"component": "TextArea",
-		}));
+		let nginx_template = new FieldInfo();
+		nginx_template.api_name = "nginx_template";
+		nginx_template.label = "Nginx template";
+		nginx_template.component = "TextArea";
+		this.fields.push( deepClone(nginx_template) );
 		
-		this.form.fields = this.fields.slice();
-		this.form.fields = this.fields.slice();
-	}
-	
-	
-	
-	/**
-	 * Show form
-	 */
-	showForm()
-	{
-		this.form.clear();
-		if (this.current_item != null)
-		{
-			this.form.item = deepClone(this.current_item);
-			this.form.item_original = deepClone(this.current_item);
-		}
-		else
-		{
-			this.form.item = new Domain();
-			this.form.item_original = null;
-		}
-		this.dialog_form.show();
-	}
-	
-	
-	
-	/**
-	 * Show delete
-	 */
-	showDelete()
-	{
-		if (this.current_item != null)
-		{
-			this.dialog_delete.show();
-		}
-	}
-	
-	
-	 
-	/**
-	 * Find item by domain name
-	 */
-	findItemByDomainName(domain_name: string): Domain | null
-	{
-		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
-		if (index != -1)
-		{
-			return this.items[index];
-		}
-		return null;
-	}
-	
-	
-	
-	/**
-	 * Set current item
-	 */
-	setCurrentItem(item: Domain | null)
-	{
-		this.current_item = item;
-	}
-	
-	
-	
-	/**
-	 * Set change item
-	 */
-	setChangeItem(domain_name: string, item: Domain)
-	{
-		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
-		if (index != -1)
-		{
-			this.items[index] = item;
-		}
-	}
-	
-	
-	
-	/**
-	 * Add new item
-	 */
-	addNewItem(data: any)
-	{
-		let item:Domain = new Domain().assignValues(data);
-		this.items.unshift(item);
-	}
-	
-	
-	
-	/**
-	 * Delete item
-	 */
-	deleteItem(domain_name: string)
-	{
-		let index = this.items.findIndex( (item) => item.domain_name == domain_name );
-		if (index != -1)
-		{
-			this.items.splice(index, 1);
-		}
-	}
-	
-	
-	
-	/**
-	 * Load items
-	 */
-	loadItems(items: Array<any>)
-	{
-		for (let i = 0; i < items.length; i++)
-		{
-			this.items.push(new Domain().assignValues(items[i]));
-		}
-	}
-	
-	
-	
-	/**
-	 * Load data
-	 */
-	static async loadData(component: DefineComponent)
-	{
-		let model:DomainPageState = component.model;
+		/* Row number */
+		let row_number = new FieldInfo();
+		row_number.api_name = "row_number";
+		row_number.label = "";
+		row_number.component = "RowNumber";
 		
-		let url = "/api/domains/crud/search/";
-		let response:AxiosResponse = await axios.get(url);
+		/* Row buttons */
+		let row_buttons = new FieldInfo();
+		row_buttons.api_name = "row_buttons";
+		row_buttons.label = "";
+		row_buttons.component = "RowButtons";
 		
-		if (typeof(response.data) == "object" && response.data.error.code == 1)
-		{
-			model.items = new Array();
-			model.loadItems(response.data.result.items);
-		}
+		/* Form fields */
+		this.form.fields.push( deepClone(domain_name) );
+		this.form.fields.push( deepClone(nginx_template) );
+		
+		/* Table fields */
+		domain_name.component = "Label";
+		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(domain_name) );
+		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
 	
 	
 	/**
-	 * Save form
+	 * Returns form value
 	 */
-	static async saveForm(component: DefineComponent)
+	getItemName(item: Domain | null): string
 	{
-		let model:DomainPageState = component.model;
-		let response:AxiosResponse;
-		let item:Domain = model.form.item as Domain;
-		let item_original:Domain = model.form.item_original as Domain;
-		
-		model.form.setWaitResponse();
-		
-		if (item_original == null)
-		{
-			let url = "/api/domains/crud/create/";
-			
-			try
-			{
-				response = await axios.post(url, {"item": item});
-			}
-			catch (e)
-			{
-				response = e.response;
-			}
-			
-			model = component.model;
-			model.form.setResponse(response.data);
-			
-			if (response.data.error.code == 1)
-			{
-				model.addNewItem(response.data.result.item);
-				model.dialog_form.hide();
-			}
-		}
-		else
-		{
-			let url = "/api/domains/crud/edit/" + item_original.domain_name + "/";
-			
-			try
-			{
-				response = await axios.post(url, {"item": item});
-			}
-			catch (e)
-			{
-				response = e.response;
-			}
-			
-			model = component.model;
-			model.form.setResponse(response.data);
-			
-			if (typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				model.setChangeItem(item_original.domain_name, response.data.result.item);
-				model.dialog_form.hide();
-			}
-		}
-		
+		return (item) ? item.domain_name : "";
 	}
 	
 	
 	
 	/**
-	 * Delete form
+	 * Returns delete message
 	 */
-	static async deleteForm(component: DefineComponent)
+	getMessage(message_type: string, item: Domain | null): string
 	{
-		let model:DomainPageState = component.model;
-		let response:AxiosResponse;
-		let item:Domain = model.current_item as Domain;
-		
-		model.dialog_delete.setWaitResponse();
-		
-		if (item)
+		if (message_type == "dialog_delete_title")
 		{
-			let url = "/api/domains/crud/delete/" + item.domain_name + "/";
-			
-			try
-			{
-				response = await axios.delete(url);
-			}
-			catch (e)
-			{
-				response = e.response;
-			}
-			
-			model = component.model;
-			model.dialog_delete.setResponse(response.data);
-			
-			if (typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				model.deleteItem(item.domain_name);
-				model.dialog_delete.hide();
-			}
+			return "Delete domain";
 		}
-		
+		if (message_type == "dialog_delete_text")
+		{
+			return "Do you sure to delete domain \"" + this.getItemName(item) + "\" ?";
+		}
+		return super.getMessage(message_type, item);
 	}
 }

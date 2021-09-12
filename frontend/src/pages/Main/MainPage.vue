@@ -32,7 +32,8 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 
-export default defineComponent({
+export const MainPage =
+{
 	mixins: [ mixin ],
 	computed:
 	{
@@ -43,6 +44,8 @@ export default defineComponent({
 	mounted() {
 		this.setPageTitle("Index page");
 	}
-});
+};
+
+export default defineComponent(MainPage);
 
 </script>

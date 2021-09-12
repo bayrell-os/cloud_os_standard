@@ -95,17 +95,12 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
+import { COMPONENTS } from "@/components/CrudState";
 import axios from "axios";
-import Input from '@/components/Input.vue';
-import TextArea from '@/components/TextArea.vue';
 
-export let COMPONENTS =
+
+export const Form =
 {
-	Input,
-	TextArea,
-};
-
-export default defineComponent({
 	mixins: [ mixin ],
 	props: [],
 	computed:
@@ -115,12 +110,12 @@ export default defineComponent({
 	{
 		onChangeItem(api_name, $event)
 		{
-			//console.log(api_name);
-			//console.log($event);
 			this.model.setItemValue(api_name, $event.target.value)
 		}
 	},
 	components: COMPONENTS,
-});
+};
+
+export default defineComponent(Form);
 
 </script>

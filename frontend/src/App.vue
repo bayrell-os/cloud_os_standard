@@ -146,7 +146,8 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 
-export default defineComponent({
+export const App =
+{
 	mixins: [ mixin ],
 	data: function () {
 		return {
@@ -168,5 +169,8 @@ export default defineComponent({
 	methods:
 	{
 	}
-});
+};
+
+export default defineComponent(App);
+
 </script>

@@ -37,7 +37,9 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 
-export default defineComponent({
+
+export const Input =
+{
 	mixins: [ mixin ],
 	props: [ "value", "name", "type" ],
 	computed:
@@ -49,6 +51,8 @@ export default defineComponent({
 	components:
 	{
 	},
-});
+};
+
+export default defineComponent(Input);
 
 </script>

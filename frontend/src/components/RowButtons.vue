@@ -17,11 +17,18 @@
 -->
 
 <style lang="scss" scoped>
+.buttons button{
+    margin-left: 2px;
+    margin-right: 2px;
+}
 </style>
 
 
 <template>
-    Page not found
+    <div class='buttons'>
+	    <Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
+        <Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
+    </div>
 </template>
 
 
@@ -29,21 +36,35 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
+import Button from "./Button";
+import { CrudEvent } from "./CrudState";
 
-export const NotFoundPage =
+
+export const RowButtons =
 {
+    name: "RowButtons",
 	mixins: [ mixin ],
+	props: [ "crud_index", "crud_item", "crud_field", "name", "value" ],
 	computed:
 	{
 	},
 	methods:
 	{
+        onButtonClick: function(button_name)
+        {
+            let event = new CrudEvent();
+            event.name = "row_button_click";
+            event.attrs["crud_item"] = this.crud_item;
+            event.attrs["button_name"] = button_name;
+            this.$emit( "crudEvent", event );
+        }
 	},
-	mounted() {
-		this.setPageTitle("Page not found");
-	}
+	components:
+	{
+        Button,
+	},
 };
 
-export default defineComponent(NotFoundPage);
+export default defineComponent(RowButtons);
 
 </script>
