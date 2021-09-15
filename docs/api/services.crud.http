@@ -1,0 +1,153 @@
+# Api domain crud
+
+
+### Get services
+
+GET {{app_url}}/api/services/crud/search/
+  ?start=0&limit=10 HTTP/1.1
+
+
+### Answer:
+
+{
+  "data": {
+    "items": [
+      {
+        "service_id": 28,
+        "stack_name": "cloud_os",
+        "service_name": "http",
+        "software_api_name": "",
+        "enable": 1,
+        "docker_name": "cloud_os_http",
+        "gmtime_created": "2021-08-20 09:30:35",
+        "gmtime_updated": "2021-08-20 09:30:35"
+      },
+    ],
+    "filter": [],
+    "start": 0,
+    "limit": 10,
+    "total": 1
+  },
+  "error": {
+    "code": 1,
+    "name": "",
+    "str": ""
+  }
+}
+
+
+### Search service
+
+GET {{app_url}}/api/services/crud/search/
+  ?filter[]=["domain_name","like","test"] HTTP/1.1
+
+
+### Answer:
+
+{
+  "result": {
+    "items": [
+      {
+        "service_id": 28,
+        "stack_name": "cloud_os",
+        "service_name": "http",
+        "software_api_name": "",
+        "enable": 1,
+        "docker_name": "cloud_os_http",
+        "gmtime_created": "2021-08-20 09:30:35",
+        "gmtime_updated": "2021-08-20 09:30:35"
+      },
+    ],
+    "filter": [],
+    "start": 0,
+    "limit": 10,
+    "total": 1
+  },
+  "error": {
+    "code": 1,
+    "str": "",
+    "name": ""
+  }
+}
+
+
+### Get service
+
+GET {{app_url}}/api/services/crud/item/28/ HTTP/1.1
+
+
+### Answer:
+
+{
+  "result": {
+    "item": {
+      "service_id": 28,
+      "stack_name": "cloud_os",
+      "service_name": "http",
+      "software_api_name": "",
+      "enable": 1,
+      "docker_name": "cloud_os_http",
+      "gmtime_created": "2021-08-20 09:30:35",
+      "gmtime_updated": "2021-08-20 09:30:35"
+    }
+  },
+  "error": {
+    "code": 1,
+    "name": "",
+    "str": ""
+  }
+}
+
+
+### Create service
+
+POST {{app_url}}/api/services/crud/create/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "item":
+  {
+  }
+}
+
+
+### Answer:
+
+{
+  "result": null,
+  "error": {
+    "code": -405,
+    "name": "TinyPHP.Exception.HttpMethodNotAllowedException",
+    "str": "Method are not allowed"
+  }
+}
+
+
+### Edit service
+
+POST {{app_url}}/api/services/crud/edit/1/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "item":
+  {
+  }
+}
+
+
+### Answer
+
+{
+  "result": null,
+  "error": {
+    "code": -405,
+    "name": "TinyPHP.Exception.HttpMethodNotAllowedException",
+    "str": "Method are not allowed"
+  }
+}
+
+
+### Delete service
+
+DELETE {{app_url}}/api/services/crud/delete/1/ HTTP/1.1
+Content-Type: application/json
