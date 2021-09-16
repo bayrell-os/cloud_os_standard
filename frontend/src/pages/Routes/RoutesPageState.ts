@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo } from '@/components/CrudState';
+import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/Crud/CrudState';
 import { deepClone } from "vue-helper";
 
 
@@ -154,6 +154,14 @@ export class RoutesPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
+		/* Protocol field */
+		let protocol = new FieldInfo();
+		protocol.api_name = "protocol";
+		protocol.label = "Protocol";
+		protocol.component = "Input";
+		protocol.primary = true;
+		this.fields.push( deepClone(protocol) );
+		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
 		domain_name.api_name = "domain_name";
@@ -161,6 +169,50 @@ export class RoutesPageState extends CrudState
 		domain_name.component = "Input";
 		domain_name.primary = true;
 		this.fields.push( deepClone(domain_name) );
+		
+		/* Route field */
+		let route = new FieldInfo();
+		route.api_name = "route";
+		route.label = "Route";
+		route.component = "Input";
+		route.primary = true;
+		this.fields.push( deepClone(route) );
+		
+		/* Route prefix field */
+		let route_prefix = new FieldInfo();
+		route_prefix.api_name = "route_prefix";
+		route_prefix.label = "Route prefix";
+		route_prefix.component = "Input";
+		route_prefix.primary = true;
+		this.fields.push( deepClone(route_prefix) );
+		
+		/* Target port field */
+		let target_port = new FieldInfo();
+		target_port.api_name = "target_port";
+		target_port.label = "Target port";
+		target_port.component = "Input";
+		target_port.primary = true;
+		this.fields.push( deepClone(target_port) );
+		
+		/* Docker name field */
+		let docker_name = new FieldInfo();
+		docker_name.api_name = "docker_name";
+		docker_name.label = "Docker name";
+		docker_name.component = "Input";
+		docker_name.primary = true;
+		this.fields.push( deepClone(docker_name) );
+		
+		/* Enable field */
+		let enable = new FieldInfo();
+		enable.api_name = "enable";
+		enable.label = "Enable";
+		enable.component = "Select";
+		enable.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
+		this.fields.push( deepClone(enable) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -175,12 +227,30 @@ export class RoutesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
+		this.form.fields.push( deepClone(enable) );
+		this.form.fields.push( deepClone(protocol) );
+		this.form.fields.push( deepClone(docker_name) );
+		this.form.fields.push( deepClone(route) );
 		this.form.fields.push( deepClone(domain_name) );
+		this.form.fields.push( deepClone(target_port) );
+		this.form.fields.push( deepClone(route_prefix) );
 		
 		/* Table fields */
+		enable.component = "SelectLabel";
+		route.component = "Label";
+		protocol.component = "Label";
+		docker_name.component = "Label";
 		domain_name.component = "Label";
+		target_port.component = "Label";
+		route_prefix.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(enable) );
+		this.fields_table.push( deepClone(protocol) );
+		this.fields_table.push( deepClone(docker_name) );
+		this.fields_table.push( deepClone(route) );
 		this.fields_table.push( deepClone(domain_name) );
+		this.fields_table.push( deepClone(target_port) );
+		this.fields_table.push( deepClone(route_prefix) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

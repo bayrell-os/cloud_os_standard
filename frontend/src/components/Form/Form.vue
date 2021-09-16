@@ -97,7 +97,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
-import { COMPONENTS } from "@/components/CrudState";
+import { COMPONENTS } from "@/components/Crud/CrudState";
 import axios from "axios";
 
 

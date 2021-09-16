@@ -145,7 +145,7 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 import { DialogButtonClickEvent } from '@/components/Dialog/DialogState.ts';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Crud/Button.vue';
 
 export default defineComponent({
 	mixins: [ mixin ],

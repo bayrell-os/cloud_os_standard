@@ -29,7 +29,8 @@
 
 
 <template>
-	<textarea class="textarea" v-bind:name="name" v-bind:type="type" v-bind:value="value"></textarea>
+	<textarea class="textarea" v-bind:name="name" v-bind:type="type" v-bind:value="value"
+		@change="onChange(name, $event)"></textarea>
 </template>
 
 
@@ -37,6 +38,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from 'vue-helper';
+import { CrudEvent } from "./CrudState";
 import { Field } from './Field.vue';
 
 
@@ -50,6 +52,13 @@ export const TextArea =
 	},
 	methods:
 	{
+		onChange: function(name, $event)
+		{
+			let event = new CrudEvent();
+			event.name = "change";
+			event.value = $event.target.value;
+			this.$emit( "crudEvent", event );
+		}
 	},
 	components:
 	{

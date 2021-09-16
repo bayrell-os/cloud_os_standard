@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/CrudState';
+import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/Crud/CrudState';
 import { deepClone } from "vue-helper";
 
 
@@ -263,7 +263,7 @@ export class ServicesPageState extends CrudState
 		this.fields_table.push( deepClone(docker_image) );
 		this.fields_table.push( deepClone(replicas) );
 		this.fields_table.push( deepClone(enable) );
-		this.fields_table.push( deepClone(row_buttons) );
+		//this.fields_table.push( deepClone(row_buttons) );
 	}
 	
 	

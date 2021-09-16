@@ -17,7 +17,7 @@
  */
 
 import { BaseObject } from "vue-helper";
-import { FieldInfo } from "@/components/CrudState";
+import { FieldInfo } from "@/components/Crud/CrudState";
 import { AxiosResponse } from "axios";
 
 

@@ -24,7 +24,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from "vue-helper";
-import { Crud } from '@/components/Crud.vue';
+import { Crud } from '@/components/Crud/Crud.vue';
 import { DomainsPageState } from './DomainsPageState';
 
 

@@ -27,6 +27,10 @@
 	padding: 5px;
 	text-align: center;
 }
+.table .row:hover{
+	background-color: #eee;
+	color: inherit;
+}
 .buttons button{
 	margin-left: 2px;
 	margin-right: 2px;
@@ -113,8 +117,8 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
-import { COMPONENTS } from "@/components/CrudState";
-import Button from '@/components/Button.vue';
+import { COMPONENTS } from "./CrudState";
+import Button from './Button.vue';
 import Dialog from '@/components/Dialog/Dialog.vue';
 import Form from '@/components/Form/Form.vue';
 

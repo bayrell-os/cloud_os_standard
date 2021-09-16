@@ -16,15 +16,23 @@
  *  limitations under the License.
 -->
 
+<style scoped>
+.top_buttons{
+	display: none;
+}
+</style>
+
 <template>
-	<Crud v-bind:store_path="store_path" />
+	<Crud v-bind:store_path="store_path">
+		<template v-slot:top_buttons><div></div></template>
+	</Crud>
 </template>
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from "vue-helper";
-import { Crud } from '@/components/Crud.vue';
+import { Crud } from '@/components/Crud/Crud.vue';
 import { ServicesPageState } from './ServicesPageState';
 
 

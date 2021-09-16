@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo } from '@/components/CrudState';
+import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/Crud/CrudState';
 import { deepClone } from "vue-helper";
 
 
@@ -155,7 +155,11 @@ export class NginxFilesPageState extends CrudState
 		enable.api_name = "enable";
 		enable.label = "Enable";
 		enable.component = "Select";
-		enable.primary = true;
+		enable.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
 		this.fields.push( deepClone(enable) );
 		
 		/* Content */
@@ -183,7 +187,8 @@ export class NginxFilesPageState extends CrudState
 		this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
-		//domain_name.component = "Label";
+		name.component = "Label";
+		enable.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(enable) );

@@ -19,8 +19,8 @@
 import axios, { AxiosResponse } from "axios";
 import { DefineComponent } from "vue";
 import { BaseObject, deepClone } from "vue-helper";
-import { DialogState } from "./Dialog/DialogState";
-import { FormState } from "./Form/FormState";
+import { DialogState } from "@/components/Dialog/DialogState";
+import { FormState } from "@/components/Form/FormState";
 import Input from './Input.vue';
 import Label from './Label.vue';
 import RowButtons from './RowButtons.vue';
