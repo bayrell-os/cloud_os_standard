@@ -18,7 +18,11 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
-import DomainPage from '@/pages/Domain/DomainPage.vue'
+import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
+import DomainsPage from '@/pages/Domains/DomainsPage.vue'
+import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
+import RoutesPage from '@/pages/Routes/RoutesPage.vue'
+import ServicesPage from '@/pages/Services/ServicesPage.vue'
 import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -29,10 +33,34 @@ const routes: Array<RouteRecordRaw> = [
 		props: { store_path: ["MainPage"] },
 	},
 	{
+		path: '/applications/',
+		name: 'ApplicationsPage',
+		component: ApplicationsPage,
+		props: { store_path: ["ApplicationsPage"] },
+	},
+	{
 		path: '/domains/',
-		name: 'DomainPage',
-		component: DomainPage,
-		props: { store_path: ["DomainPage"] },
+		name: 'DomainsPage',
+		component: DomainsPage,
+		props: { store_path: ["DomainsPage"] },
+	},
+	{
+		path: '/nginx_files/',
+		name: 'NginxFilesPage',
+		component: NginxFilesPage,
+		props: { store_path: ["NginxFilesPage"] },
+	},
+	{
+		path: '/routes/',
+		name: 'RoutesPage',
+		component: RoutesPage,
+		props: { store_path: ["RoutesPage"] },
+	},
+	{
+		path: '/services/',
+		name: 'ServicesPage',
+		component: ServicesPage,
+		props: { store_path: ["ServicesPage"] },
 	},
 	{
 		path: "/:pathMatch(.*)*",

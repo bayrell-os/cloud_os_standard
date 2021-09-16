@@ -25,24 +25,24 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from "vue-helper";
 import { Crud } from '@/components/Crud.vue';
-import { DomainPageState } from './DomainPageState';
+import { ApplicationsPageState } from './ApplicationsPageState';
 
 
-export const DomainPage =
+export const ApplicationsPage =
 {
-	name: "DomainPage",
+	name: "ApplicationsPage",
 	mixins: [mixin],
 	methods:
 	{
 	},
 	mounted()
 	{
-		this.setPageTitle("Domains");
+		this.setPageTitle("Applications");
 		this.model.constructor.apiLoadData(this);
 	}
 }
 
-componentExtend(DomainPage, Crud);
-export default defineComponent(DomainPage);
+componentExtend(ApplicationsPage, Crud);
+export default defineComponent(ApplicationsPage);
 
 </script>

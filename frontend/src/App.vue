@@ -157,7 +157,7 @@ export const App =
 				{ "id": 3, "href": "/services/", "title": "Services" },
 				{ "id": 4, "href": "/domains/", "title": "Domains" },
 				{ "id": 5, "href": "/routes/", "title": "Routes" },
-				{ "id": 6, "href": "/nginx/", "title": "Nginx Files" },
+				{ "id": 6, "href": "/nginx_files/", "title": "Nginx Files" },
 				{ "id": 7, "href": "/users/", "title": "Users" },
 				{ "id": 8, "href": "/database/", "title": "Adminer" },
 			]

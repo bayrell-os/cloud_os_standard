@@ -20,11 +20,12 @@ import { CrudItem, CrudState, FieldInfo } from '@/components/CrudState';
 import { deepClone } from "vue-helper";
 
 
-export class Domain extends CrudItem
+export class Application extends CrudItem
 {
-	domain_name: string = "";
-	nginx_template: string = "";
-	space_id: number | null = null;
+	id: number = 0;
+	name: string = "";
+	content: string = "";
+	stack_name: string = "";
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -32,12 +33,12 @@ export class Domain extends CrudItem
 	/**
 	 * From object
 	 */
-	assignValues(params:Record<string, any>): Domain
+	assignValues(params:Record<string, any>): Application
 	{
-		this.domain_name = String(params["domain_name"] || this.domain_name);
-		this.nginx_template = String(params["nginx_template"] || this.nginx_template);
-		this.space_id = this.space_id != null ?
-			(Number(params["space_id"] || this.space_id)) : null;
+		this.id = Number(params["id"] || this.id);
+		this.name = String(params["name"] || this.name);
+		this.content = String(params["content"] || this.content);
+		this.stack_name = String(params["stack_name"] || this.stack_name);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		super.assignValues(params);
@@ -52,9 +53,10 @@ export class Domain extends CrudItem
 	{
 		let res: Record<string, any> = super.getValues();
 		return Object.assign(res, {
-			"domain_name": this.domain_name,
-			"nginx_template": this.nginx_template,
-			"space_id": this.space_id,
+			"id": this.id,
+			"name": this.name,
+			"content": this.content,
+			"stack_name": this.stack_name,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
 		});
@@ -63,15 +65,15 @@ export class Domain extends CrudItem
 
 
 
-export class DomainPageState extends CrudState
+export class ApplicationsPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): Domain
+	createNewItem(): Application
 	{
-		return new Domain();
+		return new Application();
 	}
 	
 	
@@ -81,7 +83,7 @@ export class DomainPageState extends CrudState
 	 */
 	getApiObjectName()
 	{
-		return "domains";
+		return "applications";
 	}
 	
 	
@@ -109,9 +111,9 @@ export class DomainPageState extends CrudState
 	/**
 	 * Return api update url
 	 */
-	getApiUrlUpdate(item: Domain)
+	getApiUrlUpdate(item: Application)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.domain_name + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.id + "/";
 	}
 	
 	
@@ -119,9 +121,9 @@ export class DomainPageState extends CrudState
 	/**
 	 * Return api delete url
 	 */
-	getApiUrlDelete(item: Domain)
+	getApiUrlDelete(item: Application)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.domain_name + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.id + "/";
 	}
 	
 	
@@ -131,20 +133,32 @@ export class DomainPageState extends CrudState
 	 */
 	crudInit()
 	{
-		/* Domain name field */
-		let domain_name = new FieldInfo();
-		domain_name.api_name = "domain_name";
-		domain_name.label = "Domain name";
-		domain_name.component = "Input";
-		domain_name.primary = true;
-		this.fields.push( deepClone(domain_name) );
+		/* ID field */
+		let id = new FieldInfo();
+		id.api_name = "id";
+		id.primary = true;
+		this.fields.push( deepClone(id) );
 		
-		/* Nginx template */
-		let nginx_template = new FieldInfo();
-		nginx_template.api_name = "nginx_template";
-		nginx_template.label = "Nginx template";
-		nginx_template.component = "TextArea";
-		this.fields.push( deepClone(nginx_template) );
+		/* Stack name field */
+		let stack_name = new FieldInfo();
+		stack_name.api_name = "stack_name";
+		stack_name.label = "Stack name";
+		stack_name.component = "Input";
+		this.fields.push( deepClone(stack_name) );
+		
+		/* Name field */
+		let name = new FieldInfo();
+		name.api_name = "name";
+		name.label = "name";
+		name.component = "Input";
+		this.fields.push( deepClone(name) );
+		
+		/* Content field */
+		let content = new FieldInfo();
+		content.api_name = "content";
+		content.label = "Content";
+		content.component = "TextArea";
+		this.fields.push( deepClone(content) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -159,13 +173,15 @@ export class DomainPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(domain_name) );
-		this.form.fields.push( deepClone(nginx_template) );
+		this.form.fields.push( deepClone(stack_name) );
+		this.form.fields.push( deepClone(name) );
+		this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
-		domain_name.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(domain_name) );
+		this.fields_table.push( deepClone(stack_name) );
+		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(content) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -174,9 +190,9 @@ export class DomainPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: Domain | null): string
+	getItemName(item: Application | null): string
 	{
-		return (item) ? item.domain_name : "";
+		return (item) ? (item.stack_name + "/" + item.name) : "";
 	}
 	
 	
@@ -184,15 +200,15 @@ export class DomainPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: Domain | null): string
+	getMessage(message_type: string, item: Application | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{
-			return "Delete domain";
+			return "Delete application";
 		}
 		if (message_type == "dialog_delete_text")
 		{
-			return "Do you sure to delete domain \"" + this.getItemName(item) + "\" ?";
+			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
 	}

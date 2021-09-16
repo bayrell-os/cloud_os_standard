@@ -17,41 +17,21 @@
  */
 
 import { MainPageState } from '@/pages/Main/MainPageState'
-import { DomainPageState } from '@/pages/Domain/DomainPageState'
+import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
+import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
+import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
+import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
+import { ServicesPageState } from '@/pages/Services/ServicesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
 
 export class AppState
 {
 	title: string = "";
 	MainPage: MainPageState = new MainPageState();
-	DomainPage: DomainPageState = new DomainPageState();
+	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
+	DomainsPage: DomainsPageState = new DomainsPageState();
+	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
+	RoutesPage: RoutesPageState = new RoutesPageState();
+	ServicesPage: ServicesPageState = new ServicesPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();
-
-
-	/**
-	 * Returns methods list
-	 */
-	static mutations(): Array<string>
-	{
-		let res: Array<string> =
-		[
-		];
-		return res;
-	}
-
-
-	/**
-	 * Returns modules
-	 */
-	static modules(): Record<string, any>
-	{
-		let res: Record<string, any> =
-		{
-			"MainPage": MainPageState,
-			"DomainPage": DomainPageState,
-			"NotFoundPage": NotFoundPageState,
-		};
-		return res;
-	}
-
 }
