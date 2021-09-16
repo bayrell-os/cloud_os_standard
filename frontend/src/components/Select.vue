@@ -17,7 +17,7 @@
 -->
 
 <style lang="scss" scoped>
-.input{
+.select{
 	width: 100%;
 	padding: 6px 12px;
 	background-color: white;
@@ -28,7 +28,15 @@
 
 
 <template>
-	<div v-bind:data-name="name" >{{ crud_index + 1 }}</div>
+	<select class="select" @change="onChange(name, $event)">
+		<option value="">Select value</option>
+		<option v-for="option in crud_field.options" :key="option.id"
+			v-bind:value="option.id"
+			v-bind:selected="isSelected(value, option.id)"
+		>
+			{{ option.value }}
+		</option>
+	</select>
 </template>
 
 
@@ -36,12 +44,12 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from 'vue-helper';
+import { CrudEvent } from "./CrudState";
 import { Field } from './Field.vue';
 
 
-export const RowNumber =
+export const Select =
 {
-    name: "RowNumber",
 	mixins: [ mixin ],
 	emits: Field.emits,
 	props: Field.props,
@@ -50,13 +58,24 @@ export const RowNumber =
 	},
 	methods:
 	{
+		onChange: function(name, $event)
+		{
+			let event = new CrudEvent();
+			event.name = "change";
+			event.value = $event.target.value;
+			this.$emit( "crudEvent", event );
+		},
+		isSelected: function(value, option_id)
+		{
+			return value == option_id;
+		},
 	},
 	components:
 	{
 	},
 };
 
-componentExtend(RowNumber, Field);
-export default defineComponent(RowNumber);
+componentExtend(Select, Field);
+export default defineComponent(Select);
 
 </script>

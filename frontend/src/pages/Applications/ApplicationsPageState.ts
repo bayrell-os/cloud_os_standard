@@ -178,10 +178,11 @@ export class ApplicationsPageState extends CrudState
 		this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
+		name.component = "Label";
+		stack_name.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(stack_name) );
 		this.fields_table.push( deepClone(name) );
-		this.fields_table.push( deepClone(content) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

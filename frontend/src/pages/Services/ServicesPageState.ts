@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo } from '@/components/CrudState';
+import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/CrudState';
 import { deepClone } from "vue-helper";
 
 
@@ -28,6 +28,9 @@ export class Service extends CrudItem
 	software_api_name: string = "";
 	enable: boolean = false;
 	docker_name: string = "";
+	docker_image: string = "";
+	docker_json: any = null;
+	docker_balancer: any = null;
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -41,10 +44,13 @@ export class Service extends CrudItem
 		this.service_id = Number(params["service_id"] || this.service_id);
 		this.stack_name = String(params["stack_name"] || this.stack_name);
 		this.docker_name = String(params["docker_name"] || this.docker_name);
+		this.docker_image = String(params["docker_image"] || this.docker_image);
 		this.service_name = String(params["service_name"] || this.service_name);
 		this.software_api_name = String(params["software_api_name"] || this.software_api_name);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
+		this.docker_json = params["docker_json"];
+		this.docker_balancer = params["docker_balancer"];
 		super.assignValues(params);
 		return this;
 	}
@@ -61,8 +67,11 @@ export class Service extends CrudItem
 			"service_id": this.service_id,
 			"stack_name": this.stack_name,
 			"docker_name": this.docker_name,
+			"docker_image": this.docker_image,
 			"service_name": this.service_name,
 			"software_api_name": this.software_api_name,
+			"docker_json": this.docker_json,
+			"docker_balancer": this.docker_balancer,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
 		});
@@ -135,6 +144,34 @@ export class ServicesPageState extends CrudState
 	
 	
 	/**
+	 * Returns form value
+	 */
+	getItemValue(index: number, api_name: string): any
+	{
+		if (this.items[index] == undefined) return "";
+		let item: Service = this.items[index] as Service;
+		
+		if (api_name == "docker_image")
+		{
+			let docker_image: string = item.docker_image;
+			let pos: number = docker_image.search("@");
+			if (pos != -1) docker_image = docker_image.substring(0, pos)
+			return docker_image;
+		}
+		
+		if (api_name == "replicas")
+		{
+			let work: number = Number(item.docker_balancer["State"]["Work"]);
+			let total: number = Number(item.docker_balancer["State"]["Total"]);
+			return work + " / " + total;
+		}
+		
+		return super.getItemValue(index, api_name);
+	}
+	
+	
+	
+	/**
 	 * Crud init
 	 */
 	crudInit()
@@ -171,6 +208,11 @@ export class ServicesPageState extends CrudState
 		enable.api_name = "enable";
 		enable.label = "Enable";
 		enable.component = "Select";
+		enable.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
 		this.fields.push( deepClone(enable) );
 		
 		/* Docker name field */
@@ -179,6 +221,19 @@ export class ServicesPageState extends CrudState
 		docker_name.label = "Docker name";
 		docker_name.component = "Input";
 		this.fields.push( deepClone(docker_name) );
+		
+		/* Docker name field */
+		let docker_image = new FieldInfo();
+		docker_image.api_name = "docker_image";
+		docker_image.label = "Docker image";
+		docker_image.component = "Input";
+		this.fields.push( deepClone(docker_image) );
+		
+		/* Replicas field */
+		let replicas = new FieldInfo();
+		replicas.api_name = "replicas";
+		replicas.label = "Replicas";
+		this.fields.push( deepClone(replicas) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -193,20 +248,21 @@ export class ServicesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(enable) );
 		this.form.fields.push( deepClone(docker_name) );
 		this.form.fields.push( deepClone(stack_name) );
 		this.form.fields.push( deepClone(service_name) );
-		this.form.fields.push( deepClone(software_api_name) );
+		this.form.fields.push( deepClone(enable) );
 		
 		/* Table fields */
-		// domain_name.component = "Label";
+		enable.component = "SelectLabel";
+		replicas.component = "Label";
+		docker_name.component = "Label";
+		docker_image.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(enable) );
-		this.fields_table.push( deepClone(stack_name) );
-		this.fields_table.push( deepClone(service_name) );
-		this.fields_table.push( deepClone(software_api_name) );
 		this.fields_table.push( deepClone(docker_name) );
+		this.fields_table.push( deepClone(docker_image) );
+		this.fields_table.push( deepClone(replicas) );
+		this.fields_table.push( deepClone(enable) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

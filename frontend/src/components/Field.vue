@@ -17,34 +17,25 @@
 -->
 
 <style lang="scss" scoped>
-.input{
-	width: 100%;
-	padding: 6px 12px;
-	background-color: white;
-	border: 1px #ccc solid;
-	outline: transparent;
-}
 </style>
 
 
 <template>
-	<div v-bind:data-name="name" >{{ crud_index + 1 }}</div>
+	{{ value }}
 </template>
 
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from 'vue-helper';
-import { Field } from './Field.vue';
+import { mixin } from "vue-helper";
 
 
-export const RowNumber =
+export const Field =
 {
-    name: "RowNumber",
 	mixins: [ mixin ],
-	emits: Field.emits,
-	props: Field.props,
+	emits: ["crudEvent"],
+	props: [ "value", "name", "type", "crud_index", "crud_item", "crud_field" ],
 	computed:
 	{
 	},
@@ -56,7 +47,7 @@ export const RowNumber =
 	},
 };
 
-componentExtend(RowNumber, Field);
-export default defineComponent(RowNumber);
+
+export default defineComponent(Field);
 
 </script>

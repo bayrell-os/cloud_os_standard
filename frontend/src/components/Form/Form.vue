@@ -64,8 +64,10 @@
 					<div class="form_row_label">{{ field.label }}</div>
 					<div class="form_row_value">
 						<component v-bind:is="field.component"
+							v-bind:crud_item="model.item"
+							v-bind:crud_field="field"
 							v-bind:value="model.getItemValue(field.api_name)"
-							@change="onChangeItem(field.api_name, $event)"
+							@crudEvent="onCrudEvent(field.api_name, $event)"
 						/>
 					</div>
 					<div class="form_row_result"></div>
@@ -108,10 +110,13 @@ export const Form =
 	},
 	methods:
 	{
-		onChangeItem(api_name, $event)
+		onCrudEvent: function(api_name, $event)
 		{
-			this.model.setItemValue(api_name, $event.target.value)
-		}
+			if ($event.name == "change")
+			{
+				this.model.setItemValue(api_name, $event.value)
+			}
+		},
 	},
 	components: COMPONENTS,
 };

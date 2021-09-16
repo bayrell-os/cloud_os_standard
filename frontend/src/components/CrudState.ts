@@ -25,6 +25,8 @@ import Input from './Input.vue';
 import Label from './Label.vue';
 import RowButtons from './RowButtons.vue';
 import RowNumber from './RowNumber.vue';
+import Select from './Select.vue';
+import SelectLabel from './SelectLabel.vue';
 import TextArea from './TextArea.vue';
 
 
@@ -34,6 +36,8 @@ export let COMPONENTS =
 	Label,
 	RowButtons,
 	RowNumber,
+	Select,
+	SelectLabel,
 	TextArea,
 };
 
@@ -41,8 +45,40 @@ export let COMPONENTS =
 export class CrudEvent
 {
 	name: string = "";
+	value: any = null;
 	tag: any = null;
 	attrs: Record<string, any> = {};
+}
+
+
+export class SelectOption extends BaseObject
+{
+	id: string = "";
+	value: string = "";
+	
+	/**
+	 * From object
+	 */
+	assignValues(params:Record<string, any>): SelectOption
+	{
+		this.id = String(params["id"] || this.id);
+		this.value = String(params["value"] || this.value);
+		super.assignValues(params);
+		return this;
+	}
+	
+	
+	/**
+	 * Returns values
+	 */
+	getValues(): Record<string, any>
+	{
+		let res: Record<string, any> = super.getValues();
+		return Object.assign(res, {
+			"id": this.id,
+			"value": this.value,
+		});
+	}
 }
 
 
@@ -61,7 +97,9 @@ export class FieldInfo extends BaseObject
 	can_update: boolean = true;
 	group: string = "default";
 	default_val: any = null;
-    
+	
+	/* Select options */
+    options: Array<SelectOption> = [];
 	
     /**
 	 * From object

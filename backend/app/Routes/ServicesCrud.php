@@ -28,6 +28,7 @@ use TinyPHP\ApiResult;
 use TinyPHP\RenderContainer;
 use TinyPHP\Exception\HttpMethodNotAllowedException;
 use TinyPHP\Rules\AllowFields;
+use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
@@ -54,10 +55,15 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 					"software_api_name",
 					"enable",
 					"docker_name",
+					"docker_image",
+					"docker_json",
+					"docker_balancer",
 					"gmtime_created",
 					"gmtime_updated",
 				]
-			])
+			]),
+			new JsonField([ "api_name" => "docker_json" ]),
+			new JsonField([ "api_name" => "docker_balancer" ]),
 		];
 	}
 	

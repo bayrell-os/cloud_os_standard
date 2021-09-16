@@ -34,17 +34,19 @@
 
 <script lang="js">
 
-import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
 import Button from "./Button";
+import { defineComponent } from 'vue';
+import { mixin, componentExtend } from 'vue-helper';
 import { CrudEvent } from "./CrudState";
+import { Field } from './Field.vue';
 
 
 export const RowButtons =
 {
     name: "RowButtons",
 	mixins: [ mixin ],
-	props: [ "crud_index", "crud_item", "crud_field", "name", "value" ],
+    emits: Field.emits,
+	props: Field.props,
 	computed:
 	{
 	},
@@ -65,6 +67,7 @@ export const RowButtons =
 	},
 };
 
+componentExtend(RowButtons, Field);
 export default defineComponent(RowButtons);
 
 </script>

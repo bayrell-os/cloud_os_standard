@@ -36,12 +36,15 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
+import { mixin, componentExtend } from 'vue-helper';
+import { Field } from './Field.vue';
+
 
 export const TextArea =
 {
 	mixins: [ mixin ],
-	props: [ "value", "name", "type" ],
+	emits: Field.emits,
+	props: Field.props,
 	computed:
 	{
 	},
@@ -53,6 +56,7 @@ export const TextArea =
 	},
 };
 
+componentExtend(TextArea, Field);
 export default defineComponent(TextArea);
 
 </script>

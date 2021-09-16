@@ -28,31 +28,44 @@
 
 
 <template>
-	<input class="input" v-bind:name="name" v-bind:type="type" v-bind:value="value" />
+	<input class="input" v-bind:name="name" v-bind:type="type" v-bind:value="value"
+		@change="onChange(name, $event)"
+	/>
 </template>
 
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
+import { mixin, componentExtend } from 'vue-helper';
+import { CrudEvent } from "./CrudState";
+import { Field } from './Field.vue';
 
 
 export const Input =
 {
 	mixins: [ mixin ],
-	props: [ "value", "name", "type" ],
+	emits: Field.emits,
+	props: Field.props,
 	computed:
 	{
 	},
 	methods:
 	{
+		onChange: function(name, $event)
+		{
+			let event = new CrudEvent();
+			event.name = "change";
+			event.value = $event.target.value;
+			this.$emit( "crudEvent", event );
+		}
 	},
 	components:
 	{
 	},
 };
 
+componentExtend(Input, Field);
 export default defineComponent(Input);
 
 </script>

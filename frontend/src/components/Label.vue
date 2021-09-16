@@ -35,13 +35,15 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
+import { mixin, componentExtend } from 'vue-helper';
+import { Field } from './Field.vue';
 
 
 export const Label =
 {
 	mixins: [ mixin ],
-	props: [ "value", "name", "type" ],
+	emits: Field.emits,
+	props: Field.props,
 	computed:
 	{
 	},
@@ -53,6 +55,7 @@ export const Label =
 	},
 };
 
+componentExtend(Label, Field);
 export default defineComponent(Label);
 
 </script>

@@ -28,7 +28,7 @@
 
 
 <template>
-	<div v-bind:data-name="name" >{{ crud_index + 1 }}</div>
+	{{ getSelectValue(value) }}
 </template>
 
 
@@ -39,9 +39,8 @@ import { mixin, componentExtend } from 'vue-helper';
 import { Field } from './Field.vue';
 
 
-export const RowNumber =
+export const SelectLabel =
 {
-    name: "RowNumber",
 	mixins: [ mixin ],
 	emits: Field.emits,
 	props: Field.props,
@@ -50,13 +49,22 @@ export const RowNumber =
 	},
 	methods:
 	{
+		getSelectValue: function(value)
+		{
+			for(let i=0; i<this.crud_field.options.length; i++)
+			{
+				let option = this.crud_field.options[i];
+				if (option.id == value) return option.value;
+			}
+			return value;
+		}
 	},
 	components:
 	{
 	},
 };
 
-componentExtend(RowNumber, Field);
-export default defineComponent(RowNumber);
+componentExtend(SelectLabel, Field);
+export default defineComponent(SelectLabel);
 
 </script>
