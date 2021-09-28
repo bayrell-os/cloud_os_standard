@@ -45,6 +45,7 @@ class Instance extends \TinyPHP\App
 		$this->addModel(\App\Models\Service::class);
 
 		/* Includes console commands */
+		$this->addConsoleCommand(\App\Console\Docker\NginxUpdate::class);
 		$this->addConsoleCommand(\App\Console\Docker\ServicesUpdate::class);
 		$this->addConsoleCommand(\App\Console\Hello::class);
 

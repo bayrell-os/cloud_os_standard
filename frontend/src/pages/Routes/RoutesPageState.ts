@@ -25,6 +25,7 @@ export class Route extends CrudItem
 	id: number = 0;
 	enable: boolean = false;
 	protocol: string = "";
+	protocol_data: any;
 	domain_name: string = "";
 	route: string = "";
 	docker_name: string = "";
@@ -43,6 +44,7 @@ export class Route extends CrudItem
 		this.id = Number(params["id"] || this.id);
 		this.enable = params["enable"] == 1 || params["enable"] == "true";
 		this.protocol = String(params["protocol"] || this.protocol);
+		this.protocol_data = params["protocol_data"] || this.protocol_data;
 		this.domain_name = String(params["domain_name"] || this.domain_name);
 		this.route = String(params["route"] || this.route);
 		this.docker_name = String(params["docker_name"] || this.docker_name);
@@ -66,6 +68,7 @@ export class Route extends CrudItem
 			"id": this.id,
 			"enable": this.enable,
 			"protocol": this.protocol,
+			"protocol_data": this.protocol_data,
 			"domain_name": this.domain_name,
 			"route": this.route,
 			"docker_name": this.docker_name,

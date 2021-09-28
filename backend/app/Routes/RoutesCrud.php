@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\Rules\AllowFields;
+use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
@@ -49,6 +50,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 					"id",
 					"enable",
 					"protocol",
+					"protocol_data",
 					"domain_name",
 					"route",
 					"docker_name",
@@ -58,8 +60,9 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 					"gmtime_created",
 					"gmtime_updated",
 				]
-                ]),
-                new ReadOnly(["api_name"=>"id"])
+			]),
+			new ReadOnly(["api_name"=>"id"]),
+			new JsonField(["api_name"=>"protocol_data"])
 		];
 	}
 

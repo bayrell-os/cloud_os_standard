@@ -21,6 +21,7 @@
 namespace App\Models;
 
 use TinyPHP\Model;
+use TinyPHP\Utils;
 
 
 class Service extends Model
@@ -33,4 +34,50 @@ class Service extends Model
     protected $fillable = [
         "docker_name",
 	];
+	
+	
+	/**
+	 * Returns ip addresses
+	 */
+	function getIpAddresses($network_name)
+	{
+		$ip_res = [];
+		$service_name = $this->docker_name;
+		$docker_balancer = json_decode($this->docker_balancer, true);
+		$tasks = Utils::attr($docker_balancer, "Tasks");
+		
+		if (gettype($tasks) == "array")
+		{
+			foreach ($tasks as $task)
+			{
+				$state = Utils::attr($task, ["Status", "State"], "");
+				$networks = Utils::attr($task, ["Networks"], null);
+				$desired_state = Utils::attr($task, ["DesiredState"], "");
+				if ($desired_state == "running" and $state == "running")
+				{
+					if ($networks != null && gettype($networks) == "array")
+					{
+						foreach ($networks as $network)
+						{
+							if (
+								isset($network["Name"]) && isset($network["Addresses"]) &&
+								gettype($network["Addresses"]) == "array" &&
+								$network["Name"] == $network_name
+							)
+							{
+								$addresses = $network["Addresses"];
+								foreach ($addresses as $ip)
+								{
+									$arr = explode("/", $ip);
+									$ip_res[] = $arr[0];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return $ip_res;
+	}
 }

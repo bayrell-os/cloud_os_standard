@@ -21,7 +21,6 @@
 namespace App\Console\Docker;
 
 use App\Docker;
-use App\Models\Service;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,45 +28,26 @@ use Illuminate\Database\Capsule\Manager as DB;
 use TinyPHP\Utils;
 
 
-class ServicesUpdate extends Command
+class NginxUpdate extends Command
 {
-    protected static $defaultName = 'docker:services:update';
+    protected static $defaultName = 'docker:nginx:update';
 
     protected function configure(): void
     {
         $this
 			// the short description
-			->setDescription('Update docker services into database')
+			->setDescription('Update docker nginx files into database')
 
 			// the full command description shown when running the command with
 			// the "--help" option
-			->setHelp('Update docker services into database')
+			->setHelp('Update docker nginx files into database')
 		;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$current_timestamp = time();
-		$nodes = Docker::getNodes();
-		$services = Docker::getServices();
-		
-		foreach ($services as $service)
-		{
-			$result = Docker::updateServiceIntoDatabase
-			(
-				$service,
-				["nodes" => $nodes, "current_timestamp" => $current_timestamp]
-			);
-			
-			if ($result)
-			{
-				$service_name = Utils::attr($service, ["Spec", "Name"]);
-				$output->writeln("Update service " . $service_name);
-			}
-		}
-		
-		Docker::deleteOldServicesFromDatabase($current_timestamp);
-		
+		Docker::updateUpstreams("cloud_router");
+		Docker::updateDomains();
         return Command::SUCCESS;
     }
 	

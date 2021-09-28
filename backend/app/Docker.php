@@ -21,8 +21,10 @@
 namespace App;
 
 use TinyPHP\Utils;
+use App\Models\Domain;
+use App\Models\NginxFile;
+use App\Models\Route;
 use App\Models\Service;
-
 
 class Docker
 {
@@ -185,7 +187,7 @@ class Docker
 	
 	
 	/**
-	 * Update service into database
+	 * Update service into database by json from docker api
 	 */
 	public function updateServiceIntoDatabase($service, $params)
 	{
@@ -245,5 +247,163 @@ class Docker
 		$sql = "delete from " . $service->getTable() .
 			" where `is_deleted` = 1 and `timestamp` < :timestamp";
 		$db::update($db::raw($sql), [ "timestamp" => $timestamp - 24*60*60 ]);
+	}
+	
+	
+	
+	/**
+	 * Update upstreams
+	 */
+	static function updateUpstreams($network_name)
+	{
+		$services = Service::query()
+			->where("enable", "=", "1")
+			->where("is_deleted", "=", "0")
+			->where("docker_name", "!=", "")
+			->orderBy("docker_name", "asc")
+			->get()
+		;
+		
+		$routes = Route::query()
+			->where("enable", "=", 1)
+			->where("protocol", "=", "http")
+			->orderBy("route", "desc")
+			->get()
+		;
+		
+		$upstreams = [];
+		foreach ($services as $service)
+		{
+			$ip_arr = $service->getIpAddresses($network_name);
+			$docker_name = $service["docker_name"];
+			$service_routes = array_filter
+			(
+				$routes->toArray(),
+				function($route) use ($docker_name)
+				{
+					return $route["docker_name"] == $docker_name;
+				}
+			);
+			
+			$upstream_s = "";
+			$upstream_names = [];
+			foreach ($service_routes as $route)
+			{
+				$upstream_name = $route["target_port"] . "." . $docker_name . "." . $network_name . ".example";
+				if (!in_array($upstream_name, $upstream_names) && count($ip_arr) > 0)
+				{
+					$upstream_s .= "upstream " . $upstream_name . " {\n";
+					foreach ($ip_arr as $ip)
+					{
+						$upstream_s .= "\tserver " . $ip . ":" . $route["target_port"] . ";\n";
+					}
+					$upstream_s .= "}\n";
+					$upstream_names[] = $upstream_name;
+				}
+			}
+			
+			$upstreams[] = $upstream_s;
+		}
+		
+		/* Clear empty upstreams */
+		$upstreams = array_filter
+		(
+			$upstreams,
+			function($item)
+			{
+				return $item != "";
+			}
+		);
+		
+		$file_name = "/conf.d/99-" . $network_name . "-upstreams.conf";
+		$content = implode("", $upstreams);
+		NginxFile::updateFile($file_name, $content);
+	}
+	
+	
+	
+	/**
+	 * Update domains
+	 */
+	static function updateDomains()
+	{
+		$domains = Domain::query()
+			->get()
+		;
+		
+		foreach ($domains as $domain)
+		{
+			$routes = Route::query()
+				->where("enable", "=", 1)
+				->where("protocol", "=", "http")
+				->where("domain_name", "=", $domain["domain_name"])
+				->orderBy("route", "desc")
+				->get()
+			;
+			
+			$nginx_routes = [];
+			foreach ($routes as $route)
+			{
+				$nginx_route = "";
+				$upstream_name = $route["target_port"] . "." . $route["docker_name"]
+					. ".cloud_router.example";
+				
+				$protocol_data = json_decode($route["protocol_data"]);
+				$has_websocket = isset($protocol_data["websocket"]) ? $protocol_data["websocket"] : false;
+					
+				$domain_route_url = $route["route"];
+				$domain_route_prefix = $route["route_prefix"];
+				if ($domain_route_url == "") $domain_route_url = "/";
+				if ($domain_route_prefix == "/") $domain_route_prefix = "";
+				
+				$nginx_route .= "\tlocation " . $domain_route_url . " {\n";
+				$nginx_route .= "\t\tproxy_pass http://" . $upstream_name .
+					$domain_route_prefix . ";\n";
+				$nginx_route .= "\t\tinclude proxy_params;\n";
+				
+				/* Add websocket settings */
+				if ($has_websocket)
+				{
+					$nginx_route .= "proxy_http_version 1.1;";
+					$nginx_route .= "proxy_set_header Upgrade $http_upgrade;";
+					$nginx_route .= "proxy_set_header Connection \"upgrade\";";
+				}
+				
+				/* Add route prefix */
+				if ($domain_route_prefix != "")
+				{
+					$nginx_route .= "\t\tproxy_set_header X-ROUTE-PREFIX \"" .
+						$domain_route_prefix . "\";\n";
+				}
+				
+				/* Add space id */
+				if ($domain["space_id"] != "")
+				{
+					$nginx_route .= "\t\tproxy_set_header X-SPACE-ID \"" .
+						$domain["space_id"] . "\";\n";
+				}
+				
+				/* Add layer uid */
+				if ($route["layer_uid"] != "")
+				{
+					$nginx_route .= "\t\tproxy_set_header X-LAYER-UID \"" .
+						$route["layer_uid"] . "\";\n";
+				}
+				
+				$nginx_route .= "\t}";
+				$nginx_routes[] = $nginx_route;
+			}
+			
+			/* Create nginx files */
+			$nginx_content = $domain["nginx_template"];
+			$nginx_content = str_replace("%DOMAIN_NAME%", $domain["domain_name"], $nginx_content);
+			$nginx_content = str_replace("%ROUTES%", implode("\n", $nginx_routes), $nginx_content);
+			$nginx_content = str_replace("%SSL%", "", $nginx_content);
+			
+			/* Update file */
+			$file_name = "/domains/" . $domain["domain_name"] . ".conf";
+			NginxFile::updateFile($file_name, $content);
+		}
+		
 	}
 }
