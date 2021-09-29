@@ -126,6 +126,11 @@
 									</a>
 								</li>
 							</router-link>
+							<li>
+								<a href="/api/database/" class="nolink">
+									Adminer
+								</a>
+							</li>
 						</ul>
 					</div>
 				
@@ -159,7 +164,6 @@ export const App =
 				{ "id": 5, "href": "/routes/", "title": "Routes" },
 				{ "id": 6, "href": "/nginx_files/", "title": "Nginx Files" },
 				{ "id": 7, "href": "/users/", "title": "Users" },
-				{ "id": 8, "href": "/database/", "title": "Adminer" },
 			]
 		}
 	},

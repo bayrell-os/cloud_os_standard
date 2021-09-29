@@ -329,6 +329,7 @@ class Docker
 	{
 		$domains = Domain::query()
 			->get()
+			->toArray()
 		;
 		
 		foreach ($domains as $domain)
@@ -402,7 +403,7 @@ class Docker
 			
 			/* Update file */
 			$file_name = "/domains/" . $domain["domain_name"] . ".conf";
-			NginxFile::updateFile($file_name, $content);
+			NginxFile::updateFile($file_name, $nginx_content);
 		}
 		
 	}

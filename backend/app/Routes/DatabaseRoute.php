@@ -73,9 +73,9 @@ class DatabaseRoute
 	 */
 	function actionDatabase(RenderContainer $container)
 	{
-		$container->setContext("host", getenv("DB_HOST"));
-		$container->setContext("username", getenv("DB_USERNAME"));
-		$container->setContext("password", getenv("DB_PASSWORD"));
+		$container->setContext("host", getenv("MYSQL_HOST"));
+		$container->setContext("username", getenv("MYSQL_USERNAME"));
+		$container->setContext("password", getenv("MYSQL_PASSWORD"));
 		
 		/* Set result */
 		return $container->render("@app/database.html");

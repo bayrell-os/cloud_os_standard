@@ -32,6 +32,7 @@ class Instance extends \TinyPHP\App
 		
 		/* Includes crud routes */
 		$this->addRoute(\App\Routes\ApplicationsCrud::class);
+		$this->addRoute(\App\Routes\BusApiRoute::class);
 		$this->addRoute(\App\Routes\DomainsCrud::class);
 		$this->addRoute(\App\Routes\NginxFilesCrud::class);
 		$this->addRoute(\App\Routes\RoutesCrud::class);

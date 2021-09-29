@@ -1,0 +1,72 @@
+version: "3.3"
+
+services:
+    
+    standard:
+        image: bayrell/ubuntu_code_server:3.11.0-4-amd64
+        hostname: "cloud_os_standard.local"
+        volumes:
+            - "code_server_data:/data"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        ports:
+            - "8080:80"
+            - "8000:8000"
+        env_file:
+            - ./env.conf
+        environment:
+            TZ: "Asia/Almaty"
+            APP_URL: "http://cloud.docker0:8080/"
+            MYSQL_DATABASE: "cloud_os_standard"
+            DOCUMENT_ROOT: "/srv/frontend/html"
+            NGINX_CONF: "/srv/nginx_vscode.conf"
+            WWW_UID: 1000
+            WWW_GID: 1000
+        restart: unless-stopped
+        networks:
+            dockernet:
+                ipv4_address: 172.20.0.7
+        logging:
+            driver: journald
+            
+    mysql:
+        image: mysql:5.7
+        command:    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
+        volumes:
+            - "mysql_data:/var/lib/mysql"
+        env_file:
+            - ./env.conf
+        restart: unless-stopped
+        networks:
+            dockernet:
+                ipv4_address: 172.20.0.5
+        logging:
+            driver: journald
+     
+     
+    balancer:
+        image: bayrell/load_balancer_http:0.3.0
+        volumes:
+            - "http_data:/data"
+            - "/home/ubuntu/bayrell/load_balancer_http/files/root/router.php:/root/router.php"
+        ports:
+            - "80:80"
+        env_file:
+            - ./env.conf
+        restart: unless-stopped
+        networks:
+            - dockernet
+            - cloud_router
+        logging:
+            driver: journald
+     
+volumes:
+    mysql_data:
+    code_server_data:
+    http_data:
+    
+networks:
+    dockernet:
+        external: true
+    cloud_router:
+        external: true

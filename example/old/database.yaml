@@ -26,7 +26,7 @@ services:
         constraints:
           - node.labels.name == docker0
     networks:
-      - cloud_backend
+      - cloud_router
     logging:
       driver: journald
 
@@ -34,5 +34,5 @@ volumes:
   mysql_node1_data:
 
 networks:
-  cloud_backend:
+  cloud_router:
     external: true

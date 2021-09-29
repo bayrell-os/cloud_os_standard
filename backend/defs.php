@@ -22,9 +22,11 @@ use Psr\Container\ContainerInterface;
 
 define("ROOT_PATH", __DIR__);
 
+//$_SERVER["APP_DEBUG"] = true;
+
 return
 [
-	"App" => DI\create(\App\Instance::class),
+	"app" => DI\create(\App\Instance::class),
 	"connectToDatabase" => DI\factory([\App\Instance::class, 'connectToDatabase']),
 	"render" => DI\create(\TinyPHP\Twig::class),
 	"db" => DI\create(\Illuminate\Database\Capsule\Manager::class),
