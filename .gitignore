@@ -3,6 +3,7 @@
 /tmp
 
 # Backend
+backend/var
 backend/vendor
 backend_py/env
 backend_py/__pycache__

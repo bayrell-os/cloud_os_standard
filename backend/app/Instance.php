@@ -30,13 +30,16 @@ class Instance extends \TinyPHP\App
 	{
 		parent::init();
 		
-		/* Includes routes */
+		/* Includes crud routes */
 		$this->addRoute(\App\Routes\ApplicationsCrud::class);
 		$this->addRoute(\App\Routes\DomainsCrud::class);
 		$this->addRoute(\App\Routes\NginxFilesCrud::class);
 		$this->addRoute(\App\Routes\RoutesCrud::class);
 		$this->addRoute(\App\Routes\ServicesCrud::class);
-
+		
+		/* Include routes */
+		$this->addRoute(\App\Routes\DatabaseRoute::class);
+		
 		/* Includes models */
 		$this->addModel(\App\Models\Application::class);
 		$this->addModel(\App\Models\Domain::class);

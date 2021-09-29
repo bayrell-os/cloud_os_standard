@@ -20,6 +20,12 @@
 
 require_once __DIR__ . "/../../vendor/autoload.php";
 
+/* Remove api */
+$uri = $_SERVER['REQUEST_URI'];
+$uri = preg_replace("/^\/api/", "", $uri);
+$_SERVER['REQUEST_URI'] = $uri;
+
+/* Run app */
 \TinyPHP\Core::start( __DIR__ . "/../../defs.php" );
 $app = app();
 $app->init();
