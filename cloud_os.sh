@@ -46,7 +46,7 @@ case "$1" in
 	;;
 	
 	compose)
-		docker-compose -f example/docker-compose.yaml -p "cloud_os" up -d --remove-orphans
+		docker-compose -f example/compose.yaml -p "cloud_os" up -d --remove-orphans
 	;;
 	
 	run)

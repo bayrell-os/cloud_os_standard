@@ -41,7 +41,10 @@ module.exports = {
 		rules: [
 			{
 				test: /\.js$/,
-				loader: 'babel-loader'
+				loader: 'babel-loader',
+				options: {
+					compact: false
+				}
 			},
 			{
 				test: /\.tsx?$/,
