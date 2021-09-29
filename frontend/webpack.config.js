@@ -23,31 +23,13 @@ module.exports = {
 		alias: {
 			'@': path.resolve(__dirname, 'src')
 		},
-		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue'],
-		fallback: {
-			"fs": false,
-			"child_process": false,
-			"worker_threads": false,
-			"crypto": require.resolve("crypto-browserify"),
-			"constants": require.resolve("constants-browserify"),
-			"stream": require.resolve("stream-browserify"),
-			"path": require.resolve("path-browserify"),
-			"os": require.resolve("os-browserify/browser"),
-			"http": require.resolve("stream-http"),
-			"https": require.resolve("https-browserify"),
-			"vm": require.resolve("vm-browserify"),
-			"zlib": require.resolve("browserify-zlib"),
-			"tty": require.resolve("tty-browserify")
-		}
+		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue']
 	},
 	module: {
 		rules: [
 			{
 				test: /\.js$/,
-				loader: 'babel-loader',
-				options: {
-					compact: false
-				}
+				loader: 'babel-loader'
 			},
 			{
 				test: /\.tsx?$/,

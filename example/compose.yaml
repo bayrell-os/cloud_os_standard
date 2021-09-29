@@ -3,7 +3,7 @@ version: "3.3"
 services:
     
     standard:
-        image: bayrell/ubuntu_code_server:3.11.0-4-20210929_185130
+        image: bayrell/ubuntu_code_server:3.11.0-4-20210929_193023
         hostname: "cloud_os_standard.local"
         volumes:
             - "code_server_data:/data"
@@ -28,7 +28,8 @@ services:
                 ipv4_address: 172.20.0.7
         logging:
             driver: journald
-            
+    
+    
     mysql:
         image: mysql:5.7
         command:    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
@@ -42,8 +43,8 @@ services:
                 ipv4_address: 172.20.0.5
         logging:
             driver: journald
-     
-     
+    
+    
     balancer:
         image: bayrell/load_balancer_http:0.3.0
         volumes:
