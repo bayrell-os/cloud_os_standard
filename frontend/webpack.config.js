@@ -23,7 +23,19 @@ module.exports = {
 		alias: {
 			'@': path.resolve(__dirname, 'src')
 		},
-		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue']
+		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue'],
+		fallback: {
+			"fs": false,
+			"path": false,
+			"os": false,
+			"constants": false,
+			"stream": false,
+			"crypto": false,
+			"zlib": false,
+			"http": false,
+			"https": false,
+			"vm": false
+		}
 	},
 	module: {
 		rules: [

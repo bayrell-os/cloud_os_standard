@@ -17,10 +17,12 @@
 -->
 
 <style lang="scss" scoped>
+.table{
+	margin-top: 10px
+}
 .table table{
 	border-collapse: collapse;
 	border: 1px #ccc solid;
-	margin-top: 10px
 }
 .table td, .table th{
 	border: 1px #ccc solid;
@@ -30,6 +32,10 @@
 .table .row:hover{
 	background-color: #eee;
 	color: inherit;
+}
+.table .row.active{
+	background-color: #337ab7;
+	color: white;
 }
 .buttons button{
 	margin-left: 2px;
@@ -58,6 +64,7 @@
 		</slot>
 	</div>
 	<div class="table">
+		<slot name="table_before"></slot>
 		<slot name="table">
 			<table>
 				<tr class="header">
@@ -65,7 +72,10 @@
 						:key="field.api_name"
 					>{{ field.label }}</th>
 				</tr>
-				<tr class="row" v-for="item, item_index in model.items" :key="item.domain_name">
+				<tr class="row" v-for="item, item_index in model.items" :key="item.domain_name"
+					v-bind:class="{ active: model.isRowActive(item) }"
+					@click="onRowClick(item, item_index, $event)"
+				>
 					<td v-for="field in model.fields_table"
 						:key="field.api_name"
 					>
@@ -74,12 +84,13 @@
 							v-bind:crud_item="item"
 							v-bind:crud_field="field"
 							v-bind:value="model.getItemValue(item_index, field.api_name)"
-							@crudEvent="onCrudEvent(index, field.api_name, $event)"
+							@crudEvent="onCrudEvent($event)"
 						/>
 					</td>
 				</tr>
 			</table>
 		</slot>
+		<slot name="table_after"></slot>
 	</div>
 	<slot name="dialog_form">
 		<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
@@ -116,8 +127,8 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
-import { COMPONENTS } from "./CrudState";
+import { mixin, deepClone } from "vue-helper";
+import { COMPONENTS, CRUD_EVENTS, CrudEvent } from "./CrudState";
 import Button from './Button.vue';
 import Dialog from '@/components/Dialog/Dialog.vue';
 import Form from '@/components/Form/Form.vue';
@@ -132,17 +143,26 @@ export const Crud =
 	},
 	methods:
 	{
-		onCrudEvent: function(index, field_api_name, $event)
+		onRowClick: function(item, index, $event)
 		{
-			if ($event.name == "row_button_click")
+			let event = new CrudEvent();
+			event.event_name = CRUD_EVENTS.ROW_CLICK;
+			event.crud_item = deepClone(item);
+			event.index = this.crud_index;
+			event.$event = $event;
+			this.$emit( "crudEvent", event );
+		},
+		onCrudEvent: function($event)
+		{
+			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK)
 			{
-				if ($event.attrs.button_name == "edit")
+				if ($event.button_name == "edit")
 				{
-					this.onShowEdit($event.attrs.crud_item);
+					this.onShowEdit($event.crud_item);
 				}
-				if ($event.attrs.button_name == "delete")
+				if ($event.button_name == "delete")
 				{
-					this.onShowDelete($event.attrs.crud_item);
+					this.onShowDelete($event.crud_item);
 				}
 			}
 		},

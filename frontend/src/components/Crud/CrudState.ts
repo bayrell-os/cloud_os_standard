@@ -18,7 +18,7 @@
 
 import axios, { AxiosResponse } from "axios";
 import { DefineComponent } from "vue";
-import { BaseObject, deepClone } from "vue-helper";
+import { BaseObject, deepClone, objContains, objEquals } from "vue-helper";
 import { DialogState } from "@/components/Dialog/DialogState";
 import { FormState } from "@/components/Form/FormState";
 import Input from './Input.vue';
@@ -41,13 +41,25 @@ export let COMPONENTS =
 	TextArea,
 };
 
+export let CRUD_EVENTS =
+{
+	ROW_CLICK: "row_click",
+	ROW_BUTTON_CLICK: "row_button_click",
+	ITEM_CHANGE: "item_change",
+};
+
 
 export class CrudEvent
 {
-	name: string = "";
+	event_name: string = "";
+	item_name: string = "";
 	value: any = null;
 	tag: any = null;
+	index: number = 0;
+	crud_item: CrudItem | null = null;
+	button_name: string = "";
 	attrs: Record<string, any> = {};
+	$event: any = null;
 }
 
 
@@ -180,6 +192,8 @@ export class CrudState
 	form: FormState = new FormState();
 	dialog_delete: DialogState = new DialogState();
 	dialog_form: DialogState = new DialogState();
+	active_item: CrudItem | null = null;
+	active_item_pk: Record<string, any> | null = null;
 	
 	
 	constructor()
@@ -187,6 +201,19 @@ export class CrudState
 		this.crudInit();
 	}
 	
+	
+	/**
+	 * Returns if item is action
+	 */
+	isRowActive(item: CrudItem | null)
+	{
+		if (item == null) return false;
+		if (this.active_item_pk == null) return false;
+		
+		if (objContains(this.active_item_pk, item)) return true;
+		
+		return false;
+	}
 	
 	
 	/**

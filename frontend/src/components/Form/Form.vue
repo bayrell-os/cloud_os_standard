@@ -64,10 +64,11 @@
 					<div class="form_row_label">{{ field.label }}</div>
 					<div class="form_row_value">
 						<component v-bind:is="field.component"
+							v-bind:name="field.api_name"
 							v-bind:crud_item="model.item"
 							v-bind:crud_field="field"
 							v-bind:value="model.getItemValue(field.api_name)"
-							@crudEvent="onCrudEvent(field.api_name, $event)"
+							@crudEvent="onCrudEvent($event)"
 						/>
 					</div>
 					<div class="form_row_result"></div>
@@ -97,7 +98,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
-import { COMPONENTS } from "@/components/Crud/CrudState";
+import { COMPONENTS, CRUD_EVENTS } from "@/components/Crud/CrudState";
 import axios from "axios";
 
 
@@ -110,11 +111,11 @@ export const Form =
 	},
 	methods:
 	{
-		onCrudEvent: function(api_name, $event)
+		onCrudEvent: function($event)
 		{
-			if ($event.name == "change")
+			if ($event.event_name == CRUD_EVENTS.ITEM_CHANGE)
 			{
-				this.model.setItemValue(api_name, $event.value)
+				this.model.setItemValue($event.item_name, $event.value)
 			}
 		},
 	},

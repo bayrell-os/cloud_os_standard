@@ -61,7 +61,8 @@ export const Select =
 		onChange: function(name, $event)
 		{
 			let event = new CrudEvent();
-			event.name = "change";
+			event.event_name = CRUD_EVENTS.ITEM_CHANGE;
+			event.item_name = name;
 			event.value = $event.target.value;
 			this.$emit( "crudEvent", event );
 		},

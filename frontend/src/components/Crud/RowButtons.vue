@@ -18,17 +18,17 @@
 
 <style lang="scss" scoped>
 .buttons button{
-    margin-left: 2px;
-    margin-right: 2px;
+	margin-left: 2px;
+	margin-right: 2px;
 }
 </style>
 
 
 <template>
-    <div class='buttons'>
-	    <Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
-        <Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
-    </div>
+	<div class='buttons'>
+		<Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
+		<Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
+	</div>
 </template>
 
 
@@ -36,34 +36,35 @@
 
 import Button from "./Button";
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from 'vue-helper';
-import { CrudEvent } from "./CrudState";
+import { mixin, componentExtend, deepClone } from 'vue-helper';
+import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
 
 export const RowButtons =
 {
-    name: "RowButtons",
+	name: "RowButtons",
 	mixins: [ mixin ],
-    emits: Field.emits,
+	emits: Field.emits,
 	props: Field.props,
 	computed:
 	{
 	},
 	methods:
 	{
-        onButtonClick: function(button_name)
-        {
-            let event = new CrudEvent();
-            event.name = "row_button_click";
-            event.attrs["crud_item"] = this.crud_item;
-            event.attrs["button_name"] = button_name;
-            this.$emit( "crudEvent", event );
-        }
+		onButtonClick: function(button_name)
+		{
+			let event = new CrudEvent();
+			event.event_name = CRUD_EVENTS.ROW_BUTTON_CLICK;
+			event.crud_item = deepClone(this.crud_item);
+			event.button_name = button_name;
+			event.index = this.crud_index;
+			this.$emit( "crudEvent", event );
+		}
 	},
 	components:
 	{
-        Button,
+		Button,
 	},
 };
 
