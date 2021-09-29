@@ -3,13 +3,14 @@
 	"version": "0.4.0",
 	"description": "Cloud OS",
 	"scripts": {
-		"build": "webpack --mode development",
-		"build:prod": "webpack",
-		"watch": "webpack --watch --progress --mode development"
+		"build": "./node_modules/.bin/webpack --mode development",
+		"build:prod": "./node_modules/.bin/webpack",
+		"watch": "./node_modules/.bin/webpack --watch --progress --mode development"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.8",
 		"@babel/preset-env": "^7.14.8",
+		"@swc/core": "^1.2.92",
 		"@types/jest": "^24.0.19",
 		"@typescript-eslint/eslint-plugin": "^4.18.0",
 		"@typescript-eslint/parser": "^4.18.0",
@@ -25,16 +26,27 @@
 		"@vue/eslint-config-typescript": "^7.0.0",
 		"@vue/test-utils": "^2.0.0-0",
 		"babel-loader": "^8.2.2",
+		"constants-browserify": "^1.0.0",
+		"crypto-browserify": "^3.12.0",
 		"css-loader": "^6.2.0",
 		"cssnano": "^5.0.7",
+		"esbuild": "^0.13.3",
 		"eslint": "^6.7.2",
 		"eslint-plugin-vue": "^7.0.0",
+		"fs": "0.0.1-security",
+		"https-browserify": "^1.0.0",
 		"node-sass": "^6.0.1",
+		"os-browserify": "^0.3.0",
+		"path-browserify": "^1.0.1",
 		"sass": "^1.36.0",
 		"sass-loader": "^12.1.0",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
 		"style-loader": "^3.2.1",
 		"ts-loader": "^9.2.4",
+		"tty-browserify": "0.0.1",
 		"typescript": "^4.3.5",
+		"vm-browserify": "^1.1.2",
 		"vue": "^3.1.5",
 		"vue-jest": "^5.0.0-0",
 		"vue-loader": "^16.4.0",
@@ -51,5 +63,17 @@
 		"vue-helper": "file:tmp/vue-helper",
 		"vue-router": "^4.0.0-0",
 		"vuex": "^4.0.0-0"
+	},
+	"browser": {
+		"fs": false,
+		"path": false,
+		"os": false,
+		"crypto": false,
+		"stream": false,
+		"http": false,
+		"tls": false,
+		"zlib": false,
+		"https": false,
+		"net": false
 	}
 }

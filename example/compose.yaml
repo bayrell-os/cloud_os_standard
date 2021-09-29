@@ -3,7 +3,7 @@ version: "3.3"
 services:
     
     standard:
-        image: bayrell/ubuntu_code_server:3.11.0-3-amd64
+        image: bayrell/ubuntu_code_server:3.11.0-4-20210929_185130
         hostname: "cloud_os_standard.local"
         volumes:
             - "code_server_data:/data"

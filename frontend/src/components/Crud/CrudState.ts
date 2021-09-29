@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
 import { BaseObject, deepClone, objContains, objEquals } from "vue-helper";
 import { DialogState } from "@/components/Dialog/DialogState";
@@ -549,7 +549,7 @@ export class CrudState
 	static async apiSaveForm(component: DefineComponent)
 	{
 		let model:CrudState = component.model;
-		let response:AxiosResponse;
+		let response:AxiosResponse | null = null;
 		let item:CrudItem = model.form.item as CrudItem;
 		let item_original:CrudItem = model.form.item_original as CrudItem;
 		
@@ -565,16 +565,22 @@ export class CrudState
 			}
 			catch (e)
 			{
-				response = e.response;
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
 			}
 			
-			model = component.model;
-			model.form.setResponse(response.data);
-			
-			if (response.data.error.code == 1)
+			if (response)
 			{
-				model.addItem(response.data.result.item);
-				model.dialog_form.hide();
+				model = component.model;
+				model.form.setResponse(response.data);
+				
+				if (response.data.error.code == 1)
+				{
+					model.addItem(response.data.result.item);
+					model.dialog_form.hide();
+				}
 			}
 		}
 		else
@@ -587,16 +593,23 @@ export class CrudState
 			}
 			catch (e)
 			{
-				response = e.response;
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
+
 			}
 			
-			model = component.model;
-			model.form.setResponse(response.data);
-			
-			if (typeof(response.data) == "object" && response.data.error.code == 1)
+			if (response)
 			{
-				model.updateItem(item_original, response.data.result.item);
-				model.dialog_form.hide();
+				model = component.model;
+				model.form.setResponse(response.data);
+				
+				if (typeof(response.data) == "object" && response.data.error.code == 1)
+				{
+					model.updateItem(item_original, response.data.result.item);
+					model.dialog_form.hide();
+				}
 			}
 		}
 		
@@ -610,7 +623,7 @@ export class CrudState
 	static async apiDeleteForm(component: DefineComponent)
 	{
 		let model:CrudState = component.model;
-		let response:AxiosResponse;
+		let response:AxiosResponse | null = null;
 		let item:CrudItem = model.current_item as CrudItem;
 		
 		model.dialog_delete.setWaitResponse();
@@ -625,16 +638,22 @@ export class CrudState
 			}
 			catch (e)
 			{
-				response = e.response;
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
 			}
 			
-			model = component.model;
-			model.dialog_delete.setResponse(response.data);
-			
-			if (typeof(response.data) == "object" && response.data.error.code == 1)
+			if (response)
 			{
-				model.deleteItem(item);
-				model.dialog_delete.hide();
+				model = component.model;
+				model.dialog_delete.setResponse(response.data);
+				
+				if (typeof(response.data) == "object" && response.data.error.code == 1)
+				{
+					model.deleteItem(item);
+					model.dialog_delete.hide();
+				}
 			}
 		}
 		

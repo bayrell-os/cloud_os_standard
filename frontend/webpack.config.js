@@ -26,15 +26,18 @@ module.exports = {
 		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue'],
 		fallback: {
 			"fs": false,
-			"path": false,
-			"os": false,
-			"constants": false,
-			"stream": false,
-			"crypto": false,
-			"zlib": false,
-			"http": false,
-			"https": false,
-			"vm": false
+			"child_process": false,
+			"worker_threads": false,
+			"crypto": require.resolve("crypto-browserify"),
+			"constants": require.resolve("constants-browserify"),
+			"stream": require.resolve("stream-browserify"),
+			"path": require.resolve("path-browserify"),
+			"os": require.resolve("os-browserify/browser"),
+			"http": require.resolve("stream-http"),
+			"https": require.resolve("https-browserify"),
+			"vm": require.resolve("vm-browserify"),
+			"zlib": require.resolve("browserify-zlib"),
+			"tty": require.resolve("tty-browserify")
 		}
 	},
 	module: {
