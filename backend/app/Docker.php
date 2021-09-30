@@ -347,10 +347,11 @@ class Docker
 			{
 				$nginx_route = "";
 				$upstream_name = $route["target_port"] . "." . $route["docker_name"]
-					. ".cloud_router.example";
+					. ".cloud_network.example";
 				
 				$protocol_data = json_decode($route["protocol_data"]);
-				$has_websocket = isset($protocol_data["websocket"]) ? $protocol_data["websocket"] : false;
+				$has_websocket = isset($protocol_data["websocket"]) ?
+					$protocol_data["websocket"] : false;
 					
 				$domain_route_url = $route["route"];
 				$domain_route_prefix = $route["route_prefix"];
