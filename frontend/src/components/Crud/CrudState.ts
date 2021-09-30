@@ -28,6 +28,7 @@ import RowNumber from './RowNumber.vue';
 import Select from './Select.vue';
 import SelectLabel from './SelectLabel.vue';
 import TextArea from './TextArea.vue';
+import CodeMirror from './CodeMirror.vue';
 
 
 export let COMPONENTS =
@@ -39,6 +40,7 @@ export let COMPONENTS =
 	Select,
 	SelectLabel,
 	TextArea,
+	CodeMirror,
 };
 
 export let CRUD_EVENTS =
@@ -597,7 +599,6 @@ export class CrudState
 				{
 					response = e["response"] as AxiosResponse;
 				}
-
 			}
 			
 			if (response)

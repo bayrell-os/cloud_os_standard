@@ -2,8 +2,8 @@ version: "3.3"
 
 services:
     
-    standard:
-        image: bayrell/ubuntu_code_server:3.11.0-4-20210929_193023
+    standard_node1:
+        image: bayrell/ubuntu_code_server:3.11.0-4-20210930_092935
         hostname: "cloud_os_standard.local"
         volumes:
             - "code_server_data:/data"
@@ -24,13 +24,12 @@ services:
             WWW_GID: 1000
         restart: unless-stopped
         networks:
-            dockernet:
-                ipv4_address: 172.20.0.7
+            - cloud_network
         logging:
             driver: journald
     
     
-    mysql:
+    mysql_node1:
         image: mysql:5.7
         command:    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
         volumes:
@@ -39,13 +38,12 @@ services:
             - ./env.conf
         restart: unless-stopped
         networks:
-            dockernet:
-                ipv4_address: 172.20.0.5
+            - cloud_network
         logging:
             driver: journald
     
     
-    balancer:
+    balancer_node1:
         image: bayrell/load_balancer_http:0.3.0
         volumes:
             - "http_data:/data"
@@ -56,18 +54,15 @@ services:
             - ./env.conf
         restart: unless-stopped
         networks:
-            - dockernet
-            - cloud_router
+            - cloud_network
         logging:
             driver: journald
-     
+    
 volumes:
     mysql_data:
     code_server_data:
     http_data:
     
 networks:
-    dockernet:
-        external: true
-    cloud_router:
+    cloud_network:
         external: true

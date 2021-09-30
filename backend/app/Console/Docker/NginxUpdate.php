@@ -46,7 +46,7 @@ class NginxUpdate extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		Docker::updateUpstreams("cloud_router");
+		Docker::updateUpstreams("cloud_network");
 		Docker::updateDomains();
         return Command::SUCCESS;
     }

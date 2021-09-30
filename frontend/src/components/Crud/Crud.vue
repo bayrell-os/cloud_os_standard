@@ -17,12 +17,13 @@
 -->
 
 <style lang="scss" scoped>
-.table{
-	margin-top: 10px
+.top_buttons{
+	margin-bottom: 10px;
 }
 .table table{
 	border-collapse: collapse;
 	border: 1px #ccc solid;
+	width: 100%;
 }
 .table td, .table th{
 	border: 1px #ccc solid;
@@ -56,71 +57,73 @@
 
 
 <template>
-	<div class="top_buttons">
+	<div class='crud'>
 		<slot name="top_buttons">
-			<Button type="primary" @click="onShowAdd()">
-				{{ model.getMessage("top_button_show_add_title", model.current_item) }}
-			</Button>
+			<div class="top_buttons">
+				<Button type="primary" @click="onShowAdd()">
+					{{ model.getMessage("top_button_show_add_title", model.current_item) }}
+				</Button>
+			</div>
 		</slot>
-	</div>
-	<div class="table">
 		<slot name="table_before"></slot>
 		<slot name="table">
-			<table>
-				<tr class="header">
-					<th v-for="field in model.fields_table"
-						:key="field.api_name"
-					>{{ field.label }}</th>
-				</tr>
-				<tr class="row" v-for="item, item_index in model.items" :key="item.domain_name"
-					v-bind:class="{ active: model.isRowActive(item) }"
-					@click="onRowClick(item, item_index, $event)"
-				>
-					<td v-for="field in model.fields_table"
-						:key="field.api_name"
+			<div class="table">
+				<table>
+					<tr class="header">
+						<th v-for="field in model.fields_table"
+							:key="field.api_name"
+						>{{ field.label }}</th>
+					</tr>
+					<tr class="row" v-for="item, item_index in model.items" :key="item.domain_name"
+						v-bind:class="{ active: model.isRowActive(item) }"
+						@click="onRowClick(item, item_index, $event)"
 					>
-						<component v-bind:is="field.component"
-							v-bind:crud_index="item_index"
-							v-bind:crud_item="item"
-							v-bind:crud_field="field"
-							v-bind:value="model.getItemValue(item_index, field.api_name)"
-							@crudEvent="onCrudEvent($event)"
-						/>
-					</td>
-				</tr>
-			</table>
+						<td v-for="field in model.fields_table"
+							:key="field.api_name"
+						>
+							<component v-bind:is="field.component"
+								v-bind:crud_index="item_index"
+								v-bind:crud_item="item"
+								v-bind:crud_field="field"
+								v-bind:value="model.getItemValue(item_index, field.api_name)"
+								@crudEvent="onCrudEvent($event)"
+							/>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</slot>
 		<slot name="table_after"></slot>
+		<slot name="dialog_form">
+			<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
+				<template v-slot:title>
+					{{ model.getMessage("dialog_form_title", model.current_item) }}
+				</template>
+				<template v-slot:content>
+					<Form v-bind:store_path="store_path.concat('form')">
+						<template v-slot:buttons>
+							<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+							<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+						</template>
+					</Form>
+				</template>
+			</Dialog>
+		</slot>
+		<slot name="dialog_delete">
+			<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
+				<template v-slot:title>
+					{{ model.getMessage("dialog_delete_title", model.current_item) }}
+				</template>
+				<template v-slot:text>
+					{{ model.getMessage("dialog_delete_text", model.current_item) }}
+				</template>
+				<template v-slot:buttons>
+					<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
+					<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
+				</template>
+			</Dialog>
+		</slot>
 	</div>
-	<slot name="dialog_form">
-		<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
-			<template v-slot:title>
-				{{ model.getMessage("dialog_form_title", model.current_item) }}
-			</template>
-			<template v-slot:content>
-				<Form v-bind:store_path="store_path.concat('form')">
-					<template v-slot:buttons>
-						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-						<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-					</template>
-				</Form>
-			</template>
-		</Dialog>
-	</slot>
-	<slot name="dialog_delete">
-		<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
-			<template v-slot:title>
-				{{ model.getMessage("dialog_delete_title", model.current_item) }}
-			</template>
-			<template v-slot:text>
-				{{ model.getMessage("dialog_delete_text", model.current_item) }}
-			</template>
-			<template v-slot:buttons>
-				<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
-				<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
-			</template>
-		</Dialog>
-	</slot>
 </template>
 
 
@@ -203,7 +206,7 @@ export const Crud =
 	},
 	mounted()
 	{
-		console.log("crud mounted");
+		// console.log("crud mounted");
 	},
 	components: Object.assign(COMPONENTS, {
 		Button,

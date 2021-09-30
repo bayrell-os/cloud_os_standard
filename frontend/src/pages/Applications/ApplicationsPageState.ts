@@ -17,6 +17,8 @@
  */
 
 import { CrudItem, CrudState, FieldInfo } from '@/components/Crud/CrudState';
+import axios, { AxiosResponse } from 'axios';
+import { DefineComponent } from 'vue';
 import { deepClone } from "vue-helper";
 
 
@@ -67,6 +69,16 @@ export class Application extends CrudItem
 
 export class ApplicationsPageState extends CrudState
 {
+	
+	getActiveText(): string
+	{
+		if (this.active_item != null)
+		{
+			return (this.active_item as Application).content;
+		}
+		return "";
+	}
+	
 	
 	/**
 	 * Returns new item
@@ -175,7 +187,7 @@ export class ApplicationsPageState extends CrudState
 		/* Form fields */
 		this.form.fields.push( deepClone(stack_name) );
 		this.form.fields.push( deepClone(name) );
-		this.form.fields.push( deepClone(content) );
+		//this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		name.component = "Label";
@@ -212,5 +224,41 @@ export class ApplicationsPageState extends CrudState
 			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	/**
+	 * Save active item
+	 */
+	static async apiSaveActive(component: DefineComponent)
+	{
+		let model:CrudState = component.model;
+		let response:AxiosResponse | null = null;
+		let item:Application = model.active_item as Application;
+		
+		let url = model.getApiUrlUpdate(item);
+			
+		try
+		{
+			response = await axios.post(url, {"item": {"content": item.content}});
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		if (response)
+		{
+			if (response.data.error.code == 1)
+			{
+				item = model.createNewItemInstance(response.data.result.item) as Application;
+				model.active_item = item;
+				model.active_item_pk = model.getPrimaryKeyFromItem(item);
+				model.updateItem(item, response.data.result.item);
+			}
+		}
 	}
 }

@@ -44,6 +44,7 @@
 	},
 	"dependencies": {
 		"axios": "^0.21.1",
+		"codemirror": "^5.63.1",
 		"core-js": "^3.6.5",
 		"dayjs": "^1.10.6",
 		"immutable": "^4.0.0-rc.14",

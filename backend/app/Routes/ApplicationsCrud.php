@@ -57,4 +57,16 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		];
 	}
 
+	
+	
+	/**
+	 * Find query
+	 */
+	public function findQuery($query)
+	{
+		return $query
+			->orderBy("stack_name", "asc")
+			->orderBy("name", "asc")
+		;
+	}
 }

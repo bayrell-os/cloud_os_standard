@@ -13,7 +13,6 @@ TAG=`date '+%Y%m%d_%H%M%S'`
 function generate {
 	
 	ENV_PATH=$SCRIPT_PATH/example/env.conf
-	CLOUD_KEY_PATH=$SCRIPT_PATH/example/cloud.key
 	
 	if [ ! -f $ENV_PATH ]; then
 		
@@ -34,7 +33,7 @@ function generate {
 case "$1" in
 	
 	create_network)
-		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable cloud_router -o "com.docker.network.bridge.name"="cloud_router"
+		docker network create --subnet 172.21.0.1/16 --driver=overlay --attachable cloud_network -o "com.docker.network.bridge.name"="cloud_network"
 		
 		sleep 2
 		
@@ -49,7 +48,7 @@ case "$1" in
 		docker-compose -f example/compose.yaml -p "cloud_os" up -d --remove-orphans
 	;;
 	
-	run)
+	run|setup)
 		$0 create_network
 		$0 generate
 		$0 compose

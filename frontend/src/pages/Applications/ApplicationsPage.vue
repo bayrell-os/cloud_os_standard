@@ -18,21 +18,52 @@
 
 <style lang="scss">
 .applications_page{
-	.table{
-		display: flex;
-		table{
+	.crud{
+		position: relative;
+		.top_buttons{
+			margin-bottom: 10px;
+		}
+		.top_buttons_table, .top_buttons_editor{
+			display: inline-block;
+			vertical-align: top;
+		}
+		.top_buttons_table{
 			width: 400px;
+		}
+		.top_buttons_editor{
+			width: calc(100% - 400px);
+			button{
+				margin-right: 5px;
+			}
+		}
+		.table{
+			display: inline-block;
+			vertical-align: top;
+			width: 400px;
+			padding-right: 5px;
 		}
 		.row{
 			cursor: pointer;
 		}
 		.editor{
+			display: inline-block;
+			vertical-align: top;
+			position: relative;
 			width: calc(100% - 400px);
-			margin-left: 10px;
+			height: 100%;
 		}
 		.editor textarea{
 			width: 100%;
 			height: 200px;
+		}
+		.editor .CodeMirror {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			height: 100%;
 		}
 	}
 }
@@ -41,9 +72,28 @@
 <template>
 	<div class='applications_page'>
 		<Crud v-bind:store_path="store_path">
+			<template v-slot:top_buttons>
+				<div class="top_buttons">
+					<div class="top_buttons_table">
+						<Button type="primary" @click="onShowAdd()">
+							{{ model.getMessage("top_button_show_add_title", model.current_item) }}
+						</Button>
+					</div>
+					<div class="top_buttons_editor">
+						<Button type="default" @click="onSave()">
+							Save
+						</Button>
+						<Button type="success" @click="onCompose()">
+							Compose
+						</Button>
+					</div>
+				</div>
+			</template>
 			<template v-slot:table_after>
 				<div class="editor">
-					<textarea>123</textarea>
+					<CodeMirror v-bind:value="model.getActiveText()" name="code_mirror"
+						@crudEvent="onCodeMirrorCrudEvent($event)"
+					/>
 				</div>
 			</template>
 		</Crud>
@@ -56,31 +106,52 @@ import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone } from "vue-helper";
 import { Crud } from '@/components/Crud/Crud.vue';
 import { CRUD_EVENTS } from '@/components/Crud/CrudState';
-import { ApplicationsPageState } from './ApplicationsPageState';
-
+import { Application, ApplicationsPageState } from './ApplicationsPageState';
+import Button from '@/components/Crud/Button.vue';
+import CodeMirror from '@/components/Crud/CodeMirror.vue';
 
 export const ApplicationsPage =
 {
 	name: "ApplicationsPage",
 	mixins: [mixin],
+	components:
+	{
+		Button,
+		CodeMirror
+	},
 	methods:
 	{
+		onSave: function()
+		{
+			this.model.constructor.apiSaveActive(this);
+		},
+		onCompose: function()
+		{
+			this.model.constructor.apiComposeActive(this);
+		},
+		onShowAdd: function()
+		{
+			Crud.methods.onShowAdd.apply(this, []);
+		},
 		onRowClick: function(item, index, $event)
 		{
 			if ($event.target.tagName != 'BUTTON')
 			{
-				this.model.active_item = deepClone(item);
+				this.model.active_item = (new Application()).assignValues(item);
 				this.model.active_item_pk = this.model.getPrimaryKeyFromItem(item);
 				Crud.methods.onRowClick.apply(this, [item, index]);
 			}
 		},
 		onCrudEvent: function($event)
 		{
-			if ($event.event_name == CRUD_EVENTS.ROW_CLICK)
-			{
-				console.log($event);
-			}
 			Crud.methods.onCrudEvent.apply(this, [$event]);
+		},
+		onCodeMirrorCrudEvent: function($event)
+		{
+			if (this.model.active_item != null && $event.event_name == CRUD_EVENTS.ITEM_CHANGE)
+			{
+				this.model.active_item.content = $event.value;
+			}
 		},
 	},
 	mounted()
