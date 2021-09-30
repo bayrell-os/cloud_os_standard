@@ -9,6 +9,8 @@ RUN apk add sudo docker dnsmasq curl php7-curl mariadb-client; \
 	adduser www www-data; \
 	echo "Ok"
 
+ADD backend /srv/backend
+ADD frontend/html /srv/frontend/html
 ADD files /src/files
 RUN cd ~; \
 	cp -rf /src/files/etc/* /etc/; \
@@ -16,5 +18,3 @@ RUN cd ~; \
 	rm -rf /src/files; \
 	chmod +x /root/run.sh; \
 	echo "Ok"
-	
-ADD src /var/www

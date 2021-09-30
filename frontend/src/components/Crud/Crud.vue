@@ -23,7 +23,6 @@
 .table table{
 	border-collapse: collapse;
 	border: 1px #ccc solid;
-	width: 100%;
 }
 .table td, .table th{
 	border: 1px #ccc solid;

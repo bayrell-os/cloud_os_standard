@@ -41,6 +41,9 @@
 			vertical-align: top;
 			width: 400px;
 			padding-right: 5px;
+			table{
+				width: 100%;
+			}
 		}
 		.row{
 			cursor: pointer;

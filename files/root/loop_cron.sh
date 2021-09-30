@@ -2,6 +2,7 @@
 
 while true
 do
-    sleep 5
-    /var/www/console.php run_cron
+    sleep 15
+    /srv/backend/console.php docker:services:update
+    /srv/backend/console.php docker:nginx:update
 done

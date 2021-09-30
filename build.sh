@@ -5,7 +5,7 @@ SCRIPT_PATH=`dirname $SCRIPT`
 BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
-VERSION=0.3.1
+VERSION=0.4.0
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in
@@ -16,15 +16,18 @@ case "$1" in
 	;;
 	
 	amd64)
-		docker build ./ -t bayrell/cloud_os_standard:$VERSION-amd64 --file Dockerfile --build-arg ARCH=-amd64
+		docker build ./ -t bayrell/cloud_os_standard:$VERSION-amd64 \
+			--file Dockerfile --build-arg ARCH=-amd64
 	;;
 	
 	arm64v8)
-		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8 --file Dockerfile --build-arg ARCH=-arm64v8
+		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8 \
+			--file Dockerfile --build-arg ARCH=-arm64v8
 	;;
 	
 	arm32v7)
-		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm32v7 --file Dockerfile --build-arg ARCH=-arm32v7
+		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm32v7 \
+			--file Dockerfile --build-arg ARCH=-arm32v7
 	;;
 	
 	manifest)

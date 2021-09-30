@@ -3,21 +3,41 @@ version: "3.3"
 services:
     
     standard_node1:
-        image: bayrell/ubuntu_code_server:3.11.0-4-20210930_092935
+        image: bayrell/cloud_os_standard:0.4.0-amd64
         hostname: "cloud_os_standard.local"
         volumes:
-            - "code_server_data:/data"
+            - "standard_node1_data:/data"
             - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
             - "8080:80"
-            - "8000:8000"
         env_file:
             - ./env.conf
         environment:
             TZ: "Asia/Almaty"
             APP_URL: "http://cloud.docker0:8080/"
             MYSQL_DATABASE: "cloud_os_standard"
+            DOCUMENT_ROOT: "/srv/frontend/html"
+            WWW_UID: 1000
+            WWW_GID: 1000
+        restart: unless-stopped
+        networks:
+            - cloud_network
+        logging:
+            driver: journald
+    
+    
+    code_server:
+        image: bayrell/ubuntu_code_server:3.11.0-4-amd64
+        hostname: "cloud_os_standard.local"
+        volumes:
+            - "code_server_data:/data"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
+        ports:
+            - "8000:8000"
+        environment:
+            TZ: "Asia/Almaty"
+            APP_URL: "http://cloud.docker0:8080/"
             DOCUMENT_ROOT: "/srv/frontend/html"
             NGINX_CONF: "/srv/nginx_vscode.conf"
             WWW_UID: 1000
@@ -31,7 +51,7 @@ services:
     
     mysql_node1:
         image: mysql:5.7
-        command:    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
+        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
         volumes:
             - "mysql_data:/var/lib/mysql"
         env_file:
@@ -60,6 +80,7 @@ services:
     
 volumes:
     mysql_data:
+    standard_node1_data:
     code_server_data:
     http_data:
     
