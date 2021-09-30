@@ -20,11 +20,13 @@
 
 namespace App\Routes;
 
+use App\Docker;
 use App\Models\Application;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
+use TinyPHP\Utils;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
@@ -34,6 +36,22 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	var $class_name = Application::class;
 	var $api_path = "applications";
 
+	
+	/**
+	 * Declare routes
+	 */
+	function routes(RouteCollector $routes)
+	{
+		parent::routes($routes);
+		$routes->addRoute
+		(
+			'POST',
+			'/' . $this->api_path . '/default/compose/{id}/',
+			[$this, "actionCompose"]
+		);
+	}
+	
+	
 	
 	/**
 	 * Get rules
@@ -68,5 +86,64 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->orderBy("stack_name", "asc")
 			->orderBy("name", "asc")
 		;
+	}
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	public function actionCompose($container)
+	{
+		$post = json_decode($container->request->getContent(), true);
+		if ($post == null)
+		{
+			throw new \Exception("Post is null");
+		}
+		
+		$data = Utils::attr($post, "item");
+		if ($data === null)
+		{
+			throw new \Exception("Field item is empty");
+		}
+		
+		/* Find item */
+		$this->findItem();
+		
+		if ($this->item == null)
+        {
+            throw new ItemNotFoundException();
+        }
+		
+		/* From database */
+		$item = $this->fromDatabase($this->item);
+		
+		/* Save all files */
+		$applications = Application::query()->get()->toArray();
+		foreach ($applications as $row)
+		{
+			$row_name = $row["name"];
+			$row_stack_name = $row["stack_name"];
+			$row_content = $row["content"];
+			$file_path = "/data/yaml/" . $row_stack_name . "/" . $row_name;
+			$file_dirname = dirname($file_path);
+			@mkdir($file_dirname, 0755, true);
+			file_put_contents($file_path, $row_content);
+		}
+		
+		/* Compose */
+		$yaml_file_path = "/data/yaml/" . $item["stack_name"] . "/" . $item["name"];
+		$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " " .
+			$item["stack_name"] . " --with-registry-auth";
+		$result = Docker::exec($cmd . " 2>&1");
+		
+		/* Set result */
+		return $container->setResponse
+		(
+			$this
+				->api_result
+				->success(["item"=>$item], $result)
+				->getResponse()
+		);
 	}
 }

@@ -573,16 +573,12 @@ export class CrudState
 				}
 			}
 			
-			if (response)
+			model.form.setResponse(response);
+			
+			if (response && response.data.error.code == 1)
 			{
-				model = component.model;
-				model.form.setResponse(response.data);
-				
-				if (response.data.error.code == 1)
-				{
-					model.addItem(response.data.result.item);
-					model.dialog_form.hide();
-				}
+				model.addItem(response.data.result.item);
+				model.dialog_form.hide();
 			}
 		}
 		else
@@ -601,16 +597,12 @@ export class CrudState
 				}
 			}
 			
-			if (response)
+			model.form.setResponse(response);
+			
+			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
-				model = component.model;
-				model.form.setResponse(response.data);
-				
-				if (typeof(response.data) == "object" && response.data.error.code == 1)
-				{
-					model.updateItem(item_original, response.data.result.item);
-					model.dialog_form.hide();
-				}
+				model.updateItem(item_original, response.data.result.item);
+				model.dialog_form.hide();
 			}
 		}
 		
@@ -645,16 +637,12 @@ export class CrudState
 				}
 			}
 			
-			if (response)
+			model.dialog_delete.setResponse(response);
+			
+			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
-				model = component.model;
-				model.dialog_delete.setResponse(response.data);
-				
-				if (typeof(response.data) == "object" && response.data.error.code == 1)
-				{
-					model.deleteItem(item);
-					model.dialog_delete.hide();
-				}
+				model.deleteItem(item);
+				model.dialog_delete.hide();
 			}
 		}
 		

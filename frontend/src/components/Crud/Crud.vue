@@ -123,6 +123,7 @@
 				</template>
 			</Dialog>
 		</slot>
+		<slot name="crud_after"></slot>
 	</div>
 </template>
 

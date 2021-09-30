@@ -65,6 +65,9 @@
 			width: 100%;
 			height: 100%;
 		}
+		.dialog_buttons button{
+			margin: 0 5px;
+		}
 	}
 }
 </style>
@@ -79,11 +82,11 @@
 							{{ model.getMessage("top_button_show_add_title", model.current_item) }}
 						</Button>
 					</div>
-					<div class="top_buttons_editor">
-						<Button type="default" @click="onSave()">
+					<div class="top_buttons_editor" v-show="model.active_item != null">
+						<Button type="default" @click="onActiveItemSaveClick()">
 							Save
 						</Button>
-						<Button type="success" @click="onCompose()">
+						<Button type="success" @click="onActiveItemComposeClick()">
 							Compose
 						</Button>
 					</div>
@@ -91,10 +94,21 @@
 			</template>
 			<template v-slot:table_after>
 				<div class="editor">
-					<CodeMirror v-bind:value="model.getActiveText()" name="code_mirror"
+					<CodeMirror v-bind:value="getActiveItemText()" name="code_mirror"
 						@crudEvent="onCodeMirrorCrudEvent($event)"
 					/>
 				</div>
+			</template>
+			<template v-slot:crud_after>
+				<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
+					<template v-slot:text>
+						Compose file "{{ getActiveItemName() }}" ?
+					</template>
+					<template v-slot:buttons>
+						<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
+						<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
+					</template>
+				</Dialog>
 			</template>
 		</Crud>
 	</div>
@@ -109,6 +123,7 @@ import { CRUD_EVENTS } from '@/components/Crud/CrudState';
 import { Application, ApplicationsPageState } from './ApplicationsPageState';
 import Button from '@/components/Crud/Button.vue';
 import CodeMirror from '@/components/Crud/CodeMirror.vue';
+import Dialog from '@/components/Dialog/Dialog.vue';
 
 export const ApplicationsPage =
 {
@@ -117,17 +132,40 @@ export const ApplicationsPage =
 	components:
 	{
 		Button,
-		CodeMirror
+		CodeMirror,
+		Dialog
 	},
 	methods:
 	{
-		onSave: function()
+		getActiveItemText()
 		{
-			this.model.constructor.apiSaveActive(this);
+			if (this.model.active_item != null)
+			{
+				return this.model.active_item.content;
+			}
+			return "";
 		},
-		onCompose: function()
+		getActiveItemName()
 		{
-			this.model.constructor.apiComposeActive(this);
+			if (this.model.active_item != null)
+			{
+				return this.model.active_item.stack_name + "/" + this.model.active_item.name;
+			}
+			return "";
+		},
+		onActiveItemSaveClick: function()
+		{
+			if (this.model.active_item != null)
+			{
+				this.model.constructor.apiSaveActiveItem(this);
+			}
+		},
+		onActiveItemComposeClick: function()
+		{
+			if (this.model.active_item != null)
+			{
+				this.model.dialog_compose.show();
+			}
 		},
 		onShowAdd: function()
 		{
@@ -153,6 +191,17 @@ export const ApplicationsPage =
 				this.model.active_item.content = $event.value;
 			}
 		},
+		onDialogComposeButtonClick: function(button_name)
+		{
+			if (button_name == "yes")
+			{
+				this.model.constructor.apiComposeActiveItem(this);
+			}
+			else
+			{
+				this.model.dialog_compose.hide();
+			}
+		}
 	},
 	mounted()
 	{
