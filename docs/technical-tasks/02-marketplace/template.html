@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Пример XML шаблона</title>
+<link rel="stylesheet" href="../main.css" type="text/css" />
+<script type="text/javascript" src="../main.js"></script>
+</head>
+
+<body>
+<h1>Пример XML шаблона</h1>
+
+<p>
+	Данный шаблон описывает как установить вордпресс на Облачную ОС. При установке, пользователь в переменную <b>_var_service_name_</b> должнен указать название сервиса.
+</p>
+
+<textarea class='code' readonly><?xml version="1.1" encoding="UTF-8" ?>
+<template>
+	<name>WordPress</name>
+	<maintainer>ildar@bayrell.org</maintainer>
+	<version>1.0</version>
+	<marketplace>http://example.com/shop/wordpress</marketplace>
+	<hub>docker.io/bayrell/alpine_wordpress</hub>
+	<author>Automattic</author>
+	<license>GNU GPL 2+</license>
+	<website>https://wordpress.org/</website>
+	<yaml>
+		<services>
+			<var_service_name>
+				<image>bayrell/alpine_wordpress:5.7.2-2-amd64</image>
+				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
+				<environment>
+					<WWW_UID>1000</WWW_UID>
+					<WWW_GID>1000</WWW_GID>
+				</environment>
+			</var_service_name>
+		</services>
+	</yaml>
+	<varibales>
+		<varibale>
+			<name>var_service_name</name>
+			<type>string</type>
+			<label lang="en_US">Service Name</label>
+			<label lang="ru_RU">Название сервиса</label>
+			<description lang="en_US">Unique name of the service</description>
+			<description lang="ru_RU">Уникальное имя сервиса</description>
+		</varibale>
+	</varibales>
+</template></textarea>
+
+
+<h2>Модификаторы шаблонов</h2>
+
+<p>
+	Модификаторы шаблонов нужны чтобы добавить параметры в Yaml файл сервиса. Модификаторы могут быть на подключение DNS, сети, баз данных, деплой на хосты и т.п.
+</p>
+
+<p>Пример модификатора деплоя:</p>
+
+<textarea class='code' readonly><?xml version="1.1" encoding="UTF-8" ?>
+<patch>
+	<name>Deploy hostname</name>
+	<name lang="ru_RU">Название хоста</name>
+	<maintainer>ildar@bayrell.org</maintainer>
+	<version>1.0</version>
+	<operations>
+		
+		<operation type="add">
+			<path>/template/yaml/services/var_service_name</path>
+			<value>
+				<deploy>
+					<replicas>var_replicas</replicas>
+					<endpoint_mode>dnsrr</endpoint_mode>
+					<update_config>
+						<parallelism>1</parallelism>
+						<failure_action>rollback</failure_action>
+						<delay>5s</delay>
+					</update_config>
+					<restart_policy>
+						<condition>on-failure</condition>
+						<delay>10s</delay>
+						<window>120s</window>
+					</restart_policy>
+					<placement>
+						<constraints>node.hostname == var_hostname</constraints>
+					</placement>
+				</deploy>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/varibales</path>
+			<value>
+				<varibale>
+					<name>var_hostname</name>
+					<type>string</type>
+					<label lang="en_US">Hostname</label>
+					<label lang="ru_RU">Название хоста</label>
+					<description lang="en_US">Hostname</description>
+					<description lang="ru_RU">Название хоста</description>
+				</varibale>
+				<varibale>
+					<name>var_replicas</name>
+					<type>string</type>
+					<label lang="en_US">Replicas count</label>
+					<label lang="ru_RU">Количество реплик для запуска</label>
+					<description lang="en_US">Replicas count</description>
+					<description lang="ru_RU">Количество реплик для запуска</description>
+				</varibale>
+			</value>
+		</operation>
+		
+	</operations>
+</patch></textarea>
+
+
+<p>Добавление сети cloud_network:</p>
+
+<textarea class='code'><?xml version="1.1" encoding="UTF-8" ?>
+<patch>
+	<name>Add cloud network</name>
+	<name lang="ru_RU">Добавление сети cloud_network</name>
+	<maintainer>ildar@bayrell.org</maintainer>
+	<version>1.0</version>
+	<operations>
+		
+		<operation type="add">
+			<path>/template/yaml/services/var_service_name</path>
+			<value>
+				<networks>cloud_network</networks>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/networks</path>
+			<value>
+				<cloud_network>
+					<external>true</external>
+				</cloud_network>
+			</value>
+		</operation>
+		
+	</operations>
+</patch></textarea>
+
+
+<p>Логирование в journald:</p>
+
+<textarea class='code'><?xml version="1.1" encoding="UTF-8" ?>
+<patch>
+	<name>Add journald logging</name>
+	<name lang="ru_RU">Журналирование в journald</name>
+	<maintainer>ildar@bayrell.org</maintainer>
+	<version>1.0</version>
+	<operations>
+		<operation type="add">
+			<path>/template/yaml/services/_var_service_name_</path>
+			<value>
+				<logging>
+					<driver>journald</driver>
+				</logging>
+			</value>
+		</operation>
+	</operations>
+</patch></textarea>
+
+
+</body>
+</html>
