@@ -54,6 +54,26 @@ textarea.code:active, textarea.code:focus{
 	border-bottom: 1px blue solid;
 	text-decoration: none;
 }
+h1{
+	font-size: 2em;
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: 2em;
+}
+h2{
+	font-size: 1.5em;
+	text-align: center;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
 .center{
 	text-align: center;
+}
+.image{
+	display: block;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px #000 solid;
+	padding: 10px;
 }
