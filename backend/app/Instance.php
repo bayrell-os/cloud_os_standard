@@ -67,5 +67,35 @@ class Instance extends \TinyPHP\App
 		$this->addConsoleCommand(\Phinx\Console\Command\Test::class);
 		*/
 	}
+	
+	
+	
+	/**
+	 * Connect to database
+	 */
+	static function connectToDatabase()
+	{
+		$capsule = new \Illuminate\Database\Capsule\Manager;
+		$capsule->addConnection
+		([
+			'driver'    => 'sqlite',
+			'database'  => '/data/db/cloud_os.db',
+			'prefix'    => '',
+		]);
+		
+		// Set event dispatcher
+		$capsule->setEventDispatcher( app(\Illuminate\Events\Dispatcher::class) );
+		
+		// Set the cache manager instance used by connections... (optional)
+		//$capsule->setCacheManager();
 
+		// Make this Capsule instance available globally via static methods... (optional)
+		$capsule->setAsGlobal();
+
+		// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+		$capsule->bootEloquent();
+		
+		return $capsule;
+	}
+	
 }

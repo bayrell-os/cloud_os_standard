@@ -44,6 +44,24 @@ class DatabaseRoute
 			'/database/adminer/',
 			[$this, "actionAdminer"]
 		);
+		$routes->addRoute
+		(
+			['GET', 'POST'],
+			'/database/sqlite/',
+			[$this, "actionSQLiteDatabase"]
+		);
+		$routes->addRoute
+		(
+			['GET'],
+			'/database/info/',
+			[$this, "actionInfo"]
+		);
+		$routes->addRoute
+		(
+			['GET'],
+			'/database/test/',
+			[$this, "actionTest"]
+		);
 	}
 	
 	
@@ -78,7 +96,7 @@ class DatabaseRoute
 		$container->setContext("password", getenv("MYSQL_PASSWORD"));
 		
 		/* Set result */
-		return $container->render("@app/database.html");
+		return $container->render("@app/database/index.html");
 	}
 	
 	
@@ -88,7 +106,7 @@ class DatabaseRoute
 	 */
 	function actionAdminer(RenderContainer $container)
 	{
-		$file_path = ROOT_PATH . "/app/Templates/adminer-4.7.6.php";
+		$file_path = ROOT_PATH . "/app/Templates/database/adminer-sqlite.php";
 		
 		@ob_start();
 		$_SERVER['REQUEST_URI'] = "/api" . $_SERVER['REQUEST_URI'];
@@ -101,4 +119,58 @@ class DatabaseRoute
 		/* Set result */
 		return $container->setContent($content);
 	}
+	
+	
+	
+	/**
+	 * Adminer for sqlite
+	 */
+	function actionSQLiteDatabase(RenderContainer $container)
+	{
+		$file_path = ROOT_PATH . "/app/Templates/database/adminer-sqlite.php";
+		
+		@ob_start();
+		$_SERVER['REQUEST_URI'] = "/api" . $_SERVER['REQUEST_URI'];
+		include $file_path;
+		$content = ob_get_contents();
+		@ob_end_clean();
+		
+		//$content = "";
+		
+		/* Set result */
+		return $container->setContent($content);
+	}
+	
+	
+	
+	/**
+	 * PHP info
+	 */
+	function actionInfo(RenderContainer $container)
+	{
+		@ob_start();
+		phpinfo();
+		$content = ob_get_contents();
+		@ob_end_clean();
+		
+		/* Set result */
+		return $container->setContent($content);
+	}
+	
+	
+	
+	/**
+	 * PHP info
+	 */
+	function actionTest(RenderContainer $container)
+	{
+		@ob_start();
+		echo date("Y-m-d H:i:s");
+		$content = ob_get_contents();
+		@ob_end_clean();
+		
+		/* Set result */
+		return $container->setContent($content);
+	}
+	
 }
