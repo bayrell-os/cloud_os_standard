@@ -49,25 +49,11 @@ services:
             driver: journald
     
     
-    mysql_node1:
-        image: mysql:5.7
-        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="" --ft_min_word_len=1 --wait_timeout=600 --max_allowed_packet=1G --innodb_buffer_pool_size=100M --net_read_timeout=3600 --net_write_timeout=3600
+    router_http_node1:
+        image: bayrell/cloud_router_http:0.4.0-20211023_155437
         volumes:
-            - "mysql_data:/var/lib/mysql"
-        env_file:
-            - ./env.conf
-        restart: unless-stopped
-        networks:
-            - cloud_network
-        logging:
-            driver: journald
-    
-    
-    balancer_node1:
-        image: bayrell/load_balancer_http:0.3.0
-        volumes:
-            - "http_data:/data"
-            - "/home/ubuntu/bayrell/load_balancer_http/files/root/router.php:/root/router.php"
+            - "router_http_data:/data"
+            - "/home/ubuntu/bayrell/cloud_router_http/files/root/router.php:/root/router.php"
         ports:
             - "80:80"
         env_file:
@@ -79,10 +65,9 @@ services:
             driver: journald
     
 volumes:
-    mysql_data:
     standard_node1_data:
     code_server_data:
-    http_data:
+    router_http_data:
     
 networks:
     cloud_network:
