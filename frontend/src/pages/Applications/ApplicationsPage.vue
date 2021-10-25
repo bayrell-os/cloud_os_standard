@@ -17,103 +17,64 @@
 -->
 
 <style lang="scss">
-.applications_page{
-	.crud{
-		position: relative;
-		.top_buttons{
-			margin-bottom: 10px;
-		}
-		.top_buttons_table, .top_buttons_editor{
-			display: inline-block;
-			vertical-align: top;
-		}
-		.top_buttons_table{
-			width: 400px;
-		}
-		.top_buttons_editor{
-			width: calc(100% - 400px);
-			button{
-				margin-right: 5px;
-			}
-		}
-		.table{
-			display: inline-block;
-			vertical-align: top;
-			width: 400px;
-			padding-right: 5px;
-			table{
-				width: 100%;
-			}
-		}
-		.row{
-			cursor: pointer;
-		}
-		.editor{
-			display: inline-block;
-			vertical-align: top;
-			position: relative;
-			width: calc(100% - 400px);
-			height: 100%;
-		}
-		.editor textarea{
-			width: 100%;
-			height: 200px;
-		}
-		.editor .CodeMirror {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			width: 100%;
-			height: 100%;
-		}
-		.dialog_buttons button{
-			margin: 0 5px;
-		}
-	}
+@import '@/variable.scss';
+.applications_page__menu{
+	display: flex;
+}
+.applications_page__menu_item{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 150px;
+	border: 1px $color_border solid;
+	border-left: 0px;
+}
+.applications_page__menu_item:first-child{
+	border-left: 1px $color_border solid;
+}
+.applications_page__menu_item a{
+	width: 100%; height: 100%;
+	padding: 20px 10px;
+}
+.applications_page__menu_item.active a,
+.applications_page__menu_item.active a:hover{
+	background-color: $color_selected;
+	border-color: $color_selected;
+	color: $color_selected_background;
+}
+.applications_page__content{
+	padding-top: 10px;
 }
 </style>
 
 <template>
 	<div class='applications_page'>
-		<Crud v-bind:store_path="store_path">
-			<template v-slot:top_buttons>
-				<div class="top_buttons">
-					<div class="top_buttons_table">
-						<Button type="primary" @click="onShowAdd()">
-							{{ model.getMessage("top_button_show_add_title", model.current_item) }}
-						</Button>
-					</div>
-					<div class="top_buttons_editor" v-show="model.active_item != null">
-						<Button type="default" @click="onActiveItemSaveClick()">
-							Save
-						</Button>
-						<Button type="success" @click="onActiveItemComposeClick()">
-							Compose
-						</Button>
-					</div>
+		
+		<div class='applications_page__menu'>
+			
+			<router-link :to="{path: item.href}" custom
+				v-for="item in menu" :key="item.id"
+				v-slot="{ navigate, route }"
+			>
+				<div class='applications_page__menu_item'
+					v-bind:class="{ active: isActive(item.name) }">
+					<a :href="item.href" @click="navigate" class="nolink b_out"
+						v-bind:data-route-name="route.name"
+					>
+						<div class="b_in">
+							{{ item.title }}
+						</div>
+					</a>
 				</div>
-			</template>
-			<template v-slot:table_after>
-				<div class="editor">
-					<CodeMirror v-bind:value="getActiveItemText()" name="code_mirror"
-						@crudEvent="onCodeMirrorCrudEvent($event)"
-					/>
-				</div>
-			</template>
-			<template v-slot:crud_after>
-				<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
-					<template v-slot:text>
-						Compose file "{{ getActiveItemName() }}" ?
-					</template>
-					<template v-slot:buttons>
-						<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
-						<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
-					</template>
-				</Dialog>
-			</template>
-		</Crud>
+			</router-link>
+			
+		</div>
+		
+		<div class='applications_page__content'>
+			<slot name="content">
+			</slot>
+		</div>
+		
 	</div>
 </template>
 
@@ -132,88 +93,62 @@ export const ApplicationsPage =
 {
 	name: "ApplicationsPage",
 	mixins: [mixin],
+	data: function () {
+		return {
+			menu: [
+				{
+					"id": 1,
+					"href": "/applications/status/",
+					"name": "app:applications:status",
+					"title": "Запущенные приложения",
+				},
+				{
+					"id": 2,
+					"href": "/applications/templates/",
+					"name": "app:applications:templates",
+					"title": "Шаблоны приложений",
+				},
+				{
+					"id": 3,
+					"href": "/applications/modificators/",
+					"name": "app:applications:modificators",
+					"title": "Модификаторы шаблонов",
+				},
+				{
+					"id": 4,
+					"href": "/applications/files/",
+					"name": "app:applications:files",
+					"title": "Файлы",
+				},
+			]
+		}
+	},
 	components:
 	{
-		Button,
-		CodeMirror,
-		Dialog
+
 	},
 	methods:
 	{
-		getActiveItemText()
+		isActive: function(route_name)
 		{
-			if (this.model.active_item != null)
+			if (this.$router.currentRoute.value.name != undefined)
 			{
-				return this.model.active_item.content;
+				if (this.$router.currentRoute.value.name.substr(0, route_name.length)
+					== route_name)
+				{
+					return true;
+				}
 			}
-			return "";
+			return false;
 		},
-		getActiveItemName()
-		{
-			if (this.model.active_item != null)
-			{
-				return this.model.active_item.stack_name + "/" + this.model.active_item.name;
-			}
-			return "";
-		},
-		onActiveItemSaveClick: function()
-		{
-			if (this.model.active_item != null)
-			{
-				this.model.constructor.apiSaveActiveItem(this);
-			}
-		},
-		onActiveItemComposeClick: function()
-		{
-			if (this.model.active_item != null)
-			{
-				this.model.dialog_compose.show();
-			}
-		},
-		onShowAdd: function()
-		{
-			Crud.methods.onShowAdd.apply(this, []);
-		},
-		onRowClick: function(item, index, $event)
-		{
-			if ($event.target.tagName != 'BUTTON')
-			{
-				this.model.active_item = (new Application()).assignValues(item);
-				this.model.active_item_pk = this.model.getPrimaryKeyFromItem(item);
-				Crud.methods.onRowClick.apply(this, [item, index]);
-			}
-		},
-		onCrudEvent: function($event)
-		{
-			Crud.methods.onCrudEvent.apply(this, [$event]);
-		},
-		onCodeMirrorCrudEvent: function($event)
-		{
-			if (this.model.active_item != null && $event.event_name == CRUD_EVENTS.ITEM_CHANGE)
-			{
-				this.model.active_item.content = $event.value;
-			}
-		},
-		onDialogComposeButtonClick: function(button_name)
-		{
-			if (button_name == "yes")
-			{
-				this.model.constructor.apiComposeActiveItem(this);
-			}
-			else
-			{
-				this.model.dialog_compose.hide();
-			}
-		}
 	},
 	mounted()
 	{
 		this.setPageTitle("Applications");
-		this.model.constructor.apiLoadData(this);
 	}
 }
 
-componentExtend(ApplicationsPage, Crud);
+
 export default defineComponent(ApplicationsPage);
 
 </script>

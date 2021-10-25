@@ -18,20 +18,50 @@
 
 import "./main.scss";
 
-import { createApp } from 'vue'
+//import { createApp } from 'vue'
+import { createApp } from 'vue/dist/vue.esm-bundler.js'
 import { buildStore } from 'vue-helper'
 import App from './App.vue'
 import Router from './Router'
 import { AppState } from './AppState'
 import { initTestStore } from './StoreTest'
 
+import Dialog from './components/Dialog/Dialog.vue';
+import Form from './components/Form/Form.vue';
+import Button from './components/Crud/Button.vue';
+import Input from './components/Crud/Input.vue';
+import Label from './components/Crud/Label.vue';
+import RowButtons from './components/Crud/RowButtons.vue';
+import RowNumber from './components/Crud/RowNumber.vue';
+import Select from './components/Crud/Select.vue';
+import SelectLabel from './components/Crud/SelectLabel.vue';
+import TextArea from './components/Crud/TextArea.vue';
+import CodeMirror from './components/Crud/CodeMirror.vue';
+
 /* Create app state */
 let Store = buildStore(AppState);
 
-var app = createApp(App)
-	.use(Store)
-	.use(Router)
-	.mount('#app')
+var app = createApp(App);
+
+/* Register modules */
+app.use(Store);
+app.use(Router);
+
+/* Register components */
+app.component("Input", Input);
+app.component("Label", Label);
+app.component("RowButtons", RowButtons);
+app.component("RowNumber", RowNumber);
+app.component("Select", Select);
+app.component("SelectLabel", SelectLabel);
+app.component("TextArea", TextArea);
+app.component("CodeMirror", CodeMirror);
+app.component("Button", Button);
+app.component("Dialog", Dialog);
+app.component("Form", Form);
+
+/* Register app */
+app.mount('#app');
 
 window["appInstance"] = app;
 window["storeInstance"] = Store;

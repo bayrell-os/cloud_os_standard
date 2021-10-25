@@ -16,8 +16,9 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-button{
+<style lang="scss">
+@import '@/variable.scss';
+button.component_button{
 	padding: 6px 12px;
     cursor: pointer;
     background-color: #fff;
@@ -26,47 +27,47 @@ button{
     /* box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 25%); */
     outline: 0;
 }
-button:active{
+button.component_button:active{
 	box-shadow: inset 0px 2px 5px 0px rgba(0,0,0,0.25);
 }
-button.small{
+button.component_button.small{
 	padding: 3px 6px;
 }
-button.primary{
-	background-color: #337ab7;
-	border: 1px #22527b solid;
+button.component_button.primary{
+	background-color: $color_primary;
+	border: 1px darken($color_primary, 5%) solid;
 	color: #fff;
 }
-button.primary:hover{
-	background-color: #286090;
-	border: 1px #22527b solid;
+button.component_button.primary:hover{
+	background-color: darken($color_primary, 5%);
+	border: 1px darken($color_primary, 10%) solid;
 	color: #fff;
 }
-button.danger{
-	background-color: #d14b42;
-    border: 1px #a02e27 solid;
+button.component_button.danger{
+	background-color: $color_danger;
+    border: 1px darken($color_danger, 5%) solid;
     color: #fff;
 }
-button.danger:hover{
-	background-color: #e60000;
-	border: 1px #a02e27 solid;
+button.component_button.danger:hover{
+	background-color: darken($color_danger, 5%);
+    border: 1px darken($color_danger, 10%) solid;
 	color: #fff;
 }
-button.success{
-	background-color: green;
-	border: 1px green solid;
+button.component_button.success{
+	background-color: $color_success;
+	border: 1px darken($color_success, 5%) solid;
 	color: #fff;
 }
-button.success:hover{
-	background-color: green;
-	border: 1px green solid;
+button.component_button.success:hover{
+	background-color: darken($color_success, 5%);
+	border: 1px darken($color_success, 10%) solid;
 	color: #fff;
 }
 </style>
 
 
 <template>
-	<button v-bind:class="getButtonClass" @click="onClick"><slot/></button>
+	<button class="component_button" v-bind:class="getButtonClass" @click="onClick"><slot/></button>
 </template>
 
 

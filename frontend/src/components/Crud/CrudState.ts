@@ -21,27 +21,7 @@ import { DefineComponent } from "vue";
 import { BaseObject, deepClone, objContains, objEquals } from "vue-helper";
 import { DialogState } from "@/components/Dialog/DialogState";
 import { FormState } from "@/components/Form/FormState";
-import Input from './Input.vue';
-import Label from './Label.vue';
-import RowButtons from './RowButtons.vue';
-import RowNumber from './RowNumber.vue';
-import Select from './Select.vue';
-import SelectLabel from './SelectLabel.vue';
-import TextArea from './TextArea.vue';
-import CodeMirror from './CodeMirror.vue';
 
-
-export let COMPONENTS =
-{
-	Input,
-	Label,
-	RowButtons,
-	RowNumber,
-	Select,
-	SelectLabel,
-	TextArea,
-	CodeMirror,
-};
 
 export let CRUD_EVENTS =
 {

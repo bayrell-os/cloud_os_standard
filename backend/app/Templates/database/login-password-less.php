@@ -27,5 +27,15 @@ class AdminerLoginPasswordLess {
 			return true;
 		}
 	}
-
+	
+	function head() {
+		$connection = connection();
+		if ($connection) {
+			//$connection->query("PRAGMA journal_mode = WAL;");
+			//$res = $connection->query("PRAGMA journal_mode;");
+			//var_dump($res->fetch_row());
+			//var_dump($connection);
+		}
+	}
+	
 }

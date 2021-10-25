@@ -16,8 +16,8 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.textarea{
+<style lang="scss">
+.component_textarea{
 	width: 100%;
     min-height: 300px;
 	padding: 6px 12px;
@@ -29,7 +29,8 @@
 
 
 <template>
-	<textarea class="textarea" v-bind:name="name" v-bind:type="type" v-bind:value="value"
+	<textarea class="component_textarea"
+		v-bind:name="name" v-bind:type="type" v-bind:value="value"
 		@change="onChange(name, $event)"></textarea>
 </template>
 

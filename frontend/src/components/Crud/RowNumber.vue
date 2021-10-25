@@ -16,19 +16,12 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.input{
-	width: 100%;
-	padding: 6px 12px;
-	background-color: white;
-	border: 1px #ccc solid;
-	outline: transparent;
-}
+<style lang="scss">
 </style>
 
 
 <template>
-	<div v-bind:data-name="name" >{{ crud_index + 1 }}</div>
+	<div class="component_row_number" v-bind:data-name="name" >{{ crud_index + 1 }}</div>
 </template>
 
 

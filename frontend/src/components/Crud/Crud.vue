@@ -16,64 +16,71 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.top_buttons{
-	margin-bottom: 10px;
-}
-.table table{
-	border-collapse: collapse;
-	border: 1px #ccc solid;
-}
-.table td, .table th{
-	border: 1px #ccc solid;
-	padding: 5px;
-	text-align: center;
-}
-.table .row:hover{
-	background-color: #eee;
-	color: inherit;
-}
-.table .row.active{
-	background-color: #337ab7;
-	color: white;
-}
-.buttons button{
-	margin-left: 2px;
-	margin-right: 2px;
-}
-.dialog_buttons button{
-	margin: 0 5px;
-}
-.form_buttons{
-	text-align: center;
-	margin-top: 10px;
-}
-.form_buttons button{
-	margin-left: 10px;
-	margin-right: 10px;
+<style lang="scss">
+@import '@/variable.scss';
+.component_crud{
+	&__top_buttons{
+		margin-bottom: 10px;
+	}
+	&__table table{
+		border-collapse: collapse;
+		border: 1px $color_table_border solid;
+	}
+	&__table td, &__table th{
+		border: 1px $color_table_border solid;
+		padding: 5px;
+		text-align: center;
+	}
+	&__row:hover{
+		background-color: $color_table_hover;
+		color: inherit;
+	}
+	&__row.active{
+		background-color: $color_table_selected;
+		color: white;
+	}
+	.buttons button{
+		margin-left: 2px;
+		margin-right: 2px;
+	}
+	.dialog_buttons button{
+		margin: 0 5px;
+	}
+	.form_buttons{
+		text-align: center;
+		margin-top: 10px;
+	}
+	.form_buttons button{
+		margin-left: 10px;
+		margin-right: 10px;
+	}
 }
 </style>
 
 
 <template>
-	<div class='crud'>
-		<slot name="top_buttons">
-			<div class="top_buttons">
-				<Button type="primary" @click="onShowAdd()">
-					{{ model.getMessage("top_button_show_add_title", model.current_item) }}
+	<div class="component_crud">
+		
+		<div class="component_crud__top_buttons">
+			<slot name="top_buttons">
+				<Button type="success" @click="onShowAdd()">
+					[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
 				</Button>
-			</div>
-		</slot>
+			</slot>
+		</div>
+		
 		<slot name="table_before"></slot>
-		<slot name="table">
-			<div class="table">
+		
+		<div class="component_crud__table">
+			<slot name="table">
 				<table>
-					<tr class="header">
+					<tr class="component_crud__header">
 						<th v-for="field in model.fields_table"
 							:key="field.api_name"
 						>{{ field.label }}</th>
 					</tr>
-					<tr class="row" v-for="item, item_index in model.items" :key="item.domain_name"
+					<tr class="component_crud__row"
+						v-for="item, item_index in model.items" :key="item.domain_name"
 						v-bind:class="{ active: model.isRowActive(item) }"
 						@click="onRowClick(item, item_index, $event)"
 					>
@@ -90,8 +97,9 @@
 						</td>
 					</tr>
 				</table>
-			</div>
-		</slot>
+			</slot>
+		</div>
+		
 		<slot name="table_after"></slot>
 		<slot name="dialog_form">
 			<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
@@ -131,7 +139,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, deepClone } from "vue-helper";
-import { COMPONENTS, CRUD_EVENTS, CrudEvent } from "./CrudState";
+import { CRUD_EVENTS, CrudEvent } from "./CrudState";
 import Button from './Button.vue';
 import Dialog from '@/components/Dialog/Dialog.vue';
 import Form from '@/components/Form/Form.vue';
@@ -207,12 +215,7 @@ export const Crud =
 	mounted()
 	{
 		// console.log("crud mounted");
-	},
-	components: Object.assign(COMPONENTS, {
-		Button,
-		Dialog,
-		Form,
-	}),
+	}
 };
 
 

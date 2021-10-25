@@ -16,8 +16,8 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.textarea{
+<style lang="scss">
+textarea.component_codemirror{
 	width: 100%;
 	min-height: 300px;
 	padding: 6px 12px;
@@ -29,7 +29,7 @@
 
 
 <template>
-	<textarea class="input" ref="input"></textarea>
+	<textarea class="component_codemirror" ref="input"></textarea>
 </template>
 
 

@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
+<style lang="scss">
 .form_row{
 	padding-bottom: 15px;
 }
@@ -32,8 +32,8 @@
 	margin-top: 10px;
 }
 .form_buttons button{
-	margin-left: 10px;
-	margin-right: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 .form_result_message{
 	padding-top: 10px;
@@ -98,7 +98,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
-import { COMPONENTS, CRUD_EVENTS } from "@/components/Crud/CrudState";
+import { CRUD_EVENTS } from "@/components/Crud/CrudState";
 import axios from "axios";
 
 
@@ -119,7 +119,6 @@ export const Form =
 			}
 		},
 	},
-	components: COMPONENTS,
 };
 
 export default defineComponent(Form);

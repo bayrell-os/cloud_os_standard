@@ -16,112 +16,117 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.layout{
+<style lang="scss">
+@import '@/variable.scss';
+.app_layout{
 	height: 100%;
 }
-.layout_wrap{
+.app_layout_wrap{
 	position: relative;
 	display: flex;
 	align-items: stretch;
 	min-height: 100%;
 }
-.layout_menu_wrap{
+.app_layout_menu_wrap{
 	position: relative;
 	width: 200px;
 }
-.layout_content_wrap{
+.app_layout_content_wrap{
 	position: relative;
 	width: calc(100% - 200px);
 	padding-bottom: 10px;
 }
-.layout_site_name, .layout_title, .layout_top_menu{
+.app_layout_site_name, .app_layout_title, .app_layout_top_menu{
 	font-size: 16px;
 	height: 40px;
 }
-.layout_site_name, .layout_title, .layout_top_menu, .layout_page, .layout_content{
+.app_layout_site_name, .app_layout_title, .app_layout_top_menu,
+.app_layout_page, .app_layout_content{
 	padding: 10px;
 }
-.layout_top_menu_item{
+.app_layout_top_menu_item{
 	padding-left: 10px;
 	padding-right: 10px;
 }
-.layout_site_name{
-	border-right: 1px #ccc solid;
+.app_layout_site_name{
+	border-right: 1px $color_border solid;
 }
-.layout_top_menu{
+.app_layout_top_menu{
 	display: flex;
 	align-items: stretch;
 }
-.layout_content{
+.app_layout_content{
 	position: relative;
 	height: calc(100% - 70px);
 	padding-bottom: 0;
 	padding-right: 0;
 }
-.layout_menu_label{
+.app_layout_menu_label{
 	font-size: 14px;
 	font-weight: bold;
 	padding: 10px;
 }
-.layout_menu{
+.app_layout_menu{
 	position: relative;
 	height: calc(100% - 40px);
 	overflow-y: auto;
-	border-right: 1px #ccc solid;
+	border-right: 1px $color_border solid;
 }
-.layout_menu_items ul, .layout_menu_items li{
+.app_layout_menu_items ul, .app_layout_menu_items li{
 	padding: 0; margin: 0;
 	list-style: none;
 }
-.layout_menu_items li{
+.app_layout_menu_items li{
 	background-color: white;
 }
-.layout_menu_items li:hover{
-	background-color: #eee;
+.app_layout_menu_items li:hover{
+	background-color: $color_hover;
 }
-.layout_menu_items li a{
+.app_layout_menu_items li a{
 	display: block;
 	padding: 10px 15px;
-	border-bottom: 1px solid #e7e7e7;
+	border-bottom: 1px solid $color_border;
 }
-.layout_menu_items li.active > a, %layout_menu_items li.active > a:hover{
-	background-color: #337ab7;
-	border-color: #337ab7;
-	color: white;
+.app_layout_menu_items li.active > a, .app_layout_menu_items li.active > a:hover{
+	background-color: $color_selected;
+	border-color: $color_selected;
+	color: $color_selected_background;
 }
-.layout_menu_logout{
+.app_layout_menu_logout{
 	text-align: center;
 	padding-top: 100px;
 }
-.layout_menu_logout > div{
+.app_layout_menu_logout > div{
 	padding-top: 5px;
 }
 </style>
 
 
 <template>
-	<div class='layout'>
-		<div class='layout_wrap'>
-			<div class='layout_menu_wrap'>
+	<div class='app_layout'>
+		<div class='app_layout_wrap'>
+			<div class='app_layout_menu_wrap'>
 				
-				<div class='layout_site_name'>
+				<div class='app_layout_site_name'>
 					<a class='nolink' href='/'>Cloud OS</a>
 				</div>
 				
-				<div class='layout_menu'>
-					<div class='layout_menu_label'>
+				<div class='app_layout_menu'>
+					
+					<div class='app_layout_menu_label'>
 						Dashboard
 					</div>
-					<div class='layout_menu_items'>
+					
+					<div class='app_layout_menu_items'>
 						<ul>
 							<router-link :to="{path: item.href}" custom
-								v-slot="{ href, navigate, isActive }"
+								v-slot="{ href, navigate, route }"
 								v-for="item in menu"
 								v-bind:key="item.id"
 							>
-								<li v-bind:class="{ active: isActive }">
-									<a :href="href" @click="navigate" class="nolink">
+								<li v-bind:class="{ active: isActive(item.name) }">
+									<a :href="href" @click="navigate" class="nolink"
+										v-bind:data-route-name="route.name">
 										{{ item.title }}
 									</a>
 								</li>
@@ -136,9 +141,9 @@
 				
 				</div>
 			</div>
-			<div class='layout_content_wrap'>
-				<div class='layout_title'>{{ model.title }}</div>
-				<div class='layout_content'>
+			<div class='app_layout_content_wrap'>
+				<div class='app_layout_title'>{{ model.title }}</div>
+				<div class='app_layout_content'>
 					<router-view />
 				</div>
 			</div>
@@ -157,13 +162,13 @@ export const App =
 	data: function () {
 		return {
 			menu: [
-				{ "id": 1, "href": "/", "title": "Main" },
-				{ "id": 2, "href": "/applications/", "title": "Applications" },
-				{ "id": 3, "href": "/services/", "title": "Services" },
-				{ "id": 4, "href": "/domains/", "title": "Domains" },
-				{ "id": 5, "href": "/routes/", "title": "Routes" },
-				{ "id": 6, "href": "/nginx_files/", "title": "Nginx Files" },
-				{ "id": 7, "href": "/users/", "title": "Users" },
+				{ "id": 1, "name": "app:main", "href": "/", "title": "Main" },
+				{ "id": 2, "name": "app:applications", "href": "/applications/status/", "title": "Applications" },
+				{ "id": 3, "name": "app:services", "href": "/services/", "title": "Services" },
+				{ "id": 4, "name": "app:domains", "href": "/domains/", "title": "Domains" },
+				{ "id": 5, "name": "app:routes", "href": "/routes/", "title": "Routes" },
+				{ "id": 6, "name": "app:nginx_files", "href": "/nginx_files/", "title": "Nginx Files" },
+				{ "id": 7, "name": "app:users", "href": "/users/", "title": "Users" },
 			]
 		}
 	},
@@ -172,6 +177,18 @@ export const App =
 	},
 	methods:
 	{
+		isActive: function(route_name)
+		{
+			if (this.$router.currentRoute.value.name != undefined)
+			{
+				if (this.$router.currentRoute.value.name.substr(0, route_name.length)
+					== route_name)
+				{
+					return true;
+				}
+			}
+			return false;
+		},
 	}
 };
 

@@ -18,6 +18,7 @@
 
 import { MainPageState } from '@/pages/Main/MainPageState'
 import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
+import { ApplicationsStatusPageState } from '@/pages/Applications/ApplicationsStatusPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
@@ -29,6 +30,7 @@ export class AppState
 	title: string = "";
 	MainPage: MainPageState = new MainPageState();
 	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
+	ApplicationsStatusPage: ApplicationsStatusPageState = new ApplicationsStatusPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();

@@ -65,7 +65,8 @@ export class DialogState extends BaseObject
     error_code: number = 0;
 	message: string = "";
 	
-    
+	
+	
     /**
 	 * Show dialog
 	 */

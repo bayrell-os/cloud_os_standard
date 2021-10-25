@@ -16,34 +16,34 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.dialog_box, .dialog_shadow{
+<style lang="scss">
+.component_dialog__box, .component_dialog__shadow{
 	position: fixed;
 	top: 0; left: 0;
 	width: 100%; height: 100%;
 	z-index: 1001;
 }
-.dialog_box{
+.component_dialog__box{
 	overflow: auto;
 	overflow-y: scroll;
 	display: none;
 }
-.dialog_box.open{
+.component_dialog__box.open{
 	display: block;
 }
-.dialog_shadow{
+.component_dialog__shadow{
 	background-color: #000;
 	opacity: 0.2;
 	overflow: hidden;
 }
-.dialog_wrap{
+.component_dialog__wrap{
 	width: 100%;
 	min-height: 100%;
 }
-.dialog_wrap > tr > td{
+.component_dialog__wrap > tr > td{
 	padding: 20px;
 }
-.dialog{
+.component_dialog{
 	position: relative;
 	padding: 20px;
 	background-color: white;
@@ -54,67 +54,67 @@
 	box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5);
 	font-size: 14px;
 }
-.dialog_title, .dialog_text, .dialog_promt{
+.component_dialog__title, .component_dialog__text, .component_dialog__promt{
 	text-align: center;
 	padding-bottom: 12px;
 }
-.dialog_title{
+.component_dialog__title{
 	font-weight: bold;
 }
-.dialog_promt_input{
+.component_dialog__promt_input{
 	padding: 6px 12px;
 	width: 100%;
 }
-.dialog_text{
+.component_dialog__text{
 	text-align: center;
 	white-space: pre-wrap;
 }
-.dialog_buttons{
+.component_dialog__buttons{
 	padding-top: 12px;
 	text-align: center;
 }
-.dialog_buttons button{
+.component_dialog__buttons button{
 	margin: 0 5px;
 }
-.dialog_row{
+.component_dialog__row{
 	padding-bottom: 6px;
 }
-.dialog_row:last-child{
+.component_dialog__row:last-child{
 	padding-bottom: 0px;
 }
-.dialog_result_message{
+.component_dialog__result_message{
 	text-align: center;
 	padding-top: 12px;
 	white-space: break-spaces;
 }
-.dialog_result_message.success{
+.component_dialog__result_message.success{
 	color: green;
 }
-.dialog_result_message.error{
+.component_dialog__result_message.error{
 	color: red;
 }
 </style>
 
 
-<template>
-	<div class="dialog_box" v-bind:class="{ 'open': model.open }">
-		<div class='dialog_shadow'></div>
-		<table class='dialog_wrap'><tr><td>
-			<div class='dialog' v-bind:style="getDialogStyle()">
+<template><teleport to="body">
+	<div v-bind:class="getDialogClass()">
+		<div class='component_dialog__shadow'></div>
+		<table class='component_dialog__wrap'><tr><td>
+			<div class='component_dialog' v-bind:style="getDialogStyle()">
 				
-				<div class='dialog_title'>
+				<div class='component_dialog__title'>
 					<slot name="title">{{ model.title }}</slot>
 				</div>
 				
-				<div class='dialog_text'>
+				<div class='component_dialog__text'>
 					<slot name="text">{{ model.text }}</slot>
 				</div>
 				
-				<div class='dialog_content'>
+				<div class='component_dialog__content'>
 					<slot name="content"></slot>
 				</div>
 				
-				<div class='dialog_buttons' v-if="showButtons()">
+				<div class='component_dialog__buttons' v-if="showButtons()">
 					<slot name="buttons">
 						<Button v-for="button, index in model.buttons" v-bind:data-action="button.action"
 						@click="onButtonClick(button.action, $event)" v-bind:type="button.type"
@@ -123,9 +123,9 @@
 					</slot>
 				</div>
 				
-				<div class="dialog_result">
+				<div class="component_dialog__result">
 					<slot name="result">
-						<div class="dialog_result_message" v-if="model.message != ''"
+						<div class="component_dialog__result_message" v-if="model.message != ''"
 							v-bind:class="{
 								error: model.error_code < 0,
 								success: model.error_code > 0,
@@ -137,7 +137,7 @@
 			</div>
 		</td></tr></table>
 	</div>
-</template>
+</teleport></template>
 
 
 <script lang="js">
@@ -149,12 +149,29 @@ import Button from '@/components/Crud/Button.vue';
 
 export default defineComponent({
 	mixins: [ mixin ],
-	props: [ "width", "buttons" ],
+	props: [ "width", "buttons", "style" ],
 	computed:
 	{
 	},
 	methods:
 	{
+		getDialogClass: function()
+		{
+			let res = [ "component_dialog__box" ];
+			if (this.model.open)
+			{
+				res.push("open");
+			}
+			if (this.style instanceof Array)
+			{
+				res = res.concat( this.style );
+			}
+			else (this.style instanceof String || typeof this.style == "string")
+			{
+				res.push( this.style );
+			}
+			return res.join(" ");
+		},
 		showButtons: function()
 		{
 			if (this.buttons == "false") return false;

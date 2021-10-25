@@ -95,6 +95,10 @@ class Instance extends \TinyPHP\App
 		// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
 		$capsule->bootEloquent();
 		
+		// Set journal_mode wal
+		$capsule::statement("PRAGMA journal_mode = WAL;");
+		//var_dump( $capsule::select("PRAGMA journal_mode;", [], true) );
+		
 		return $capsule;
 	}
 	

@@ -16,8 +16,8 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.buttons button{
+<style lang="scss">
+.component_row_buttons button{
 	margin-left: 2px;
 	margin-right: 2px;
 }
@@ -25,7 +25,7 @@
 
 
 <template>
-	<div class='buttons'>
+	<div class="component_row_buttons">
 		<Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
 		<Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
 	</div>

@@ -16,19 +16,14 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.input{
-	width: 100%;
-	padding: 6px 12px;
-	background-color: white;
-	border: 1px #ccc solid;
-	outline: transparent;
-}
+<style lang="scss">
 </style>
 
 
 <template>
-	{{ getSelectValue(value) }}
+	<div class="component_selec_label" v-bind:data-name="name" >
+		{{ getSelectValue(value) }}
+	</div>
 </template>
 
 

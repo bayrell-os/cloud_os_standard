@@ -16,8 +16,8 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.input{
+<style lang="scss">
+.component_input{
 	width: 100%;
 	padding: 6px 12px;
 	background-color: white;
@@ -28,7 +28,7 @@
 
 
 <template>
-	<input class="input" v-bind:name="name" v-bind:type="type" v-bind:value="value"
+	<input class="component_input" v-bind:name="name" v-bind:type="type" v-bind:value="value"
 		@change="onChange(name, $event)"
 	/>
 </template>

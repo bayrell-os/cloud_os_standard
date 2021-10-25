@@ -16,41 +16,70 @@
  *  limitations under the License.
 -->
 
-<style>
-.top_buttons{
-	display: none;
-}
+<style lang="scss">
+
 </style>
 
+
 <template>
-	<Crud v-bind:store_path="store_path">
-		<template v-slot:top_buttons><div></div></template>
-	</Crud>
+	<div class="applications_status_page">
+		<ApplicationsPage v-bind:store_path="store_path">
+			<template v-slot:content>
+				<StatusCrud v-bind:store_path="store_path" />
+			</template>
+		</ApplicationsPage>
+	</div>
 </template>
+
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from "vue-helper";
+import { mixin, componentExtend, deepClone } from "vue-helper";
+import { ApplicationsPage } from './ApplicationsPage.vue';
 import { Crud } from '@/components/Crud/Crud.vue';
-import { ServicesPageState } from './ServicesPageState';
 
 
-export const ServicesPage =
+/**
+ * Crud table
+ */
+export const Crud2 =
 {
-	name: "ServicesPage",
+	name: "Crud2",
+	template: `<Crud v-bind:store_path="store_path">
+		
+	</Crud>`,
 	mixins: [mixin],
 	methods:
 	{
 	},
 	mounted()
 	{
-		this.setPageTitle("Service Page");
-		this.model.constructor.apiLoadData(this);
 	}
 }
+componentExtend(Crud2, Crud);
 
-componentExtend(ServicesPage, Crud);
-export default defineComponent(ServicesPage);
+
+/**
+ * Status page
+ */
+export const ApplicationsFilesPage =
+{
+	name: "ApplicationsFilesPage",
+	mixins: [mixin],
+	components:
+	{
+		Crud2,
+	},
+	methods:
+	{
+	},
+	mounted()
+	{
+		this.setPageTitle("Status");
+	}
+}
+componentExtend(ApplicationsFilesPage, ApplicationsPage);
+export default defineComponent(ApplicationsFilesPage);
 
 </script>

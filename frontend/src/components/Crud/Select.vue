@@ -16,8 +16,8 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.select{
+<style lang="scss">
+.component_select{
 	width: 100%;
 	padding: 6px 12px;
 	background-color: white;
@@ -28,7 +28,7 @@
 
 
 <template>
-	<select class="select" @change="onChange(name, $event)">
+	<select class="component_select" @change="onChange(name, $event)">
 		<option value="">Select value</option>
 		<option v-for="option in crud_field.options" :key="option.id"
 			v-bind:value="option.id"

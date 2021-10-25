@@ -16,19 +16,12 @@
  *  limitations under the License.
 -->
 
-<style lang="scss" scoped>
-.input{
-	width: 100%;
-	padding: 6px 12px;
-	background-color: white;
-	border: 1px #ccc solid;
-	outline: transparent;
-}
+<style lang="scss">
 </style>
 
 
 <template>
-	<div v-bind:data-name="name" >{{ value }}</div>
+	<div class="component_label" v-bind:data-name="name" >{{ value }}</div>
 </template>
 
 
