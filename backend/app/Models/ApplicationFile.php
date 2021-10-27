@@ -23,31 +23,14 @@ namespace App\Models;
 use TinyPHP\Model;
 
 
-class NginxFile extends Model
+class ApplicationFile extends Model
 {
-	protected $table = "nginx_files";
-	protected $primaryKey = "name";
+	protected $table = "app_files";
+	protected $primaryKey = "file_name";
 	public $incrementing = false;
 	protected $attributes = [
 	];
 	protected $fillable = [
-		"name",
+		"file_name",
 	];
-	
-	
-	static function updateFile($file_name, $content)
-	{
-		/* Update nginx file */
-		$item = NginxFile::firstOrNew(['name' => $file_name]);
-		$item->name = $file_name;
-		$item->content = $content;
-		$item->enable = true;
-		$item->is_deleted = false;
-		
-		/* Save service */
-		if ($item->isDirty())
-		{
-			$item->save();
-		}
-	}
 }

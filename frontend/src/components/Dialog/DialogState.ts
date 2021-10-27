@@ -127,12 +127,12 @@ export class DialogState extends BaseObject
 	/**
 	 * Set response
 	 */
-	setResponse(response: AxiosResponse | null)
+	setAxiosResponse(response: AxiosResponse | null)
 	{
 		if (response)
 		{
 			let data: any = response.data;
-			if (typeof(data) == "object")
+			if (typeof(data["error"]) == "object")
 			{
 				this.error_code = data["error"]["code"];
 				this.message = data["error"]["str"];

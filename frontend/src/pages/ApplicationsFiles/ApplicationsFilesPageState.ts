@@ -25,10 +25,12 @@ import { deepClone } from "vue-helper";
 
 export class ApplicationFile extends CrudItem
 {
-	id: number = 0;
-	name: string = "";
-	content: string = "";
+	file_name: string = "";
 	stack_name: string = "";
+	content: string = "";
+	app_status: number | null = null;
+	timestamp: number = 0;
+	is_deleted: number = 0;
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -38,10 +40,13 @@ export class ApplicationFile extends CrudItem
 	 */
 	assignValues(params:Record<string, any>): ApplicationFile
 	{
-		this.id = Number(params["id"] || this.id);
-		this.name = String(params["name"] || this.name);
-		this.content = String(params["content"] || this.content);
+		this.file_name = String(params["file_name"] || this.file_name);
 		this.stack_name = String(params["stack_name"] || this.stack_name);
+		this.content = String(params["content"] || this.content);
+		this.app_status = Number(params["app_status"] || this.app_status);
+		if (this.app_status == 0) this.app_status = null;
+		this.timestamp = Number(params["timestamp"] || this.timestamp);
+		this.is_deleted = Number(params["is_deleted"] || this.is_deleted);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		super.assignValues(params);
@@ -56,10 +61,12 @@ export class ApplicationFile extends CrudItem
 	{
 		let res: Record<string, any> = super.getValues();
 		return Object.assign(res, {
-			"id": this.id,
-			"name": this.name,
-			"content": this.content,
+			"file_name": this.file_name,
 			"stack_name": this.stack_name,
+			"content": this.content,
+			"app_status": this.app_status,
+			"timestamp": this.timestamp,
+			"is_deleted": this.is_deleted,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
 		});
@@ -70,6 +77,7 @@ export class ApplicationFile extends CrudItem
 
 export class ApplicationsFilesPageState extends CrudState
 {
+	dialog_compose: DialogState = new DialogState();
 	
 	/**
 	 * Returns new item
@@ -86,7 +94,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getApiObjectName()
 	{
-		return "applications_status";
+		return "applications_files";
 	}
 	
 	
@@ -116,7 +124,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getApiUrlUpdate(item: ApplicationFile)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.id + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.file_name + "/";
 	}
 	
 	
@@ -126,7 +134,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getApiUrlDelete(item: ApplicationFile)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.id + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.file_name + "/";
 	}
 	
 	
@@ -136,7 +144,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getApiUrlCompose(item: ApplicationFile)
 	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" + item.id + "/";
+		return "/api/" + this.getApiObjectName() + "/default/compose/" + item.file_name + "/";
 	}
 	
 	
@@ -146,11 +154,13 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	crudInit()
 	{
-		/* ID field */
-		let id = new FieldInfo();
-		id.api_name = "id";
-		id.primary = true;
-		this.fields.push( deepClone(id) );
+		/* Name field */
+		let file_name = new FieldInfo();
+		file_name.api_name = "file_name";
+		file_name.label = "File name";
+		file_name.component = "Input";
+		file_name.primary = true;
+		this.fields.push( deepClone(file_name) );
 		
 		/* Stack name field */
 		let stack_name = new FieldInfo();
@@ -159,18 +169,11 @@ export class ApplicationsFilesPageState extends CrudState
 		stack_name.component = "Input";
 		this.fields.push( deepClone(stack_name) );
 		
-		/* Name field */
-		let name = new FieldInfo();
-		name.api_name = "name";
-		name.label = "name";
-		name.component = "Input";
-		this.fields.push( deepClone(name) );
-		
 		/* Content field */
 		let content = new FieldInfo();
 		content.api_name = "content";
 		content.label = "Content";
-		content.component = "TextArea";
+		content.component = "CodeMirror";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */
@@ -186,16 +189,16 @@ export class ApplicationsFilesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
+		this.form.fields.push( deepClone(file_name) );
 		this.form.fields.push( deepClone(stack_name) );
-		this.form.fields.push( deepClone(name) );
-		//this.form.fields.push( deepClone(content) );
+		this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
-		name.component = "Label";
+		file_name.component = "Label";
 		stack_name.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(file_name) );
 		this.fields_table.push( deepClone(stack_name) );
-		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -206,7 +209,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getItemName(item: ApplicationFile | null): string
 	{
-		return (item) ? (item.stack_name + "/" + item.name) : "";
+		return (item) ? (item.stack_name + "/" + item.file_name) : "";
 	}
 	
 	
@@ -264,5 +267,37 @@ export class ApplicationsFilesPageState extends CrudState
 		}
 	}
 	
+	
+	
+	/**
+	 * Compose active item
+	 */
+	static async apiComposeActiveItem(component: DefineComponent)
+	{
+		let model:ApplicationsFilesPageState = component.model;
+		let response:AxiosResponse | null = null;
+		let item:ApplicationFile = model.active_item as ApplicationFile;
+		
+		if (item != null)
+		{
+			model.dialog_compose.setWaitResponse();
+			
+			let url = model.getApiUrlCompose(item);
+			
+			try
+			{
+				response = await axios.post(url, {"item": {"content": item.content}});
+			}
+			catch (e)
+			{
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
+			}
+			
+			model.dialog_compose.setAxiosResponse(response);
+		}
+	}
 	
 }

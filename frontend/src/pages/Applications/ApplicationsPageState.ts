@@ -293,7 +293,7 @@ export class ApplicationsPageState extends CrudState
 				}
 			}
 			
-			model.dialog_compose.setResponse(response);
+			model.dialog_compose.setAxiosResponse(response);
 		}
 	}
 }

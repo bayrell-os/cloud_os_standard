@@ -95,7 +95,7 @@ export const ApplicationsPage =
 {
 	name: "ApplicationsPage",
 	mixins: [mixin],
-	props: ["style"],
+	props: ["type"],
 	data: function () {
 		return {
 			menu: [
@@ -132,11 +132,12 @@ export const ApplicationsPage =
 	},
 	methods:
 	{
-		bindClass: function bindClass() {
+		bindClass: function()
+		{
 			let arr = [];
-			if (this.style && this.style != "")
+			if (this.type && this.type != "")
 			{
-				arr.push("applications_page--" + this.style);
+				arr.push("applications_page--" + this.type);
 			}
 			return arr.join(" ");
 		},

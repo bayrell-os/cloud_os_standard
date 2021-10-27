@@ -140,10 +140,6 @@
 import { defineComponent } from 'vue';
 import { mixin, deepClone } from "vue-helper";
 import { CRUD_EVENTS, CrudEvent } from "./CrudState";
-import Button from './Button.vue';
-import Dialog from '@/components/Dialog/Dialog.vue';
-import Form from '@/components/Form/Form.vue';
-
 
 export const Crud =
 {

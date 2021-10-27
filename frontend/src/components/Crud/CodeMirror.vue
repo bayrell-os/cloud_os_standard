@@ -100,6 +100,7 @@ export const CodeMirror =
 				tabSize: 2,
 			}
 		);
+		this.instance.refresh();
 		this.instance_created = true;
 		this.change_timer = null;
 		this.new_value = "";

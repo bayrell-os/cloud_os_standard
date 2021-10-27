@@ -24,9 +24,9 @@
 <template>
 	<ApplicationsPage type="files_page">
 		<template v-slot:content>
-			<Crud v-bind:store_path="store_path">
+			<CrudSave v-bind:store_path="store_path">
 				
-			</Crud>
+			</CrudSave>
 		</template>
 	</ApplicationsPage>
 </template>
@@ -37,13 +37,13 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone } from "vue-helper";
 import { ApplicationsPage } from '@/pages/Applications/ApplicationsPage.vue';
-import { Crud } from '@/components/Crud/Crud.vue';
+import { CrudSave } from '@/components/Crud/CrudSave.vue';
 
 
 /**
  * Status page
  */
-export const ApplicationsFilesPage =
+export const ApplicationsFilesSavePage =
 {
 	name: "ApplicationsFilesPage",
 	mixins: [mixin],
@@ -60,7 +60,7 @@ export const ApplicationsFilesPage =
 		this.model.constructor.apiLoadData(this);
 	}
 }
-componentExtend(ApplicationsFilesPage, Crud);
-export default defineComponent(ApplicationsFilesPage);
+componentExtend(ApplicationsFilesSavePage, CrudSave);
+export default defineComponent(ApplicationsFilesSavePage);
 
 </script>

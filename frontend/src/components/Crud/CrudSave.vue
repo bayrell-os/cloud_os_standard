@@ -16,51 +16,42 @@
  *  limitations under the License.
 -->
 
-<style lang="scss">
 
+<style lang="scss">
+@import '@/variable.scss';
 </style>
 
 
 <template>
-	<ApplicationsPage type="files_page">
-		<template v-slot:content>
-			<Crud v-bind:store_path="store_path">
-				
-			</Crud>
-		</template>
-	</ApplicationsPage>
+	<div class='component_crud_save'>
+		<Form v-bind:store_path="store_path.concat('form')">
+			<template v-slot:buttons>
+				<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+				<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+			</template>
+		</Form>
+	</div>
 </template>
 
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, deepClone } from "vue-helper";
-import { ApplicationsPage } from '@/pages/Applications/ApplicationsPage.vue';
-import { Crud } from '@/components/Crud/Crud.vue';
+import { mixin, deepClone } from "vue-helper";
+import { CRUD_EVENTS, CrudEvent } from "./CrudState";
 
 
-/**
- * Status page
- */
-export const ApplicationsFilesPage =
+export const CrudSave =
 {
-	name: "ApplicationsFilesPage",
-	mixins: [mixin],
-	components:
+	name: "CrudSave",
+	mixins: [ mixin ],
+	computed:
 	{
-		ApplicationsPage,
 	},
 	methods:
 	{
-	},
-	mounted()
-	{
-		this.setPageTitle("Files");
-		this.model.constructor.apiLoadData(this);
 	}
 }
-componentExtend(ApplicationsFilesPage, Crud);
-export default defineComponent(ApplicationsFilesPage);
 
+export default defineComponent(CrudSave);
 </script>

@@ -101,17 +101,26 @@ export class FormState extends BaseObject
 	/**
 	 * Set response
 	 */
-	setResponse(data: any)
+	setAxiosResponse(response: AxiosResponse | null)
 	{
-		if (typeof(data) == "object")
+		if (response)
 		{
-			this.error_code = data["error"]["code"];
-			this.message = data["error"]["str"];
+			let data: any = response.data;
+			if (typeof(data["error"]) == "object")
+			{
+				this.error_code = data["error"]["code"];
+				this.message = data["error"]["str"];
+			}
+			else
+			{
+				this.error_code = -1;
+				this.message = "System error";
+			}
 		}
 		else
 		{
 			this.error_code = -1;
-			this.message = "System error";
+			this.message = "System error. Response is null";
 		}
 	}
 }

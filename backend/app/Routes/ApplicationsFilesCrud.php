@@ -21,7 +21,7 @@
 namespace App\Routes;
 
 use App\Docker;
-use App\Models\Application;
+use App\Models\ApplicationFile;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,10 +31,10 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
+class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Application::class;
-	var $api_path = "applications";
+	var $class_name = ApplicationFile::class;
+	var $api_path = "applications_files";
 
 	
 	/**
@@ -64,10 +64,12 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"id",
+					"file_name",
 					"stack_name",
-					"name",
 					"content",
+					"app_status",
+					"timestamp",
+					"is_deleted",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -83,8 +85,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	public function findQuery($query)
 	{
 		return $query
-			->orderBy("stack_name", "asc")
-			->orderBy("name", "asc")
+			->orderBy("file_name", "asc")
 		;
 	}
 	

@@ -31,7 +31,10 @@ class Instance extends \TinyPHP\App
 		parent::init();
 		
 		/* Includes crud routes */
-		$this->addRoute(\App\Routes\ApplicationsCrud::class);
+		$this->addRoute(\App\Routes\ApplicationsFilesCrud::class);
+		$this->addRoute(\App\Routes\ApplicationsModificatorsCrud::class);
+		$this->addRoute(\App\Routes\ApplicationsStatusCrud::class);
+		$this->addRoute(\App\Routes\ApplicationsTemplatesCrud::class);
 		$this->addRoute(\App\Routes\BusApiRoute::class);
 		$this->addRoute(\App\Routes\DomainsCrud::class);
 		$this->addRoute(\App\Routes\NginxFilesCrud::class);
@@ -42,7 +45,9 @@ class Instance extends \TinyPHP\App
 		$this->addRoute(\App\Routes\DatabaseRoute::class);
 		
 		/* Includes models */
-		$this->addModel(\App\Models\Application::class);
+		$this->addModel(\App\Models\ApplicationFile::class);
+		$this->addModel(\App\Models\ApplicationStatus::class);
+		$this->addModel(\App\Models\ApplicationTemplate::class);
 		$this->addModel(\App\Models\Domain::class);
 		$this->addModel(\App\Models\NginxFile::class);
 		$this->addModel(\App\Models\Route::class);
