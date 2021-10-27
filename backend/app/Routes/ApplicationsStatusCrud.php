@@ -59,9 +59,7 @@ class ApplicationsStatusCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
-					"stack_name",
 					"name",
-					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]

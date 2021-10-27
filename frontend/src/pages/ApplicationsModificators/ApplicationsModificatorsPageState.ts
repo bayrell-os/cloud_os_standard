@@ -28,7 +28,6 @@ export class ApplicationModificator extends CrudItem
 	id: number = 0;
 	name: string = "";
 	content: string = "";
-	stack_name: string = "";
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -41,7 +40,6 @@ export class ApplicationModificator extends CrudItem
 		this.id = Number(params["id"] || this.id);
 		this.name = String(params["name"] || this.name);
 		this.content = String(params["content"] || this.content);
-		this.stack_name = String(params["stack_name"] || this.stack_name);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		super.assignValues(params);
@@ -59,7 +57,6 @@ export class ApplicationModificator extends CrudItem
 			"id": this.id,
 			"name": this.name,
 			"content": this.content,
-			"stack_name": this.stack_name,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
 		});
@@ -86,7 +83,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	 */
 	getApiObjectName()
 	{
-		return "applications_status";
+		return "applications_modificators";
 	}
 	
 	
@@ -152,13 +149,6 @@ export class ApplicationsModificatorsPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Stack name field */
-		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
-		stack_name.label = "Stack name";
-		stack_name.component = "Input";
-		this.fields.push( deepClone(stack_name) );
-		
 		/* Name field */
 		let name = new FieldInfo();
 		name.api_name = "name";
@@ -170,7 +160,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 		let content = new FieldInfo();
 		content.api_name = "content";
 		content.label = "Content";
-		content.component = "TextArea";
+		content.component = "CodeMirror";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */
@@ -186,15 +176,12 @@ export class ApplicationsModificatorsPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(stack_name) );
 		this.form.fields.push( deepClone(name) );
-		//this.form.fields.push( deepClone(content) );
+		this.form.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		name.component = "Label";
-		stack_name.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(stack_name) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
@@ -206,7 +193,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	 */
 	getItemName(item: ApplicationModificator | null): string
 	{
-		return (item) ? (item.stack_name + "/" + item.name) : "";
+		return (item) ? item.name : "";
 	}
 	
 	
@@ -225,43 +212,6 @@ export class ApplicationsModificatorsPageState extends CrudState
 			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
-	}
-	
-	
-	
-	/**
-	 * Save active item
-	 */
-	static async apiSaveActiveItem(component: DefineComponent)
-	{
-		let model:ApplicationsModificatorsPageState = component.model;
-		let response:AxiosResponse | null = null;
-		let item:ApplicationModificator = model.active_item as ApplicationModificator;
-		
-		if (item != null)
-		{
-			let url = model.getApiUrlUpdate(item);
-				
-			try
-			{
-				response = await axios.post(url, {"item": {"content": item.content}});
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
-			}
-			
-			if (response && response.data.error.code == 1)
-			{
-				item = model.createNewItemInstance(response.data.result.item) as ApplicationModificator;
-				model.active_item = item;
-				model.active_item_pk = model.getPrimaryKeyFromItem(item);
-				model.updateItem(item, response.data.result.item);
-			}
-		}
 	}
 	
 	

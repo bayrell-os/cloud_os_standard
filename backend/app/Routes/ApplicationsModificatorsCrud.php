@@ -77,9 +77,20 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	public function findQuery($query)
 	{
 		return $query
-			->where('type', '=', '1')
+			->where('type', '=', '2')
 			->orderBy("name", "asc")
 		;
 	}
 	
+	
+	
+	/**
+	 * To database
+	 */
+	function toDatabase($item)
+	{
+		$item = parent::toDatabase($item);
+		$item["type"] = 2;
+		return $item;
+	}
 }

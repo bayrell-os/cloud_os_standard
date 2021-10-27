@@ -56,6 +56,7 @@ export const ApplicationsTemplatesPage =
 	mounted()
 	{
 		this.setPageTitle("Templates");
+		this.model.constructor.apiLoadData(this);
 	}
 }
 componentExtend(ApplicationsTemplatesPage, Crud);

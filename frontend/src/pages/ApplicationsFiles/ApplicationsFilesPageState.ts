@@ -233,43 +233,6 @@ export class ApplicationsFilesPageState extends CrudState
 	
 	
 	/**
-	 * Save active item
-	 */
-	static async apiSaveActiveItem(component: DefineComponent)
-	{
-		let model:ApplicationsFilesPageState = component.model;
-		let response:AxiosResponse | null = null;
-		let item:ApplicationFile = model.active_item as ApplicationFile;
-		
-		if (item != null)
-		{
-			let url = model.getApiUrlUpdate(item);
-				
-			try
-			{
-				response = await axios.post(url, {"item": {"content": item.content}});
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
-			}
-			
-			if (response && response.data.error.code == 1)
-			{
-				item = model.createNewItemInstance(response.data.result.item) as ApplicationFile;
-				model.active_item = item;
-				model.active_item_pk = model.getPrimaryKeyFromItem(item);
-				model.updateItem(item, response.data.result.item);
-			}
-		}
-	}
-	
-	
-	
-	/**
 	 * Compose active item
 	 */
 	static async apiComposeActiveItem(component: DefineComponent)

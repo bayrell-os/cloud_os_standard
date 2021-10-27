@@ -55,6 +55,7 @@ export const ApplicationsModificators =
 	mounted()
 	{
 		this.setPageTitle("Modificators");
+		this.model.constructor.apiLoadData(this);
 	}
 }
 componentExtend(ApplicationsModificators, Crud);

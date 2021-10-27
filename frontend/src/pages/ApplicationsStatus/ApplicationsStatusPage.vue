@@ -55,6 +55,7 @@ export const ApplicationsStatusPage =
 	mounted()
 	{
 		this.setPageTitle("Status");
+		this.model.constructor.apiLoadData(this);
 	}
 }
 componentExtend(ApplicationsStatusPage, Crud);

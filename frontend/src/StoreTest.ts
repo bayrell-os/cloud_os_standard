@@ -29,7 +29,7 @@ export function initTestStore (store: Store<AppState>)
 {
     let item;
     
-    item = new ApplicationStatus();
+    /*item = new ApplicationStatus();
     item.id = 1;
     item.name = "name";
     item.stack_name = "stack_name";
@@ -39,5 +39,5 @@ export function initTestStore (store: Store<AppState>)
     item.id = 2;
     item.name = "name 2";
     item.stack_name = "stack_name 2";
-	store.state.ApplicationsStatusPage.items.push(item);
+	store.state.ApplicationsStatusPage.items.push(item);*/
 }
