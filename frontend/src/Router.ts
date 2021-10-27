@@ -19,7 +19,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
 import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
-import ApplicationsStatusPage from '@/pages/Applications/ApplicationsStatusPage.vue'
+import ApplicationsFilesPage from '@/pages/ApplicationsFiles/ApplicationsFilesPage.vue'
+import ApplicationsModificatorsPage from '@/pages/ApplicationsModificators/ApplicationsModificatorsPage.vue'
+import ApplicationsStatusPage from '@/pages/ApplicationsStatus/ApplicationsStatusPage.vue'
+import ApplicationsTemplatesPage from '@/pages/ApplicationsTemplates/ApplicationsTemplatesPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
@@ -40,6 +43,18 @@ const routes: Array<RouteRecordRaw> = [
 		props: { store_path: ["ApplicationsPage"] },
 	},
 	{
+		path: '/applications/files/',
+		name: 'app:applications:files',
+		component: ApplicationsFilesPage,
+		props: { store_path: ["ApplicationsFilesPage"] },
+	},
+	{
+		path: '/applications/modificators/',
+		name: 'app:applications:modificators',
+		component: ApplicationsModificatorsPage,
+		props: { store_path: ["ApplicationsModificatorsPage"] },
+	},
+	{
 		path: '/applications/status/',
 		name: 'app:applications:status',
 		component: ApplicationsStatusPage,
@@ -48,20 +63,14 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/applications/templates/',
 		name: 'app:applications:templates',
-		component: ApplicationsPage,
-		props: { store_path: ["ApplicationsPage"] },
+		component: ApplicationsTemplatesPage,
+		props: { store_path: ["ApplicationsTemplatesPage"] },
 	},
 	{
 		path: '/applications/modificators/',
 		name: 'app:applications:modificators',
-		component: ApplicationsPage,
-		props: { store_path: ["ApplicationsPage"] },
-	},
-	{
-		path: '/applications/files/',
-		name: 'app:applications:files',
-		component: ApplicationsPage,
-		props: { store_path: ["ApplicationsPage"] },
+		component: ApplicationsModificatorsPage,
+		props: { store_path: ["ApplicationsModificatorsPage"] },
 	},
 	{
 		path: '/domains/',

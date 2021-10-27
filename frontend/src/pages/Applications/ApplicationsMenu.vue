@@ -16,8 +16,10 @@
  *  limitations under the License.
 -->
 
+
 <style lang="scss">
 @import '@/variable.scss';
+
 .applications_page__menu{
 	display: flex;
 }
@@ -45,36 +47,28 @@
 .applications_page__content{
 	padding-top: 10px;
 }
+
 </style>
 
 
 <template>
-	<div class='applications_page' v-bind:class="bindClass()">
+	<div class='applications_page__menu'>
 		
-		<div class='applications_page__menu'>
-			
-			<router-link :to="{path: item.href}" custom
-				v-for="item in menu" :key="item.id"
-				v-slot="{ navigate, route }"
-			>
-				<div class='applications_page__menu_item'
-					v-bind:class="{ active: isActive(item.name) }">
-					<a :href="item.href" @click="navigate" class="nolink b_out"
-						v-bind:data-route-name="route.name"
-					>
-						<div class="b_in">
-							{{ item.title }}
-						</div>
-					</a>
-				</div>
-			</router-link>
-			
-		</div>
-		
-		<div class='applications_page__content'>
-			<slot name="content">
-			</slot>
-		</div>
+		<router-link :to="{path: item.href}" custom
+			v-for="item in menu" :key="item.id"
+			v-slot="{ navigate, route }"
+		>
+			<div class='applications_page__menu_item'
+				v-bind:class="{ active: isActive(item.name) }">
+				<a :href="item.href" @click="navigate" class="nolink b_out"
+					v-bind:data-route-name="route.name"
+				>
+					<div class="b_in">
+						{{ item.title }}
+					</div>
+				</a>
+			</div>
+		</router-link>
 		
 	</div>
 </template>
@@ -84,18 +78,12 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone } from "vue-helper";
-import { Crud } from '@/components/Crud/Crud.vue';
-import { CRUD_EVENTS } from '@/components/Crud/CrudState';
-import { Application, ApplicationsPageState } from './ApplicationsPageState';
-import Button from '@/components/Crud/Button.vue';
-import CodeMirror from '@/components/Crud/CodeMirror.vue';
-import Dialog from '@/components/Dialog/Dialog.vue';
 
-export const ApplicationsPage =
+
+export const ApplicationsMenu =
 {
-	name: "ApplicationsPage",
+	name: "ApplicationsMenu",
 	mixins: [mixin],
-	props: ["style"],
 	data: function () {
 		return {
 			menu: [
@@ -132,14 +120,6 @@ export const ApplicationsPage =
 	},
 	methods:
 	{
-		bindClass: function bindClass() {
-			let arr = [];
-			if (this.style && this.style != "")
-			{
-				arr.push("applications_page--" + this.style);
-			}
-			return arr.join(" ");
-		},
 		isActive: function(route_name)
 		{
 			if (this.$router.currentRoute.value.name != undefined)

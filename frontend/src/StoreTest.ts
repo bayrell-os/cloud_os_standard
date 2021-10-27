@@ -18,7 +18,7 @@
 
 import { Store } from "vuex";
 import { AppState } from "./AppState";
-import { ApplicationStatus } from "./pages/Applications/ApplicationsStatusPageState";
+import { ApplicationStatus } from "./pages/ApplicationsStatus/ApplicationsStatusPageState";
 import * as dayjs from 'dayjs'
 
 
