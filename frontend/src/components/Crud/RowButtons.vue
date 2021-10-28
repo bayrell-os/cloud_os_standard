@@ -21,13 +21,39 @@
 	margin-left: 2px;
 	margin-right: 2px;
 }
+.component_row_button{
+	display: inline-block;
+	vertical-align: middle;
+}
 </style>
 
 
 <template>
 	<div class="component_row_buttons">
-		<Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
-		<Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
+		
+		<div class="component_row_button"
+			v-if="crud.route_names != undefined && crud.route_names.edit != undefined"
+		>
+			<router-link custom
+				:to="{ name: crud.route_names.edit, params: { id: getItemId() }}"
+				v-slot="{ href, navigate, route }"
+			>
+				<a :href="href" @click="navigate" class="nolink"
+					v-bind:data-route-name="route.name"
+				>
+					<Button type="default" small="true">Edit</Button>
+				</a>
+			</router-link>
+		</div>
+		
+		<div class="component_row_button" v-else
+		>
+			<Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
+		</div>
+		
+		<div class="component_row_button">
+			<Button type="danger" small="true" @click="onButtonClick('delete')">Delete</Button>
+		</div>
 	</div>
 </template>
 
@@ -52,13 +78,19 @@ export const RowButtons =
 	},
 	methods:
 	{
+		getItemId: function()
+		{
+			let id = this.crud.model.getItemId(this.crud.item);
+			if (id == "") return "0";
+			return id;
+		},
 		onButtonClick: function(button_name)
 		{
 			let event = new CrudEvent();
 			event.event_name = CRUD_EVENTS.ROW_BUTTON_CLICK;
-			event.crud_item = deepClone(this.crud_item);
+			event.crud_item = deepClone(this.crud.item);
 			event.button_name = button_name;
-			event.index = this.crud_index;
+			event.index = this.crud.index;
 			this.$emit( "crudEvent", event );
 		}
 	},

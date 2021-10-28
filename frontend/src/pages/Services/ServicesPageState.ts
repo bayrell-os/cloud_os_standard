@@ -104,46 +104,6 @@ export class ServicesPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
-	 */
-	getApiUrlSearch()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: Service)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.service_id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: Service)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.service_id + "/";
-	}
-	
-	
-	
-	/**
 	 * Returns form value
 	 */
 	getItemValue(index: number, api_name: string): any
@@ -274,6 +234,16 @@ export class ServicesPageState extends CrudState
 	getItemName(item: Service | null): string
 	{
 		return (item) ? item.service_name : "";
+	}
+	
+	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: Service | null): string
+	{
+		return (item != null) ? String(item.service_id) : "";
 	}
 	
 	

@@ -100,41 +100,11 @@ export class ApplicationsFilesPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
+	 * Returns item id
 	 */
-	getApiUrlSearch()
+	getItemId(item: ApplicationFile | null): string
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: ApplicationFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.file_name + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: ApplicationFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.file_name + "/";
+		return (item != null) ? item.file_name : "";
 	}
 	
 	
@@ -144,7 +114,21 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getApiUrlCompose(item: ApplicationFile)
 	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" + item.file_name + "/";
+		return "/api/" + this.getApiObjectName() + "/default/compose/" + encodeURIComponent(this.getItemId(item)) + "/";
+	}
+	
+	
+	
+	/**
+	 * Returns route names
+	 */
+	getRouteNames(): Record<string, string>
+	{
+		return {
+			"list": "app:applications:files",
+			"add": "app:applications:files:add",
+			"edit": "app:applications:files:edit",
+		};
 	}
 	
 	

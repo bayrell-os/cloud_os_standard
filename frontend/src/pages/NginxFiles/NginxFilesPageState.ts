@@ -92,46 +92,6 @@ export class NginxFilesPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
-	 */
-	getApiUrlSearch()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: NginxFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + encodeURIComponent(item.name) + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: NginxFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + encodeURIComponent(item.name) + "/";
-	}
-	
-	
-	
-	/**
 	 * Crud init
 	 */
 	crudInit()
@@ -203,6 +163,16 @@ export class NginxFilesPageState extends CrudState
 	getItemName(item: NginxFile | null): string
 	{
 		return (item) ? item.name : "";
+	}
+	
+	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: NginxFile | null): string
+	{
+		return (item != null) ? item.name : "";
 	}
 	
 	

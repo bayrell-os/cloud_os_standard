@@ -17,9 +17,6 @@
  */
 
 import { CrudItem, CrudState, FieldInfo } from '@/components/Crud/CrudState';
-import { DialogState } from '@/components/Dialog/DialogState';
-import axios, { AxiosResponse } from 'axios';
-import { DefineComponent } from 'vue';
 import { deepClone } from "vue-helper";
 
 
@@ -89,55 +86,19 @@ export class ApplicationsModificatorsPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
+	 * Returns route names
 	 */
-	getApiUrlSearch()
+	getRouteNames(): Record<string, string>
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
+		return {
+			"list": "app:applications:modificators",
+			"add": "app:applications:modificators:add",
+			"edit": "app:applications:modificators:edit",
+		};
 	}
 	
 	
 	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: ApplicationModificator)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: ApplicationModificator)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlCompose(item: ApplicationModificator)
-	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" + item.id + "/";
-	}
-	
-	
-	 
 	/**
 	 * Crud init
 	 */
@@ -194,6 +155,16 @@ export class ApplicationsModificatorsPageState extends CrudState
 	getItemName(item: ApplicationModificator | null): string
 	{
 		return (item) ? item.name : "";
+	}
+	
+	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: ApplicationModificator | null): string
+	{
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	

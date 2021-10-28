@@ -22,11 +22,7 @@
 
 
 <template>
-	<ApplicationsPage style="status_page">
-		<template v-slot:content>
-			<Crud v-bind:store_path="store_path" />
-		</template>
-	</ApplicationsPage>
+	<Crud v-bind:store_path="store_path" />
 </template>
 
 
@@ -34,7 +30,6 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone } from "vue-helper";
-import { ApplicationsPage } from '@/pages/Applications/ApplicationsPage.vue';
 import { Crud } from '@/components/Crud/Crud.vue';
 
 
@@ -47,7 +42,6 @@ export const ApplicationsStatusPage =
 	mixins: [mixin],
 	components:
 	{
-		ApplicationsPage,
 	},
 	methods:
 	{

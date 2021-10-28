@@ -22,6 +22,15 @@
 	&__top_buttons{
 		margin-bottom: 10px;
 	}
+	&__top_button{
+		display: inline-block;
+		vertical-align: top;
+		margin-left: 2px;
+		margin-right: 2px;
+		&:first-child{
+			margin-left: 0px;
+		}
+	}
 	&__table table{
 		border-collapse: collapse;
 		border: 1px $color_table_border solid;
@@ -61,75 +70,119 @@
 <template>
 	<div class="component_crud">
 		
-		<div class="component_crud__top_buttons">
-			<slot name="top_buttons">
-				<Button type="success" @click="onShowAdd()">
-					[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
-				</Button>
-			</slot>
-		</div>
+		<slot name="crud_before"></slot>
 		
-		<slot name="table_before"></slot>
+		<div class="component_crud_list" v-if="action == undefined || action == 'list'">
 		
-		<div class="component_crud__table">
-			<slot name="table">
-				<table>
-					<tr class="component_crud__header">
-						<th v-for="field in model.fields_table"
-							:key="field.api_name"
-						>{{ field.label }}</th>
-					</tr>
-					<tr class="component_crud__row"
-						v-for="item, item_index in model.items" :key="item.domain_name"
-						v-bind:class="{ active: model.isRowActive(item) }"
-						@click="onRowClick(item, item_index, $event)"
+			<div class="component_crud__top_buttons">
+				<slot name="top_buttons">
+					
+					<div class="component_crud__top_button"
+						v-if="route_names != undefined && route_names.add != undefined"
 					>
-						<td v-for="field in model.fields_table"
-							:key="field.api_name"
+						<router-link custom
+							:to="{ name: route_names.add }"
+							v-slot="{ href, navigate, route }"
 						>
-							<component v-bind:is="field.component"
-								v-bind:crud_index="item_index"
-								v-bind:crud_item="item"
-								v-bind:crud_field="field"
-								v-bind:value="model.getItemValue(item_index, field.api_name)"
-								@crudEvent="onCrudEvent($event)"
-							/>
-						</td>
-					</tr>
-				</table>
+							<a :href="href" @click="navigate" class="nolink"
+								v-bind:data-route-name="route.name"
+							>
+								<Button type="success">
+									[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
+								</Button>
+							</a>
+						</router-link>
+					</div>
+					
+					<div class="component_crud__top_button" v-else >
+						<Button type="success" @click="onShowAdd()">
+							[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
+						</Button>
+					</div>
+					
+				</slot>
+			</div>
+			
+			<slot name="table_before"></slot>
+			
+			<div class="component_crud__table">
+				<slot name="table">
+					<table>
+						<tr class="component_crud__header">
+							<th v-for="field in model.fields_table"
+								:key="field.api_name"
+							>{{ field.label }}</th>
+						</tr>
+						<tr class="component_crud__row"
+							v-for="item, item_index in model.items" :key="item.domain_name"
+							v-bind:class="{ active: model.isRowActive(item) }"
+							@click="onRowClick(item, item_index, $event)"
+						>
+							<td v-for="field in model.fields_table"
+								:key="field.api_name"
+							>
+								<component v-bind:is="field.component"
+									v-bind:crud="{
+										action: action,
+										route_names: route_names,
+										store_path: store_path,
+										index: item_index,
+										item: item,
+										field: field,
+										model: model
+									}"
+									v-bind:value="model.getItemValue(item_index, field.api_name)"
+									@crudEvent="onCrudEvent($event)"
+								/>
+							</td>
+						</tr>
+					</table>
+				</slot>
+			</div>
+			
+			<slot name="table_after"></slot>
+			<slot name="dialog_form">
+				<Dialog v-bind:store_path="store_path.concat('dialog_form')"
+					width="800px" buttons="false"
+				>
+					<template v-slot:title>
+						{{ model.getMessage("dialog_form_title", model.current_item) }}
+					</template>
+					<template v-slot:content>
+						<Form v-bind:store_path="store_path.concat('form')">
+							<template v-slot:buttons>
+								<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+								<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+							</template>
+						</Form>
+					</template>
+				</Dialog>
+			</slot>
+			<slot name="dialog_delete">
+				<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
+					<template v-slot:title>
+						{{ model.getMessage("dialog_delete_title", model.current_item) }}
+					</template>
+					<template v-slot:text>
+						{{ model.getMessage("dialog_delete_text", model.current_item) }}
+					</template>
+					<template v-slot:buttons>
+						<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
+						<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
+					</template>
+				</Dialog>
 			</slot>
 		</div>
 		
-		<slot name="table_after"></slot>
-		<slot name="dialog_form">
-			<Dialog v-bind:store_path="store_path.concat('dialog_form')" width="800px" buttons="false">
-				<template v-slot:title>
-					{{ model.getMessage("dialog_form_title", model.current_item) }}
-				</template>
-				<template v-slot:content>
-					<Form v-bind:store_path="store_path.concat('form')">
-						<template v-slot:buttons>
-							<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-							<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-						</template>
-					</Form>
-				</template>
-			</Dialog>
-		</slot>
-		<slot name="dialog_delete">
-			<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
-				<template v-slot:title>
-					{{ model.getMessage("dialog_delete_title", model.current_item) }}
-				</template>
-				<template v-slot:text>
-					{{ model.getMessage("dialog_delete_text", model.current_item) }}
-				</template>
+		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
+			<Form v-bind:store_path="store_path.concat('form')">
 				<template v-slot:buttons>
-					<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
-					<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
+					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
 				</template>
-			</Dialog>
-		</slot>
+			</Form>
+		</div>
+		
 		<slot name="crud_after"></slot>
 	</div>
 </template>
@@ -145,8 +198,13 @@ export const Crud =
 {
 	name: "Crud",
 	mixins: [ mixin ],
+	props: ["action"],
 	computed:
 	{
+		route_names: function()
+		{
+			return this.model.getRouteNames();
+		},
 	},
 	methods:
 	{
@@ -196,7 +254,15 @@ export const Crud =
 			}
 			else if (action == "cancel")
 			{
-				this.model.dialog_form.hide();
+				let route_names = this.model.getRouteNames();
+				if (route_names.list == undefined)
+				{
+					this.model.dialog_form.hide();
+				}
+				else
+				{
+					this.$router.go(-1);
+				}
 			}
 			else if (action == "yes")
 			{
@@ -210,7 +276,7 @@ export const Crud =
 	},
 	mounted()
 	{
-		// console.log("crud mounted");
+		console.log("crud mounted");
 	}
 };
 

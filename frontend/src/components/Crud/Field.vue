@@ -35,7 +35,13 @@ export const Field =
 {
 	mixins: [ mixin ],
 	emits: ["crudEvent"],
-	props: [ "value", "name", "type", "crud_index", "crud_item", "crud_field" ],
+	props:
+	[
+		"value",
+		"name",
+		"type",
+		"crud",
+	],
 	computed:
 	{
 	},

@@ -176,6 +176,7 @@ export class CrudState
 	dialog_form: DialogState = new DialogState();
 	active_item: CrudItem | null = null;
 	active_item_pk: Record<string, any> | null = null;
+	page_action: string = "";
 	
 	
 	constructor()
@@ -233,7 +234,7 @@ export class CrudState
 	 */
 	getApiUrlUpdate(item: CrudItem)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/";
+		return "/api/" + this.getApiObjectName() + "/crud/edit/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	
 	
@@ -243,7 +244,17 @@ export class CrudState
 	 */
 	getApiUrlDelete(item: CrudItem)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/";
+		return "/api/" + this.getApiObjectName() + "/crud/delete/" + encodeURIComponent(this.getItemId(item)) + "/";
+	}
+	
+	
+	
+	/**
+	 * Returns route names
+	 */
+	getRouteNames(): Record<string, string>
+	{
+		return {};
 	}
 	
 	
@@ -351,6 +362,16 @@ export class CrudState
 	
 	
 	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: CrudItem | null): string
+	{
+		return "";
+	}
+	
+	 
+	 
 	/**
 	 * Returns crud message
 	 */

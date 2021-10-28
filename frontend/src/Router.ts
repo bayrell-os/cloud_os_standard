@@ -18,7 +18,6 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
-import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
 import ApplicationsFilesPage from '@/pages/ApplicationsFiles/ApplicationsFilesPage.vue'
 import ApplicationsModificatorsPage from '@/pages/ApplicationsModificators/ApplicationsModificatorsPage.vue'
 import ApplicationsStatusPage from '@/pages/ApplicationsStatus/ApplicationsStatusPage.vue'
@@ -36,66 +35,120 @@ const routes: Array<RouteRecordRaw> = [
 		component: MainPage,
 		props: { store_path: ["MainPage"] },
 	},
-	{
-		path: '/applications/',
-		name: 'app:applications',
-		component: ApplicationsPage,
-		props: { store_path: ["ApplicationsPage"] },
-	},
-	{
-		path: '/applications/files/',
-		name: 'app:applications:files',
-		component: ApplicationsFilesPage,
-		props: { store_path: ["ApplicationsFilesPage"] },
-	},
-	{
-		path: '/applications/modificators/',
-		name: 'app:applications:modificators',
-		component: ApplicationsModificatorsPage,
-		props: { store_path: ["ApplicationsModificatorsPage"] },
-	},
+	
+	/* Status */
 	{
 		path: '/applications/status/',
 		name: 'app:applications:status',
 		component: ApplicationsStatusPage,
 		props: { store_path: ["ApplicationsStatusPage"] },
 	},
+	
+	/* Files */
 	{
-		path: '/applications/templates/',
-		name: 'app:applications:templates',
-		component: ApplicationsTemplatesPage,
-		props: { store_path: ["ApplicationsTemplatesPage"] },
+		path: '/applications/files/',
+		name: 'app:applications:files',
+		component: ApplicationsFilesPage,
+		props:
+		{
+			store_path: ["ApplicationsFilesPage"],
+			action: "list",
+		},
 	},
+	{
+		path: '/applications/files/add/',
+		name: 'app:applications:files:add',
+		component: ApplicationsFilesPage,
+		props: { store_path: ["ApplicationsFilesPage"], action: "add" },
+	},
+	{
+		path: '/applications/files/edit/:id/',
+		name: 'app:applications:files:edit',
+		component: ApplicationsFilesPage,
+		props: { store_path: ["ApplicationsFilesPage"], action: "edit" },
+	},
+	
+	/* Modificators */
 	{
 		path: '/applications/modificators/',
 		name: 'app:applications:modificators',
 		component: ApplicationsModificatorsPage,
-		props: { store_path: ["ApplicationsModificatorsPage"] },
+		props:
+		{
+			store_path: ["ApplicationsModificatorsPage"],
+			action: "list"
+		},
 	},
+	{
+		path: '/applications/modificators/add/',
+		name: 'app:applications:modificators:add',
+		component: ApplicationsModificatorsPage,
+		props: { store_path: ["ApplicationsModificatorsPage"], action: "add" },
+	},
+	{
+		path: '/applications/modificators/edit/:id/',
+		name: 'app:applications:modificators:edit',
+		component: ApplicationsModificatorsPage,
+		props: { store_path: ["ApplicationsModificatorsPage"], action: "edit" },
+	},
+	
+	/* Templates */
+	{
+		path: '/applications/templates/',
+		name: 'app:applications:templates',
+		component: ApplicationsTemplatesPage,
+		props:
+		{
+			store_path: ["ApplicationsTemplatesPage"],
+			action: "list"
+		},
+	},
+	{
+		path: '/applications/templates/add/',
+		name: 'app:applications:templates:add',
+		component: ApplicationsTemplatesPage,
+		props: { store_path: ["ApplicationsTemplatesPage"], action: "add" },
+	},
+	{
+		path: '/applications/templates/edit/:id/',
+		name: 'app:applications:templates:edit',
+		component: ApplicationsTemplatesPage,
+		props: { store_path: ["ApplicationsTemplatesPage"], action: "edit" },
+	},
+	
+	/* Domains */
 	{
 		path: '/domains/',
 		name: 'app:domains',
 		component: DomainsPage,
 		props: { store_path: ["DomainsPage"] },
 	},
+	
+	/* Nginx files */
 	{
 		path: '/nginx_files/',
 		name: 'app:nginx_files',
 		component: NginxFilesPage,
 		props: { store_path: ["NginxFilesPage"] },
 	},
+	
+	/* Routes */
 	{
 		path: '/routes/',
 		name: 'app:routes',
 		component: RoutesPage,
 		props: { store_path: ["RoutesPage"] },
 	},
+	
+	/* Services */
 	{
 		path: '/services/',
 		name: 'app:services',
 		component: ServicesPage,
 		props: { store_path: ["ServicesPage"] },
 	},
+	
+	/* Page not found */
 	{
 		path: "/:pathMatch(.*)*",
 		name: 'app:page_not_found',

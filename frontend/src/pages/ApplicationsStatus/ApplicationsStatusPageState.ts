@@ -17,9 +17,6 @@
  */
 
 import { CrudItem, CrudState, FieldInfo } from '@/components/Crud/CrudState';
-import { DialogState } from '@/components/Dialog/DialogState';
-import axios, { AxiosResponse } from 'axios';
-import { DefineComponent } from 'vue';
 import { deepClone } from "vue-helper";
 
 
@@ -84,56 +81,6 @@ export class ApplicationsStatusPageState extends CrudState
 	}
 	
 	
-	
-	/**
-	 * Return api search url
-	 */
-	getApiUrlSearch()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: ApplicationStatus)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: ApplicationStatus)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlCompose(item: ApplicationStatus)
-	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" + item.id + "/";
-	}
-	
-	
 	 
 	/**
 	 * Crud init
@@ -190,6 +137,16 @@ export class ApplicationsStatusPageState extends CrudState
 	getItemName(item: ApplicationStatus | null): string
 	{
 		return (item) ? item.name : "";
+	}
+	
+	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: ApplicationStatus | null): string
+	{
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	

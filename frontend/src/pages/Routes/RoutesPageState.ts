@@ -107,46 +107,6 @@ export class RoutesPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
-	 */
-	getApiUrlSearch()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: Route)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.id + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: Route)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.id + "/";
-	}
-	
-	
-	
-	/**
 	 * Crud init
 	 */
 	crudInit()
@@ -268,6 +228,16 @@ export class RoutesPageState extends CrudState
 	}
 	
 	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: Route | null): string
+	{
+		return (item != null) ? String(item.id) : "";
+	}
+	
+	 
 	
 	/**
 	 * Returns delete message

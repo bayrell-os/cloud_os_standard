@@ -87,46 +87,6 @@ export class DomainsPageState extends CrudState
 	
 	
 	/**
-	 * Return api search url
-	 */
-	getApiUrlSearch()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	getApiUrlUpdate(item: Domain)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + item.domain_name + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	getApiUrlDelete(item: Domain)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + item.domain_name + "/";
-	}
-	
-	
-	
-	/**
 	 * Crud init
 	 */
 	crudInit()
@@ -177,6 +137,16 @@ export class DomainsPageState extends CrudState
 	getItemName(item: Domain | null): string
 	{
 		return (item) ? item.domain_name : "";
+	}
+	
+	
+	
+	/**
+	 * Returns item id
+	 */
+	getItemId(item: Domain | null): string
+	{
+		return (item != null) ? item.domain_name : "";
 	}
 	
 	

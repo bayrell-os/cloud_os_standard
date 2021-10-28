@@ -163,7 +163,10 @@ export const App =
 		return {
 			menu: [
 				{ "id": 1, "name": "app:main", "href": "/", "title": "Main" },
-				{ "id": 2, "name": "app:applications", "href": "/applications/status/", "title": "Applications" },
+				{ "id": 8, "name": "app:applications:status", "href": "/applications/status/", "title": "Status" },
+				{ "id": 9, "name": "app:applications:templates", "href": "/applications/templates/", "title": "Templates" },
+				{ "id": 10, "name": "app:applications:modificators", "href": "/applications/modificators/", "title": "Modificators" },
+				{ "id": 11, "name": "app:applications:files", "href": "/applications/files/", "title": "App Files" },
 				{ "id": 3, "name": "app:services", "href": "/services/", "title": "Services" },
 				{ "id": 4, "name": "app:domains", "href": "/domains/", "title": "Domains" },
 				{ "id": 5, "name": "app:routes", "href": "/routes/", "title": "Routes" },
