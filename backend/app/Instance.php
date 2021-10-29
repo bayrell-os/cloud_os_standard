@@ -30,16 +30,18 @@ class Instance extends \TinyPHP\App
 	{
 		parent::init();
 		
-		/* Includes crud routes */
-		$this->addRoute(\App\Routes\ApplicationsFilesCrud::class);
-		$this->addRoute(\App\Routes\ApplicationsModificatorsCrud::class);
-		$this->addRoute(\App\Routes\ApplicationsStatusCrud::class);
-		$this->addRoute(\App\Routes\ApplicationsTemplatesCrud::class);
-		$this->addRoute(\App\Routes\BusApiRoute::class);
-		$this->addRoute(\App\Routes\DomainsCrud::class);
-		$this->addRoute(\App\Routes\NginxFilesCrud::class);
-		$this->addRoute(\App\Routes\RoutesCrud::class);
-		$this->addRoute(\App\Routes\ServicesCrud::class);
+		/* Include api functions */
+		$this->addRoute(\App\Api\ApplicationsFilesCrud::class);
+		$this->addRoute(\App\Api\ApplicationsModificatorsCrud::class);
+		$this->addRoute(\App\Api\ApplicationsStatusCrud::class);
+		$this->addRoute(\App\Api\ApplicationsTemplatesCrud::class);
+		$this->addRoute(\App\Api\DomainsCrud::class);
+		$this->addRoute(\App\Api\NginxFilesCrud::class);
+		$this->addRoute(\App\Api\RoutesCrud::class);
+		$this->addRoute(\App\Api\ServicesCrud::class);
+		
+		/* Include bus functions */
+		$this->addRoute(\App\Bus\BusApiRoute::class);
 		
 		/* Include routes */
 		$this->addRoute(\App\Routes\DatabaseRoute::class);

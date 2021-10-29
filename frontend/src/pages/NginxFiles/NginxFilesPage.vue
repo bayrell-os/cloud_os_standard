@@ -23,7 +23,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from "vue-helper";
+import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
 import { Crud } from '@/components/Crud/Crud.vue';
 import { NginxFilesPageState } from './NginxFilesPageState';
 
@@ -35,10 +35,13 @@ export const NginxFilesPage =
 	methods:
 	{
 	},
-	mounted()
+	beforeRouteEnter(to, from, next)
 	{
-		this.setPageTitle("Nginx Files");
-		this.model.constructor.apiLoadData(this);
+		onRouteUpdate("beforeRouteEnter", to, from, next);
+	},
+	beforeRouteUpdate(to, from, next)
+	{
+		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 

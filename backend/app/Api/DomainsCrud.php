@@ -18,22 +18,21 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
-use App\Models\Route;
+use App\Models\Domain;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\Rules\AllowFields;
-use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
-class RoutesCrud extends \TinyPHP\ApiCrudRoute
+class DomainsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Route::class;
-	var $api_path = "routes";
+	var $class_name = Domain::class;
+	var $api_path = "domains";
 
 	
 	/**
@@ -47,22 +46,13 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"id",
-					"enable",
-					"protocol",
-					"protocol_data",
 					"domain_name",
-					"route",
-					"docker_name",
-					"target_port",
-					"route_prefix",
-					"layer_uid",
+					"nginx_template",
+					"space_id",
 					"gmtime_created",
 					"gmtime_updated",
 				]
-			]),
-			new ReadOnly(["api_name"=>"id"]),
-			new JsonField(["api_name"=>"protocol_data"])
+			])
 		];
 	}
 

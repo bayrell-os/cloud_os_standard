@@ -18,24 +18,22 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
-use App\Models\Service;
+use App\Models\Route;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\RenderContainer;
-use TinyPHP\Exception\HttpMethodNotAllowedException;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ServicesCrud extends \TinyPHP\ApiCrudRoute
+class RoutesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Service::class;
-	var $api_path = "services";
+	var $class_name = Route::class;
+	var $api_path = "routes";
 
 	
 	/**
@@ -49,51 +47,23 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"service_id",
-					"stack_name",
-					"service_name",
-					"software_api_name",
+					"id",
 					"enable",
+					"protocol",
+					"protocol_data",
+					"domain_name",
+					"route",
 					"docker_name",
-					"docker_image",
-					"docker_json",
-					"docker_balancer",
+					"target_port",
+					"route_prefix",
+					"layer_uid",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
-			new JsonField([ "api_name" => "docker_json" ]),
-			new JsonField([ "api_name" => "docker_balancer" ]),
+			new ReadOnly(["api_name"=>"id"]),
+			new JsonField(["api_name"=>"protocol_data"])
 		];
 	}
-	
-	
-	
-	/**
-	 * Create action
-	 */
-	function actionCreate(RenderContainer $container)
-	{
-		throw new HttpMethodNotAllowedException();
-	}
-	
-	
-	
-	/**
-	 * Edit action
-	 */
-	function actionEdit(RenderContainer $container)
-	{
-		throw new HttpMethodNotAllowedException();
-	}
-	
-	
-	
-	/**
-	 * Delete action
-	 */
-	function actionDelete(RenderContainer $container)
-	{
-		throw new HttpMethodNotAllowedException();
-	}
+
 }

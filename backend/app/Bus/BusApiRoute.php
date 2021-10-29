@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Bus;
 
 use FastRoute\RouteCollector;
 use TinyPHP\ApiResult;

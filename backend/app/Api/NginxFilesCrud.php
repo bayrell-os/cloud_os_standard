@@ -18,34 +18,22 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
-use App\Docker;
-use App\Models\ApplicationTemplate;
+use App\Models\NginxFile;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\Utils;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
+class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationTemplate::class;
-	var $api_path = "applications_modificators";
+	var $class_name = NginxFile::class;
+	var $api_path = "nginx_files";
 
-	
-	/**
-	 * Declare routes
-	 */
-	function routes(RouteCollector $routes)
-	{
-		parent::routes($routes);
-	}
-	
-	
 	
 	/**
 	 * Get rules
@@ -58,10 +46,11 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"id",
-					"type",
 					"name",
+					"enable",
 					"content",
+					"timestamp",
+					"is_deleted",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -69,28 +58,4 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 		];
 	}
 
-	
-	
-	/**
-	 * Find query
-	 */
-	public function findQuery($query)
-	{
-		return $query
-			->where('type', '=', '2')
-			->orderBy("name", "asc")
-		;
-	}
-	
-	
-	
-	/**
-	 * To database
-	 */
-	function toDatabase($item)
-	{
-		$item = parent::toDatabase($item);
-		$item["type"] = 2;
-		return $item;
-	}
 }

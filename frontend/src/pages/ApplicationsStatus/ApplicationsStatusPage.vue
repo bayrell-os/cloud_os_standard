@@ -29,7 +29,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, deepClone } from "vue-helper";
+import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
 import { Crud } from '@/components/Crud/Crud.vue';
 
 
@@ -46,10 +46,13 @@ export const ApplicationsStatusPage =
 	methods:
 	{
 	},
-	mounted()
+	beforeRouteEnter(to, from, next)
 	{
-		this.setPageTitle("Status");
-		this.model.constructor.apiLoadData(this);
+		onRouteUpdate("beforeRouteEnter", to, from, next);
+	},
+	beforeRouteUpdate(to, from, next)
+	{
+		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 componentExtend(ApplicationsStatusPage, Crud);

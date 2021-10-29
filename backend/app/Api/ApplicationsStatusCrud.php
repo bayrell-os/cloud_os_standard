@@ -18,22 +18,34 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
-use App\Models\Domain;
+use App\Docker;
+use App\Models\ApplicationStatus;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
+use TinyPHP\Utils;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class DomainsCrud extends \TinyPHP\ApiCrudRoute
+class ApplicationsStatusCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Domain::class;
-	var $api_path = "domains";
+	var $class_name = ApplicationStatus::class;
+	var $api_path = "applications_status";
 
+	
+	/**
+	 * Declare routes
+	 */
+	function routes(RouteCollector $routes)
+	{
+		parent::routes($routes);
+	}
+	
+	
 	
 	/**
 	 * Get rules
@@ -46,9 +58,8 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"domain_name",
-					"nginx_template",
-					"space_id",
+					"id",
+					"name",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -56,4 +67,17 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 		];
 	}
 
+	
+	
+	/**
+	 * Find query
+	 */
+	public function findQuery($query)
+	{
+		return $query
+			->orderBy("stack_name", "asc")
+			->orderBy("name", "asc")
+		;
+	}
+	
 }

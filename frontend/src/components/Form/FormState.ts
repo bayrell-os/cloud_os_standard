@@ -61,7 +61,7 @@ export class FormState extends BaseObject
 	 */
 	getItemValue(api_name: string): any
 	{
-		if (this.item[api_name] != undefined)
+		if (this.item && this.item[api_name] != undefined)
 		{
 			return this.item[api_name];
 		}
@@ -85,8 +85,16 @@ export class FormState extends BaseObject
 	 */
 	setItem(item: CrudState)
 	{
-		this.item = deepClone(item);
-		this.item_original = deepClone(item);
+		if (item == null)
+		{
+			this.item = {};
+			this.item_original = null;
+		}
+		else
+		{
+			this.item = deepClone(item);
+			this.item_original = deepClone(item);
+		}
 	}
 	
 	

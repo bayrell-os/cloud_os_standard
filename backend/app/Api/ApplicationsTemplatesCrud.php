@@ -18,10 +18,10 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
 use App\Docker;
-use App\Models\ApplicationStatus;
+use App\Models\ApplicationTemplate;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,10 +31,10 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsStatusCrud extends \TinyPHP\ApiCrudRoute
+class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationStatus::class;
-	var $api_path = "applications_status";
+	var $class_name = ApplicationTemplate::class;
+	var $api_path = "applications_templates";
 
 	
 	/**
@@ -59,7 +59,9 @@ class ApplicationsStatusCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
+					"type",
 					"name",
+					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -75,9 +77,20 @@ class ApplicationsStatusCrud extends \TinyPHP\ApiCrudRoute
 	public function findQuery($query)
 	{
 		return $query
-			->orderBy("stack_name", "asc")
+			->where('type', '=', '1')
 			->orderBy("name", "asc")
 		;
 	}
 	
+	
+	
+	/**
+	 * To database
+	 */
+	function toDatabase($item)
+	{
+		$item = parent::toDatabase($item);
+		$item["type"] = 1;
+		return $item;
+	}
 }

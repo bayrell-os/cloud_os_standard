@@ -25,6 +25,7 @@ import { deepClone } from "vue-helper";
 
 export class ApplicationFile extends CrudItem
 {
+	id: number = 0;
 	file_name: string = "";
 	stack_name: string = "";
 	content: string = "";
@@ -40,6 +41,7 @@ export class ApplicationFile extends CrudItem
 	 */
 	assignValues(params:Record<string, any>): ApplicationFile
 	{
+		this.id = Number(params["id"] || this.id);
 		this.file_name = String(params["file_name"] || this.file_name);
 		this.stack_name = String(params["stack_name"] || this.stack_name);
 		this.content = String(params["content"] || this.content);
@@ -61,6 +63,7 @@ export class ApplicationFile extends CrudItem
 	{
 		let res: Record<string, any> = super.getValues();
 		return Object.assign(res, {
+			"id": this.id,
 			"file_name": this.file_name,
 			"stack_name": this.stack_name,
 			"content": this.content,
@@ -105,7 +108,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getItemId(item: ApplicationFile | null): string
 	{
-		return (item != null) ? item.file_name : "";
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	
@@ -139,7 +142,7 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	getItemName(item: ApplicationFile | null): string
 	{
-		return (item) ? (item.stack_name + "/" + item.file_name) : "";
+		return (item) ? item.file_name : "";
 	}
 	
 	
@@ -187,12 +190,17 @@ export class ApplicationsFilesPageState extends CrudState
 	 */
 	crudInit()
 	{
+		/* ID field */
+		let id = new FieldInfo();
+		id.api_name = "id";
+		id.primary = true;
+		this.fields.push( deepClone(id) );
+		
 		/* Name field */
 		let file_name = new FieldInfo();
 		file_name.api_name = "file_name";
 		file_name.label = "File name";
 		file_name.component = "Input";
-		file_name.primary = true;
 		this.fields.push( deepClone(file_name) );
 		
 		/* Stack name field */

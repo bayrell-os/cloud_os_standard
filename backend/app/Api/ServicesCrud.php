@@ -18,34 +18,25 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
-use App\Docker;
-use App\Models\ApplicationTemplate;
+use App\Models\Service;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\Utils;
+use TinyPHP\RenderContainer;
+use TinyPHP\Exception\HttpMethodNotAllowedException;
 use TinyPHP\Rules\AllowFields;
+use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
+class ServicesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationTemplate::class;
-	var $api_path = "applications_templates";
+	var $class_name = Service::class;
+	var $api_path = "services";
 
-	
-	/**
-	 * Declare routes
-	 */
-	function routes(RouteCollector $routes)
-	{
-		parent::routes($routes);
-	}
-	
-	
 	
 	/**
 	 * Get rules
@@ -58,39 +49,51 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
-					"id",
-					"type",
-					"name",
-					"content",
+					"service_id",
+					"stack_name",
+					"service_name",
+					"software_api_name",
+					"enable",
+					"docker_name",
+					"docker_image",
+					"docker_json",
+					"docker_balancer",
 					"gmtime_created",
 					"gmtime_updated",
 				]
-			])
+			]),
+			new JsonField([ "api_name" => "docker_json" ]),
+			new JsonField([ "api_name" => "docker_balancer" ]),
 		];
 	}
-
+	
 	
 	
 	/**
-	 * Find query
+	 * Create action
 	 */
-	public function findQuery($query)
+	function actionCreate(RenderContainer $container)
 	{
-		return $query
-			->where('type', '=', '1')
-			->orderBy("name", "asc")
-		;
+		throw new HttpMethodNotAllowedException();
 	}
 	
 	
 	
 	/**
-	 * To database
+	 * Edit action
 	 */
-	function toDatabase($item)
+	function actionEdit(RenderContainer $container)
 	{
-		$item = parent::toDatabase($item);
-		$item["type"] = 1;
-		return $item;
+		throw new HttpMethodNotAllowedException();
+	}
+	
+	
+	
+	/**
+	 * Delete action
+	 */
+	function actionDelete(RenderContainer $container)
+	{
+		throw new HttpMethodNotAllowedException();
 	}
 }

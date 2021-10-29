@@ -26,8 +26,8 @@ use TinyPHP\Model;
 class ApplicationFile extends Model
 {
 	protected $table = "app_files";
-	protected $primaryKey = "file_name";
-	public $incrementing = false;
+	protected $primaryKey = "id";
+	public $incrementing = true;
 	protected $attributes = [
 	];
 	protected $fillable = [

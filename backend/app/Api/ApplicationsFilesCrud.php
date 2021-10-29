@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-namespace App\Routes;
+namespace App\Api;
 
 use App\Docker;
 use App\Models\ApplicationFile;
@@ -64,6 +64,7 @@ class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
+					"id",
 					"file_name",
 					"stack_name",
 					"content",
