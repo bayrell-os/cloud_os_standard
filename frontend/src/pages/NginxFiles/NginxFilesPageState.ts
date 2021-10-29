@@ -16,8 +16,9 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo, SelectOption } from '@/components/Crud/CrudState';
 import { deepClone } from "vue-helper";
+import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+
 
 
 export class NginxFile extends CrudItem

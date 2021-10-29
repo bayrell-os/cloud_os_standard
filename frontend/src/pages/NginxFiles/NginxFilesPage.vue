@@ -24,7 +24,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { Crud } from '@/components/Crud/Crud.vue';
+import { Crud } from "vue-helper/Crud/Crud.vue";
 import { NginxFilesPageState } from './NginxFilesPageState';
 
 

@@ -30,7 +30,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from '@/components/Crud/Crud.vue';
+import { Crud } from "vue-helper/Crud/Crud.vue";
 
 
 /**

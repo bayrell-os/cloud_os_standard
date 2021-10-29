@@ -16,11 +16,11 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo } from '@/components/Crud/CrudState';
-import { DialogState } from '@/components/Dialog/DialogState';
-import axios, { AxiosResponse } from 'axios';
 import { DefineComponent } from 'vue';
 import { deepClone } from "vue-helper";
+import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { DialogState } from "vue-helper/Crud/DialogState";
+import axios, { AxiosResponse } from 'axios';
 
 
 export class ApplicationFile extends CrudItem
@@ -215,6 +215,7 @@ export class ApplicationsFilesPageState extends CrudState
 		content.api_name = "content";
 		content.label = "Content";
 		content.component = "CodeMirror";
+		//content.component_params["min-height"] = "500px";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */

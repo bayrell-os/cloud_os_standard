@@ -30,7 +30,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from '@/components/Crud/Crud.vue';
+import { Crud } from "vue-helper/Crud/Crud.vue";
 
 
 /**
@@ -45,6 +45,13 @@ export const ApplicationsFilesPage =
 	},
 	methods:
 	{
+		onDialogFormButtonCancel1: function()
+		{
+			//window.history.state.back
+			//cosole.log(this.$router);
+			//this.$router.push({ path: '/applications/files/' });
+			//this.$router.go(-1);
+		},
 	},
 	beforeRouteEnter(to, from, next)
 	{

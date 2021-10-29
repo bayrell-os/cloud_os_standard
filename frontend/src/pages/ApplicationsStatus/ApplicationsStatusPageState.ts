@@ -16,8 +16,9 @@
  *  limitations under the License.
  */
 
-import { CrudItem, CrudState, FieldInfo } from '@/components/Crud/CrudState';
 import { deepClone } from "vue-helper";
+import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+
 
 
 export class ApplicationStatus extends CrudItem

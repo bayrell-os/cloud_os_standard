@@ -26,17 +26,17 @@ import Router from './Router'
 import { AppState } from './AppState'
 import { initTestStore } from './StoreTest'
 
-import Dialog from './components/Dialog/Dialog.vue';
-import Form from './components/Form/Form.vue';
-import Button from './components/Crud/Button.vue';
-import Input from './components/Crud/Input.vue';
-import Label from './components/Crud/Label.vue';
-import RowButtons from './components/Crud/RowButtons.vue';
-import RowNumber from './components/Crud/RowNumber.vue';
-import Select from './components/Crud/Select.vue';
-import SelectLabel from './components/Crud/SelectLabel.vue';
-import TextArea from './components/Crud/TextArea.vue';
-import CodeMirror from './components/Crud/CodeMirror.vue';
+import Dialog from 'vue-helper/Crud/Dialog.vue';
+import Form from 'vue-helper/Crud/Form.vue';
+import Button from 'vue-helper/Crud/Button.vue';
+import Input from 'vue-helper/Crud/Input.vue';
+import Label from 'vue-helper/Crud/Label.vue';
+import RowButtons from 'vue-helper/Crud/RowButtons.vue';
+import RowNumber from 'vue-helper/Crud/RowNumber.vue';
+import Select from 'vue-helper/Crud/Select.vue';
+import SelectLabel from 'vue-helper/Crud/SelectLabel.vue';
+import TextArea from 'vue-helper/Crud/TextArea.vue';
+import CodeMirror from 'vue-helper/Crud/CodeMirror.vue';
 
 /* Create app state */
 let Store = buildStore(AppState);
