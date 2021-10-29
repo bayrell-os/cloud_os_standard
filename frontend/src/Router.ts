@@ -53,7 +53,7 @@ const routes: Array<RouteRecordRaw> = [
 		{
 			store_path: ["ApplicationsFilesPage"],
 			action: "list",
-		},
+		}
 	},
 	{
 		path: '/applications/files/add/',
@@ -65,7 +65,7 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/applications/files/edit/:id/',
 		name: 'app:applications:files:edit',
 		component: ApplicationsFilesPage,
-		props: { store_path: ["ApplicationsFilesPage"], action: "edit" },
+		props: { store_path: ["ApplicationsFilesPage"], action: "edit" }
 	},
 	
 	/* Modificators */

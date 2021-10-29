@@ -167,22 +167,24 @@ export class CrudItem extends BaseObject
 
 export class CrudState
 {
+	page_action: string = "";
 	fields: Array<FieldInfo> = [];
 	fields_table: Array<FieldInfo> = [];
-	current_item: CrudItem | null = null;
 	items: Array<CrudItem> = new Array<CrudItem>();
-	form: FormState = new FormState();
+	form_save: FormState = new FormState();
+	form_delete: FormState = new FormState();
 	dialog_delete: DialogState = new DialogState();
 	dialog_form: DialogState = new DialogState();
 	active_item: CrudItem | null = null;
 	active_item_pk: Record<string, any> | null = null;
-	page_action: string = "";
+	
 	
 	
 	constructor()
 	{
 		this.crudInit();
 	}
+	
 	
 	
 	/**
@@ -197,6 +199,7 @@ export class CrudState
 		
 		return false;
 	}
+	
 	
 	
 	/**
@@ -215,6 +218,16 @@ export class CrudState
 	getApiUrlSearch()
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/search/";
+	}
+	
+	
+	
+	/**
+	 * Return api search url
+	 */
+	getApiUrlItem(id: string)
+	{
+		return "/api/" + this.getApiObjectName() + "/crud/item/" + encodeURIComponent(id) + "/";
 	}
 	
 	
@@ -370,35 +383,44 @@ export class CrudState
 		return "";
 	}
 	
-	 
-	 
+	
+	
 	/**
 	 * Returns crud message
 	 */
 	getMessage(message_type: string, item: CrudItem | null): string
 	{
-		if (message_type == "dialog_form_title")
+		if (message_type == "list_title")
 		{
-			if (item == null)
+			return "Items";
+		}
+		else if (message_type == "form_title")
+		{
+			if (item)
 			{
-				return "Add item";
+				return this.getMessage("edit_title", item);
 			}
-			else
-			{
-				return "Edit item";
-			}
+			return this.getMessage("add_title", item);
 		}
-		if (message_type == "top_button_show_add_title")
+		else if (message_type == "add_title")
 		{
-			return "Add";
+			return "Add item";
 		}
-		if (message_type == "dialog_delete_title")
+		else if (message_type == "edit_title")
 		{
-			return "Delete";
+			return "Edit item";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "delete_title")
+		{
+			return "Delete item";
+		}
+		else if (message_type == "delete_text")
 		{
 			return "Do you sure to delete \"" + this.getItemName(item) + "\" ?";
+		}
+		else if (message_type == "top_button_show_add_title")
+		{
+			return "Add";
 		}
 		return "";
 	}
@@ -413,16 +435,6 @@ export class CrudState
 		if (this.items[index] == undefined) return "";
 		if ((this.items[index] as any)[api_name] == undefined) return "";
 		return (this.items[index] as any)[api_name];
-	}
-	
-	
-	
-	/**
-	 * Set current item
-	 */
-	setCurrentItem(item: CrudItem | null)
-	{
-		this.current_item = deepClone(item);
 	}
 	
 	
@@ -494,21 +506,32 @@ export class CrudState
 	
 	
 	/**
-	 * Show form
+	 * Set form save item
 	 */
-	showForm()
+	setFormSaveItem(item:CrudState)
 	{
-		this.form.clear();
-		if (this.current_item != null)
+		if (item != null)
 		{
-			this.form.item = deepClone(this.current_item);
-			this.form.item_original = deepClone(this.current_item);
+			this.form_save.item = deepClone(item);
+			this.form_save.item_original = deepClone(item);
 		}
 		else
 		{
-			this.form.item = new CrudItem();
-			this.form.item_original = null;
+			this.form_save.item = new CrudItem();
+			this.form_save.item_original = null;
 		}
+	}
+	
+	
+	
+	/**
+	 * Show form
+	 */
+	showForm(item:CrudState)
+	{
+		this.form_save.clear();
+		this.form_save.setItem(item);
+		this.dialog_delete.clear();
 		this.dialog_form.show();
 	}
 	
@@ -517,10 +540,14 @@ export class CrudState
 	/**
 	 * Show delete
 	 */
-	showDelete()
+	showDelete(item:CrudState)
 	{
-		if (this.current_item != null)
+		if (item != null)
 		{
+			this.form_delete.clear();
+			this.form_delete.item = deepClone(item);
+			this.form_delete.item_original = deepClone(item);
+			this.dialog_delete.clear();
 			this.dialog_delete.show();
 		}
 	}
@@ -528,18 +555,90 @@ export class CrudState
 	
 	
 	/**
-	 * Load data
+	 * Set current crud action
 	 */
-	static async apiLoadData(component: DefineComponent)
+	setPageAction(action: string)
 	{
-		let model:CrudState = component.model;
-		
-		let url = model.getApiUrlSearch();
-		let response:AxiosResponse = await axios.get(url);
-		
-		if (typeof(response.data) == "object" && response.data.error.code == 1)
+		if (action == "add" ||
+			action == "edit" ||
+			action == "delete" ||
+			action == "list"
+		)
 		{
-			model.items = new Array();
+			this.page_action = action;
+		}
+		else
+		{
+			this.page_action = "list";
+		}
+	}
+	
+	
+	
+	/**
+	 * Route update
+	 */
+	static async onRouteUpdate(model: CrudState, route: any)
+	{
+		if (route.kind == "beforeRouteEnter" || route.kind == "beforeRouteUpdate")
+		{
+			model.setPageAction(route.props.action);
+			await this.pageLoadData(model, route);
+		}
+		else
+		{
+			route.next();
+		}
+	}
+	
+	
+	
+	/**
+	 * Page data
+	 */
+	static async pageLoadData(model: CrudState, route: any)
+	{
+		if (model.page_action == "list")
+		{
+			await this.listPageLoadData(model, route);
+		}
+		
+		else if (model.page_action == "add")
+		{
+			await this.addPageLoadData(model, route);
+		}
+		
+		else if (model.page_action == "edit")
+		{
+			await this.editPageLoadData(model, route);
+		}
+		
+		else if (model.page_action == "delete")
+		{
+			await this.deletePageLoadData(model, route);
+		}
+		
+		route.next();
+	}
+	
+	
+	
+	/**
+	 * List Page Load data
+	 */
+	static async listPageLoadData(model: CrudState, route: any)
+	{
+		/* Set page title */
+		let page_title = model.getMessage("list_title", null);
+		route.setPageTitle(page_title);
+		
+		/* Ajax request */
+		let response:AxiosResponse | null = await model.apiLoadData();
+		
+		/* Set result */
+		model.items = new Array();
+		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
 			model.addItems(response.data.result.items);
 		}
 	}
@@ -547,66 +646,80 @@ export class CrudState
 	
 	
 	/**
+	 * Add Page Load data
+	 */
+	static async addPageLoadData(model: CrudState, route: any)
+	{
+		/* Set page title */
+		let page_title = model.getMessage("add_title", null);
+		route.setPageTitle(page_title);
+		
+		model.form_save.clear();
+	}
+	
+	
+	
+	/**
+	 * Edit Page Load data
+	 */
+	static async editPageLoadData(model: CrudState, route: any)
+	{
+		/* Set page title */
+		let page_title = model.getMessage("edit_title", null);
+		route.setPageTitle(page_title);
+		
+		/* Ajax request */
+		let response:AxiosResponse | null = await model.apiLoadItem(route.to.params.id);
+		
+		model.form_save.setLoadResponse(response);
+	}
+	
+	
+	
+	/**
+	 * Delete Page Load data
+	 */
+	static async deletePageLoadData(model: CrudState, route: any)
+	{
+		/* Set page title */
+		let page_title = model.getMessage("delete_title", null);
+		route.setPageTitle(page_title);
+	}
+	
+	
+	
+	/**
 	 * Save form
 	 */
-	static async apiSaveForm(component: DefineComponent)
+	static async onSaveForm(component: DefineComponent)
 	{
 		let model:CrudState = component.model;
-		let response:AxiosResponse | null = null;
-		let item:CrudItem = model.form.item as CrudItem;
-		let item_original:CrudItem = model.form.item_original as CrudItem;
+		let item:CrudItem = model.form_save.item as CrudItem;
+		let item_original:CrudItem = model.form_save.item_original as CrudItem;
 		
-		model.form.setWaitResponse();
+		model.form_save.setWaitResponse();
+		let response:AxiosResponse | null = await model.apiSaveForm(item, item_original);
+		model.form_save.setAxiosResponse(response);
 		
 		if (item_original == null)
 		{
-			let url = model.getApiUrlCreate();
-			
-			try
-			{
-				response = await axios.post(url, {"item": item});
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
-			}
-			
-			model.form.setAxiosResponse(response);
-			
 			if (response && response.data.error.code == 1)
 			{
+				model.form_save.setItem(response.data.result.item);
 				model.addItem(response.data.result.item);
 				model.dialog_form.hide();
 			}
 		}
+		
 		else
 		{
-			let url = model.getApiUrlUpdate(item_original);
-			
-			try
-			{
-				response = await axios.post(url, {"item": item});
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
-			}
-			
-			model.form.setAxiosResponse(response);
-			
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
+				model.form_save.setItem(response.data.result.item);
 				model.updateItem(item_original, response.data.result.item);
 				model.dialog_form.hide();
 			}
 		}
-		
 	}
 	
 	
@@ -614,17 +727,131 @@ export class CrudState
 	/**
 	 * Delete form
 	 */
-	static async apiDeleteForm(component: DefineComponent)
+	static async onDeleteForm(component: DefineComponent)
 	{
 		let model:CrudState = component.model;
-		let response:AxiosResponse | null = null;
-		let item:CrudItem = model.current_item as CrudItem;
+		let item:CrudItem = model.form_delete.item as CrudItem;
 		
 		model.dialog_delete.setWaitResponse();
+		let response:AxiosResponse | null = await model.apiDeleteForm(item);
+		model.dialog_delete.setAxiosResponse(response);
+		
+		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
+			model.deleteItem(item);
+			model.dialog_delete.hide();
+		}
+	}
+	
+	
+	
+	/**
+	 * Load data api
+	 */
+	async apiLoadData(): Promise<AxiosResponse | null>
+	{
+		let url = this.getApiUrlSearch();
+		let response:AxiosResponse | null = null;
+		
+		try
+		{
+			response = await axios.get(url);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Load data api
+	 */
+	async apiLoadItem(id: string): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		
+		let url = this.getApiUrlItem(id);
+		
+		try
+		{
+			response = await axios.get(url);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Save form api
+	 */
+	async apiSaveForm(item:CrudItem, item_original:CrudItem): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		
+		if (item_original == null)
+		{
+			let url = this.getApiUrlCreate();
+			
+			try
+			{
+				response = await axios.post(url, {"item": item});
+			}
+			catch (e)
+			{
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
+			}
+		}
+		
+		else
+		{
+			let url = this.getApiUrlUpdate(item_original);
+			
+			try
+			{
+				response = await axios.post(url, {"item": item});
+			}
+			catch (e)
+			{
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Delete form api
+	 */
+	async apiDeleteForm(item:CrudItem): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
 		
 		if (item)
 		{
-			let url = model.getApiUrlDelete(item);
+			let url = this.getApiUrlDelete(item);
 			
 			try
 			{
@@ -637,15 +864,10 @@ export class CrudState
 					response = e["response"] as AxiosResponse;
 				}
 			}
-			
-			model.dialog_delete.setAxiosResponse(response);
-			
-			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				model.deleteItem(item);
-				model.dialog_delete.hide();
-			}
 		}
 		
+		return response;
 	}
+	
+	
 }

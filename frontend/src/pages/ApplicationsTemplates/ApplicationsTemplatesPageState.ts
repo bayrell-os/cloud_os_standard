@@ -144,8 +144,8 @@ export class ApplicationsTemplatesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(name) );
-		this.form.fields.push( deepClone(content) );
+		this.form_save.fields.push( deepClone(name) );
+		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		name.component = "Label";

@@ -30,7 +30,7 @@
 <template>
 	<select class="component_select" @change="onChange(name, $event)">
 		<option value="">Select value</option>
-		<option v-for="option in crud_field.options" :key="option.id"
+		<option v-for="option in crud.field.options" :key="option.id"
 			v-bind:value="option.id"
 			v-bind:selected="isSelected(value, option.id)"
 		>

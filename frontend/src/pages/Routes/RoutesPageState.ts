@@ -190,13 +190,13 @@ export class RoutesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(enable) );
-		this.form.fields.push( deepClone(protocol) );
-		this.form.fields.push( deepClone(docker_name) );
-		this.form.fields.push( deepClone(route) );
-		this.form.fields.push( deepClone(domain_name) );
-		this.form.fields.push( deepClone(target_port) );
-		this.form.fields.push( deepClone(route_prefix) );
+		this.form_save.fields.push( deepClone(enable) );
+		this.form_save.fields.push( deepClone(protocol) );
+		this.form_save.fields.push( deepClone(docker_name) );
+		this.form_save.fields.push( deepClone(route) );
+		this.form_save.fields.push( deepClone(domain_name) );
+		this.form_save.fields.push( deepClone(target_port) );
+		this.form_save.fields.push( deepClone(route_prefix) );
 		
 		/* Table fields */
 		enable.component = "SelectLabel";

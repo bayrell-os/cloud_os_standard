@@ -207,11 +207,11 @@ export class ServicesPageState extends CrudState
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		
-		/* Form fields */
-		this.form.fields.push( deepClone(docker_name) );
-		this.form.fields.push( deepClone(stack_name) );
-		this.form.fields.push( deepClone(service_name) );
-		this.form.fields.push( deepClone(enable) );
+		/* Form save fields */
+		this.form_save.fields.push( deepClone(docker_name) );
+		this.form_save.fields.push( deepClone(stack_name) );
+		this.form_save.fields.push( deepClone(service_name) );
+		this.form_save.fields.push( deepClone(enable) );
 		
 		/* Table fields */
 		enable.component = "SelectLabel";

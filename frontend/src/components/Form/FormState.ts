@@ -16,8 +16,8 @@
  *  limitations under the License.
  */
 
-import { BaseObject } from "vue-helper";
-import { FieldInfo } from "@/components/Crud/CrudState";
+import { BaseObject, deepClone } from "vue-helper";
+import { CrudState, FieldInfo } from "@/components/Crud/CrudState";
 import { AxiosResponse } from "axios";
 
 
@@ -29,6 +29,7 @@ export class FormState extends BaseObject
 	item_original: Record<string, any> | null = null;
 	error_code: number = 0;
 	message: string = "";
+	load_error: boolean = false;
 	
 	
 	/**
@@ -42,6 +43,7 @@ export class FormState extends BaseObject
 	}
 	
 	
+	
 	/**
 	 * Returns values
 	 */
@@ -51,6 +53,7 @@ export class FormState extends BaseObject
 			"fields": this.fields,
 		};
 	}
+	
 	
 	
 	/**
@@ -66,6 +69,7 @@ export class FormState extends BaseObject
 	}
 	
 	
+	
 	/**
 	 * Set form value
 	 */
@@ -73,6 +77,18 @@ export class FormState extends BaseObject
 	{
 		this.item[api_name] = value;
 	}
+	
+	
+	
+	/**
+	 * Set item
+	 */
+	setItem(item: CrudState)
+	{
+		this.item = deepClone(item);
+		this.item_original = deepClone(item);
+	}
+	
 	
 	
 	/**
@@ -83,8 +99,9 @@ export class FormState extends BaseObject
 		this.title = "";
 		this.error_code = 0;
 		this.message = "";
+		this.load_error = false;
 		this.item = {};
-		this.item_original = {};
+		this.item_original = null;
 	}
 	
 	
@@ -96,6 +113,28 @@ export class FormState extends BaseObject
 		this.error_code = 0;
 		this.message = "Please wait";
 	}
+	
+	
+	
+	/**
+	 * Set load response
+	 */
+	setLoadResponse(response: AxiosResponse | null)
+	{
+		this.clear();
+		
+		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
+			let item:CrudState = response.data.result.item;
+			this.setItem(item);
+		}
+		else
+		{
+			this.load_error = true;
+			this.setAxiosResponse(response);
+		}
+	}
+	
 	
 	
 	/**

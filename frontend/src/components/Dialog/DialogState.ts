@@ -114,6 +114,17 @@ export class DialogState extends BaseObject
 	
 	
 	/**
+	 * Clear
+	 */
+	clear()
+	{
+		this.error_code = 0;
+		this.message = "";
+	}
+	
+	
+	
+	/**
 	 * Set wait response
 	 */
 	setWaitResponse()

@@ -119,8 +119,8 @@ export class DomainsPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(domain_name) );
-		this.form.fields.push( deepClone(nginx_template) );
+		this.form_save.fields.push( deepClone(domain_name) );
+		this.form_save.fields.push( deepClone(nginx_template) );
 		
 		/* Table fields */
 		domain_name.component = "Label";

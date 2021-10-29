@@ -35,9 +35,8 @@ export const DomainPage =
 	methods:
 	{
 	},
-	mounted()
+	created()
 	{
-		this.setPageTitle("Domains");
 		this.model.constructor.apiLoadData(this);
 	}
 }

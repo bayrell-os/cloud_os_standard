@@ -79,6 +79,7 @@ export class ApplicationsFilesPageState extends CrudState
 {
 	dialog_compose: DialogState = new DialogState();
 	
+	
 	/**
 	 * Returns new item
 	 */
@@ -132,7 +133,55 @@ export class ApplicationsFilesPageState extends CrudState
 	}
 	
 	
-	 
+	
+	/**
+	 * Returns form value
+	 */
+	getItemName(item: ApplicationFile | null): string
+	{
+		return (item) ? (item.stack_name + "/" + item.file_name) : "";
+	}
+	
+	
+	
+	/**
+	 * Returns delete message
+	 */
+	getMessage(message_type: string, item: ApplicationFile | null): string
+	{
+		if (message_type == "list_title")
+		{
+			return "Files";
+		}
+		else if (message_type == "add_title")
+		{
+			return "Add file";
+		}
+		else if (message_type == "edit_title")
+		{
+			if (item != null)
+			{
+				return "Edit file " + this.getItemName(item);
+			}
+			return "Edit file";
+		}
+		else if (message_type == "delete_title")
+		{
+			return "Delete file";
+		}
+		else if (message_type == "delete_text")
+		{
+			return "Do you sure to delete \"" + this.getItemName(item) + "\" ?";
+		}
+		else if (message_type == "top_button_show_add_title")
+		{
+			return "Add";
+		}
+		return super.getMessage(message_type, item);
+	}
+	
+	
+	
 	/**
 	 * Crud init
 	 */
@@ -173,9 +222,9 @@ export class ApplicationsFilesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form.fields.push( deepClone(file_name) );
-		this.form.fields.push( deepClone(stack_name) );
-		this.form.fields.push( deepClone(content) );
+		this.form_save.fields.push( deepClone(file_name) );
+		this.form_save.fields.push( deepClone(stack_name) );
+		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		file_name.component = "Label";
@@ -189,29 +238,24 @@ export class ApplicationsFilesPageState extends CrudState
 	
 	
 	/**
-	 * Returns form value
+	 * Compose active item
 	 */
-	getItemName(item: ApplicationFile | null): string
+	async apiCompose(item: ApplicationFile): Promise<AxiosResponse | null>
 	{
-		return (item) ? (item.stack_name + "/" + item.file_name) : "";
-	}
-	
-	
-	
-	/**
-	 * Returns delete message
-	 */
-	getMessage(message_type: string, item: ApplicationFile | null): string
-	{
-		if (message_type == "dialog_delete_title")
+		let response:AxiosResponse | null = null;
+		let url = this.getApiUrlCompose(item);
+		try
 		{
-			return "Delete application";
+			response = await axios.post(url, {"item": {"content": item.content}});
 		}
-		if (message_type == "dialog_delete_text")
+		catch (e)
 		{
-			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
 		}
-		return super.getMessage(message_type, item);
+		return response;
 	}
 	
 	
@@ -219,7 +263,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Compose active item
 	 */
-	static async apiComposeActiveItem(component: DefineComponent)
+	static async onCompose(component: DefineComponent)
 	{
 		let model:ApplicationsFilesPageState = component.model;
 		let response:AxiosResponse | null = null;
@@ -228,21 +272,7 @@ export class ApplicationsFilesPageState extends CrudState
 		if (item != null)
 		{
 			model.dialog_compose.setWaitResponse();
-			
-			let url = model.getApiUrlCompose(item);
-			
-			try
-			{
-				response = await axios.post(url, {"item": {"content": item.content}});
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
-			}
-			
+			response = await model.apiCompose(item);
 			model.dialog_compose.setAxiosResponse(response);
 		}
 	}

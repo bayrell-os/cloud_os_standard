@@ -146,10 +146,10 @@
 					width="800px" buttons="false"
 				>
 					<template v-slot:title>
-						{{ model.getMessage("dialog_form_title", model.current_item) }}
+						{{ model.getMessage("form_title", model.current_item) }}
 					</template>
 					<template v-slot:content>
-						<Form v-bind:store_path="store_path.concat('form')">
+						<Form v-bind:store_path="store_path.concat('form_save')">
 							<template v-slot:buttons>
 								<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
 								<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
@@ -161,10 +161,10 @@
 			<slot name="dialog_delete">
 				<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 					<template v-slot:title>
-						{{ model.getMessage("dialog_delete_title", model.current_item) }}
+						{{ model.getMessage("delete_title", model.form_delete.item) }}
 					</template>
 					<template v-slot:text>
-						{{ model.getMessage("dialog_delete_text", model.current_item) }}
+						{{ model.getMessage("delete_text", model.form_delete.item) }}
 					</template>
 					<template v-slot:buttons>
 						<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
@@ -175,7 +175,7 @@
 		</div>
 		
 		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
-			<Form v-bind:store_path="store_path.concat('form')">
+			<Form v-bind:store_path="store_path.concat('form_save')">
 				<template v-slot:buttons>
 					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
 					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
@@ -233,24 +233,21 @@ export const Crud =
 		},
 		onShowAdd: function()
 		{
-			this.model.setCurrentItem(null);
-			this.model.showForm();
+			this.model.showForm(null);
 		},
 		onShowEdit: function(item)
 		{
-			this.model.setCurrentItem(item);
-			this.model.showForm();
+			this.model.showForm(item);
 		},
 		onShowDelete: function(item)
 		{
-			this.model.setCurrentItem(item);
-			this.model.showDelete();
+			this.model.showDelete(item);
 		},
 		onDialogFormButtonClick: function(action)
 		{
 			if (action == "save")
 			{
-				this.model.constructor.apiSaveForm(this);
+				this.model.constructor.onSaveForm(this);
 			}
 			else if (action == "cancel")
 			{
@@ -266,17 +263,13 @@ export const Crud =
 			}
 			else if (action == "yes")
 			{
-				this.model.constructor.apiDeleteForm(this);
+				this.model.constructor.onDeleteForm(this);
 			}
 			else if (action == "no")
 			{
 				this.model.dialog_delete.hide();
 			}
 		},
-	},
-	mounted()
-	{
-		console.log("crud mounted");
 	}
 };
 
