@@ -38,20 +38,20 @@ const routes: Array<RouteRecordRaw> =
 		props: { store_path: ["MainPage"] },
 	},
 	
-	/* Run app */
-	{
-		path: '/applications/run/:template_id/',
-		name: 'app:applications:run',
-		component: ApplicationsRunPage,
-		props: { store_path: ["ApplicationsRunPage"], action: "run" },
-	},
-	
 	/* Status */
 	{
 		path: '/applications/status/',
 		name: 'app:applications:status',
 		component: ApplicationsStatusPage,
 		props: { store_path: ["ApplicationsStatusPage"] },
+	},
+	
+	/* Run app */
+	{
+		path: '/applications/status/:id/',
+		name: 'app:applications:status:edit',
+		component: ApplicationsRunPage,
+		props: { store_path: ["ApplicationsRunPage"] },
 	},
 	
 	/* Files */

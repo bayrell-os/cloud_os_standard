@@ -21,7 +21,8 @@
 namespace App\Api;
 
 use App\Docker;
-use App\Models\ApplicationModificator;
+use App\Models\Application;
+use App\Models\ApplicationTemplate;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,10 +32,10 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
+class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationModificator::class;
-	var $api_path = "applications_modificators";
+	var $class_name = Application::class;
+	var $api_path = "applications";
 
 	
 	/**
@@ -59,9 +60,7 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
-					"type",
 					"name",
-					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -80,6 +79,7 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	public function findQuery($query)
 	{
 		return $query
+			->orderBy("stack_name", "asc")
 			->orderBy("name", "asc")
 		;
 	}
@@ -87,11 +87,67 @@ class ApplicationsModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
-	 * To database
+	 * Find item
 	 */
-	function toDatabase($item)
+	public function findItem()
 	{
-		$item = parent::toDatabase($item);
-		return $item;
+		parent::findItem();
+	}
+	
+	
+	
+	/**
+	 * Process after
+	 */
+	public function process_after()
+	{
+		$db = app("db");
+		
+		/* Edit */
+		if ($this->container->action == "actionEdit")
+		{
+			$post = json_decode($this->container->request->getContent(), true);
+			
+			/* Save modificators */
+			$modificators = $post["item"]["modificators"];
+			
+			/* App id */
+			$app_id = $this->item->id;
+			
+			/* Update modificators */
+			Application::updateModificators($app_id, $modificators);
+		}
+		
+		/* Get item */
+		if
+		(
+			$this->container->action == "actionGetById" ||
+			$this->container->action == "actionEdit"
+		)
+		{
+			$item = $this->api_result->result["item"];
+			
+			/* App id */
+			$app_id = $this->item->id;
+			
+			/* Set template */
+			$template_id = $this->item->template_id;
+			if ($template_id)
+			{
+				$template = ApplicationTemplate::query()
+					->where("id", "=", $template_id)
+					->first()
+				;
+				if ($template)
+				{
+					$template = $template->getAttributes();
+					$this->api_result->result["item"]["template"] = $template;
+				}
+			}
+			
+			/* Select template modificators */
+			$modificators = Application::getModificators($app_id);
+			$this->api_result->result["item"]["modificators"] = $modificators;
+		}
 	}
 }

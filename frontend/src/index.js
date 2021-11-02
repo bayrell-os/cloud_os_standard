@@ -27,6 +27,7 @@ import { AppState } from './AppState'
 import { initTestStore } from './StoreTest'
 
 /* Import components */
+import CrudResult from 'vue-helper/Crud/CrudResult.vue';
 import Dialog from 'vue-helper/Crud/Dialog.vue';
 import Form from 'vue-helper/Crud/Form.vue';
 import Button from 'vue-helper/Crud/Button.vue';
@@ -60,6 +61,7 @@ app.component("CodeMirror", CodeMirror);
 app.component("Button", Button);
 app.component("Dialog", Dialog);
 app.component("Form", Form);
+app.component("CrudResult", CrudResult);
 
 /* Register app */
 app.mount('#app');

@@ -62,6 +62,9 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 					"gmtime_updated",
 				]
 			]),
+			new ReadOnly(["api_name"=>"service_id"]),
+			new ReadOnly(["api_name"=>"gmtime_created"]),
+			new ReadOnly(["api_name"=>"gmtime_updated"]),
 			new JsonField([ "api_name" => "docker_json" ]),
 			new JsonField([ "api_name" => "docker_balancer" ]),
 		];

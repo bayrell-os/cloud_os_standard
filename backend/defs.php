@@ -21,8 +21,7 @@
 use Psr\Container\ContainerInterface;
 
 define("ROOT_PATH", __DIR__);
-
-//$_SERVER["APP_DEBUG"] = true;
+$_SERVER["APP_DEBUG"] = true;
 
 return
 [

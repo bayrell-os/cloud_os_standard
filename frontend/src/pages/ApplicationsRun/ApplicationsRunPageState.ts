@@ -19,29 +19,21 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { ApplicationsTemplatesPageState, ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
 import { ApplicationsModificatorsPageState, ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
+import { ApplicationsStatusPageState, ApplicationStatus } from "../ApplicationsStatus/ApplicationsStatusPageState";
+import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
+import { DefineComponent } from "vue";
+
 
 
 export class ApplicationsRunPageState
 {
 	action: string = "";
-	template: ApplicationTemplate | null = null;
+	application: ApplicationStatus | null = null;
 	modificators: Array<ApplicationModificator> = new Array<ApplicationModificator>();
-	template_modificators: Array<number> = [];
 	dialog_add_modificator: DialogState = new DialogState();
 	dialog_delete_modificator: DialogState = new DialogState();
-	
-	
-	
-	/**
-	 * Returns modificator index
-	 */
-	getModificatorIndex(modificator_id: number): number
-	{
-		let index = this.modificators.findIndex( (item) => item.id == modificator_id );
-		return index;
-	}
-	
+	result: CrudResultState = new CrudResultState();
 	
 	
 	/**
@@ -62,38 +54,68 @@ export class ApplicationsRunPageState
 	static async pageLoadData(model: ApplicationsRunPageState, route: any)
 	{
 		let response: AxiosResponse | null = null;
+		let app_id = route.to.params.id;
 		
-		if (route.props.action == "run")
+		route.setPageTitle("Edit app");
+		
+		/* Load app id */
+		response = await ApplicationsStatusPageState.apiLoadItem(app_id);
+		if (response && response.data.error.code == 1)
 		{
-			route.setPageTitle("Run app");
-			
-			/* Load template id */
-			let template_id = route.to.params.template_id;
-			response = await ApplicationsTemplatesPageState.apiLoadItem(template_id);
-			if (response && response.data.error.code == 1)
+			model.application = ApplicationsStatusPageState.createNewItemInstance
+				(
+					response.data.result.item
+				) as ApplicationStatus
+			;
+		}
+		
+		/* Load modificators */
+		response = await ApplicationsModificatorsPageState.apiLoadData();
+		if (response && response.data.error.code == 1)
+		{
+			model.modificators = [];
+			for (let i=0; i<response.data.result.items.length; i++)
 			{
-				model.template =
-					ApplicationsTemplatesPageState.createNewItemInstance(response.data.result.item) as ApplicationTemplate
+				let item = response.data.result.items[i];
+				model.modificators.push
+				(
+					ApplicationsModificatorsPageState
+						.createNewItemInstance(item) as ApplicationModificator
+				);
+			}
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * Save form
+	 */
+	static async onSaveForm(component: DefineComponent)
+	{
+		let model:ApplicationsRunPageState = component.model;
+		let item:ApplicationStatus | null = model.application;
+		
+		if (item)
+		{
+			model.result.setWaitResponse();
+			let response:AxiosResponse | null = await ApplicationsStatusPageState
+				.apiSaveForm(item, item)
+			;
+			model.result.setAxiosResponse(response);
+			
+			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+			{
+				model.application = ApplicationsStatusPageState.createNewItemInstance
+					(
+						response.data.result.item
+					) as ApplicationStatus
 				;
 			}
-			
-			/* Load modificators */
-			response = await ApplicationsModificatorsPageState.apiLoadData();
-			if (response && response.data.error.code == 1)
-			{
-				model.modificators = [];
-				for (let i=0; i<response.data.result.items.length; i++)
-				{
-					let item = response.data.result.items[i];
-					model.modificators.push
-					(
-						ApplicationsModificatorsPageState.createNewItemInstance(item) as ApplicationModificator
-					);
-				}
-			}
-			
-			model.template_modificators = [2, 3];
 		}
 	}
+	
+	
 	
 }

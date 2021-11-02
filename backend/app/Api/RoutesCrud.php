@@ -62,6 +62,8 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 				]
 			]),
 			new ReadOnly(["api_name"=>"id"]),
+			new ReadOnly(["api_name"=>"gmtime_created"]),
+			new ReadOnly(["api_name"=>"gmtime_updated"]),
 			new JsonField(["api_name"=>"protocol_data"])
 		];
 	}

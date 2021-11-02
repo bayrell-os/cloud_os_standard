@@ -23,9 +23,9 @@ namespace App\Models;
 use TinyPHP\Model;
 
 
-class ApplicationStatus extends Model
+class ApplicationModificator extends Model
 {
-	protected $table = "app_status";
+	protected $table = "app_modificators";
 	protected $primaryKey = "id";
 	public $incrementing = true;
 	protected $attributes = [

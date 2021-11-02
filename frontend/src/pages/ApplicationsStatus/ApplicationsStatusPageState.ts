@@ -18,6 +18,8 @@
 
 import { deepClone } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
+import { ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
 
 
 
@@ -25,6 +27,8 @@ export class ApplicationStatus extends CrudItem
 {
 	id: number = 0;
 	name: string = "";
+	template: ApplicationTemplate | null = null;
+	modificators: Array<number> = [];
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -38,6 +42,23 @@ export class ApplicationStatus extends CrudItem
 		this.name = String(params["name"] || this.name);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
+		
+		/* Set template */
+		if (params["template"])
+		{
+			this.template = new ApplicationTemplate();
+			this.template.assignValues(params["template"]);
+		}
+		
+		/* Set modificators */
+		if (params["modificators"] && params["modificators"] instanceof Array)
+		{
+			this.modificators = params["modificators"].map
+			(
+				(item: any) => { return Number(item); }
+			);
+		}
+		
 		super.assignValues(params);
 		return this;
 	}
@@ -52,6 +73,8 @@ export class ApplicationStatus extends CrudItem
 		return Object.assign(res, {
 			"id": this.id,
 			"name": this.name,
+			"template": this.template,
+			"modificators": this.modificators,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,
 		});
@@ -78,7 +101,20 @@ export class ApplicationsStatusPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "applications_status";
+		return "applications";
+	}
+	
+	
+	
+	/**
+	 * Returns route names
+	 */
+	static getRouteNames(): Record<string, string>
+	{
+		return {
+			"list": "app:applications:status",
+			"edit": "app:applications:status:edit",
+		};
 	}
 	
 	

@@ -74,7 +74,10 @@ class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
 					"gmtime_created",
 					"gmtime_updated",
 				]
-			])
+			]),
+			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "gmtime_created" ]),
+			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
 

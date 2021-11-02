@@ -31,9 +31,9 @@ class Instance extends \TinyPHP\App
 		parent::init();
 		
 		/* Include api functions */
+		$this->addRoute(\App\Api\ApplicationsCrud::class);
 		$this->addRoute(\App\Api\ApplicationsFilesCrud::class);
 		$this->addRoute(\App\Api\ApplicationsModificatorsCrud::class);
-		$this->addRoute(\App\Api\ApplicationsStatusCrud::class);
 		$this->addRoute(\App\Api\ApplicationsTemplatesCrud::class);
 		$this->addRoute(\App\Api\DomainsCrud::class);
 		$this->addRoute(\App\Api\NginxFilesCrud::class);
@@ -47,8 +47,9 @@ class Instance extends \TinyPHP\App
 		$this->addRoute(\App\Routes\DatabaseRoute::class);
 		
 		/* Includes models */
+		$this->addModel(\App\Models\Application::class);
 		$this->addModel(\App\Models\ApplicationFile::class);
-		$this->addModel(\App\Models\ApplicationStatus::class);
+		$this->addModel(\App\Models\ApplicationModificator::class);
 		$this->addModel(\App\Models\ApplicationTemplate::class);
 		$this->addModel(\App\Models\Domain::class);
 		$this->addModel(\App\Models\NginxFile::class);
@@ -104,7 +105,6 @@ class Instance extends \TinyPHP\App
 		
 		// Set journal_mode wal
 		$capsule::statement("PRAGMA journal_mode = WAL;");
-		//var_dump( $capsule::select("PRAGMA journal_mode;", [], true) );
 		
 		return $capsule;
 	}

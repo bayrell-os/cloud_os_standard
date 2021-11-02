@@ -65,7 +65,10 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 					"gmtime_created",
 					"gmtime_updated",
 				]
-			])
+			]),
+			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "gmtime_created" ]),
+			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
 
@@ -77,7 +80,6 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 	public function findQuery($query)
 	{
 		return $query
-			->where('type', '=', '1')
 			->orderBy("name", "asc")
 		;
 	}
@@ -90,7 +92,6 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 	function toDatabase($item)
 	{
 		$item = parent::toDatabase($item);
-		$item["type"] = 1;
 		return $item;
 	}
 }

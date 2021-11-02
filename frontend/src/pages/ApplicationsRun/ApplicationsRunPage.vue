@@ -51,7 +51,7 @@
 
 
 <template>
-	<div class="applications_run_page" v-if="model.template != null">
+	<div class="applications_run_page" v-if="model.application != null">
 		
 		<!-- Application info -->
 		<div class="applications_run_page__info applications_run_page__block">
@@ -98,7 +98,7 @@
 					<th></th>
 				</tr>
 				<tr class="component_crud__row"
-					v-for="modificator_id, index in model.template_modificators"
+					v-for="modificator_id, index in model.application.modificators"
 					:key="modificator_id"
 				>
 					<td>{{ index + 1 }}</td>
@@ -110,6 +110,13 @@
 				</tr>
 			</table>
 		</div>
+		
+		<div class="crud_form__buttons">
+			<Button type="primary" @click="onSave()">Save</Button>
+			<Button type="" @click="onCancel()">Cancel</Button>
+		</div>
+		
+		<CrudResult v-bind:store_path="store_path.concat('result')" />
 		
 	</div>
 	
@@ -185,7 +192,7 @@ export const ApplicationsRunPage =
 		},
 		getTemplateName: function()
 		{
-			return (this.model.template != null) ? this.model.template.name : "";
+			return (this.model.application != null) ? this.model.application.name : "";
 		},
 		getMarketPlace: function()
 		{
@@ -212,7 +219,7 @@ export const ApplicationsRunPage =
 		/* Add modificator */
 		getSelectAddModificators()
 		{
-			let template_modificators = this.model.template_modificators;
+			let application_modificators = this.model.application.modificators;
 			return this.model.modificators
 				.map
 				(
@@ -225,7 +232,7 @@ export const ApplicationsRunPage =
 				(
 					(item) =>
 					{
-						return template_modificators.indexOf(item.id) == -1
+						return application_modificators.indexOf(item.id) == -1
 					}
 				)
 			;
@@ -244,10 +251,10 @@ export const ApplicationsRunPage =
 			if (button_text == "yes")
 			{
 				let select_add_modificator = Number(this.select_add_modificator);
-				let index = this.model.template_modificators.indexOf(select_add_modificator);
+				let index = this.model.application.modificators.indexOf(select_add_modificator);
 				if (index == -1 && select_add_modificator > 0)
 				{
-					this.model.template_modificators.push(select_add_modificator);
+					this.model.application.modificators.push(select_add_modificator);
 				}
 			}
 			this.model.dialog_add_modificator.hide();
@@ -270,13 +277,32 @@ export const ApplicationsRunPage =
 			if (button_text == "yes")
 			{
 				let modificator = this.model.dialog_delete_modificator.tag;
-				let index = this.model.template_modificators.indexOf(modificator.id);
+				let index = this.model.application.modificators.indexOf(modificator.id);
 				if (index > -1)
 				{
-					this.model.template_modificators.splice(index, 1);
+					this.model.application.modificators.splice(index, 1);
 				}
 			}
 			this.model.dialog_delete_modificator.hide();
+		},
+		
+		/* Save */
+		onSave()
+		{
+			this.model.constructor.onSaveForm(this);
+		},
+		
+		/* Cancel */
+		onCancel()
+		{
+			if (window.history.state.back)
+			{
+				this.$router.push({ path: window.history.state.back });
+			}
+			else
+			{
+				this.$router.push({ name: "app:applications:status" });
+			}
 		},
 	},
 	beforeRouteEnter(to, from, next)
