@@ -61,43 +61,29 @@
 	padding-bottom: 0;
 	padding-right: 0;
 }
-.app_layout_menu_label{
-	font-size: 14px;
-	font-weight: bold;
-	padding: 10px;
-}
 .app_layout_menu{
 	position: relative;
 	height: calc(100% - 40px);
 	overflow-y: auto;
 	border-right: 1px $color_border solid;
 }
-.app_layout_menu_items ul, .app_layout_menu_items li{
-	padding: 0; margin: 0;
-	list-style: none;
+.app_layout_menu_item_label{
+	font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
 }
-.app_layout_menu_items li{
-	background-color: white;
-}
-.app_layout_menu_items li:hover{
-	background-color: $color_hover;
-}
-.app_layout_menu_items li a{
+.app_layout_menu_sub_item a{
 	display: block;
-	padding: 10px 15px;
+	padding: 10px;
 	border-bottom: 1px solid $color_border;
 }
-.app_layout_menu_items li.active > a, .app_layout_menu_items li.active > a:hover{
+.app_layout_menu_sub_item a:hover{
+	background-color: $color_hover;
+}
+.app_layout_menu_sub_item a.active, .app_layout_menu_sub_item a.active:hover{
 	background-color: $color_selected;
 	border-color: $color_selected;
 	color: $color_selected_background;
-}
-.app_layout_menu_logout{
-	text-align: center;
-	padding-top: 100px;
-}
-.app_layout_menu_logout > div{
-	padding-top: 5px;
 }
 </style>
 
@@ -113,30 +99,48 @@
 				
 				<div class='app_layout_menu'>
 					
-					<div class='app_layout_menu_label'>
-						Dashboard
-					</div>
-					
 					<div class='app_layout_menu_items'>
-						<ul>
-							<router-link :to="{path: item.href}" custom
-								v-slot="{ href, navigate, route }"
-								v-for="item in menu"
-								v-bind:key="item.id"
-							>
-								<li v-bind:class="{ active: isActive(item.name) }">
-									<a :href="href" @click="navigate" class="nolink"
-										v-bind:data-route-name="route.name">
-										{{ item.title }}
-									</a>
-								</li>
-							</router-link>
-							<li>
-								<a href="/api/database/" class="nolink">
-									Adminer
-								</a>
-							</li>
-						</ul>
+						<div class='app_layout_menu_item'
+							v-for="item, index in menu" :key="index"
+						>
+							<div v-if="item.items != undefined">
+								<div class='app_layout_menu_item_label'>
+									{{ item.title }}
+								</div>
+								
+								<div class='app_layout_menu_sub_items'>
+									<div class='app_layout_menu_sub_item'
+										v-for="sub_item, sub_index in item.items" :key="sub_index"
+									>
+										<router-link :to="{ name: sub_item.name }" custom
+											v-slot="{ href, navigate, route }"
+										>
+											<a :href="href" @click="navigate" class="nolink"
+												v-bind:data-route-name="route.name"
+												v-bind:class="{ active: isActive(sub_item) }"
+											>
+												{{ sub_item.title }}
+											</a>
+										</router-link>
+									</div>
+								</div>
+							</div>
+							
+							<div v-else>
+								<router-link :to="{ name: item.name }" custom
+									v-slot="{ href, navigate, route }"
+								>
+									<div class="app_layout_menu_sub_item">
+										<a :href="href" @click="navigate" class="nolink"
+											v-bind:data-route-name="route.name"
+											v-bind:class="{ active: isActive(item) }"
+										>
+											{{ item.title }}
+										</a>
+									</div>
+								</router-link>
+							</div>
+						</div>
 					</div>
 				
 				</div>
@@ -161,17 +165,43 @@ export const App =
 	mixins: [ mixin ],
 	data: function () {
 		return {
-			menu: [
-				{ "id": 1, "name": "app:main", "href": "/", "title": "Main" },
-				{ "id": 8, "name": "app:applications:status", "href": "/applications/status/", "title": "Status" },
-				{ "id": 9, "name": "app:applications:templates", "href": "/applications/templates/", "title": "Templates" },
-				{ "id": 10, "name": "app:applications:modificators", "href": "/applications/modificators/", "title": "Modificators" },
-				{ "id": 11, "name": "app:applications:files", "href": "/applications/files/", "title": "App Files" },
-				{ "id": 3, "name": "app:services", "href": "/services/", "title": "Services" },
-				{ "id": 4, "name": "app:domains", "href": "/domains/", "title": "Domains" },
-				{ "id": 5, "name": "app:routes", "href": "/routes/", "title": "Routes" },
-				{ "id": 6, "name": "app:nginx_files", "href": "/nginx_files/", "title": "Nginx Files" },
-				{ "id": 7, "name": "app:users", "href": "/users/", "title": "Users" },
+			menu:
+			[
+				
+				{ "name": "app:main", "title": "Main" },
+				
+				{
+					"title": "App",
+					"items":
+					[
+						{ "name": "app:applications:status", "title": "Status",
+							"routes": [ "app:applications:run" ],
+						},
+						{ "name": "app:applications:templates", "title": "Templates" },
+						{ "name": "app:applications:modificators", "title": "Modificators" },
+					]
+				},
+				
+				{
+					"title": "Docker Swarm",
+					"items":
+					[
+						{ "name": "app:applications:files", "title": "App Files" },
+						{ "name": "app:services", "title": "Services" },
+					]
+				},
+				
+				{
+					"title": "Cloud OS",
+					"items":
+					[
+						{ "name": "app:domains", "title": "Domains" },
+						{ "name": "app:routes","title": "Routes" },
+						{ "name": "app:nginx_files", "title": "Nginx Files" },
+						{ "name": "app:users", "title": "Users" },
+					]
+				},
+				
 			]
 		}
 	},
@@ -180,12 +210,22 @@ export const App =
 	},
 	methods:
 	{
-		isActive: function(route_name)
+		isActive: function(route)
 		{
+			let route_name = route.name;
 			if (this.$router.currentRoute.value.name != undefined)
 			{
-				if (this.$router.currentRoute.value.name.substr(0, route_name.length)
-					== route_name)
+				if (route.routes != undefined)
+				{
+					if (route.routes.indexOf(this.$router.currentRoute.value.name) > -1)
+					{
+						return true;
+					}
+				}
+				if
+				(
+					this.$router.currentRoute.value.name.substr(0, route_name.length) == route_name
+				)
 				{
 					return true;
 				}

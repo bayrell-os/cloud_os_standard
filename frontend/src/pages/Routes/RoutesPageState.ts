@@ -89,7 +89,7 @@ export class RoutesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): Route
+	static createNewItem(): Route
 	{
 		return new Route();
 	}
@@ -99,7 +99,7 @@ export class RoutesPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "routes";
 	}
@@ -222,7 +222,7 @@ export class RoutesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: Route | null): string
+	static getItemName(item: Route | null): string
 	{
 		return (item) ? item.domain_name : "";
 	}
@@ -232,7 +232,7 @@ export class RoutesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: Route | null): string
+	static getItemId(item: Route | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -242,7 +242,7 @@ export class RoutesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: Route | null): string
+	static getMessage(message_type: string, item: Route | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

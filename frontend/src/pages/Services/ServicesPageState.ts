@@ -87,7 +87,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): Service
+	static createNewItem(): Service
 	{
 		return new Service();
 	}
@@ -97,7 +97,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "services";
 	}
@@ -232,7 +232,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: Service | null): string
+	static getItemName(item: Service | null): string
 	{
 		return (item) ? item.service_name : "";
 	}
@@ -242,7 +242,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: Service | null): string
+	static getItemId(item: Service | null): string
 	{
 		return (item != null) ? String(item.service_id) : "";
 	}
@@ -252,7 +252,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: Service | null): string
+	static getMessage(message_type: string, item: Service | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

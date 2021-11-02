@@ -26,6 +26,7 @@ import Router from './Router'
 import { AppState } from './AppState'
 import { initTestStore } from './StoreTest'
 
+/* Import components */
 import Dialog from 'vue-helper/Crud/Dialog.vue';
 import Form from 'vue-helper/Crud/Form.vue';
 import Button from 'vue-helper/Crud/Button.vue';

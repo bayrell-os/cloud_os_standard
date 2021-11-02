@@ -75,7 +75,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): NginxFile
+	static createNewItem(): NginxFile
 	{
 		return new NginxFile();
 	}
@@ -85,7 +85,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "nginx_files";
 	}
@@ -161,7 +161,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: NginxFile | null): string
+	static getItemName(item: NginxFile | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -171,7 +171,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: NginxFile | null): string
+	static getItemId(item: NginxFile | null): string
 	{
 		return (item != null) ? item.name : "";
 	}
@@ -181,7 +181,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: NginxFile | null): string
+	static getMessage(message_type: string, item: NginxFile | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

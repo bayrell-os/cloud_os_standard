@@ -17,6 +17,7 @@
  */
 
 import { MainPageState } from '@/pages/Main/MainPageState'
+import { ApplicationsRunPageState } from '@/pages/ApplicationsRun/ApplicationsRunPageState'
 import { ApplicationsFilesPageState } from '@/pages/ApplicationsFiles/ApplicationsFilesPageState'
 import { ApplicationsModificatorsPageState } from '@/pages/ApplicationsModificators/ApplicationsModificatorsPageState'
 import { ApplicationsStatusPageState } from '@/pages/ApplicationsStatus/ApplicationsStatusPageState'
@@ -32,6 +33,7 @@ export class AppState
 {
 	title: string = "";
 	MainPage: MainPageState = new MainPageState();
+	ApplicationsRunPage: ApplicationsRunPageState = new ApplicationsRunPageState();
 	ApplicationsFilesPage: ApplicationsFilesPageState = new ApplicationsFilesPageState();
 	ApplicationsModificatorsPage: ApplicationsModificatorsPageState = new ApplicationsModificatorsPageState();
 	ApplicationsStatusPage: ApplicationsStatusPageState = new ApplicationsStatusPageState();

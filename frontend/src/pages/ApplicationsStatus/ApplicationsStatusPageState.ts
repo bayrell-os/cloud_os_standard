@@ -66,7 +66,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): ApplicationStatus
+	static createNewItem(): ApplicationStatus
 	{
 		return new ApplicationStatus();
 	}
@@ -76,7 +76,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "applications_status";
 	}
@@ -135,7 +135,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: ApplicationStatus | null): string
+	static getItemName(item: ApplicationStatus | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -145,7 +145,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: ApplicationStatus | null): string
+	static getItemId(item: ApplicationStatus | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -155,7 +155,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: ApplicationStatus | null): string
+	static getMessage(message_type: string, item: ApplicationStatus | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

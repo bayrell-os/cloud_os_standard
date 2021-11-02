@@ -18,6 +18,7 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
+import ApplicationsRunPage from '@/pages/ApplicationsRun/ApplicationsRunPage.vue'
 import ApplicationsFilesPage from '@/pages/ApplicationsFiles/ApplicationsFilesPage.vue'
 import ApplicationsModificatorsPage from '@/pages/ApplicationsModificators/ApplicationsModificatorsPage.vue'
 import ApplicationsStatusPage from '@/pages/ApplicationsStatus/ApplicationsStatusPage.vue'
@@ -28,12 +29,21 @@ import RoutesPage from '@/pages/Routes/RoutesPage.vue'
 import ServicesPage from '@/pages/Services/ServicesPage.vue'
 import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
 
-const routes: Array<RouteRecordRaw> = [
+const routes: Array<RouteRecordRaw> =
+[
 	{
 		path: '/',
 		name: 'app:main',
 		component: MainPage,
 		props: { store_path: ["MainPage"] },
+	},
+	
+	/* Run app */
+	{
+		path: '/applications/run/:template_id/',
+		name: 'app:applications:run',
+		component: ApplicationsRunPage,
+		props: { store_path: ["ApplicationsRunPage"], action: "run" },
 	},
 	
 	/* Status */
@@ -146,6 +156,14 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'app:services',
 		component: ServicesPage,
 		props: { store_path: ["ServicesPage"] },
+	},
+	
+	/* Users */
+	{
+		path: '/users/',
+		name: 'app:users',
+		component: NotFoundPage,
+		props: { store_path: ["NotFoundPage"] },
 	},
 	
 	/* Page not found */

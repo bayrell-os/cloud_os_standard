@@ -86,7 +86,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): ApplicationFile
+	static createNewItem(): ApplicationFile
 	{
 		return new ApplicationFile();
 	}
@@ -96,7 +96,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "applications_files";
 	}
@@ -106,7 +106,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: ApplicationFile | null): string
+	static getItemId(item: ApplicationFile | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -116,7 +116,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Return api update url
 	 */
-	getApiUrlCompose(item: ApplicationFile)
+	static getApiUrlCompose(item: ApplicationFile)
 	{
 		return "/api/" + this.getApiObjectName() + "/default/compose/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
@@ -126,7 +126,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns route names
 	 */
-	getRouteNames(): Record<string, string>
+	static getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:applications:files",
@@ -140,7 +140,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: ApplicationFile | null): string
+	static getItemName(item: ApplicationFile | null): string
 	{
 		return (item) ? item.file_name : "";
 	}
@@ -150,7 +150,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: ApplicationFile | null): string
+	static getMessage(message_type: string, item: ApplicationFile | null): string
 	{
 		if (message_type == "list_title")
 		{
@@ -249,7 +249,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Compose active item
 	 */
-	async apiCompose(item: ApplicationFile): Promise<AxiosResponse | null>
+	static async apiCompose(item: ApplicationFile): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrlCompose(item);
@@ -281,7 +281,7 @@ export class ApplicationsFilesPageState extends CrudState
 		if (item != null)
 		{
 			model.dialog_compose.setWaitResponse();
-			response = await model.apiCompose(item);
+			response = await this.apiCompose(item);
 			model.dialog_compose.setAxiosResponse(response);
 		}
 	}

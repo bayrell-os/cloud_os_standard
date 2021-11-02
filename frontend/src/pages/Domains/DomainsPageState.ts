@@ -70,7 +70,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): Domain
+	static createNewItem(): Domain
 	{
 		return new Domain();
 	}
@@ -80,7 +80,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "domains";
 	}
@@ -135,7 +135,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: Domain | null): string
+	static getItemName(item: Domain | null): string
 	{
 		return (item) ? item.domain_name : "";
 	}
@@ -145,7 +145,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: Domain | null): string
+	static getItemId(item: Domain | null): string
 	{
 		return (item != null) ? item.domain_name : "";
 	}
@@ -155,7 +155,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: Domain | null): string
+	static getMessage(message_type: string, item: Domain | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

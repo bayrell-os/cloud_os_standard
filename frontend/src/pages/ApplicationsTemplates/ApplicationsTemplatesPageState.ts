@@ -68,7 +68,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): ApplicationTemplate
+	static createNewItem(): ApplicationTemplate
 	{
 		return new ApplicationTemplate();
 	}
@@ -78,7 +78,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "applications_templates";
 	}
@@ -88,7 +88,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns route names
 	 */
-	getRouteNames(): Record<string, string>
+	static getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:applications:templates",
@@ -128,7 +128,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 		let content = new FieldInfo();
 		content.api_name = "content";
 		content.label = "Content";
-		content.component = "TextArea";
+		content.component = "CodeMirror";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */
@@ -160,7 +160,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: ApplicationTemplate | null): string
+	static getItemName(item: ApplicationTemplate | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -170,7 +170,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: ApplicationTemplate | null): string
+	static getItemId(item: ApplicationTemplate | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -180,7 +180,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: ApplicationTemplate | null): string
+	static getMessage(message_type: string, item: ApplicationTemplate | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

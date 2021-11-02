@@ -69,7 +69,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): ApplicationModificator
+	static createNewItem(): ApplicationModificator
 	{
 		return new ApplicationModificator();
 	}
@@ -79,7 +79,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "applications_modificators";
 	}
@@ -89,7 +89,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns route names
 	 */
-	getRouteNames(): Record<string, string>
+	static getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:applications:modificators",
@@ -153,7 +153,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: ApplicationModificator | null): string
+	static getItemName(item: ApplicationModificator | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -163,7 +163,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: ApplicationModificator | null): string
+	static getItemId(item: ApplicationModificator | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -173,7 +173,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	getMessage(message_type: string, item: ApplicationModificator | null): string
+	static getMessage(message_type: string, item: ApplicationModificator | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{
