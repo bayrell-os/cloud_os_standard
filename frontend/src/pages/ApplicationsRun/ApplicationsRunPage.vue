@@ -39,6 +39,13 @@
 			padding-left: 5px;
 		}
 	}
+	&__select_add_modificator{
+		label{
+			display: block;
+			font-weight: bold;
+			padding-bottom: 5px;
+		}
+	}
 }
 </style>
 
@@ -113,16 +120,18 @@
 				Add modificator
 			</template>
 			<template v-slot:content>
-				<label>Select modificator</label>
-				<Select v-bind:value="select_add_modificator"
-					@crudEvent="onSelectModificatorCrudEvent($event)"
-					v-bind:crud="{
-						field:
-						{
-							options: getSelectAddModificators()
-						}
-					}"
-				/>
+				<div class="applications_run_page__select_add_modificator">
+					<label>Select modificator:</label>
+					<Select v-bind:value="select_add_modificator"
+						@crudEvent="onSelectModificatorCrudEvent($event)"
+						v-bind:crud="{
+							field:
+							{
+								options: getSelectAddModificators()
+							}
+						}"
+					/>
+				</div>
 			</template>
 			<template v-slot:buttons>
 				<Button type="danger" @click="onDialogAddModificatorButtonClick('yes')">Yes</Button>
@@ -236,7 +245,7 @@ export const ApplicationsRunPage =
 			{
 				let select_add_modificator = Number(this.select_add_modificator);
 				let index = this.model.template_modificators.indexOf(select_add_modificator);
-				if (index == -1)
+				if (index == -1 && select_add_modificator > 0)
 				{
 					this.model.template_modificators.push(select_add_modificator);
 				}
