@@ -1,6 +1,5 @@
 ARG ARCH=
-#FROM bayrell/alpine_php_fpm:7.3-5${ARCH}
-FROM bayrell/ubuntu_php_fpm:7.4-1${ARCH}
+FROM bayrell/ubuntu_php_fpm:7.4-2${ARCH}
 
 RUN cd ~; \
 	export DEBIAN_FRONTEND='noninteractive'; \

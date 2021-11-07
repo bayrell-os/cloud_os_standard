@@ -59,7 +59,7 @@ class Instance extends \TinyPHP\App
 		/* Includes console commands */
 		$this->addConsoleCommand(\App\Console\Docker\NginxUpdate::class);
 		$this->addConsoleCommand(\App\Console\Docker\ServicesUpdate::class);
-		$this->addConsoleCommand(\App\Console\Hello::class);
+		$this->addConsoleCommand(\App\Console\Test::class);
 
 		/* Phinx */
 		/*

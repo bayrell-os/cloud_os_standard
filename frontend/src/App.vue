@@ -67,24 +67,6 @@
 	overflow-y: auto;
 	border-right: 1px $color_border solid;
 }
-.app_layout_menu_item_label{
-	font-size: 14px;
-    font-weight: bold;
-    padding: 10px;
-}
-.app_layout_menu_sub_item a{
-	display: block;
-	padding: 10px;
-	border-bottom: 1px solid $color_border;
-}
-.app_layout_menu_sub_item a:hover{
-	background-color: $color_hover;
-}
-.app_layout_menu_sub_item a.active, .app_layout_menu_sub_item a.active:hover{
-	background-color: $color_selected;
-	border-color: $color_selected;
-	color: $color_selected_background;
-}
 </style>
 
 
@@ -92,57 +74,12 @@
 	<div class='app_layout'>
 		<div class='app_layout_wrap'>
 			<div class='app_layout_menu_wrap'>
-				
 				<div class='app_layout_site_name'>
 					<a class='nolink' href='/'>Cloud OS</a>
 				</div>
 				
 				<div class='app_layout_menu'>
-					
-					<div class='app_layout_menu_items'>
-						<div class='app_layout_menu_item'
-							v-for="item, index in menu" :key="index"
-						>
-							<div v-if="item.items != undefined">
-								<div class='app_layout_menu_item_label'>
-									{{ item.title }}
-								</div>
-								
-								<div class='app_layout_menu_sub_items'>
-									<div class='app_layout_menu_sub_item'
-										v-for="sub_item, sub_index in item.items" :key="sub_index"
-									>
-										<router-link :to="{ name: sub_item.name }" custom
-											v-slot="{ href, navigate, route }"
-										>
-											<a :href="href" @click="navigate" class="nolink"
-												v-bind:data-route-name="route.name"
-												v-bind:class="{ active: isActive(sub_item) }"
-											>
-												{{ sub_item.title }}
-											</a>
-										</router-link>
-									</div>
-								</div>
-							</div>
-							
-							<div v-else>
-								<router-link :to="{ name: item.name }" custom
-									v-slot="{ href, navigate, route }"
-								>
-									<div class="app_layout_menu_sub_item">
-										<a :href="href" @click="navigate" class="nolink"
-											v-bind:data-route-name="route.name"
-											v-bind:class="{ active: isActive(item) }"
-										>
-											{{ item.title }}
-										</a>
-									</div>
-								</router-link>
-							</div>
-						</div>
-					</div>
-				
+					<AppMenu v-bind:items="menu" />
 				</div>
 			</div>
 			<div class='app_layout_content_wrap'>
@@ -159,10 +96,16 @@
 <script lang="js">
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
+import { AppMenu } from "./AppMenu";
+
 
 export const App =
 {
 	mixins: [ mixin ],
+	components:
+	{
+		AppMenu,
+	},
 	data: function () {
 		return {
 			menu:
@@ -202,6 +145,14 @@ export const App =
 					]
 				},
 				
+				
+				{
+					"title": "Control",
+					"items":
+					[
+						{ "href": "/api/database/", "title": "Adminer" },
+					]
+				},
 			]
 		}
 	},
@@ -210,28 +161,6 @@ export const App =
 	},
 	methods:
 	{
-		isActive: function(route)
-		{
-			let route_name = route.name;
-			if (this.$router.currentRoute.value.name != undefined)
-			{
-				if (route.routes != undefined)
-				{
-					if (route.routes.indexOf(this.$router.currentRoute.value.name) > -1)
-					{
-						return true;
-					}
-				}
-				if
-				(
-					this.$router.currentRoute.value.name.substr(0, route_name.length) == route_name
-				)
-				{
-					return true;
-				}
-			}
-			return false;
-		},
 	}
 };
 
