@@ -21,6 +21,8 @@
 namespace App\Models;
 
 use TinyPHP\Model;
+use App\Models\ApplicationTemplate;
+use App\Template;
 
 
 class Application extends Model
@@ -36,24 +38,34 @@ class Application extends Model
 	/**
 	 * Get modificators
 	 */
-	static function getModificators($app_id)
+	function getModificators()
 	{
 		$db = app("db");
+		
+		/* App id */
+		$app_id = $this->id;
 		
 		$modificators = $db::query()
 			->from("applications_modificators")
 			->where("app_id", "=", $app_id)
+			->join
+			(
+				"app_modificators",
+				"applications_modificators.modificator_id", "=", "app_modificators.id"
+			)
 			->get()
-			->all()
+			->toArray()
 		;
+		
 		$modificators = array_map
 		(
 			function ($item)
 			{
-				return $item->modificator_id;
+				return (array)$item;
 			},
 			$modificators
 		);
+		
 		return $modificators;
 	}
 	
@@ -62,9 +74,12 @@ class Application extends Model
 	/**
 	 * Update modificators
 	 */
-	static function updateModificators($app_id, $modificators)
+	function updateModificators($modificators)
 	{
 		$db = app("db");
+		
+		/* Get app id */
+		$app_id = $this->id;
 		
 		/* Delete */
 		$db::table("applications_modificators")
@@ -85,4 +100,52 @@ class Application extends Model
 		}
 	}
 	
+	
+	
+	/**
+	 * Update template
+	 */
+	function updateTemplate()
+	{
+		$db = app("db");
+		
+		/* Get app id */
+		$app_id = $this->id;
+		$template_id = $this->template_id;
+		
+		/* Find template */
+		$template = ApplicationTemplate::find($template_id);
+		
+		/* Find modificators */
+		$modificators = $this->getModificators();
+		
+		if ($template && count($modificators) > 0)
+		{
+			$xml = $template["content"];
+			$xml = Template::loadXml($xml);
+			if ($xml)
+			{
+				foreach ($modificators as $modificator)
+				{
+					$patch_xml = $modificator["content"];
+					$patch_xml = Template::loadXml($patch_xml);
+					if ($patch_xml)
+					{
+						Template::patchXml($xml, $patch_xml);
+					}
+				}
+			}
+			
+			/* Convert to xml */
+			$this->content = Template::toXml($xml);
+			
+			/* Convert to yaml */
+			$data = Template::xmlToArray($xml);
+			$this->yaml = Template::toYaml($data["yaml"]);
+			
+			/* Save */
+			$this->save();
+		}
+		
+	}
 }

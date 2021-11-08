@@ -115,7 +115,10 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			$app_id = $this->item->id;
 			
 			/* Update modificators */
-			Application::updateModificators($app_id, $modificators);
+			$this->item->updateModificators($modificators);
+			
+			/* Update template */
+			$this->item->updateTemplate();
 		}
 		
 		/* Get item */
@@ -126,9 +129,6 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		)
 		{
 			$item = $this->api_result->result["item"];
-			
-			/* App id */
-			$app_id = $this->item->id;
 			
 			/* Set template */
 			$template_id = $this->item->template_id;
@@ -146,7 +146,15 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			}
 			
 			/* Select template modificators */
-			$modificators = Application::getModificators($app_id);
+			$modificators = $this->item->getModificators();
+			$modificators = array_map
+			(
+				function ($item)
+				{
+					return $item["modificator_id"];
+				},
+				$modificators
+			);
 			$this->api_result->result["item"]["modificators"] = $modificators;
 		}
 	}

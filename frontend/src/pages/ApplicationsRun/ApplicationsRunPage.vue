@@ -111,6 +111,13 @@
 			</table>
 		</div>
 		
+		<!-- Application variables -->
+		<div>
+			<div class="applications_run_page__label">
+				Variables
+			</div>
+		</div>
+		
 		<div class="crud_form__buttons">
 			<Button type="primary" @click="onSave()">Save</Button>
 			<Button type="" @click="onCancel()">Cancel</Button>

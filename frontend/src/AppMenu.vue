@@ -23,15 +23,15 @@
     font-weight: bold;
     padding: 10px;
 }
-.app_layout_menu_sub_item a{
+.app_layout_menu_item a{
 	display: block;
 	padding: 10px;
 	border-bottom: 1px solid $color_border;
 }
-.app_layout_menu_sub_item a:hover{
+.app_layout_menu_item a:hover{
 	background-color: $color_hover;
 }
-.app_layout_menu_sub_item a.active, .app_layout_menu_sub_item a.active:hover{
+.app_layout_menu_item a.active, .app_layout_menu_item a.active:hover{
 	background-color: $color_selected;
 	border-color: $color_selected;
 	color: $color_selected_background;
@@ -45,7 +45,7 @@
 		<div
 			v-for="item, sub_index in items" :key="sub_index"
 		>
-			<div class='app_layout_menu_sub_item'
+			<div class='app_layout_menu_item'
 				v-if="item.name != undefined"
 			>
 				<router-link :to="{ name: item.name }" custom
@@ -60,7 +60,7 @@
 				</router-link>
 			</div>
 			
-			<div class="app_layout_menu_sub_item"
+			<div class="app_layout_menu_item"
 				v-else-if="item.href != undefined"
 			>
 				<a :href="item.href" class="nolink">
@@ -68,9 +68,12 @@
 				</a>
 			</div>
 			
-			<div class="app_layout_menu_sub_item"
+			<div class="app_layout_menu_item"
 				v-else-if="item.items != undefined"
 			>
+				<div class="app_layout_menu_item_label">
+					{{ item.title }}
+				</div>
 				<AppMenu v-bind:items="item.items" />
 			</div>
 		</div>
@@ -86,6 +89,7 @@ import { mixin } from "vue-helper";
 export const AppMenu =
 {
 	mixins: [ mixin ],
+	props: ["items"],
 	components:
 	{
 		AppMenu,
@@ -120,6 +124,6 @@ export const AppMenu =
 	}
 };
 
-export default defineComponent(App);
+export default defineComponent(AppMenu);
 
 </script>

@@ -29,122 +29,21 @@ class Template
 	/**
 	 * Load xml
 	 */
-	static function loadXml($xml)
+	static function loadXml($xml_str)
 	{
-		$xml = simplexml_load_string($xml, "SimpleXMLElement", LIBXML_NOCDATA);
+		$xml = simplexml_load_string($xml_str, "SimpleXMLElement", LIBXML_NOCDATA);
 		return $xml;
 	}
 	
 	
 	
 	/**
-	 * Parse xml
+	 * Xml to array
 	 */
-	static function parseXml($xml)
+	static function xmlToArray($xml)
 	{
-		$xml = static::loadXml($xml);
 		$data = json_decode(json_encode($xml), true);
 		return $data;
-	}
-	
-	
-	
-	/**
-	 * Add xml
-	 */
-	static function addXml($xml, $data)
-	{
-		foreach ($data as $key => $value)
-		{
-			if (is_array($value))
-			{
-				$new_xml = $xml->addChild($key);
-				static::addXml($new_xml, $value);
-			}
-			else
-			{
-				$xml->addChild($key, $value);
-			}
-		}
-	}
-	
-	
-	
-	/**
-	 * Create xml
-	 */
-	static function createXml($data, $root)
-	{
-		$xml = new \SimpleXMLElement
-		(
-			'<?xml version="1.0" encoding="UTF-8"?>'.
-			'<'.$root.'></'.$root.'>'
-		);
-		static::addXml($xml, $data);
-		return $xml;
-	}
-	
-	
-	
-	/**
-	 * To xml
-	 */
-	static function toXml($data, $root)
-	{
-		$xml = static::createXml($data, $root);
-		return static::saveXml($xml);
-	}
-	
-	
-	
-	/**
-	 * Save xml
-	 */
-	static function saveXml($xml)
-	{
-		$xml_str = $xml->asXml();
-		$xml_str = tidy_repair_string($xml_str, ['input-xml'=> 1, 'indent' => 1, 'wrap' => 0]);
-		return $xml_str;
-	}
-	
-	
-	
-	/**
-	 * Patch xml
-	 */
-	static function patch($xml, $patch)
-	{
-		$patch_xml = static::loadXml($patch);
-		$operations = $patch_xml->operations;
-		foreach ($operations->children() as $patch_item)
-		{
-			if ($patch_item->getName() == 'operation')
-			{
-				$type = $patch_item->attributes()->type;
-				$path = $patch_item->path;
-				$value = $patch_item->value;
-								
-				if ($type == "add")
-				{
-					static::patchAdd($xml, $path, $value);
-				}
-				
-			}
-		}
-	}
-	
-	
-	
-	/**
-	 * Patch add xml
-	 */
-	static function patchAdd($xml, $path, $value)
-	{
-		$result = $xml->xpath($path);
-		foreach ($result as $item)
-		{
-			static::appendChildsXml($item, $value);
-		}
 	}
 	
 	
@@ -193,11 +92,102 @@ class Template
 	
 	
 	/**
+	 * Add xml
+	 */
+	static function addXml($xml, $data)
+	{
+		foreach ($data as $key => $value)
+		{
+			if (is_array($value))
+			{
+				$new_xml = $xml->addChild($key);
+				static::addXml($new_xml, $value);
+			}
+			else
+			{
+				$xml->addChild($key, $value);
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Create xml
+	 */
+	static function createXml($root, $data = null)
+	{
+		$xml = new \SimpleXMLElement
+		(
+			'<?xml version="1.0" encoding="UTF-8"?>'.
+			'<'.$root.'></'.$root.'>'
+		);
+		if ($data != null)
+		{
+			static::addXml($xml, $data);
+		}
+		return $xml;
+	}
+	
+	
+	
+	/**
+	 * To xml
+	 */
+	static function toXml($xml)
+	{
+		$xml_str = $xml->asXml();
+		$xml_str = tidy_repair_string($xml_str, ['input-xml'=> 1, 'indent' => 1, 'wrap' => 0]);
+		return $xml_str;
+	}
+	
+	
+	
+	/**
+	 * Patch xml
+	 */
+	static function patchXml($xml, $patch_xml)
+	{
+		$operations = $patch_xml->operations;
+		foreach ($operations->children() as $patch_item)
+		{
+			if ($patch_item->getName() == 'operation')
+			{
+				$type = $patch_item->attributes()->type;
+				$path = $patch_item->path;
+				$value = $patch_item->value;
+								
+				if ($type == "add")
+				{
+					static::patchAdd($xml, $path, $value);
+				}
+				
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Patch add xml
+	 */
+	static function patchAdd($xml, $path, $value)
+	{
+		$result = $xml->xpath($path);
+		foreach ($result as $item)
+		{
+			static::appendChildsXml($item, $value);
+		}
+	}
+	
+	
+	
+	/**
 	 * Parse yaml
 	 */
-	static function parseYaml($xml)
+	static function parseYaml($yaml)
 	{
-		$value = Yaml::parse($xml);
+		$value = Yaml::parse($yaml);
 		return $value;
 	}
 	
