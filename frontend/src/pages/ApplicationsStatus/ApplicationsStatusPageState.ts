@@ -27,7 +27,10 @@ export class ApplicationStatus extends CrudItem
 {
 	id: number = 0;
 	name: string = "";
+	yaml: string = "";
+	content: string = "";
 	template: ApplicationTemplate | null = null;
+	variables: Array<any> = [];
 	modificators: Array<number> = [];
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
@@ -40,6 +43,8 @@ export class ApplicationStatus extends CrudItem
 	{
 		this.id = Number(params["id"] || this.id);
 		this.name = String(params["name"] || this.name);
+		this.yaml = String(params["yaml"] || this.yaml);
+		this.content = String(params["content"] || this.content);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		
@@ -59,6 +64,8 @@ export class ApplicationStatus extends CrudItem
 			);
 		}
 		
+		this.variables = params["variables"];
+		
 		super.assignValues(params);
 		return this;
 	}
@@ -73,7 +80,10 @@ export class ApplicationStatus extends CrudItem
 		return Object.assign(res, {
 			"id": this.id,
 			"name": this.name,
+			"yaml": this.yaml,
+			"content": this.content,
 			"template": this.template,
+			"variables": this.variables,
 			"modificators": this.modificators,
 			"gmtime_created": this.gmtime_created,
 			"gmtime_updated": this.gmtime_updated,

@@ -32,6 +32,29 @@ class Application extends Model
 	public $incrementing = true;
 	protected $attributes = [
 	];
+	protected $casts = [
+		'variables' => 'array'
+	];
+	
+	
+	
+	/**
+	 * Get variables
+	 */
+	function getVariables()
+	{
+		$vars = $this->variables;
+		$current_object_variables = [];
+		foreach ($vars as $var)
+		{
+			$var_name = isset($var["name"]) ? $var["name"] : "";
+			if ($var_name)
+			{
+				$current_object_variables[$var_name] = $var;
+			}
+		}
+		return $current_object_variables;
+	}
 	
 	
 	
@@ -103,12 +126,10 @@ class Application extends Model
 	
 	
 	/**
-	 * Update template
+	 * Patch template
 	 */
-	function updateTemplate()
+	function patchTemplate()
 	{
-		$db = app("db");
-		
 		/* Get app id */
 		$app_id = $this->id;
 		$template_id = $this->template_id;
@@ -147,5 +168,110 @@ class Application extends Model
 			$this->save();
 		}
 		
+	}
+	
+	
+	
+	/**
+	 * Update variables
+	 */
+	function updateVariables($variable_values = null)
+	{
+		if ($this->variables == null)
+		{
+			$this->variables = [];
+		}
+		
+		/* Load current variables */
+		$current_object_variables = $this->getVariables();
+		
+		/* Load xml variables */
+		$current_xml_variables = [];
+		$xml = Template::loadXml($this->content);
+		$xml_variables = $xml->variables;
+		if ($xml_variables)
+		{
+			foreach ($xml_variables->children() as $xml_variable)
+			{
+				if ($xml_variable->getName() == 'variable')
+				{
+					$var_name = (string)$xml_variable->name;
+					$var_label = Template::getNames($xml_variable, "label");
+					if ($var_name != "" && !in_array($var_name, $current_xml_variables))
+					{
+						$current_xml_variables[$var_name] =
+						[
+							"name" => $var_name,
+							"label" => $var_label,
+						];
+					}
+				}
+			}
+		}
+		
+		/* Add new variables */
+		foreach ($current_xml_variables as $var_name => $var)
+		{
+			if (!isset($current_object_variables[$var_name]))
+			{
+				$current_object_variables[$var_name] =
+				[
+					"name" => $var_name,
+					"value" => "",
+				];
+			}
+			$current_object_variables[$var_name]["label"] = $var["label"];
+			if (isset($variable_values[$var_name]))
+			{
+				$current_object_variables[$var_name]["value"] = $variable_values[$var_name];
+			}
+		}
+		
+		/* Remove variables */
+		$delete_variables = [];
+		foreach ($current_object_variables as $var)
+		{
+			$var_name = $var["name"];
+			if (!isset($current_xml_variables[$var_name]))
+			{
+				$delete_variables[] = $var_name;
+			}
+		}
+		foreach ($delete_variables as $var_name)
+		{
+			if (isset($current_object_variables[$var_name]))
+			{
+				unset($current_object_variables[$var_name]);
+			}
+		}
+		
+		$this->variables = array_values($current_object_variables);
+		
+		/* Save */
+		$this->save();
+	}
+	
+	
+	
+	/**
+	 * Patch yaml variables
+	 */
+	function patchYamlWithVariables()
+	{
+		/* Load current variables */
+		$current_object_variables = $this->getVariables();
+		
+		/* Replace yaml */
+		$yaml = $this->yaml;
+		foreach ($current_object_variables as $var)
+		{
+			$var_name = $var["name"];
+			$var_value = $var["value"];
+			$yaml = str_replace($var_name, $var_value, $yaml);
+		}
+		$this->yaml = $yaml;
+		
+		/* Save */
+		$this->save();
 	}
 }

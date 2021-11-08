@@ -61,11 +61,15 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				[
 					"id",
 					"name",
+					"yaml",
+					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "yaml" ]),
+			new ReadOnly([ "api_name" => "content" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
@@ -111,14 +115,30 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			/* Save modificators */
 			$modificators = $post["item"]["modificators"];
 			
+			/* Get variables values */
+			$variable_values = [];
+			$item_variables = $post["item"]["variables"];
+			foreach ($item_variables as $value)
+			{
+				$var_name = $value["name"];
+				$var_value = $value["value"];
+				$variable_values[$var_name] = $var_value;
+			}
+			
 			/* App id */
 			$app_id = $this->item->id;
 			
 			/* Update modificators */
 			$this->item->updateModificators($modificators);
 			
-			/* Update template */
-			$this->item->updateTemplate();
+			/* Patch template */
+			$this->item->patchTemplate();
+			
+			/* Update variables */
+			$this->item->updateVariables($variable_values);
+			
+			/* Patch variables */
+			$this->item->patchYamlWithVariables();
 		}
 		
 		/* Get item */
@@ -145,6 +165,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				}
 			}
 			
+			/* Add variables */
+			$this->api_result->result["item"]["variables"] = $this->item->variables;
+			
 			/* Select template modificators */
 			$modificators = $this->item->getModificators();
 			$modificators = array_map
@@ -156,6 +179,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				$modificators
 			);
 			$this->api_result->result["item"]["modificators"] = $modificators;
+			
+			$this->api_result->result["item"]["yaml"] = $this->item->yaml;
+			$this->api_result->result["item"]["content"] = $this->item->content;
 		}
 	}
 }

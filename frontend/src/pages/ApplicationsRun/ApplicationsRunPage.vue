@@ -46,6 +46,21 @@
 			padding-bottom: 5px;
 		}
 	}
+	&__variable{
+		padding-bottom: 5px;
+	}
+	&__left, &__right{
+		display: inline-block;
+		vertical-align: top;
+	}
+	&__left{
+		width: 50%;
+		padding-right: 5px;
+	}
+	&__right{
+		width: 50%;
+		padding-left: 5px;
+	}
 }
 </style>
 
@@ -53,77 +68,107 @@
 <template>
 	<div class="applications_run_page" v-if="model.application != null">
 		
-		<!-- Application info -->
-		<div class="applications_run_page__info applications_run_page__block">
-			<table>
-				<tr class="applications_run_page__info_row">
-					<td class="applications_run_page__info_row_key">Name:</td>
-					<td class="applications_run_page__info_row_name">{{ getAppName() }}</td>
-				</tr>
-				<tr class="applications_run_page__info_row">
-					<td class="applications_run_page__info_row_key">MarketPlace:</td>
-					<td class="applications_run_page__info_row_name">{{ getMarketPlace() }}</td>
-				</tr>
-				<tr class="applications_run_page__info_row">
-					<td class="applications_run_page__info_row_key">Template:</td>
-					<td class="applications_run_page__info_row_name">{{ getTemplateName() }}</td>
-				</tr>
-				<tr class="applications_run_page__info_row">
-					<td class="applications_run_page__info_row_key">Version:</td>
-					<td class="applications_run_page__info_row_name">{{ getVersion() }}</td>
-				</tr>
-				<tr class="applications_run_page__info_row">
-					<td class="applications_run_page__info_row_key">Status:</td>
-					<td class="applications_run_page__info_row_name">{{ getStatus() }}</td>
-				</tr>
-			</table>
-		</div>
-		
-		<!-- Application modificators -->
-		<div class="applications_run_page__modificators applications_run_page__block component_crud__table">
-			<div class="applications_run_page__label">
-				Modificators
+		<div class="applications_run_page__left">
+			
+			<!-- Application info -->
+			<div class="applications_run_page__info applications_run_page__block">
+				<table>
+					<tr class="applications_run_page__info_row">
+						<td class="applications_run_page__info_row_key">Name:</td>
+						<td class="applications_run_page__info_row_name">{{ getAppName() }}</td>
+					</tr>
+					<tr class="applications_run_page__info_row">
+						<td class="applications_run_page__info_row_key">MarketPlace:</td>
+						<td class="applications_run_page__info_row_name">{{ getMarketPlace() }}</td>
+					</tr>
+					<tr class="applications_run_page__info_row">
+						<td class="applications_run_page__info_row_key">Template:</td>
+						<td class="applications_run_page__info_row_name">{{ getTemplateName() }}</td>
+					</tr>
+					<tr class="applications_run_page__info_row">
+						<td class="applications_run_page__info_row_key">Version:</td>
+						<td class="applications_run_page__info_row_name">{{ getVersion() }}</td>
+					</tr>
+					<tr class="applications_run_page__info_row">
+						<td class="applications_run_page__info_row_key">Status:</td>
+						<td class="applications_run_page__info_row_name">{{ getStatus() }}</td>
+					</tr>
+				</table>
 			</div>
-			<div class="component_crud__top_buttons">
-				<div class="component_crud__top_button">
-					<Button type="success" @click="onModificatorAdd()">
-						[+] Add modificator
-					</Button>
+			
+			<!-- Application modificators -->
+			<div class="applications_run_page__modificators applications_run_page__block">
+				<div class="applications_run_page__label">
+					Modificators
+				</div>
+				<div class="component_crud__top_buttons">
+					<div class="component_crud__top_button">
+						<Button type="success" @click="onModificatorAdd()">
+							[+] Add modificator
+						</Button>
+					</div>
+				</div>
+				<div class="component_crud__table">
+					<table>
+						<tr class="component_crud__header">
+							<th></th>
+							<th>Name</th>
+							<th></th>
+						</tr>
+						<tr class="component_crud__row"
+							v-for="modificator_id, index in model.application.modificators"
+							:key="modificator_id"
+						>
+							<td>{{ index + 1 }}</td>
+							<td>{{ getModificatorName(modificator_id) }}</td>
+							<td>
+								<Button type="danger" small="true"
+									@click="onModificatorDelete(modificator_id)">Delete</Button>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
-			<table>
-				<tr class="component_crud__header">
-					<th></th>
-					<th>Name</th>
-					<th></th>
-				</tr>
-				<tr class="component_crud__row"
-					v-for="modificator_id, index in model.application.modificators"
-					:key="modificator_id"
+			
+			<!-- Application variables -->
+			<div class="applications_run_page__variables applications_run_page__block">
+				<div class="applications_run_page__label">
+					Variables
+				</div>
+				<div class="applications_run_page__variable"
+					v-for="variable, index in model.application.variables" :key="variable.name"
 				>
-					<td>{{ index + 1 }}</td>
-					<td>{{ getModificatorName(modificator_id) }}</td>
-					<td>
-						<Button type="danger" small="true"
-							@click="onModificatorDelete(modificator_id)">Delete</Button>
-					</td>
-				</tr>
-			</table>
+					<div class="applications_run_page__variable_label">
+						{{ variable.label.en_US }}
+					</div>
+					<div class="applications_run_page__variable_value">
+						<Input
+							v-bind:name="variable.name"
+							v-bind:crud="{
+								item: variable.item,
+								field: {}
+							}"
+							v-bind:store_path="store_path.concat(['application', 'variables', index, 'value'])"
+						/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="crud_form__buttons">
+				<Button type="primary" @click="onSave()">Save</Button>
+				<Button type="" @click="onCancel()">Cancel</Button>
+			</div>
+			
+			<CrudResult v-bind:store_path="store_path.concat('result')" />
+			
 		</div>
 		
 		<!-- Application variables -->
-		<div>
-			<div class="applications_run_page__label">
-				Variables
-			</div>
+		<div class="applications_run_page__right">
+			<CodeMirror
+				v-bind:value="model.application.yaml"
+			/>
 		</div>
-		
-		<div class="crud_form__buttons">
-			<Button type="primary" @click="onSave()">Save</Button>
-			<Button type="" @click="onCancel()">Cancel</Button>
-		</div>
-		
-		<CrudResult v-bind:store_path="store_path.concat('result')" />
 		
 	</div>
 	
@@ -136,8 +181,7 @@
 			<template v-slot:content>
 				<div class="applications_run_page__select_add_modificator">
 					<label>Select modificator:</label>
-					<Select v-bind:value="select_add_modificator"
-						@crudEvent="onSelectModificatorCrudEvent($event)"
+					<Select v-bind:store_path="store_path.concat(['select_add_modificator'])"
 						v-bind:crud="{
 							field:
 							{
@@ -248,10 +292,6 @@ export const ApplicationsRunPage =
 		{
 			this.select_add_modificator = -1;
 			this.model.dialog_add_modificator.show();
-		},
-		onSelectModificatorCrudEvent($event)
-		{
-			this.select_add_modificator = $event.value;
 		},
 		onDialogAddModificatorButtonClick(button_text)
 		{

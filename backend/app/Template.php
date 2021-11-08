@@ -149,19 +149,22 @@ class Template
 	static function patchXml($xml, $patch_xml)
 	{
 		$operations = $patch_xml->operations;
-		foreach ($operations->children() as $patch_item)
+		if ($operations)
 		{
-			if ($patch_item->getName() == 'operation')
+			foreach ($operations->children() as $patch_item)
 			{
-				$type = $patch_item->attributes()->type;
-				$path = $patch_item->path;
-				$value = $patch_item->value;
-								
-				if ($type == "add")
+				if ($patch_item->getName() == 'operation')
 				{
-					static::patchAdd($xml, $path, $value);
+					$type = $patch_item->attributes()->type;
+					$path = $patch_item->path;
+					$value = $patch_item->value;
+					
+					if ($type == "add")
+					{
+						static::patchAdd($xml, $path, $value);
+					}
+					
 				}
-				
 			}
 		}
 	}
@@ -183,6 +186,30 @@ class Template
 	
 	
 	/**
+	 * Return names
+	 */
+	static function getNames($xml, $api_name, $default_lang = "en_US")
+	{
+		$result = [];
+		$arr = $xml->$api_name;
+		if ($arr)
+		{
+			foreach ($arr as $name)
+			{
+				$lang = (string) ($name->attributes()->lang);
+				if ($lang == null)
+				{
+					$lang = $default_lang;
+				}
+				$result[$lang] = (string)$name;
+			}
+		}
+		return $result;
+	}
+	
+	
+	
+	/**
 	 * Parse yaml
 	 */
 	static function parseYaml($yaml)
@@ -198,7 +225,7 @@ class Template
 	 */
 	static function toYaml($data)
 	{
-		$yaml = Yaml::dump($data, 5);
+		$yaml = Yaml::dump($data, 10, 2);
 		return $yaml;
 	}
 }
