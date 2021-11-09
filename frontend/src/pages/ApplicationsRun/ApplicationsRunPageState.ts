@@ -118,4 +118,65 @@ export class ApplicationsRunPageState
 	
 	
 	
+	/**
+	 * Compose form
+	 */
+	static async onComposeForm(component: DefineComponent)
+	{
+		let model:ApplicationsRunPageState = component.model;
+		let item:ApplicationStatus | null = model.application;
+		let response:AxiosResponse | null = null;
+		
+		model.result.setWaitResponse();
+		if (item)
+		{
+			response = await this.apiComposeForm(item);
+		}
+		model.result.setAxiosResponse(response);
+		
+		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
+			model.application = ApplicationsStatusPageState.createNewItemInstance
+				(
+					response.data.result.item
+				) as ApplicationStatus
+			;
+		}
+	}
+	
+	
+	
+	/**
+	 * Save form api
+	 */
+	static async apiComposeForm(item:ApplicationStatus): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		let url = this.getApiUrlCompose(item);
+		
+		try
+		{
+			response = await axios.post(url, {"item": item});
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Return api update url
+	 */
+	static getApiUrlCompose(item: ApplicationStatus)
+	{
+		let item_id = ApplicationsStatusPageState.getItemId(item);
+		return "/api/applications/default/compose/" + encodeURIComponent(item_id) + "/";
+	}
 }

@@ -22,7 +22,31 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:action="action" />
+	<Crud v-bind:store_path="store_path" v-bind:action="action">
+		
+		<template v-slot:component_crud_save>
+			<Form v-bind:store_path="store_path.concat('form_save')">
+				<template v-slot:buttons>
+					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+					<Button type="success" @click="onDialogFormButtonClick('compose')">Compose</Button>
+				</template>
+			</Form>
+		</template>
+		
+		<template v-slot:crud_after>
+			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
+				<template v-slot:text>
+					Compose file ?
+				</template>
+				<template v-slot:buttons>
+					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
+					<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
+				</template>
+			</Dialog>
+		</template>
+		
+	</Crud>
 </template>
 
 
@@ -39,19 +63,34 @@ import { Crud } from "vue-helper/Crud/Crud.vue";
 export const ApplicationsFilesPage =
 {
 	name: "ApplicationsFilesPage",
-	mixins: [mixin],
+	mixins: [mixin, Crud],
 	components:
 	{
 	},
 	methods:
 	{
-		onDialogFormButtonCancel1: function()
+		onDialogFormButtonClick: function(action)
 		{
-			//window.history.state.back
-			//cosole.log(this.$router);
-			//this.$router.push({ path: '/applications/files/' });
-			//this.$router.go(-1);
+			if (action == "compose")
+			{
+				this.model.dialog_compose.show();
+			}
+			else
+			{
+				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
+			}
 		},
+		onDialogComposeButtonClick: function(button_name)
+		{
+			if (button_name == "yes")
+			{
+				this.model.constructor.onCompose(this);
+			}
+			else
+			{
+				this.model.dialog_compose.hide();
+			}
+		}
 	},
 	beforeRouteEnter(to, from, next)
 	{

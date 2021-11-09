@@ -21,10 +21,12 @@
 namespace App;
 
 use TinyPHP\Utils;
+use App\Models\ApplicationFile;
 use App\Models\Domain;
 use App\Models\NginxFile;
 use App\Models\Route;
 use App\Models\Service;
+
 
 class Docker
 {
@@ -244,10 +246,27 @@ class Docker
 		$service = new Service();
 		
 		/* Set is deleted */
+		/*
+		Service::query()
+			->where('timestamp', '!=', $timestamp)
+			->update([
+				"enable" => 0,
+				"is_deleted" => 1,
+			])
+		;
+		*/
 		$sql = "update " . $service->getTable() .
 			" set `is_deleted`=1, `enable`=0 where `timestamp` != :timestamp";
 		$db::update($db::raw($sql), [ "timestamp" => $timestamp ]);
 		
+		/* Delete */
+		/*
+		Service::query()
+			->where('is_deleted', 1)
+			->where('timestamp', '<', $timestamp - 24*60*60)
+			->delete()
+		;
+		*/
 		/* Delete old services */
 		$sql = "delete from " . $service->getTable() .
 			" where `is_deleted` = 1 and `timestamp` < :timestamp";
@@ -412,5 +431,38 @@ class Docker
 			NginxFile::updateFile($file_name, $nginx_content);
 		}
 		
+	}
+	
+	
+	
+	/**
+	 * Compose file
+	 */
+	function compose($app_file_id)
+	{
+		$result = null;
+		
+		/* Save all files */
+		$applications = ApplicationFile::query()->get()->toArray();
+		foreach ($applications as $row)
+		{
+			$row_file_name = $row["file_name"];
+			$row_content = $row["content"];
+			$file_path = "/data/yaml/app/" . $row_file_name;
+			$file_dirname = dirname($file_path);
+			@mkdir($file_dirname, 0755, true);
+			file_put_contents($file_path, $row_content);
+		}
+		
+		/* Compose */
+		$item = ApplicationFile::find($app_file_id);
+		if ($item)
+		{
+			$yaml_file_path = "/data/yaml/app/" . $item["file_name"];
+			$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " app --with-registry-auth";
+			$result = Docker::exec($cmd . " 2>&1");
+		}
+		
+		return $result;
 	}
 }

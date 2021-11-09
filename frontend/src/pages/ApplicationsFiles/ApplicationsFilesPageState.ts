@@ -276,7 +276,7 @@ export class ApplicationsFilesPageState extends CrudState
 	{
 		let model:ApplicationsFilesPageState = component.model;
 		let response:AxiosResponse | null = null;
-		let item:ApplicationFile = model.active_item as ApplicationFile;
+		let item:ApplicationFile = model.form_save.item as ApplicationFile;
 		
 		if (item != null)
 		{

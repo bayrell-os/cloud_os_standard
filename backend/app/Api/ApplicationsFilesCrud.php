@@ -96,59 +96,19 @@ class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
-	 * Compose
+	 * Action compose
 	 */
-	public function actionCompose($container)
+	function doActionCompose()
 	{
-		$post = json_decode($container->request->getContent(), true);
-		if ($post == null)
-		{
-			throw new \Exception("Post is null");
-		}
-		
-		$data = Utils::attr($post, "item");
-		if ($data === null)
-		{
-			throw new \Exception("Field item is empty");
-		}
-		
-		/* Find item */
-		$this->findItem();
-		
-		if ($this->item == null)
-        {
-            throw new ItemNotFoundException();
-        }
-		
-		/* From database */
-		$item = $this->fromDatabase($this->item);
-		
-		/* Save all files */
-		$applications = Application::query()->get()->toArray();
-		foreach ($applications as $row)
-		{
-			$row_name = $row["name"];
-			$row_stack_name = $row["stack_name"];
-			$row_content = $row["content"];
-			$file_path = "/data/yaml/" . $row_stack_name . "/" . $row_name;
-			$file_dirname = dirname($file_path);
-			@mkdir($file_dirname, 0755, true);
-			file_put_contents($file_path, $row_content);
-		}
+		/* Save */
+		$this->doActionEdit();
 		
 		/* Compose */
-		$yaml_file_path = "/data/yaml/" . $item["stack_name"] . "/" . $item["name"];
-		$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " " .
-			$item["stack_name"] . " --with-registry-auth";
-		$result = Docker::exec($cmd . " 2>&1");
-		
-		/* Set result */
-		return $container->setResponse
-		(
-			$this
-				->api_result
-				->success(["item"=>$item], $result)
-				->getResponse()
-		);
+		if ($this->item)
+		{
+			$result = Docker::compose($this->item->id);
+			$this->api_result->error_str = $result;
+		}
 	}
+	
 }

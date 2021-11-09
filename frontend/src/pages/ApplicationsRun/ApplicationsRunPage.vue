@@ -157,6 +157,7 @@
 			<div class="crud_form__buttons">
 				<Button type="primary" @click="onSave()">Save</Button>
 				<Button type="" @click="onCancel()">Cancel</Button>
+				<Button type="success" @click="onCompose()">Compose</Button>
 			</div>
 			
 			<CrudResult v-bind:store_path="store_path.concat('result')" />
@@ -350,6 +351,12 @@ export const ApplicationsRunPage =
 			{
 				this.$router.push({ name: "app:applications:status" });
 			}
+		},
+		
+		/* Compose */
+		onCompose()
+		{
+			this.model.constructor.onComposeForm(this);
 		},
 	},
 	beforeRouteEnter(to, from, next)
