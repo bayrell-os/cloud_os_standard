@@ -39,9 +39,9 @@ class Application extends Model
 	
 	
 	/**
-	 * Get variables
+	 * Get all variables
 	 */
-	function getVariables()
+	function getAllVariables()
 	{
 		$vars = $this->variables;
 		$current_object_variables = [];
@@ -54,6 +54,35 @@ class Application extends Model
 			}
 		}
 		return $current_object_variables;
+	}
+	
+	
+	
+	/**
+	 * Get current variables
+	 */
+	function getCurrentVariables()
+	{
+		$result = [];
+		$current_object_variables = $this->getAllVariables();
+		
+		$xml = Template::loadXml($this->content);
+		if ($xml->variables != null && $xml->variables->getName() == "variables")
+		{
+			foreach ($xml->variables->children() as $xml_variable)
+			{
+				if ($xml_variable->getName() == 'variable')
+				{
+					$var_name = Template::clearValue((string)$xml_variable->name);
+					if (isset($current_object_variables[$var_name]))
+					{
+						$result[$var_name] = $current_object_variables[$var_name];
+					}
+				}
+			}
+		}
+		
+		return $result;
 	}
 	
 	
@@ -160,9 +189,12 @@ class Application extends Model
 			/* Convert to xml */
 			$this->content = Template::toXml($xml);
 			
+			/* Load current variables */
+			$current_object_variables = $this->getAllVariables();
+			
 			/* Convert to yaml */
-			$data = Template::xmlToArray($xml);
-			$this->yaml = Template::toYaml($data["yaml"]);
+			$data = Template::xmlToArray($xml->yaml, $current_object_variables);
+			$this->yaml = Template::toYaml($data);
 			
 			/* Save */
 			$this->save();
@@ -183,7 +215,7 @@ class Application extends Model
 		}
 		
 		/* Load current variables */
-		$current_object_variables = $this->getVariables();
+		$current_object_variables = $this->getAllVariables();
 		
 		/* Load xml variables */
 		$current_xml_variables = [];
@@ -195,7 +227,7 @@ class Application extends Model
 			{
 				if ($xml_variable->getName() == 'variable')
 				{
-					$var_name = (string)$xml_variable->name;
+					$var_name = Template::clearValue((string)$xml_variable->name);
 					$var_label = Template::getNames($xml_variable, "label");
 					if ($var_name != "" && !in_array($var_name, $current_xml_variables))
 					{
@@ -228,6 +260,7 @@ class Application extends Model
 		}
 		
 		/* Remove variables */
+		/*
 		$delete_variables = [];
 		foreach ($current_object_variables as $var)
 		{
@@ -244,6 +277,7 @@ class Application extends Model
 				unset($current_object_variables[$var_name]);
 			}
 		}
+		*/
 		
 		$this->variables = array_values($current_object_variables);
 		
@@ -259,7 +293,7 @@ class Application extends Model
 	function patchYamlWithVariables()
 	{
 		/* Load current variables */
-		$current_object_variables = $this->getVariables();
+		$current_object_variables = $this->getAllVariables();
 		
 		/* Replace yaml */
 		$yaml = $this->yaml;

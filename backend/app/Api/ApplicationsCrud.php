@@ -126,6 +126,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	}
 	
 	
+	
 	/**
 	 * Do action edit
 	 */
@@ -154,14 +155,11 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Update modificators */
 		$this->item->updateModificators($modificators);
 		
-		/* Patch template */
-		$this->item->patchTemplate();
-		
 		/* Update variables */
 		$this->item->updateVariables($variable_values);
 		
-		/* Patch variables */
-		$this->item->patchYamlWithVariables();
+		/* Patch template */
+		$this->item->patchTemplate();
 	}
 	
 	
@@ -174,6 +172,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Save */
 		$this->doActionEdit();
 	}
+	
 	
 	
 	/**
@@ -206,7 +205,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			}
 			
 			/* Add variables */
-			$this->api_result->result["item"]["variables"] = $this->item->variables;
+			$this->api_result->result["item"]["variables"] = $this->item->getCurrentVariables();
 			
 			/* Select template modificators */
 			$modificators = $this->item->getModificators();
@@ -239,7 +238,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				$app_file->timestamp = time();
 				$app_file->save();
 				
-				/* Save app file id*/
+				/* Save app file id */
 				$this->item->app_file_id = $app_file->id;
 				$this->item->save();
 			}

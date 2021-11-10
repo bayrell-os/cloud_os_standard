@@ -226,12 +226,6 @@ export const ApplicationsRunPage =
 	name: "ApplicationsRunPage",
 	mixins: [mixin],
 	props: ["action"],
-	data: function()
-	{
-		return {
-			select_add_modificator: -1,
-		};
-	},
 	components:
 	{
 	},
@@ -291,14 +285,14 @@ export const ApplicationsRunPage =
 		},
 		onModificatorAdd()
 		{
-			this.select_add_modificator = -1;
+			this.model.select_add_modificator = -1;
 			this.model.dialog_add_modificator.show();
 		},
 		onDialogAddModificatorButtonClick(button_text)
 		{
 			if (button_text == "yes")
 			{
-				let select_add_modificator = Number(this.select_add_modificator);
+				let select_add_modificator = Number(this.model.select_add_modificator);
 				let index = this.model.application.modificators.indexOf(select_add_modificator);
 				if (index == -1 && select_add_modificator > 0)
 				{
