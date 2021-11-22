@@ -3,13 +3,14 @@ version: "3.3"
 services:
     
     standard_node1:
-        image: bayrell/cloud_os_standard:0.4.0-20211107_162750
+        image: bayrell/cloud_os_standard:0.4.0-20211122_075351
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_node1_data:/data"
             - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
+            - "8022:22"
             - "8080:80"
         env_file:
             - ./env.conf
@@ -20,6 +21,8 @@ services:
             DOCUMENT_ROOT: "/srv/frontend/html"
             WWW_UID: 1000
             WWW_GID: 1000
+            SSH_USER: "mikuro4ka"
+            SSH_PASSWORD: "Yf6ugfdCs2LWQUQ6"
         restart: unless-stopped
         networks:
             - cloud_network

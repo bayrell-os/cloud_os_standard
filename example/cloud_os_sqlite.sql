@@ -1,14 +1,78 @@
--- Adminer 4.7.6 SQLite 3 dump
+-- Adminer 4.7.1 SQLite 3 dump
+
+DROP TABLE IF EXISTS "app_files";
+CREATE TABLE "app_files" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "file_name" text NOT NULL,
+  "stack_name" text NOT NULL DEFAULT 'app',
+  "content" text NOT NULL,
+  "timestamp" integer NOT NULL DEFAULT '0',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+
+CREATE UNIQUE INDEX "app_files_file_name" ON "app_files" ("file_name");
+
+
+DROP TABLE IF EXISTS "app_modificators";
+CREATE TABLE "app_modificators" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" text NOT NULL,
+  "content" text NOT NULL DEFAULT '',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+
+
+DROP TABLE IF EXISTS "app_stacks";
+CREATE TABLE "app_stacks" (
+  "stack_name" integer NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  PRIMARY KEY ("stack_name")
+);
+
+
+DROP TABLE IF EXISTS "app_templates";
+CREATE TABLE "app_templates" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" text NOT NULL,
+  "content" text NOT NULL DEFAULT '',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+
 
 DROP TABLE IF EXISTS "applications";
 CREATE TABLE "applications" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "stack_name" text NOT NULL,
   "name" text NOT NULL,
-  "content" text NOT NULL,
+  "template_id" integer NULL,
+  "content" text NOT NULL DEFAULT '',
+  "yaml" text NOT NULL DEFAULT '',
+  "variables" text NOT NULL DEFAULT '',
+  "app_file_id" integer NULL,
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL
+  "gmtime_updated" numeric NOT NULL,
+  FOREIGN KEY ("template_id") REFERENCES "app_templates" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY ("app_file_id") REFERENCES "app_files" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+CREATE INDEX "app_status_template_id" ON "applications" ("template_id");
+
+
+DROP TABLE IF EXISTS "applications_modificators";
+CREATE TABLE "applications_modificators" (
+  "app_id" integer NOT NULL,
+  "modificator_id" integer NOT NULL,
+  FOREIGN KEY ("modificator_id") REFERENCES "app_modificators" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("app_id") REFERENCES "applications" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "applications_modificators" ("app_id", "modificator_id");
+
+CREATE INDEX "applications_modificators_modificator_id" ON "applications_modificators" ("modificator_id");
 
 
 DROP TABLE IF EXISTS "cron";
