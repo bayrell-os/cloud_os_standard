@@ -52,6 +52,13 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			'/' . $this->api_path . '/default/compose/{id}/',
 			[$this, "actionCompose"]
 		);
+		
+		$routes->addRoute
+		(
+			'POST',
+			'/' . $this->api_path . '/default/stop/{id}/',
+			[$this, "actionStop"]
+		);
 	}
 	
 	
@@ -69,6 +76,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				[
 					"id",
 					"name",
+					"status",
 					"yaml",
 					"content",
 					"gmtime_created",
@@ -171,6 +179,44 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	{
 		/* Save */
 		$this->doActionEdit();
+		
+		/* Set status = 1 */
+		$this->item->status = 1;
+		$this->item->save();
+		$this->api_result->result["item"]["status"] = 1;
+	}
+	
+	
+	
+	/**
+	 * Action stop
+	 */
+	function doActionStop()
+	{
+		/* Find item */
+		$this->findItem();
+		
+		/* Set status = 0 */
+		$this->item->status = 0;
+		$this->item->save();
+		$this->item->refresh();
+		
+		$result = [];
+		
+		/* Stop services */
+		if (gettype($this->item->services) == "array")
+		{
+			foreach ($this->item->services as $service_name)
+			{
+				$result[] = Docker::removeService($service_name);
+			}
+		}
+		
+		/* From database */
+		$this->new_data = $this->fromDatabase($this->item);
+		
+		/* Set result */
+		$this->api_result->success(["item"=>$this->new_data], "Ok");
 	}
 	
 	
@@ -222,7 +268,11 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			/* Set content */
 			$this->api_result->result["item"]["yaml"] = $this->item->yaml;
 			$this->api_result->result["item"]["content"] = $this->item->content;
-			
+		}
+		
+		/* Compose */
+		if ($this->action == "actionCompose")
+		{
 			/* Get app file id */
 			if ($this->item->app_file_id != null)
 			{
@@ -233,7 +283,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			if ($app_file == null)
 			{
 				$app_file = new ApplicationFile();
-				$app_file->file_name = $this->item->name . "_" . time() . ".yaml";
+				$app_file->file_name = $this->item->name . ".yaml";
 				$app_file->content = $this->item->yaml;
 				$app_file->timestamp = time();
 				$app_file->save();
@@ -244,15 +294,15 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			}
 			else
 			{
+				$app_file->file_name = $this->item->name . ".yaml";
 				$app_file->content = $this->item->yaml;
 				$app_file->timestamp = time();
 				$app_file->save();
 			}
-		}
-		
-		/* Compose */
-		if ($this->action == "actionCompose")
-		{
+			
+			/* Update services */
+			$this->item->updateServicesFromYaml();
+			
 			/* Save app file id */
 			if ($this->item->app_file_id != null)
 			{

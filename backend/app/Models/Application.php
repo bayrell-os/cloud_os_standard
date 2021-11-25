@@ -33,7 +33,8 @@ class Application extends Model
 	protected $attributes = [
 	];
 	protected $casts = [
-		'variables' => 'array'
+		'variables' => 'array',
+		'services' => 'array'
 	];
 	
 	
@@ -192,8 +193,22 @@ class Application extends Model
 			/* Load current variables */
 			$current_object_variables = $this->getAllVariables();
 			
+			/* Add service name */
+			$current_object_variables = array_filter($current_object_variables,
+				function ($item)
+				{
+					return $item["name"] != "_var_service_name_";
+				}
+			);
+			$current_object_variables[] =
+			[
+				"name" => "_var_service_name_",
+				"value" => $this->name,
+			];
+			
 			/* Convert to yaml */
 			$data = Template::xmlToArray($xml->yaml, $current_object_variables);
+			$this->yaml_json = json_encode($data);
 			$this->yaml = Template::toYaml($data);
 			
 			/* Save */
@@ -288,24 +303,22 @@ class Application extends Model
 	
 	
 	/**
-	 * Patch yaml variables
+	 * Update services from yaml
 	 */
-	function patchYamlWithVariables()
+	function updateServicesFromYaml()
 	{
-		/* Load current variables */
-		$current_object_variables = $this->getAllVariables();
+		$services = [];
 		
-		/* Replace yaml */
-		$yaml = $this->yaml;
-		foreach ($current_object_variables as $var)
+		$data = @json_decode($this->yaml_json, true);
+		if ($data && isset($data["services"]) && gettype($data["services"]) == "array")
 		{
-			$var_name = $var["name"];
-			$var_value = $var["value"];
-			$yaml = str_replace($var_name, $var_value, $yaml);
+			foreach ($data["services"] as $service_name => $value)
+			{
+				$services[] = "app_" . $service_name;
+			}
 		}
-		$this->yaml = $yaml;
 		
-		/* Save */
+		$this->services = $services;
 		$this->save();
 	}
 }

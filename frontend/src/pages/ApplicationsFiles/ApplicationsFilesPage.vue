@@ -27,9 +27,9 @@
 		<template v-slot:component_crud_save>
 			<Form v-bind:store_path="store_path.concat('form_save')">
 				<template v-slot:buttons>
-					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+					<!--<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>-->
 					<Button type="success" @click="onDialogFormButtonClick('compose')">Compose</Button>
+					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
 				</template>
 			</Form>
 		</template>

@@ -26,9 +26,12 @@
 		padding-bottom: 5px;
 	}
 	&__info_row{
+		td{
+			padding-bottom: 5px;
+		}
 		&_key, &_name{
-			display: inline-block;
-			vertical-align: top;
+			/*display: inline-block;*/
+			vertical-align: middle;
 		}
 		&_key{
 			text-align: right;
@@ -54,11 +57,11 @@
 		vertical-align: top;
 	}
 	&__left{
-		width: 50%;
+		width: 45%;
 		padding-right: 5px;
 	}
 	&__right{
-		width: 50%;
+		width: 55%;
 		padding-left: 5px;
 	}
 }
@@ -68,6 +71,10 @@
 <template>
 	<div class="applications_run_page" v-if="model.application != null">
 		
+		<div class="component_crud_save_back">
+			<Button type="primary" @click="onBackClick()">Back</Button>
+		</div>
+		
 		<div class="applications_run_page__left">
 			
 			<!-- Application info -->
@@ -75,20 +82,26 @@
 				<table>
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">Name:</td>
-						<td class="applications_run_page__info_row_name">{{ getAppName() }}</td>
+						<td class="applications_run_page__info_row_name">
+							<Input v-bind:store_path="store_path.concat(['application', 'name'])" />
+						</td>
 					</tr>
+					<!--
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">MarketPlace:</td>
 						<td class="applications_run_page__info_row_name">{{ getMarketPlace() }}</td>
 					</tr>
+					-->
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">Template:</td>
 						<td class="applications_run_page__info_row_name">{{ getTemplateName() }}</td>
 					</tr>
+					<!--
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">Version:</td>
 						<td class="applications_run_page__info_row_name">{{ getVersion() }}</td>
 					</tr>
+					-->
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">Status:</td>
 						<td class="applications_run_page__info_row_name">{{ getStatus() }}</td>
@@ -155,9 +168,10 @@
 			</div>
 			
 			<div class="crud_form__buttons">
-				<Button type="primary" @click="onSave()">Save</Button>
-				<Button type="" @click="onCancel()">Cancel</Button>
-				<Button type="success" @click="onCompose()">Compose</Button>
+				<Button type="danger" @click="onStopClick()">Stop</Button>
+				<!--<Button type="" @click="onCancelClick()">Cancel</Button>-->
+				<Button type="success" @click="onComposeClick()">Compose</Button>
+				<Button type="primary" @click="onSaveClick()">Save</Button>
 			</div>
 			
 			<CrudResult v-bind:store_path="store_path.concat('result')" />
@@ -234,11 +248,12 @@ export const ApplicationsRunPage =
 		/* Info */
 		getAppName: function()
 		{
-			return "";
+			return (this.model.application != null) ? this.model.application.name : "";
 		},
 		getTemplateName: function()
 		{
-			return (this.model.application != null) ? this.model.application.name : "";
+			return (this.model.application != null && this.model.application.template != null) ?
+				this.model.application.template.name : "";
 		},
 		getMarketPlace: function()
 		{
@@ -250,6 +265,9 @@ export const ApplicationsRunPage =
 		},
 		getStatus: function()
 		{
+			if (this.model.application.status == 0) return "STOPPED";
+			if (this.model.application.status == 1) return "LAUNCHED";
+			if (this.model.application.status == 2) return "STARTS UP";
 			return "";
 		},
 		getModificatorName(modificator_id)
@@ -329,13 +347,13 @@ export const ApplicationsRunPage =
 		},
 		
 		/* Save */
-		onSave()
+		onSaveClick()
 		{
 			this.model.constructor.onSaveForm(this);
 		},
 		
 		/* Cancel */
-		onCancel()
+		onCancelClick()
 		{
 			if (window.history.state.back)
 			{
@@ -348,9 +366,21 @@ export const ApplicationsRunPage =
 		},
 		
 		/* Compose */
-		onCompose()
+		onComposeClick()
 		{
 			this.model.constructor.onComposeForm(this);
+		},
+		
+		/* Stop */
+		onStopClick()
+		{
+			this.model.constructor.onStopForm(this);
+		},
+		
+		/* Back */
+		onBackClick()
+		{
+			this.onCancelClick();
 		},
 	},
 	beforeRouteEnter(to, from, next)

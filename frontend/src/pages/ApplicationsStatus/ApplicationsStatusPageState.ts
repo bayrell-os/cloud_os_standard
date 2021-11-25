@@ -17,7 +17,7 @@
  */
 
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
 import { ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
 
@@ -28,6 +28,7 @@ export class ApplicationStatus extends CrudItem
 	id: number = 0;
 	name: string = "";
 	yaml: string = "";
+	status: number = 0;
 	content: string = "";
 	template: ApplicationTemplate | null = null;
 	variables: Array<any> = [];
@@ -43,6 +44,7 @@ export class ApplicationStatus extends CrudItem
 	{
 		this.id = Number(params["id"] || this.id);
 		this.name = String(params["name"] || this.name);
+		this.status = Number(params["status"] || this.status);
 		this.yaml = String(params["yaml"] || this.yaml);
 		this.content = String(params["content"] || this.content);
 		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
@@ -80,6 +82,7 @@ export class ApplicationStatus extends CrudItem
 		return Object.assign(res, {
 			"id": this.id,
 			"name": this.name,
+			"status": this.status,
 			"yaml": this.yaml,
 			"content": this.content,
 			"template": this.template,
@@ -140,6 +143,18 @@ export class ApplicationsStatusPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
+		/* Status */
+		let status = new FieldInfo();
+		status.api_name = "status";
+		status.label = "status";
+		status.component = "SelectLabel";
+		status.options = [
+			new SelectOption().assignValues({ "id": 0, "value": "STOPPED" }),
+			new SelectOption().assignValues({ "id": 1, "value": "LAUNCHED" }),
+			new SelectOption().assignValues({ "id": 2, "value": "STARTS UP" }),
+		];
+		this.fields.push( deepClone(status) );
+		
 		/* Name field */
 		let name = new FieldInfo();
 		name.api_name = "name";
@@ -173,6 +188,7 @@ export class ApplicationsStatusPageState extends CrudState
 		name.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(status) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

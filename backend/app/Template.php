@@ -245,6 +245,13 @@ class Template
 					$key = $item->getName();
 					$value = static::xmlToArray($item, $variables);
 					
+					/* Set key by node name */
+					$node_name = (string)$item->attributes()->node_name;
+					if ($node_name != "")
+					{
+						$key = $node_name;
+					}
+					
 					/* Patch variables */
 					$key = static::patchVariables($key, $variables);
 					$value_type = gettype($value);

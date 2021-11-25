@@ -124,6 +124,18 @@ class Docker
 	
 	
 	/**
+	 * Stop services
+	 */
+	public function removeService($service_name)
+	{
+		$url_api = "/services/" . $service_name;
+		$content = static::dockerApi($url_api, "DELETE");
+		return $content;
+	}
+	
+	
+	
+	/**
 	 * Returns balancer data
 	 */
 	public function getBalancerData($service, $service_tasks, $nodes)
