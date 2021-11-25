@@ -19,6 +19,7 @@
 import axios, { AxiosResponse } from "axios";
 import { DefineComponent } from "vue";
 import { deepClone } from "vue-helper";
+import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { CrudButton, CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 
@@ -35,6 +36,7 @@ export class Service extends CrudItem
 	docker_image: string = "";
 	docker_json: any = null;
 	docker_balancer: any = null;
+	docker_tasks: any = null;
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -55,6 +57,7 @@ export class Service extends CrudItem
 		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
 		this.docker_json = params["docker_json"];
 		this.docker_balancer = params["docker_balancer"];
+		this.docker_tasks = params["docker_tasks"];
 		super.assignValues(params);
 		return this;
 	}
@@ -72,6 +75,7 @@ export class Service extends CrudItem
 			"stack_name": this.stack_name,
 			"docker_name": this.docker_name,
 			"docker_image": this.docker_image,
+			"docker_tasks": this.docker_tasks,
 			"service_name": this.service_name,
 			"software_api_name": this.software_api_name,
 			"docker_json": this.docker_json,
@@ -87,6 +91,7 @@ export class Service extends CrudItem
 export class ServicesPageState extends CrudState
 {
 	dialog_stop: DialogState = new DialogState();
+	refresh_state: CrudResultState = new CrudResultState();
 	
 	
 	/**
@@ -279,6 +284,65 @@ export class ServicesPageState extends CrudState
 			return "Do you sure to delete service \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	
+	/**
+	 * Return api search url
+	 */
+	static getApiUrlSearch(refresh: boolean = false)
+	{
+		if (refresh)
+			return "/api/" + this.getApiObjectName() + "/crud/search/?refresh=1";
+		return "/api/" + this.getApiObjectName() + "/crud/search/";
+	}
+	
+	
+	
+	/**
+	 * Load data api
+	 */
+	static async apiLoadData(refresh: boolean = false): Promise<AxiosResponse | null>
+	{
+		let url = this.getApiUrlSearch(refresh);
+		let response:AxiosResponse | null = null;
+		
+		try
+		{
+			response = await axios.get(url);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Refresh
+	 */
+	static async refresh(component: DefineComponent)
+	{
+		let model:ServicesPageState = component.model;
+		
+		/* Ajax request */
+		model.refresh_state.setWaitResponse();
+		let response:AxiosResponse | null = await this.apiLoadData(true);
+		model.refresh_state.setAxiosResponse(response);
+		
+		/* Set result */
+		model.items = new Array();
+		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
+			model.addItems(response.data.result.items);
+		}
 	}
 	
 	

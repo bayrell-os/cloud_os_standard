@@ -77,6 +77,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 					"docker_image",
 					"docker_json",
 					"docker_balancer",
+					"docker_tasks",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -84,8 +85,12 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly(["api_name"=>"service_id"]),
 			new ReadOnly(["api_name"=>"gmtime_created"]),
 			new ReadOnly(["api_name"=>"gmtime_updated"]),
+			new ReadOnly(["api_name"=>"docker_json"]),
+			new ReadOnly(["api_name"=>"docker_balancer"]),
+			new ReadOnly(["api_name"=>"docker_tasks"]),
 			new JsonField([ "api_name" => "docker_json" ]),
 			new JsonField([ "api_name" => "docker_balancer" ]),
+			new JsonField([ "api_name" => "docker_tasks" ]),
 		];
 	}
 	
@@ -100,6 +105,25 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 			->where("is_deleted", "=", "0")
 			->orderBy("docker_name", "asc")
 		;
+	}
+	
+	
+	
+	/**
+	 * Before query
+	 */
+	public function beforeQuery()
+	{
+		parent::beforeQuery();
+		
+		if ($this->action == "actionSearch")
+		{
+			$refresh = $this->container->request->query->get("refresh");
+			if ($refresh == "1")
+			{
+				Docker::updateServices();
+			}
+		}
 	}
 	
 	

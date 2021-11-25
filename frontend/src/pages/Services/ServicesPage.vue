@@ -16,28 +16,86 @@
  *  limitations under the License.
 -->
 
-<style>
+<style lang="scss">
+@import '@/variable.scss';
 .top_buttons{
 	display: none;
+}
+.page_service{
+	.component_crud__top_buttons{
+		.component_button, .crud_result__message{
+			display: inline-block;
+			vertical-align: middle;
+		}
+		.crud_result__message{
+			padding-left: 5px;
+			padding-top: 0px;
+		}
+	}
+	.component_crud__row{
+		cursor: pointer;
+	}
+	.component_crud__table, .page_service__table_after{
+		display: inline-block;
+		vertical-align: top;
+	}
+	.page_service__table_after{
+		padding-left: 10px;
+	}
+	.page_service__task_info{
+		padding-bottom: 10px;
+		border-bottom: 1px #ccc solid;
+	}
+	.page_service__task_info:last-child{
+		border-bottom: 0px;
+	}
 }
 </style>
 
 <template>
-	<Crud v-bind:store_path="store_path">
-		<template v-slot:top_buttons><div></div></template>
-	</Crud>
-	<Dialog v-bind:store_path="store_path.concat('dialog_stop')">
-		<template v-slot:title>
-			{{ model.constructor.getMessage("dialog_stop_title", model.dialog_stop.item) }}
-		</template>
-		<template v-slot:text>
-			{{ model.constructor.getMessage("dialog_stop_text", model.dialog_stop.item) }}
-		</template>
-		<template v-slot:buttons>
-			<Button type="danger" @click="onDialogFormButtonClick('stop_yes')">Yes</Button>
-			<Button type="" @click="onDialogFormButtonClick('stop_no')">No</Button>
-		</template>
-	</Dialog>
+	<div class="page_service">
+		<Crud v-bind:store_path="store_path">
+			<template v-slot:top_buttons>
+				<Button type="primary" @click="onRefreshClick()">
+					Refresh
+				</Button>
+				<CrudResult v-bind:store_path="store_path.concat('refresh_state')" />
+			</template>
+			
+			<template v-slot:table_after>
+				<div class="page_service__table_after" v-if="model.active_item != null">
+					
+					<div class="page_service__task_info"
+						v-for="task in model.active_item.docker_tasks" :key="task.ID">
+						
+						<div>
+							ID: {{ task.ID}}
+						</div>
+						<div>
+							State: {{ task.Status.State}}
+						</div>
+						<div>
+							DesiredState: {{ task.DesiredState}}
+						</div>
+						
+					</div>
+					
+				</div>
+			</template>
+		</Crud>
+		<Dialog v-bind:store_path="store_path.concat('dialog_stop')">
+			<template v-slot:title>
+				{{ model.constructor.getMessage("dialog_stop_title", model.dialog_stop.item) }}
+			</template>
+			<template v-slot:text>
+				{{ model.constructor.getMessage("dialog_stop_text", model.dialog_stop.item) }}
+			</template>
+			<template v-slot:buttons>
+				<Button type="danger" @click="onDialogFormButtonClick('stop_yes')">Yes</Button>
+				<Button type="" @click="onDialogFormButtonClick('stop_no')">No</Button>
+			</template>
+		</Dialog>
+	</div>
 </template>
 
 <script lang="js">
@@ -55,6 +113,15 @@ export const ServicesPage =
 	mixins: [mixin],
 	methods:
 	{
+		onRowClick: function(item, index, $event)
+		{
+			Crud.methods.onRowClick.apply(this, [item, index, $event]);
+			this.model.setActiveItem(item);
+		},
+		onRefreshClick: function()
+		{
+			this.model.constructor.refresh(this);
+		},
 		onCrudEvent: function($event)
 		{
 			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "stop")

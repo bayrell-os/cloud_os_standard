@@ -47,27 +47,7 @@ class ServicesUpdate extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$current_timestamp = time();
-		$nodes = Docker::getNodes();
-		$services = Docker::getServices();
-		
-		foreach ($services as $service)
-		{
-			$result = Docker::updateServiceIntoDatabase
-			(
-				$service,
-				["nodes" => $nodes, "current_timestamp" => $current_timestamp]
-			);
-			
-			if ($result)
-			{
-				$service_name = Utils::attr($service, ["Spec", "Name"]);
-				$output->writeln("Update service " . $service_name);
-			}
-		}
-		
-		Docker::deleteOldServicesFromDatabase($current_timestamp);
-		
+		Docker::updateServices($output);
         return Command::SUCCESS;
     }
 	

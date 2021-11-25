@@ -205,6 +205,38 @@ class Docker
 	
 	
 	/**
+	 * Update services
+	 */
+	public function updateServices($output = null)
+	{
+		$current_timestamp = time();
+		$nodes = Docker::getNodes();
+		$services = Docker::getServices();
+		
+		foreach ($services as $service)
+		{
+			$result = Docker::updateServiceIntoDatabase
+			(
+				$service,
+				["nodes" => $nodes, "current_timestamp" => $current_timestamp]
+			);
+			
+			if ($result)
+			{
+				$service_name = Utils::attr($service, ["Spec", "Name"]);
+				if ($output)
+				{
+					$output->writeln("Update service " . $service_name);
+				}
+			}
+		}
+		
+		Docker::deleteOldServicesFromDatabase($current_timestamp);
+	}
+	
+	
+	
+	/**
 	 * Update service into database by json from docker api
 	 */
 	public function updateServiceIntoDatabase($service, $params)
@@ -234,7 +266,7 @@ class Docker
 		$item->enable = 1;
 		$item->timestamp = $current_timestamp;
 		$item->docker_json = json_encode($service);
-		$item->docker_tasks = json_encode($tasks);
+		$item->docker_tasks = json_encode($service_tasks);
 		$item->docker_balancer = json_encode($balancer_data);
 		
 		/* Save service */
