@@ -26,6 +26,18 @@
 	<Crud v-bind:store_path="store_path">
 		<template v-slot:top_buttons><div></div></template>
 	</Crud>
+	<Dialog v-bind:store_path="store_path.concat('dialog_stop')">
+		<template v-slot:title>
+			{{ model.constructor.getMessage("dialog_stop_title", model.dialog_stop.item) }}
+		</template>
+		<template v-slot:text>
+			{{ model.constructor.getMessage("dialog_stop_text", model.dialog_stop.item) }}
+		</template>
+		<template v-slot:buttons>
+			<Button type="danger" @click="onDialogFormButtonClick('stop_yes')">Yes</Button>
+			<Button type="" @click="onDialogFormButtonClick('stop_no')">No</Button>
+		</template>
+	</Dialog>
 </template>
 
 <script lang="js">
@@ -33,6 +45,7 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
 import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CRUD_EVENTS, CrudEvent } from "vue-helper/Crud/CrudState";
 import { ServicesPageState } from './ServicesPageState';
 
 
@@ -42,6 +55,32 @@ export const ServicesPage =
 	mixins: [mixin],
 	methods:
 	{
+		onCrudEvent: function($event)
+		{
+			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "stop")
+			{
+				this.model.showStopForm($event.crud_item);
+			}
+			else
+			{
+				Crud.methods.onCrudEvent.apply(this, [$event]);
+			}
+		},
+		onDialogFormButtonClick: function(action)
+		{
+			if (action == "stop_yes")
+			{
+				this.model.constructor.onStopForm(this);
+			}
+			else if (action == "stop_no")
+			{
+				this.model.dialog_stop.hide();
+			}
+			else
+			{
+				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
+			}
+		}
 	},
 	beforeRouteEnter(to, from, next)
 	{

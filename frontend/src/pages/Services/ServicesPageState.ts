@@ -16,8 +16,11 @@
  *  limitations under the License.
  */
 
+import axios, { AxiosResponse } from "axios";
+import { DefineComponent } from "vue";
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudButton, CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { DialogState } from "vue-helper/Crud/DialogState";
 
 
 
@@ -83,6 +86,8 @@ export class Service extends CrudItem
 
 export class ServicesPageState extends CrudState
 {
+	dialog_stop: DialogState = new DialogState();
+	
 	
 	/**
 	 * Returns new item
@@ -207,6 +212,9 @@ export class ServicesPageState extends CrudState
 		row_buttons.api_name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
+		row_buttons.component_params["buttons"] = [
+			new CrudButton().assignValues({ "type": "danger", "label": "Stop", "action": "stop" })
+		];
 		
 		/* Form save fields */
 		this.form_save.fields.push( deepClone(docker_name) );
@@ -224,7 +232,7 @@ export class ServicesPageState extends CrudState
 		this.fields_table.push( deepClone(docker_image) );
 		this.fields_table.push( deepClone(replicas) );
 		this.fields_table.push( deepClone(enable) );
-		//this.fields_table.push( deepClone(row_buttons) );
+		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
 	
@@ -254,6 +262,14 @@ export class ServicesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Service | null): string
 	{
+		if (message_type == "dialog_stop_title")
+		{
+			return "Stop service";
+		}
+		if (message_type == "dialog_stop_text")
+		{
+			return "Do you sure to stop service \"" + this.getItemName(item) + "\" ?";
+		}
 		if (message_type == "dialog_delete_title")
 		{
 			return "Delete service";
@@ -263,5 +279,79 @@ export class ServicesPageState extends CrudState
 			return "Do you sure to delete service \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	
+	/**
+	 * Return api stop url
+	 */
+	static getApiUrlStop(item: Service)
+	{
+		return "/api/" + this.getApiObjectName() + "/default/stop/" +
+			encodeURIComponent(this.getItemId(item)) + "/";
+	}
+	
+	
+	
+	/**
+	 * Show stop form
+	 */
+	showStopForm(item:CrudState)
+	{
+		this.dialog_stop.clear();
+		this.dialog_stop.setItem(item);
+		this.dialog_stop.show();
+	}
+	
+	
+	
+	/**
+	 * Stop form
+	 */
+	static async onStopForm(component: DefineComponent)
+	{
+		let model:ServicesPageState = component.model;
+		let item:Service = model.dialog_stop.item as Service;
+		
+		model.dialog_stop.setWaitResponse();
+		let response:AxiosResponse | null = await this.apiStopForm(item);
+		model.dialog_stop.setAxiosResponse(response);
+		
+		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
+		{
+			model.deleteItem(item);
+			/*model.updateItem(item, response.data.result.item);*/
+			model.dialog_stop.hide();
+		}
+	}
+	
+	
+	
+	/**
+	 * Stop form api
+	 */
+	static async apiStopForm(item:Service): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		
+		if (item)
+		{
+			let url = this.getApiUrlStop(item);
+			
+			try
+			{
+				response = await axios.post(url);
+			}
+			catch (e)
+			{
+				if (axios.isAxiosError(e))
+				{
+					response = e["response"] as AxiosResponse;
+				}
+			}
+		}
+		
+		return response;
 	}
 }

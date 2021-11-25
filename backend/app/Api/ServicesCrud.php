@@ -20,6 +20,7 @@
 
 namespace App\Api;
 
+use App\Docker;
 use App\Models\Service;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,25 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Service::class;
 	var $api_path = "services";
-
+	
+	
+	/**
+	 * Declare routes
+	 */
+	function routes(RouteCollector $routes)
+	{
+		parent::routes($routes);
+		
+		$routes->addRoute
+		(
+			'POST',
+			'/' . $this->api_path . '/default/stop/{id}/',
+			[$this, "actionStop"]
+		);
+		
+	}
+	
+	
 	
 	/**
 	 * Get rules
@@ -68,6 +87,46 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 			new JsonField([ "api_name" => "docker_json" ]),
 			new JsonField([ "api_name" => "docker_balancer" ]),
 		];
+	}
+	
+	
+	
+	/**
+	 * Find query
+	 */
+	public function findQuery($query)
+	{
+		return $query
+			->where("is_deleted", "=", "0")
+			->orderBy("docker_name", "asc")
+		;
+	}
+	
+	
+	
+	/**
+	 * Action stop
+	 */
+	function doActionStop()
+	{
+		/* Find item */
+		$this->findItem();
+		
+		/* Stop service */
+		$result = Docker::removeService($this->item->docker_name);
+		
+		/* Set enable = 0 */
+		$this->item->enable = 0;
+		$this->item->is_deleted = true;
+		$this->item->timestamp = time();
+		$this->item->save();
+		$this->item->refresh();
+		
+		/* From database */
+		$this->new_data = $this->fromDatabase($this->item);
+		
+		/* Set result */
+		$this->api_result->success(["item"=>$this->new_data], "Ok");
 	}
 	
 	
