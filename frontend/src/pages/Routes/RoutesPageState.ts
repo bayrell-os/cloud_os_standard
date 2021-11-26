@@ -16,7 +16,8 @@
  *  limitations under the License.
  */
 
-import { deepClone } from "vue-helper";
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { deepClone, isNotNull } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
@@ -121,16 +122,18 @@ export class RoutesPageState extends CrudState
 		let protocol = new FieldInfo();
 		protocol.api_name = "protocol";
 		protocol.label = "Protocol";
-		protocol.component = "Input";
-		protocol.primary = true;
+		protocol.component = "Select";
+		protocol.options = [
+			new SelectOption().assignValues({ "id": "http", "value": "HTTP" }),
+		];
 		this.fields.push( deepClone(protocol) );
 		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
 		domain_name.api_name = "domain_name";
 		domain_name.label = "Domain name";
-		domain_name.component = "Input";
-		domain_name.primary = true;
+		domain_name.component = "Select";
+		domain_name.options = [];
 		this.fields.push( deepClone(domain_name) );
 		
 		/* Route field */
@@ -138,7 +141,6 @@ export class RoutesPageState extends CrudState
 		route.api_name = "route";
 		route.label = "Route";
 		route.component = "Input";
-		route.primary = true;
 		this.fields.push( deepClone(route) );
 		
 		/* Route prefix field */
@@ -146,7 +148,6 @@ export class RoutesPageState extends CrudState
 		route_prefix.api_name = "route_prefix";
 		route_prefix.label = "Route prefix";
 		route_prefix.component = "Input";
-		route_prefix.primary = true;
 		this.fields.push( deepClone(route_prefix) );
 		
 		/* Target port field */
@@ -154,15 +155,14 @@ export class RoutesPageState extends CrudState
 		target_port.api_name = "target_port";
 		target_port.label = "Target port";
 		target_port.component = "Input";
-		target_port.primary = true;
 		this.fields.push( deepClone(target_port) );
 		
 		/* Docker name field */
 		let docker_name = new FieldInfo();
 		docker_name.api_name = "docker_name";
 		docker_name.label = "Docker name";
-		docker_name.component = "Input";
-		docker_name.primary = true;
+		docker_name.component = "Select";
+		docker_name.options = [];
 		this.fields.push( deepClone(docker_name) );
 		
 		/* Enable field */
@@ -202,8 +202,8 @@ export class RoutesPageState extends CrudState
 		enable.component = "SelectLabel";
 		route.component = "Label";
 		protocol.component = "Label";
-		docker_name.component = "Label";
-		domain_name.component = "Label";
+		docker_name.component = "SelectLabel";
+		domain_name.component = "SelectLabel";
 		target_port.component = "Label";
 		route_prefix.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
@@ -253,5 +253,93 @@ export class RoutesPageState extends CrudState
 			return "Do you sure to delete route \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	/**
+	 * After api
+	 */
+	static async afterApi(model: CrudState, kind: string, response:AxiosResponse | null)
+	{
+		await super.afterApi(model, kind, response);
+		
+		if (kind == "listPageLoadData")
+		{
+			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+			{
+				/* Domains */
+				if (isNotNull(response.data.result.dictionary.domains) &&
+					response.data.result.dictionary.domains instanceof Array
+				)
+				{
+					let domains: any = response.data.result.dictionary.domains.map(
+						function (domain: any)
+						{
+							return {
+								"id": domain["domain_name"],
+								"value": domain["domain_name"],
+							};
+						}
+					);
+					
+					/* Fields table */
+					for (let i=0; i<model.fields_table.length; i++)
+					{
+						let field: FieldInfo = model.fields_table[i];
+						if (field.api_name == "domain_name")
+						{
+							field.options = deepClone(domains);
+						}
+					}
+					
+					/* Form save */
+					for (let i=0; i<model.form_save.fields.length; i++)
+					{
+						let field: FieldInfo = model.form_save.fields[i];
+						if (field.api_name == "domain_name")
+						{
+							field.options = deepClone(domains);
+						}
+					}
+				}
+				
+				/* Services */
+				if (isNotNull(response.data.result.dictionary.services) &&
+					response.data.result.dictionary.services instanceof Array
+				)
+				{
+					let services: any = response.data.result.dictionary.services.map(
+						function (domain: any)
+						{
+							return {
+								"id": domain["docker_name"],
+								"value": domain["docker_name"],
+							};
+						}
+					);
+					
+					/* Fields table */
+					for (let i=0; i<model.fields_table.length; i++)
+					{
+						let field: FieldInfo = model.fields_table[i];
+						if (field.api_name == "docker_name")
+						{
+							field.options = deepClone(services);
+						}
+					}
+					
+					/* Form save */
+					for (let i=0; i<model.form_save.fields.length; i++)
+					{
+						let field: FieldInfo = model.form_save.fields[i];
+						if (field.api_name == "docker_name")
+						{
+							field.options = deepClone(services);
+						}
+					}
+				}
+			}
+		}
+		
 	}
 }

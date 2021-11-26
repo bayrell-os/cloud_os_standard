@@ -20,12 +20,15 @@
 
 namespace App\Api;
 
+use App\Models\Domain;
 use App\Models\Route;
+use App\Models\Service;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\Rules\AllowFields;
+use TinyPHP\Rules\Dictionary;
 use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
@@ -64,7 +67,24 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly(["api_name"=>"id"]),
 			new ReadOnly(["api_name"=>"gmtime_created"]),
 			new ReadOnly(["api_name"=>"gmtime_updated"]),
-			new JsonField(["api_name"=>"protocol_data"])
+			new JsonField(["api_name"=>"protocol_data"]),
+			new Dictionary([
+				"api_name" => "domains",
+				"class_name" => Domain::class,
+				"fields" =>
+				[
+					"domain_name",
+				],
+			]),
+			new Dictionary([
+				"api_name" => "services",
+				"class_name" => Service::class,
+				"fields" =>
+				[
+					"service_id",
+					"docker_name",
+				],
+			]),
 		];
 	}
 

@@ -332,6 +332,9 @@ export class ServicesPageState extends CrudState
 	{
 		let model:ServicesPageState = component.model;
 		
+		let res:boolean = await this.beforeApi(model, "refresh");
+		if (!res) return;
+		
 		/* Ajax request */
 		model.refresh_state.setWaitResponse();
 		let response:AxiosResponse | null = await this.apiLoadData(true);
@@ -351,6 +354,8 @@ export class ServicesPageState extends CrudState
 			}
 			
 		}
+		
+		await this.afterApi(model, "refresh", response);
 	}
 	
 	
@@ -386,6 +391,9 @@ export class ServicesPageState extends CrudState
 		let model:ServicesPageState = component.model;
 		let item:Service = model.dialog_stop.item as Service;
 		
+		let res:boolean = await this.beforeApi(model, "onStopForm");
+		if (!res) return;
+		
 		model.dialog_stop.setWaitResponse();
 		let response:AxiosResponse | null = await this.apiStopForm(item);
 		model.dialog_stop.setAxiosResponse(response);
@@ -396,6 +404,8 @@ export class ServicesPageState extends CrudState
 			/*model.updateItem(item, response.data.result.item);*/
 			model.dialog_stop.hide();
 		}
+		
+		await this.afterApi(model, "onStopForm", response);
 	}
 	
 	

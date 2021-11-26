@@ -21,6 +21,7 @@
 namespace App\Api;
 
 use App\Docker;
+use App\Models\Domain;
 use App\Models\Service;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,6 +134,8 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	public function afterQuery()
 	{
+		parent::afterQuery();
+		
 		if ($this->action == "actionSearch")
 		{
 			$items = $this->api_result->result["items"];
