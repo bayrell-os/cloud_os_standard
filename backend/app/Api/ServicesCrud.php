@@ -129,6 +129,47 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
+	 * After query
+	 */
+	public function afterQuery()
+	{
+		if ($this->action == "actionSearch")
+		{
+			$items = $this->api_result->result["items"];
+			foreach ($items as $key => $item)
+			{
+				if (isset($item["docker_tasks"]) && $item["docker_tasks"] != null)
+				{
+					$this->api_result->result["items"][$key]["docker_tasks"] = array_map(
+						function($task)
+						{
+							$UpdatedAt = substr($task["UpdatedAt"], 0, 19) . "Z";
+							$task["UpdatedTimestamp"] = strtotime($UpdatedAt);
+							$task["Updated"] = date("Y-m-d H:i:s", $task["UpdatedTimestamp"]);
+							return $task;
+						},
+						$this->api_result->result["items"][$key]["docker_tasks"]
+					);
+					
+					usort
+					(
+						$this->api_result->result["items"][$key]["docker_tasks"],
+						function($task1, $task2)
+						{
+							$task1_time = $task1["UpdatedTimestamp"];
+							$task2_time = $task2["UpdatedTimestamp"];
+							$res = ($task1_time > $task2_time) ? -1 : 1;
+							return $res;
+						}
+					);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/**
 	 * Action stop
 	 */
 	function doActionStop()

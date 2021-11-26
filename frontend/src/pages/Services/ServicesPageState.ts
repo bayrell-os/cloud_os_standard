@@ -342,6 +342,14 @@ export class ServicesPageState extends CrudState
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
 			model.addItems(response.data.result.items);
+			
+			let index:number = (model.active_item_pk) ?
+				model.findItemByPrimaryKey(model.active_item_pk) : -1;
+			if (index >= 0)
+			{
+				model.setActiveItem( model.items[index] );
+			}
+			
 		}
 	}
 	

@@ -43,11 +43,18 @@
 		padding-left: 10px;
 	}
 	.page_service__task_info{
+		padding-top: 10px;
 		padding-bottom: 10px;
 		border-bottom: 1px #ccc solid;
 	}
+	.page_service__task_info:first-child{
+		padding-top: 0px;
+	}
 	.page_service__task_info:last-child{
 		border-bottom: 0px;
+	}
+	.page_service__task_info_row{
+		padding-bottom: 5px;
 	}
 }
 </style>
@@ -68,14 +75,20 @@
 					<div class="page_service__task_info"
 						v-for="task in model.active_item.docker_tasks" :key="task.ID">
 						
-						<div>
+						<div class="page_service__task_info_row">
 							ID: {{ task.ID}}
 						</div>
-						<div>
-							State: {{ task.Status.State}}
+						<div class="page_service__task_info_row">
+							State: {{ task.Status.State }}
 						</div>
-						<div>
-							DesiredState: {{ task.DesiredState}}
+						<div class="page_service__task_info_row">
+							DesiredState: {{ task.DesiredState }}
+						</div>
+						<div class="page_service__task_info_row">
+							Updated: {{ task.Updated }}
+						</div>
+						<div class="page_service__task_info_row" v-if="task.Status.State == 'failed'">
+							Error: {{ task.Status.Err }}
 						</div>
 						
 					</div>
