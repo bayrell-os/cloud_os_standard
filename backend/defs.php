@@ -20,6 +20,8 @@
 
 use Psr\Container\ContainerInterface;
 
+libxml_use_internal_errors(true);
+
 define("ROOT_PATH", __DIR__);
 $_SERVER["APP_DEBUG"] = true;
 

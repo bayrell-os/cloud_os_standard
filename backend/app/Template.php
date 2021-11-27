@@ -38,6 +38,23 @@ class Template
 	
 	
 	/**
+	 * Returns xml error
+	 */
+	static function getXmlError($err)
+	{
+		return array_map
+		(
+			function ($item)
+			{
+				return "[" . $item->line . ":" . $item->column . "] " . $item->message;
+			},
+			$err
+		);
+	}
+	
+	
+	
+	/**
 	 * Load xml
 	 */
 	static function loadXml($xml_str)

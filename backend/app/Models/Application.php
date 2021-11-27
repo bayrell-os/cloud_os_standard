@@ -184,7 +184,20 @@ class Application extends Model
 					{
 						Template::patchXml($xml, $patch_xml);
 					}
+					else
+					{
+						$err = libxml_get_errors();
+						$err = Template::getXmlError($err);
+						throw new \Exception("Error modificator " . $modificator["name"] . "\n" . implode("\n", $err));
+					}
 				}
+			}
+			
+			else
+			{
+				$err = libxml_get_errors();
+				$err = Template::getXmlError($err);
+				throw new \Exception("Error template " . $template->name . "\n" . implode("\n", $err));
 			}
 			
 			/* Convert to xml */

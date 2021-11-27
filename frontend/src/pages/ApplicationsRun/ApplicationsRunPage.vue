@@ -182,6 +182,14 @@
 		<div class="applications_run_page__right">
 			<CodeMirror
 				v-bind:value="model.application.yaml"
+				v-bind:crud="{
+					field:
+					{
+						component_params:{
+							mode: 'yaml'
+						}
+					}
+				}"
 			/>
 		</div>
 		

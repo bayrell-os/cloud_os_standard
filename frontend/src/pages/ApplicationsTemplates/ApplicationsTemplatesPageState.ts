@@ -129,6 +129,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 		content.api_name = "content";
 		content.label = "Content";
 		content.component = "CodeMirror";
+		content.component_params["lang"] = "xml";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */
