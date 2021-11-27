@@ -128,6 +128,17 @@ export class RoutesPageState extends CrudState
 		];
 		this.fields.push( deepClone(protocol) );
 		
+		/* Protocol field */
+		let web_socket = new FieldInfo();
+		web_socket.api_name = "protocol_data.websocket";
+		web_socket.label = "Web socket";
+		web_socket.component = "Select";
+		web_socket.options = [
+			new SelectOption().assignValues({ "id": 0, "value": "No" }),
+			new SelectOption().assignValues({ "id": 1, "value": "Yes" }),
+		];
+		this.fields.push( deepClone(web_socket) );
+		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
 		domain_name.api_name = "domain_name";
@@ -192,6 +203,7 @@ export class RoutesPageState extends CrudState
 		/* Form fields */
 		this.form_save.fields.push( deepClone(enable) );
 		this.form_save.fields.push( deepClone(protocol) );
+		this.form_save.fields.push( deepClone(web_socket) );
 		this.form_save.fields.push( deepClone(docker_name) );
 		this.form_save.fields.push( deepClone(route) );
 		this.form_save.fields.push( deepClone(domain_name) );

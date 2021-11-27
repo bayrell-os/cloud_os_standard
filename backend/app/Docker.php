@@ -417,7 +417,7 @@ class Docker
 				$upstream_name = $route["target_port"] . "." . $route["docker_name"]
 					. ".cloud_network.example";
 				
-				$protocol_data = json_decode($route["protocol_data"]);
+				$protocol_data = json_decode($route["protocol_data"], true);
 				$has_websocket = isset($protocol_data["websocket"]) ?
 					$protocol_data["websocket"] : false;
 					
@@ -426,41 +426,41 @@ class Docker
 				if ($domain_route_url == "") $domain_route_url = "/";
 				if ($domain_route_prefix == "/") $domain_route_prefix = "";
 				
-				$nginx_route .= "\tlocation " . $domain_route_url . " {\n";
-				$nginx_route .= "\t\tproxy_pass http://" . $upstream_name .
+				$nginx_route .= "location " . $domain_route_url . " {\n";
+				$nginx_route .= "\tproxy_pass http://" . $upstream_name .
 					$domain_route_prefix . ";\n";
-				$nginx_route .= "\t\tinclude proxy_params;\n";
+				$nginx_route .= "\tinclude proxy_params;\n";
 				
 				/* Add websocket settings */
 				if ($has_websocket)
 				{
-					$nginx_route .= "proxy_http_version 1.1;";
-					$nginx_route .= "proxy_set_header Upgrade $http_upgrade;";
-					$nginx_route .= "proxy_set_header Connection \"upgrade\";";
+					$nginx_route .= "\tproxy_http_version 1.1;\n";
+					$nginx_route .= "\tproxy_set_header Upgrade $http_upgrade;\n";
+					$nginx_route .= "\tproxy_set_header Connection \"upgrade\";\n";
 				}
 				
 				/* Add route prefix */
 				if ($domain_route_prefix != "")
 				{
-					$nginx_route .= "\t\tproxy_set_header X-ROUTE-PREFIX \"" .
+					$nginx_route .= "\tproxy_set_header X-ROUTE-PREFIX \"" .
 						$domain_route_prefix . "\";\n";
 				}
 				
 				/* Add space id */
 				if ($domain["space_id"] != "")
 				{
-					$nginx_route .= "\t\tproxy_set_header X-SPACE-ID \"" .
+					$nginx_route .= "\tproxy_set_header X-SPACE-ID \"" .
 						$domain["space_id"] . "\";\n";
 				}
 				
 				/* Add layer uid */
 				if ($route["layer_uid"] != "")
 				{
-					$nginx_route .= "\t\tproxy_set_header X-LAYER-UID \"" .
+					$nginx_route .= "\tproxy_set_header X-LAYER-UID \"" .
 						$route["layer_uid"] . "\";\n";
 				}
 				
-				$nginx_route .= "\t}";
+				$nginx_route .= "}";
 				$nginx_routes[] = $nginx_route;
 			}
 			
