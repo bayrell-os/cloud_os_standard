@@ -39,15 +39,26 @@ class NginxFile extends Model
 	{
 		/* Update nginx file */
 		$item = NginxFile::firstOrNew(['name' => $file_name]);
-		$item->name = $file_name;
-		$item->content = $content;
-		$item->enable = true;
-		$item->is_deleted = false;
+		if ($item->name != $file_name) $item->name = $file_name;
+		if ($item->content != $content) $item->content = $content;
+		if ($item->enable != true) $item->enable = true;
+		if ($item->is_deleted != false) $item->is_deleted = false;
 		
 		/* Save service */
 		if ($item->isDirty())
 		{
 			$item->save();
 		}
+	}
+	
+	
+	
+	/**
+	 * Save the model to the database.
+	 */
+	public function save(array $options = [])
+	{
+		$this->timestamp = time();
+		parent::save($options);
 	}
 }

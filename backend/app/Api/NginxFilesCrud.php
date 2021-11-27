@@ -60,5 +60,42 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
-
+	
+	
+	
+	/**
+	 * Find query
+	 */
+	public function findQuery($query)
+	{
+		return $query
+			->where("is_deleted", "=", "0")
+			->orderBy("name", "asc")
+		;
+	}
+	
+	
+	
+	/**
+	 * Do action delete
+	 */
+	function doActionDelete()
+	{
+		/* Find item */
+		$this->findItem();
+		
+		/* Delete from database */
+		if ($this->item)
+		{
+			$this->item->is_deleted = true;
+			$this->item->save();
+		}
+		
+		/* From database */
+		$this->new_data = $this->fromDatabase($this->item);
+		
+		/* Set result */
+		$this->api_result->success(["item"=>$this->new_data], "Ok");
+	}
+	
 }
