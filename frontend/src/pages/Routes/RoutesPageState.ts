@@ -17,7 +17,7 @@
  */
 
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { deepClone, isNotNull } from "vue-helper";
+import { deepClone, notNull } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
@@ -280,7 +280,7 @@ export class RoutesPageState extends CrudState
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
 				/* Domains */
-				if (isNotNull(response.data.result.dictionary.domains) &&
+				if (notNull(response.data.result.dictionary.domains) &&
 					response.data.result.dictionary.domains instanceof Array
 				)
 				{
@@ -316,7 +316,7 @@ export class RoutesPageState extends CrudState
 				}
 				
 				/* Services */
-				if (isNotNull(response.data.result.dictionary.services) &&
+				if (notNull(response.data.result.dictionary.services) &&
 					response.data.result.dictionary.services instanceof Array
 				)
 				{

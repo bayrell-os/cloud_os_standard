@@ -114,7 +114,7 @@ export const App =
 				{ "name": "app:main", "title": "Main" },
 				
 				{
-					"title": "App",
+					"title": "Docker Swarm",
 					"items":
 					[
 						{ "name": "app:applications:status", "title": "Applications",
@@ -122,16 +122,16 @@ export const App =
 						},
 						{ "name": "app:services", "title": "Docker services" },
 						{ "name": "app:applications:files", "title": "Docker yaml Files" },
-						{ "name": "app:applications:templates", "title": "Templates" },
-						{ "name": "app:applications:modificators", "title": "Modificators" },
 					]
 				},
 				
 				{
-					"title": "Docker Swarm",
+					"title": "Applications",
 					"items":
 					[
-						
+						{ "name": "app:marketplace", "title": "Market place" },
+						{ "name": "app:applications:templates", "title": "Templates" },
+						{ "name": "app:applications:modificators", "title": "Modificators" },
 					]
 				},
 				

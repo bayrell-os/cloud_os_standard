@@ -28,8 +28,8 @@
 			<Form v-bind:store_path="store_path.concat('form_save')">
 				<template v-slot:buttons>
 					<!--<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>-->
-					<Button type="success" @click="onDialogFormButtonClick('compose')">Compose</Button>
-					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+					<Button type="success" @click="onDialogFormButtonClick('form_compose')">Compose</Button>
+					<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
 				</template>
 			</Form>
 		</template>
@@ -71,7 +71,7 @@ export const ApplicationsFilesPage =
 	{
 		onDialogFormButtonClick: function(action)
 		{
-			if (action == "compose")
+			if (action == "form_compose")
 			{
 				this.model.dialog_compose.show();
 			}

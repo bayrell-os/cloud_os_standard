@@ -38,6 +38,14 @@ const routes: Array<RouteRecordRaw> =
 		props: { store_path: ["MainPage"] },
 	},
 	
+	/* Market placae */
+	{
+		path: '/marketplace/',
+		name: 'app:marketplace',
+		component: NotFoundPage,
+		props: { store_path: ["NotFoundPage"] },
+	},
+	
 	/* Status */
 	{
 		path: '/applications/status/',

@@ -8,6 +8,7 @@
 		"noImplicitThis": true,
 		"noImplicitReturns": true,
 		"experimentalDecorators": true,
+		"strictPropertyInitialization": false,
 		"sourceMap": true,
 		// "rootDir": ".",
 		"baseUrl": ".",

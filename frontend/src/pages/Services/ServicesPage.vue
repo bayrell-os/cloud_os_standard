@@ -87,7 +87,7 @@
 						<div class="page_service__task_info_row">
 							Updated: {{ task.Updated }}
 						</div>
-						<div class="page_service__task_info_row" v-if="isNotNull(task.Status.Err)">
+						<div class="page_service__task_info_row" v-if="notNull(task.Status.Err)">
 							Error: {{ task.Status.Err }}
 						</div>
 						
@@ -114,7 +114,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, onRouteUpdate, isNotNull } from "vue-helper";
+import { mixin, componentExtend, onRouteUpdate, notNull } from "vue-helper";
 import { Crud } from "vue-helper/Crud/Crud.vue";
 import { CRUD_EVENTS, CrudEvent } from "vue-helper/Crud/CrudState";
 import { ServicesPageState } from './ServicesPageState';
@@ -126,7 +126,7 @@ export const ServicesPage =
 	mixins: [mixin],
 	methods:
 	{
-		isNotNull,
+		notNull,
 		onRowClick: function(item, index, $event)
 		{
 			Crud.methods.onRowClick.apply(this, [item, index, $event]);

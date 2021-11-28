@@ -23,6 +23,21 @@
 
 <template>
 	<Crud v-bind:store_path="store_path" v-bind:action="action"></Crud>
+	<Dialog v-bind:store_path="store_path.concat('dialog_run')"
+		width="800px" buttons="false"
+	>
+		<template v-slot:title>
+			{{ model.constructor.getMessage("form_run_title", model.form_run.item) }}
+		</template>
+		<template v-slot:content>
+			<Form v-bind:store_path="store_path.concat('form_run')">
+				<template v-slot:buttons>
+					<Button type="success" @click="onDialogFormButtonClick('form_run')">Run</Button>
+					<Button type="" @click="onDialogFormButtonClick('form_run_cancel')">Cancel</Button>
+				</template>
+			</Form>
+		</template>
+	</Dialog>
 </template>
 
 
@@ -31,6 +46,7 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
 import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 
 
 
@@ -40,12 +56,38 @@ import { Crud } from "vue-helper/Crud/Crud.vue";
 export const ApplicationsTemplatesPage =
 {
 	name: "ApplicationsTemplatesPage",
-	mixins: [mixin],
+	mixins: [mixin, Crud],
 	components:
 	{
 	},
 	methods:
 	{
+		onCrudEvent: function($event)
+		{
+			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "run")
+			{
+				this.model.showRunForm($event.crud_item);
+			}
+			else
+			{
+				Crud.methods.onCrudEvent.apply(this, [$event]);
+			}
+		},
+		onDialogFormButtonClick: function(action)
+		{
+			if (action == "form_run")
+			{
+				
+			}
+			else if (action == "form_run_cancel")
+			{
+				this.model.dialog_run.hide();
+			}
+			else
+			{
+				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
+			}
+		}
 	},
 	beforeRouteEnter(to, from, next)
 	{

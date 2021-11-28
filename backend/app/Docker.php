@@ -435,7 +435,7 @@ class Docker
 				if ($has_websocket)
 				{
 					$nginx_route .= "\tproxy_http_version 1.1;\n";
-					$nginx_route .= "\tproxy_set_header Upgrade $http_upgrade;\n";
+					$nginx_route .= "\tproxy_set_header Upgrade \$http_upgrade;\n";
 					$nginx_route .= "\tproxy_set_header Connection \"upgrade\";\n";
 				}
 				

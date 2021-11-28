@@ -17,7 +17,9 @@
  */
 
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
+import { FormState } from "vue-helper/Crud/FormState";
 
 
 export class ApplicationTemplate extends CrudItem
@@ -30,40 +32,42 @@ export class ApplicationTemplate extends CrudItem
 	
 	
 	/**
-	 * From object
+	 * Convert value
 	 */
-	assignValues(params:Record<string, any>): ApplicationTemplate
+	convertValue(key:string, value:any)
 	{
-		this.id = Number(params["id"] || this.id);
-		this.name = String(params["name"] || this.name);
-		this.content = String(params["content"] || this.content);
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		super.assignValues(params);
-		return this;
+		if (key == "id") return Number(value);
+		if (key == "name") return String(value);
+		if (key == "content") return String(value);
+		if (key == "gmtime_created") return String(value);
+		if (key == "gmtime_updated") return String(value);
+		return super.convertValue(key, value);
 	}
 	
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"id": this.id,
-			"name": this.name,
-			"content": this.content,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
-	}
 }
 
 
 
 export class ApplicationsTemplatesPageState extends CrudState
 {
+	form_run: FormState;
+	dialog_run: DialogState;
+	
+	
+	/**
+	 * Init class
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.form_run = new FormState();
+		this.dialog_run = new DialogState();
+		
+		/* Init class */
+		super.init(params);
+	}
+	
+	
 	
 	/**
 	 * Returns new item
@@ -143,6 +147,11 @@ export class ApplicationsTemplatesPageState extends CrudState
 		row_buttons.api_name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
+		row_buttons.component_params["buttons"] = [
+			new CrudButton().assignValues({ "type": "success", "label": "Run", "action": "run" }),
+			new CrudButton().assignValues({ "type": "default", "label": "Edit", "action": "edit", "route": "app:applications:templates:edit" }),
+			new CrudButton().assignValues({ "type": "danger", "label": "Delete", "action": "delete" }),
+		];
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(name) );
@@ -154,6 +163,13 @@ export class ApplicationsTemplatesPageState extends CrudState
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(row_buttons) );
+		
+		/* App name field */
+		let app_name = new FieldInfo();
+		app_name.api_name = "app_name";
+		app_name.label = "app_name";
+		app_name.component = "Input";
+		this.form_run.fields.push( deepClone(app_name) );
 	}
 	
 	
@@ -183,6 +199,10 @@ export class ApplicationsTemplatesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: ApplicationTemplate | null): string
 	{
+		if (message_type == "form_run_title")
+		{
+			return "Do you sure to run application \"" + this.getItemName(item) + "\" ?";
+		}
 		if (message_type == "dialog_delete_title")
 		{
 			return "Delete application";
@@ -194,5 +214,17 @@ export class ApplicationsTemplatesPageState extends CrudState
 		return super.getMessage(message_type, item);
 	}
 	
+	
+	
+	/**
+	 * Show run form
+	 */
+	showRunForm(item:any)
+	{
+		this.form_run.clear();
+		this.form_run.setItem(item);
+		this.dialog_run.clear();
+		this.dialog_run.show();
+	}
 	
 }
