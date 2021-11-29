@@ -74,7 +74,7 @@ export class ApplicationsRunPageState extends BaseObject
 		let response: AxiosResponse | null = null;
 		let app_id = route.to.params.id;
 		
-		route.setPageTitle("Edit app");
+		route.setPageTitle("Edit application");
 		
 		/* Load app id */
 		response = await ApplicationsStatusPageState.apiLoadItem(app_id);

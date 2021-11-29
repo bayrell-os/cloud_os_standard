@@ -64,9 +64,9 @@ export const ApplicationsTemplatesPage =
 	{
 		onCrudEvent: function($event)
 		{
-			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "run")
+			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "create_app")
 			{
-				this.model.showRunForm($event.crud_item);
+				this.model.showCreateAppForm($event.crud_item);
 			}
 			else
 			{
@@ -77,7 +77,26 @@ export const ApplicationsTemplatesPage =
 		{
 			if (action == "form_run")
 			{
-				this.model.showRunForm()
+				(async function(component)
+				{
+					let response = await component.model.doCreateAppForm();
+					
+					if (
+						response &&
+						typeof(response.data) == "object" &&
+						response.data.error.code == 1
+					)
+					{
+						let id = response.data.result.item["id"];
+						component.$router.push({
+							name: "app:applications:status:edit",
+							params: {
+								id
+							}
+						});
+					}
+					
+				})(this);
 			}
 			else if (action == "form_run_cancel")
 			{

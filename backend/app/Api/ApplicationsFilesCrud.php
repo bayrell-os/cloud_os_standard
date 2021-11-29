@@ -43,6 +43,8 @@ class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
 	function routes(RouteCollector $routes)
 	{
 		parent::routes($routes);
+		
+		/* Compose */
 		$routes->addRoute
 		(
 			'POST',

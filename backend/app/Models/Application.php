@@ -46,12 +46,15 @@ class Application extends Model
 	{
 		$vars = $this->variables;
 		$current_object_variables = [];
-		foreach ($vars as $var)
+		if (gettype($vars) == "array")
 		{
-			$var_name = isset($var["name"]) ? $var["name"] : "";
-			if ($var_name)
+			foreach ($vars as $var)
 			{
-				$current_object_variables[$var_name] = $var;
+				$var_name = isset($var["name"]) ? $var["name"] : "";
+				if ($var_name)
+				{
+					$current_object_variables[$var_name] = $var;
+				}
 			}
 		}
 		return $current_object_variables;
@@ -78,6 +81,17 @@ class Application extends Model
 					if (isset($current_object_variables[$var_name]))
 					{
 						$result[$var_name] = $current_object_variables[$var_name];
+					}
+					else
+					{
+						$var_name = Template::clearValue((string)$xml_variable->name);
+						$var_label = Template::getNames($xml_variable, "label");
+						$result[$var_name] =
+						[
+							"name" => $var_name,
+							"value" => "",
+							"label" => $var_label,
+						];
 					}
 				}
 			}
@@ -170,25 +184,31 @@ class Application extends Model
 		/* Find modificators */
 		$modificators = $this->getModificators();
 		
-		if ($template && count($modificators) > 0)
+		if ($template)
 		{
 			$xml = $template["content"];
 			$xml = Template::loadXml($xml);
 			if ($xml)
 			{
-				foreach ($modificators as $modificator)
+				if (count($modificators) > 0)
 				{
-					$patch_xml = $modificator["content"];
-					$patch_xml = Template::loadXml($patch_xml);
-					if ($patch_xml)
+					foreach ($modificators as $modificator)
 					{
-						Template::patchXml($xml, $patch_xml);
-					}
-					else
-					{
-						$err = libxml_get_errors();
-						$err = Template::getXmlError($err);
-						throw new \Exception("Error modificator " . $modificator["name"] . "\n" . implode("\n", $err));
+						$patch_xml = $modificator["content"];
+						$patch_xml = Template::loadXml($patch_xml);
+						if ($patch_xml)
+						{
+							Template::patchXml($xml, $patch_xml);
+						}
+						else
+						{
+							$err = libxml_get_errors();
+							$err = Template::getXmlError($err);
+							throw new \Exception(
+								"Error modificator " .
+								$modificator["name"] . "\n" . implode("\n", $err)
+							);
+						}
 					}
 				}
 			}
@@ -197,7 +217,10 @@ class Application extends Model
 			{
 				$err = libxml_get_errors();
 				$err = Template::getXmlError($err);
-				throw new \Exception("Error template " . $template->name . "\n" . implode("\n", $err));
+				throw new \Exception(
+					"Error template " . $template->name .
+					"\n" . implode("\n", $err)
+				);
 			}
 			
 			/* Convert to xml */

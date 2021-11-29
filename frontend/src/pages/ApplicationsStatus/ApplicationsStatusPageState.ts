@@ -71,7 +71,10 @@ export class ApplicationStatus extends CrudItem
 		else if (key == "content") this.content = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
-		else if (key == "template") this.template = (value) ? new ApplicationTemplate(value) : null;
+		else if (key == "template")
+		{
+			this.template = (value) ? new ApplicationTemplate(value) : null;
+		}
 		else if (key == "modificators")
 			this.modificators = value.map
 			(

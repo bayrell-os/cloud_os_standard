@@ -16,6 +16,7 @@
  *  limitations under the License.
  */
 
+import axios, { AxiosResponse } from "axios";
 import { deepClone } from "vue-helper";
 import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
@@ -24,11 +25,28 @@ import { FormState } from "vue-helper/Crud/FormState";
 
 export class ApplicationTemplate extends CrudItem
 {
-	id: number = 0;
-	name: string = "";
-	content: string = "";
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	id: number;
+	name: string;
+	content: string;
+	gmtime_created: string;
+	gmtime_updated: string;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.id = 0;
+		this.name = "";
+		this.content = "";
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
+	}
 	
 	
 	/**
@@ -148,7 +166,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [
-			new CrudButton().assignValues({ "type": "success", "label": "Run", "action": "run" }),
+			new CrudButton().assignValues({ "type": "success", "label": "Create app", "action": "create_app" }),
 			new CrudButton().assignValues({ "type": "default", "label": "Edit", "action": "edit", "route": "app:applications:templates:edit" }),
 			new CrudButton().assignValues({ "type": "danger", "label": "Delete", "action": "delete" }),
 		];
@@ -201,7 +219,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	{
 		if (message_type == "form_run_title")
 		{
-			return "Do you sure to run application \"" + item.template_name + "\" ?";
+			return "Do you sure to create application \"" + item.template_name + "\" ?";
 		}
 		if (message_type == "dialog_delete_title")
 		{
@@ -217,9 +235,9 @@ export class ApplicationsTemplatesPageState extends CrudState
 	
 	
 	/**
-	 * Show run form
+	 * Show create app form
 	 */
-	showRunForm(item:any)
+	showCreateAppForm(item:any)
 	{
 		let res = {
 			"name": "",
@@ -230,6 +248,60 @@ export class ApplicationsTemplatesPageState extends CrudState
 		this.form_run.setItem(res);
 		this.dialog_run.clear();
 		this.dialog_run.show();
+	}
+	
+	
+	
+	/**
+	 * Do create app
+	 */
+	async doCreateAppForm()
+	{
+		let response:AxiosResponse | null = null;
+		let item: any = this.form_run.item;
+		
+		if (item != null)
+		{
+			this.dialog_run.setWaitResponse();
+			response = await (this.constructor as any).apiCreateApp(item);
+			this.dialog_run.setAxiosResponse(response);
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Do run
+	 */
+	static async apiCreateApp(item: any)
+	{
+		let response:AxiosResponse | null = null;
+		let url = this.getApiCreateApp(item);
+		try
+		{
+			response = await axios.post(url, {"item": item});
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Return api update url
+	 */
+	static getApiCreateApp(item: any)
+	{
+		return "/api/" + this.getApiObjectName() + "/default/create_app/" +
+			encodeURIComponent(item.template_id) + "/";
 	}
 	
 }
