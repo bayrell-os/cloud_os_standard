@@ -23,63 +23,64 @@ import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/Cr
 
 export class Route extends CrudItem
 {
-	id: number = 0;
-	enable: boolean = false;
-	protocol: string = "";
+	id: number;
+	enable: boolean;
+	protocol: string;
 	protocol_data: any;
-	domain_name: string = "";
-	route: string = "";
-	docker_name: string = "";
-	target_port: number = 0;
-	route_prefix: string = "";
-	layer_uid: string = "";
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	domain_name: string;
+	route: string;
+	docker_name: string;
+	target_port: number;
+	route_prefix: string;
+	layer_uid: string;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
 	
 	/**
-	 * From object
+	 * Init
 	 */
-	assignValues(params:Record<string, any>): Route
+	init(params:any)
 	{
-		this.id = Number(params["id"] || this.id);
-		this.enable = params["enable"] == 1 || params["enable"] == "true";
-		this.protocol = String(params["protocol"] || this.protocol);
-		this.protocol_data = params["protocol_data"] || this.protocol_data;
-		this.domain_name = String(params["domain_name"] || this.domain_name);
-		this.route = String(params["route"] || this.route);
-		this.docker_name = String(params["docker_name"] || this.docker_name);
-		this.route_prefix = String(params["route_prefix"] || this.route_prefix);
-		this.layer_uid = String(params["layer_uid"] || this.layer_uid);
-		this.target_port = Number(params["target_port"] || this.target_port);
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		super.assignValues(params);
-		return this;
+		/* Init variables */
+		this.id = 0;
+		this.enable = false;
+		this.protocol = "";
+		this.protocol_data;
+		this.domain_name = "";
+		this.route = "";
+		this.docker_name = "";
+		this.target_port = 0;
+		this.route_prefix = "";
+		this.layer_uid = "";
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
 	}
+	
 	
 	
 	/**
-	 * Returns values
+	 * Assign value
 	 */
-	getValues(): Record<string, any>
+	assignValue(key:string, value:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"id": this.id,
-			"enable": this.enable,
-			"protocol": this.protocol,
-			"protocol_data": this.protocol_data,
-			"domain_name": this.domain_name,
-			"route": this.route,
-			"docker_name": this.docker_name,
-			"route_prefix": this.route_prefix,
-			"layer_uid": this.layer_uid,
-			"target_port": this.target_port,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
+		if (key == "id") this.id = Number(value);
+		else if (key == "enable") this.enable = value == "1" || value == "true";
+		else if (key == "protocol") this.protocol = String(value);
+		else if (key == "domain_name") this.domain_name = String(value);
+		else if (key == "route") this.route = String(value);
+		else if (key == "docker_name") this.docker_name = String(value);
+		else if (key == "route_prefix") this.route_prefix = String(value);
+		else if (key == "layer_uid") this.layer_uid = String(value);
+		else if (key == "target_port") this.target_port = Number(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
 	}
+	
 }
 
 
@@ -268,12 +269,13 @@ export class RoutesPageState extends CrudState
 	}
 	
 	
+	
 	/**
 	 * After api
 	 */
-	static async afterApi(model: CrudState, kind: string, response:AxiosResponse | null)
+	async afterApi(kind: string, response:AxiosResponse | null)
 	{
-		await super.afterApi(model, kind, response);
+		await super.afterApi(kind, response);
 		
 		if (kind == "listPageLoadData")
 		{
@@ -295,9 +297,9 @@ export class RoutesPageState extends CrudState
 					);
 					
 					/* Fields table */
-					for (let i=0; i<model.fields_table.length; i++)
+					for (let i=0; i<this.fields_table.length; i++)
 					{
-						let field: FieldInfo = model.fields_table[i];
+						let field: FieldInfo = this.fields_table[i];
 						if (field.api_name == "domain_name")
 						{
 							field.options = deepClone(domains);
@@ -305,9 +307,9 @@ export class RoutesPageState extends CrudState
 					}
 					
 					/* Form save */
-					for (let i=0; i<model.form_save.fields.length; i++)
+					for (let i=0; i<this.form_save.fields.length; i++)
 					{
-						let field: FieldInfo = model.form_save.fields[i];
+						let field: FieldInfo = this.form_save.fields[i];
 						if (field.api_name == "domain_name")
 						{
 							field.options = deepClone(domains);
@@ -331,9 +333,9 @@ export class RoutesPageState extends CrudState
 					);
 					
 					/* Fields table */
-					for (let i=0; i<model.fields_table.length; i++)
+					for (let i=0; i<this.fields_table.length; i++)
 					{
-						let field: FieldInfo = model.fields_table[i];
+						let field: FieldInfo = this.fields_table[i];
 						if (field.api_name == "docker_name")
 						{
 							field.options = deepClone(services);
@@ -341,9 +343,9 @@ export class RoutesPageState extends CrudState
 					}
 					
 					/* Form save */
-					for (let i=0; i<model.form_save.fields.length; i++)
+					for (let i=0; i<this.form_save.fields.length; i++)
 					{
-						let field: FieldInfo = model.form_save.fields[i];
+						let field: FieldInfo = this.form_save.fields[i];
 						if (field.api_name == "docker_name")
 						{
 							field.options = deepClone(services);

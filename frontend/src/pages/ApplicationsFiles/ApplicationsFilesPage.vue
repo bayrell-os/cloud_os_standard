@@ -34,10 +34,11 @@
 			</Form>
 		</template>
 		
+		<!-- Delete compose ? -->
 		<template v-slot:crud_after>
 			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
 				<template v-slot:text>
-					Compose file ?
+					Compose file {{ model.constructor.getItemName(model.dialog_compose.item) }}?
 				</template>
 				<template v-slot:buttons>
 					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
@@ -73,7 +74,7 @@ export const ApplicationsFilesPage =
 		{
 			if (action == "form_compose")
 			{
-				this.model.dialog_compose.show();
+				this.model.showCompose(this.model.form_save.item);
 			}
 			else
 			{
@@ -84,7 +85,7 @@ export const ApplicationsFilesPage =
 		{
 			if (button_name == "yes")
 			{
-				this.model.constructor.onCompose(this);
+				this.model.doCompose();
 			}
 			else
 			{

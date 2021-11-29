@@ -357,7 +357,7 @@ export const ApplicationsRunPage =
 		/* Save */
 		onSaveClick()
 		{
-			this.model.constructor.onSaveForm(this);
+			this.model.doSaveForm(this);
 		},
 		
 		/* Cancel */
@@ -376,13 +376,13 @@ export const ApplicationsRunPage =
 		/* Compose */
 		onComposeClick()
 		{
-			this.model.constructor.onComposeForm(this);
+			this.model.doComposeForm(this);
 		},
 		
 		/* Stop */
 		onStopClick()
 		{
-			this.model.constructor.onStopForm(this);
+			this.model.doStopForm(this);
 		},
 		
 		/* Back */

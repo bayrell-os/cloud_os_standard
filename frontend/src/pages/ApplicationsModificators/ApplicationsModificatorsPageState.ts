@@ -31,16 +31,16 @@ export class ApplicationModificator extends CrudItem
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
-		if (key == "id") return Number(value);
-		if (key == "name") return String(value);
-		if (key == "content") return String(value);
-		if (key == "gmtime_created") return String(value);
-		if (key == "gmtime_updated") return String(value);
-		return super.convertValue(key, value);
+		if (key == "id") this.id = Number(value);
+		else if (key == "name") this.name = String(value);
+		else if (key == "content") this.content = String(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
 	}
 	
 }

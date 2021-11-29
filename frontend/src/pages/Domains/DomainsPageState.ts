@@ -16,50 +16,52 @@
  *  limitations under the License.
  */
 
-import { deepClone } from "vue-helper";
+import { deepClone, notNull } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 
 
 export class Domain extends CrudItem
 {
-	domain_name: string = "";
-	nginx_template: string = "";
-	space_id: number | null = null;
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	domain_name: string;
+	nginx_template: string;
+	space_id: number | null;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
-	
-	/**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): Domain
-	{
-		this.domain_name = String(params["domain_name"] || this.domain_name);
-		this.nginx_template = String(params["nginx_template"] || this.nginx_template);
-		this.space_id = this.space_id != null ?
-			(Number(params["space_id"] || this.space_id)) : null;
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		super.assignValues(params);
-		return this;
-	}
 	
 	
 	/**
-	 * Returns values
+	 * Init
 	 */
-	getValues(): Record<string, any>
+	init(params:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"domain_name": this.domain_name,
-			"nginx_template": this.nginx_template,
-			"space_id": this.space_id,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
+		/* Init variables */
+		this.domain_name = "";
+		this.nginx_template = "";
+		this.space_id = null;
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
 	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "domain_name") this.domain_name = String(value);
+		else if (key == "nginx_template") this.nginx_template = String(value);
+		else if (key == "space_id") this.space_id = notNull(value) ? Number(value) : null;
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else return super.assignValue(key, value);
+	}
+	
 }
 
 

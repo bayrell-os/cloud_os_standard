@@ -25,62 +25,81 @@ import axios, { AxiosResponse } from 'axios';
 
 export class ApplicationFile extends CrudItem
 {
-	id: number = 0;
-	file_name: string = "";
-	stack_name: string = "";
-	content: string = "";
-	app_status: number | null = null;
-	timestamp: number = 0;
-	is_deleted: number = 0;
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	id: number;
+	file_name: string;
+	stack_name: string;
+	content: string;
+	app_status: number | null;
+	timestamp: number;
+	is_deleted: number;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
-	
-	/**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): ApplicationFile
-	{
-		this.id = Number(params["id"] || this.id);
-		this.file_name = String(params["file_name"] || this.file_name);
-		this.stack_name = String(params["stack_name"] || this.stack_name);
-		this.content = String(params["content"] || this.content);
-		this.app_status = Number(params["app_status"] || this.app_status);
-		if (this.app_status == 0) this.app_status = null;
-		this.timestamp = Number(params["timestamp"] || this.timestamp);
-		this.is_deleted = Number(params["is_deleted"] || this.is_deleted);
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		super.assignValues(params);
-		return this;
-	}
 	
 	
 	/**
-	 * Returns values
+	 * Init
 	 */
-	getValues(): Record<string, any>
+	init(params:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"id": this.id,
-			"file_name": this.file_name,
-			"stack_name": this.stack_name,
-			"content": this.content,
-			"app_status": this.app_status,
-			"timestamp": this.timestamp,
-			"is_deleted": this.is_deleted,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
+		/* Init variables */
+		this.id = 0;
+		this.file_name = "";
+		this.stack_name = "";
+		this.content = "";
+		this.app_status = null;
+		this.timestamp = 0;
+		this.is_deleted = 0;
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
 	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "id") this.id = Number(value);
+		else if (key == "file_name") this.file_name = String(value);
+		else if (key == "stack_name") this.stack_name = String(value);
+		else if (key == "content") this.content = String(value);
+		else if (key == "app_status")
+		{
+			this.app_status = (value == 0) ? null : Number(value);
+		}
+		else if (key == "timestamp") this.timestamp = Number(value);
+		else if (key == "is_deleted") this.is_deleted = Number(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
+	}
+	
 }
 
 
 
 export class ApplicationsFilesPageState extends CrudState
 {
-	dialog_compose: DialogState = new DialogState();
+	dialog_compose: DialogState;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.dialog_compose = new DialogState();
+		
+		/* Init class */
+		super.init(params);
+	}
+	
 	
 	
 	/**
@@ -109,16 +128,6 @@ export class ApplicationsFilesPageState extends CrudState
 	static getItemId(item: ApplicationFile | null): string
 	{
 		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	static getApiUrlCompose(item: ApplicationFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	
 	
@@ -247,6 +256,47 @@ export class ApplicationsFilesPageState extends CrudState
 	
 	
 	/**
+	 * Show compose
+	 */
+	showCompose(item:any)
+	{
+		this.dialog_compose.clear();
+		this.dialog_compose.setItem(item);
+		this.dialog_compose.show();
+	}
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	async doCompose()
+	{
+		let response:AxiosResponse | null = null;
+		let item:ApplicationFile = this.dialog_compose.item as ApplicationFile;
+		
+		if (item != null)
+		{
+			this.dialog_compose.setWaitResponse();
+			response = await (this.constructor as any).apiCompose(item);
+			this.dialog_compose.setAxiosResponse(response);
+		}
+	}
+	
+	
+	
+	/**
+	 * Return api update url
+	 */
+	static getApiUrlCompose(item: ApplicationFile)
+	{
+		return "/api/" + this.getApiObjectName() + "/default/compose/" +
+			encodeURIComponent(this.getItemId(item)) + "/";
+	}
+	
+	
+	
+	/**
 	 * Compose active item
 	 */
 	static async apiCompose(item: ApplicationFile): Promise<AxiosResponse | null>
@@ -266,24 +316,4 @@ export class ApplicationsFilesPageState extends CrudState
 		}
 		return response;
 	}
-	
-	
-	
-	/**
-	 * Compose active item
-	 */
-	static async onCompose(component: DefineComponent)
-	{
-		let model:ApplicationsFilesPageState = component.model;
-		let response:AxiosResponse | null = null;
-		let item:ApplicationFile = model.form_save.item as ApplicationFile;
-		
-		if (item != null)
-		{
-			model.dialog_compose.setWaitResponse();
-			response = await this.apiCompose(item);
-			model.dialog_compose.setAxiosResponse(response);
-		}
-	}
-	
 }

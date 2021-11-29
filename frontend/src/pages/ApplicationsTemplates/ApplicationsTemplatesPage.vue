@@ -77,7 +77,7 @@ export const ApplicationsTemplatesPage =
 		{
 			if (action == "form_run")
 			{
-				
+				this.model.showRunForm()
 			}
 			else if (action == "form_run_cancel")
 			{

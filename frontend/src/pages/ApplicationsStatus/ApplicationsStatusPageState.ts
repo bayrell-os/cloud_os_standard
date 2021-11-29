@@ -18,80 +18,68 @@
 
 import { deepClone } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
-import { ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
 import { ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
-
 
 
 export class ApplicationStatus extends CrudItem
 {
-	id: number = 0;
-	name: string = "";
-	yaml: string = "";
-	status: number = 0;
-	content: string = "";
-	template: ApplicationTemplate | null = null;
-	variables: Array<any> = [];
-	modificators: Array<number> = [];
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	id: number;
+	name: string;
+	yaml: string;
+	status: number;
+	content: string;
+	template: ApplicationTemplate | null;
+	variables: Array<any>;
+	modificators: Array<number>;
+	gmtime_created: string;
+	gmtime_updated: string;
+	
 	
 	
 	/**
-	 * From object
+	 * Init
 	 */
-	assignValues(params:Record<string, any>): ApplicationStatus
+	init(params:any)
 	{
-		this.id = Number(params["id"] || this.id);
-		this.name = String(params["name"] || this.name);
-		this.status = Number(params["status"] || this.status);
-		this.yaml = String(params["yaml"] || this.yaml);
-		this.content = String(params["content"] || this.content);
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
+		/* Init variables */
+		this.id = 0;
+		this.name = "";
+		this.yaml = "";
+		this.status = 0;
+		this.content = "";
+		this.template = null;
+		this.variables = [];
+		this.modificators = [];
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
 		
-		/* Set template */
-		if (params["template"])
-		{
-			this.template = new ApplicationTemplate();
-			this.template.assignValues(params["template"]);
-		}
-		
-		/* Set modificators */
-		if (params["modificators"] && params["modificators"] instanceof Array)
-		{
-			this.modificators = params["modificators"].map
+		/* Init class */
+		super.init(params);
+	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "id") this.id = Number(value);
+		else if (key == "name") this.name = String(value);
+		else if (key == "status") this.status = Number(value);
+		else if (key == "yaml") this.yaml = String(value);
+		else if (key == "content") this.content = String(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else if (key == "template") this.template = (value) ? new ApplicationTemplate(value) : null;
+		else if (key == "modificators")
+			this.modificators = value.map
 			(
 				(item: any) => { return Number(item); }
 			);
-		}
-		
-		this.variables = params["variables"];
-		
-		super.assignValues(params);
-		return this;
+		else super.assignValue(key, value);
 	}
 	
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"id": this.id,
-			"name": this.name,
-			"status": this.status,
-			"yaml": this.yaml,
-			"content": this.content,
-			"template": this.template,
-			"variables": this.variables,
-			"modificators": this.modificators,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
-	}
 }
 
 
@@ -186,6 +174,7 @@ export class ApplicationsStatusPageState extends CrudState
 		
 		/* Table fields */
 		name.component = "Label";
+		status.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(status) );

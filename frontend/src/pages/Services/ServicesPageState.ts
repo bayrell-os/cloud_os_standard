@@ -17,7 +17,6 @@
  */
 
 import axios, { AxiosResponse } from "axios";
-import { DefineComponent } from "vue";
 import { deepClone } from "vue-helper";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { CrudButton, CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
@@ -27,63 +26,63 @@ import { DialogState } from "vue-helper/Crud/DialogState";
 
 export class Service extends CrudItem
 {
-	service_id: number = 0;
-	stack_name: string = "";
-	service_name: string = "";
-	software_api_name: string = "";
-	enable: boolean = false;
-	docker_name: string = "";
-	docker_image: string = "";
-	docker_json: any = null;
-	docker_balancer: any = null;
-	docker_tasks: any = null;
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	service_id: number;
+	stack_name: string;
+	service_name: string;
+	software_api_name: string;
+	enable: boolean;
+	docker_name: string;
+	docker_image: string;
+	docker_json: any;
+	docker_balancer: any;
+	docker_tasks: any;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
-	
-	/**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): Service
-	{
-		this.enable = params["enable"] == 1 || params["enable"] == "true";
-		this.service_id = Number(params["service_id"] || this.service_id);
-		this.stack_name = String(params["stack_name"] || this.stack_name);
-		this.docker_name = String(params["docker_name"] || this.docker_name);
-		this.docker_image = String(params["docker_image"] || this.docker_image);
-		this.service_name = String(params["service_name"] || this.service_name);
-		this.software_api_name = String(params["software_api_name"] || this.software_api_name);
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		this.docker_json = params["docker_json"];
-		this.docker_balancer = params["docker_balancer"];
-		this.docker_tasks = params["docker_tasks"];
-		super.assignValues(params);
-		return this;
-	}
 	
 	
 	/**
-	 * Returns values
+	 * Init
 	 */
-	getValues(): Record<string, any>
+	init(params:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"enable": this.enable,
-			"service_id": this.service_id,
-			"stack_name": this.stack_name,
-			"docker_name": this.docker_name,
-			"docker_image": this.docker_image,
-			"docker_tasks": this.docker_tasks,
-			"service_name": this.service_name,
-			"software_api_name": this.software_api_name,
-			"docker_json": this.docker_json,
-			"docker_balancer": this.docker_balancer,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
+		/* Init variables */
+		this.service_id = 0;
+		this.stack_name = "";
+		this.service_name = "";
+		this.software_api_name = "";
+		this.enable = false;
+		this.docker_name = "";
+		this.docker_image = "";
+		this.docker_json = null;
+		this.docker_balancer = null;
+		this.docker_tasks = null;
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
 	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "enable") this.enable = value == "1" || value == "true";
+		else if (key == "service_id") this.service_id = Number(value);
+		else if (key == "stack_name") this.stack_name = String(value);
+		else if (key == "docker_name") this.docker_name = String(value);
+		else if (key == "docker_image") this.docker_image = String(value);
+		else if (key == "service_name") this.service_name = String(value);
+		else if (key == "software_api_name") this.software_api_name = String(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else return super.assignValue(key, value);
+	}
+	
 }
 
 
@@ -328,34 +327,32 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Refresh
 	 */
-	static async refresh(component: DefineComponent)
+	async doRefresh()
 	{
-		let model:ServicesPageState = component.model;
-		
-		let res:boolean = await this.beforeApi(model, "refresh");
+		let res:boolean = await this.beforeApi("refresh");
 		if (!res) return;
 		
 		/* Ajax request */
-		model.refresh_state.setWaitResponse();
-		let response:AxiosResponse | null = await this.apiLoadData(true);
-		model.refresh_state.setAxiosResponse(response);
+		this.refresh_state.setWaitResponse();
+		let response:AxiosResponse | null = await (this.constructor as any).apiLoadData(true);
+		this.refresh_state.setAxiosResponse(response);
 		
 		/* Set result */
-		model.items = new Array();
+		this.items = new Array();
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			model.addItems(response.data.result.items);
+			this.addItems(response.data.result.items);
 			
-			let index:number = (model.active_item_pk) ?
-				model.findItemByPrimaryKey(model.active_item_pk) : -1;
+			let index:number = (this.active_item_pk) ?
+				this.findItemByPrimaryKey(this.active_item_pk) : -1;
 			if (index >= 0)
 			{
-				model.setActiveItem( model.items[index] );
+				this.setActiveItem( this.items[index] );
 			}
 			
 		}
 		
-		await this.afterApi(model, "refresh", response);
+		await this.afterApi("refresh", response);
 	}
 	
 	
@@ -386,26 +383,25 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Stop form
 	 */
-	static async onStopForm(component: DefineComponent)
+	async doStopForm()
 	{
-		let model:ServicesPageState = component.model;
-		let item:Service = model.dialog_stop.item as Service;
+		let item:Service = this.dialog_stop.item as Service;
 		
-		let res:boolean = await this.beforeApi(model, "onStopForm");
+		let res:boolean = await this.beforeApi("onStopForm");
 		if (!res) return;
 		
-		model.dialog_stop.setWaitResponse();
-		let response:AxiosResponse | null = await this.apiStopForm(item);
-		model.dialog_stop.setAxiosResponse(response);
+		this.dialog_stop.setWaitResponse();
+		let response:AxiosResponse | null = await (this.constructor as any).apiStopForm(item);
+		this.dialog_stop.setAxiosResponse(response);
 		
 		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			model.deleteItem(item);
+			this.deleteItem(item);
 			/*model.updateItem(item, response.data.result.item);*/
-			model.dialog_stop.hide();
+			this.dialog_stop.hide();
 		}
 		
-		await this.afterApi(model, "onStopForm", response);
+		await this.afterApi("onStopForm", response);
 	}
 	
 	

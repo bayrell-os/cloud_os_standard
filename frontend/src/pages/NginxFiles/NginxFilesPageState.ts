@@ -23,48 +23,51 @@ import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/Cr
 
 export class NginxFile extends CrudItem
 {
-	name: string = "";
-	enable: boolean = false;
-	content: string = "";
-	timestamp: number = 0;
-	is_deleted: boolean = false;
-	gmtime_created: string = "";
-	gmtime_updated: string = "";
+	name: string;
+	enable: boolean;
+	content: string;
+	timestamp: number;
+	is_deleted: boolean;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
-	
-	/**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): NginxFile
-	{
-		this.name = String(params["name"] || this.name);
-		this.enable = params["enable"] == 1 || params["enable"] == "true";
-		this.content = String(params["content"] || this.content);
-		this.timestamp = Number(params["timestamp"] || this.timestamp);
-		this.is_deleted = params["is_deleted"] == 1 || params["is_deleted"] == "true";
-		this.gmtime_created = String(params["gmtime_created"] || this.gmtime_created);
-		this.gmtime_updated = String(params["gmtime_updated"] || this.gmtime_updated);
-		super.assignValues(params);
-		return this;
-	}
 	
 	
 	/**
-	 * Returns values
+	 * Init
 	 */
-	getValues(): Record<string, any>
+	init(params:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"name": this.name,
-			"enable": this.enable,
-			"content": this.content,
-			"timestamp": this.timestamp,
-			"is_deleted": this.is_deleted,
-			"gmtime_created": this.gmtime_created,
-			"gmtime_updated": this.gmtime_updated,
-		});
+		/* Init variables */
+		this.name = "";
+		this.enable = false;
+		this.content = "";
+		this.timestamp = 0;
+		this.is_deleted = false;
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
 	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "name") this.name = String(value);
+		else if (key == "enable") this.enable = value == "1" || value == "true";
+		else if (key == "content") this.content = String(value);
+		else if (key == "timestamp") this.timestamp = Number(value);
+		else if (key == "is_deleted") this.is_deleted = value == "1" || value == "true";
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
+	}
+	
 }
 
 

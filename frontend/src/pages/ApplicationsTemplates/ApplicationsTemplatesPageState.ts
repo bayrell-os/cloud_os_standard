@@ -32,16 +32,16 @@ export class ApplicationTemplate extends CrudItem
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
-		if (key == "id") return Number(value);
-		if (key == "name") return String(value);
-		if (key == "content") return String(value);
-		if (key == "gmtime_created") return String(value);
-		if (key == "gmtime_updated") return String(value);
-		return super.convertValue(key, value);
+		if (key == "id") this.id = Number(value);
+		else if (key == "name") this.name = String(value);
+		else if (key == "content") this.content = String(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
 	}
 	
 }
@@ -197,11 +197,11 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: ApplicationTemplate | null): string
+	static getMessage(message_type: string, item: any | null): string
 	{
 		if (message_type == "form_run_title")
 		{
-			return "Do you sure to run application \"" + this.getItemName(item) + "\" ?";
+			return "Do you sure to run application \"" + item.template_name + "\" ?";
 		}
 		if (message_type == "dialog_delete_title")
 		{
@@ -221,8 +221,13 @@ export class ApplicationsTemplatesPageState extends CrudState
 	 */
 	showRunForm(item:any)
 	{
+		let res = {
+			"name": "",
+			"template_id": item["id"],
+			"template_name": item["name"],
+		};
 		this.form_run.clear();
-		this.form_run.setItem(item);
+		this.form_run.setItem(res);
 		this.dialog_run.clear();
 		this.dialog_run.show();
 	}

@@ -134,7 +134,7 @@ export const ServicesPage =
 		},
 		onRefreshClick: function()
 		{
-			this.model.constructor.refresh(this);
+			this.model.doRefresh();
 		},
 		onCrudEvent: function($event)
 		{
@@ -151,7 +151,7 @@ export const ServicesPage =
 		{
 			if (action == "stop_yes")
 			{
-				this.model.constructor.onStopForm(this);
+				this.model.doStopForm();
 			}
 			else if (action == "stop_no")
 			{

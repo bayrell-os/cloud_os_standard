@@ -17,23 +17,41 @@
  */
 
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { ApplicationsTemplatesPageState, ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
 import { ApplicationsModificatorsPageState, ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
 import { ApplicationsStatusPageState, ApplicationStatus } from "../ApplicationsStatus/ApplicationsStatusPageState";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
-import { DefineComponent } from "vue";
+import { BaseObject } from "vue-helper";
 
 
 
-export class ApplicationsRunPageState
+export class ApplicationsRunPageState extends BaseObject
 {
-	action: string = "";
-	application: ApplicationStatus | null = null;
-	modificators: Array<ApplicationModificator> = new Array<ApplicationModificator>();
-	dialog_add_modificator: DialogState = new DialogState();
-	dialog_delete_modificator: DialogState = new DialogState();
-	result: CrudResultState = new CrudResultState();
+	action: string;
+	application: ApplicationStatus | null;
+	modificators: Array<ApplicationModificator>;
+	dialog_add_modificator: DialogState;
+	dialog_delete_modificator: DialogState;
+	result: CrudResultState;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.action = "";
+		this.application = null;
+		this.modificators = new Array<ApplicationModificator>();
+		this.dialog_add_modificator = new DialogState();
+		this.dialog_delete_modificator = new DialogState();
+		this.result = new CrudResultState();
+		
+		/* Init class */
+		super.init(params);
+	}
+	
 	
 	
 	/**
@@ -51,7 +69,7 @@ export class ApplicationsRunPageState
 	/**
 	 * Page data
 	 */
-	static async pageLoadData(model: ApplicationsRunPageState, route: any)
+	async pageLoadData(route: any)
 	{
 		let response: AxiosResponse | null = null;
 		let app_id = route.to.params.id;
@@ -62,7 +80,7 @@ export class ApplicationsRunPageState
 		response = await ApplicationsStatusPageState.apiLoadItem(app_id);
 		if (response && response.data.error.code == 1)
 		{
-			model.application = ApplicationsStatusPageState.createNewItemInstance
+			this.application = ApplicationsStatusPageState.createNewItemInstance
 				(
 					response.data.result.item
 				) as ApplicationStatus
@@ -73,11 +91,11 @@ export class ApplicationsRunPageState
 		response = await ApplicationsModificatorsPageState.apiLoadData();
 		if (response && response.data.error.code == 1)
 		{
-			model.modificators = [];
+			this.modificators = [];
 			for (let i=0; i<response.data.result.items.length; i++)
 			{
 				let item = response.data.result.items[i];
-				model.modificators.push
+				this.modificators.push
 				(
 					ApplicationsModificatorsPageState
 						.createNewItemInstance(item) as ApplicationModificator
@@ -92,22 +110,21 @@ export class ApplicationsRunPageState
 	/**
 	 * Save form
 	 */
-	static async onSaveForm(component: DefineComponent)
+	async doSaveForm()
 	{
-		let model:ApplicationsRunPageState = component.model;
-		let item:ApplicationStatus | null = model.application;
+		let item:ApplicationStatus | null = this.application;
 		
 		if (item)
 		{
-			model.result.setWaitResponse();
+			this.result.setWaitResponse();
 			let response:AxiosResponse | null = await ApplicationsStatusPageState
 				.apiSaveForm(item, item)
 			;
-			model.result.setAxiosResponse(response);
+			this.result.setAxiosResponse(response);
 			
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
-				model.application = ApplicationsStatusPageState.createNewItemInstance
+				this.application = ApplicationsStatusPageState.createNewItemInstance
 					(
 						response.data.result.item
 					) as ApplicationStatus
@@ -122,22 +139,21 @@ export class ApplicationsRunPageState
 	/**
 	 * Compose form
 	 */
-	static async onComposeForm(component: DefineComponent)
+	async doComposeForm()
 	{
-		let model:ApplicationsRunPageState = component.model;
-		let item:ApplicationStatus | null = model.application;
+		let item:ApplicationStatus | null = this.application;
 		let response:AxiosResponse | null = null;
 		
-		model.result.setWaitResponse();
+		this.result.setWaitResponse();
 		if (item)
 		{
-			response = await this.apiComposeForm(item);
+			response = await (this.constructor as any).apiComposeForm(item);
 		}
-		model.result.setAxiosResponse(response);
+		this.result.setAxiosResponse(response);
 		
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			model.application = ApplicationsStatusPageState.createNewItemInstance
+			this.application = ApplicationsStatusPageState.createNewItemInstance
 				(
 					response.data.result.item
 				) as ApplicationStatus
@@ -188,16 +204,16 @@ export class ApplicationsRunPageState
 	/**
 	 * Stop form
 	 */
-	static async onStopForm(component: DefineComponent)
+	async doStopForm()
 	{
-		let model:ApplicationsRunPageState = component.model;
+		let model:ApplicationsRunPageState = this;
 		let item:ApplicationStatus | null = model.application;
 		let response:AxiosResponse | null = null;
 		
 		model.result.setWaitResponse();
 		if (item)
 		{
-			response = await this.apiStopForm(item);
+			response = await (this.constructor as any).apiStopForm(item);
 		}
 		model.result.setAxiosResponse(response);
 		
