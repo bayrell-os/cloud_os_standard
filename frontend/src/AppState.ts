@@ -17,15 +17,15 @@
  */
 
 import { MainPageState } from '@/pages/Main/MainPageState'
-import { ApplicationsRunPageState } from '@/pages/ApplicationsRun/ApplicationsRunPageState'
-import { ApplicationsFilesPageState } from '@/pages/ApplicationsFiles/ApplicationsFilesPageState'
+import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
+import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
 import { ApplicationsModificatorsPageState } from '@/pages/ApplicationsModificators/ApplicationsModificatorsPageState'
-import { ApplicationsStatusPageState } from '@/pages/ApplicationsStatus/ApplicationsStatusPageState'
 import { ApplicationsTemplatesPageState } from '@/pages/ApplicationsTemplates/ApplicationsTemplatesPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
 import { ServicesPageState } from '@/pages/Services/ServicesPageState'
+import { YamlFilesPageState } from '@/pages/YamlFiles/YamlFilesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
 
 
@@ -33,14 +33,14 @@ export class AppState
 {
 	title: string = "";
 	MainPage: MainPageState = new MainPageState();
-	ApplicationsRunPage: ApplicationsRunPageState = new ApplicationsRunPageState();
-	ApplicationsFilesPage: ApplicationsFilesPageState = new ApplicationsFilesPageState();
+	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
+	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
 	ApplicationsModificatorsPage: ApplicationsModificatorsPageState = new ApplicationsModificatorsPageState();
-	ApplicationsStatusPage: ApplicationsStatusPageState = new ApplicationsStatusPageState();
 	ApplicationsTemplatesPage: ApplicationsTemplatesPageState = new ApplicationsTemplatesPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();
+	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();
 }

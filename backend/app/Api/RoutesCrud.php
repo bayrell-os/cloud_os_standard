@@ -20,9 +20,9 @@
 
 namespace App\Api;
 
+use App\Models\DockerService;
 use App\Models\Domain;
 use App\Models\Route;
-use App\Models\Service;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,7 +78,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			]),
 			new Dictionary([
 				"api_name" => "services",
-				"class_name" => Service::class,
+				"class_name" => DockerService::class,
 				"fields" =>
 				[
 					"service_id",

@@ -18,17 +18,17 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { ApplicationsModificatorsPageState, ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
-import { ApplicationsStatusPageState, ApplicationStatus } from "../ApplicationsStatus/ApplicationsStatusPageState";
+import { ApplicationsPageState, Application } from "../Applications/ApplicationsPageState";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 import { BaseObject } from "vue-helper";
 
 
 
-export class ApplicationsRunPageState extends BaseObject
+export class ApplicationsEditPageState extends BaseObject
 {
 	action: string;
-	application: ApplicationStatus | null;
+	application: Application | null;
 	modificators: Array<ApplicationModificator>;
 	dialog_add_modificator: DialogState;
 	dialog_delete_modificator: DialogState;
@@ -77,13 +77,13 @@ export class ApplicationsRunPageState extends BaseObject
 		route.setPageTitle("Edit application");
 		
 		/* Load app id */
-		response = await ApplicationsStatusPageState.apiLoadItem(app_id);
+		response = await ApplicationsPageState.apiLoadItem(app_id);
 		if (response && response.data.error.code == 1)
 		{
-			this.application = ApplicationsStatusPageState.createNewItemInstance
+			this.application = ApplicationsPageState.createNewItemInstance
 				(
 					response.data.result.item
-				) as ApplicationStatus
+				) as Application
 			;
 		}
 		
@@ -112,22 +112,22 @@ export class ApplicationsRunPageState extends BaseObject
 	 */
 	async doSaveForm()
 	{
-		let item:ApplicationStatus | null = this.application;
+		let item:Application | null = this.application;
 		
 		if (item)
 		{
 			this.result.setWaitResponse();
-			let response:AxiosResponse | null = await ApplicationsStatusPageState
+			let response:AxiosResponse | null = await ApplicationsPageState
 				.apiSaveForm(item, item)
 			;
 			this.result.setAxiosResponse(response);
 			
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
-				this.application = ApplicationsStatusPageState.createNewItemInstance
+				this.application = ApplicationsPageState.createNewItemInstance
 					(
 						response.data.result.item
-					) as ApplicationStatus
+					) as Application
 				;
 			}
 		}
@@ -141,7 +141,7 @@ export class ApplicationsRunPageState extends BaseObject
 	 */
 	async doComposeForm()
 	{
-		let item:ApplicationStatus | null = this.application;
+		let item:Application | null = this.application;
 		let response:AxiosResponse | null = null;
 		
 		this.result.setWaitResponse();
@@ -153,10 +153,10 @@ export class ApplicationsRunPageState extends BaseObject
 		
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			this.application = ApplicationsStatusPageState.createNewItemInstance
+			this.application = ApplicationsPageState.createNewItemInstance
 				(
 					response.data.result.item
-				) as ApplicationStatus
+				) as Application
 			;
 		}
 	}
@@ -166,7 +166,7 @@ export class ApplicationsRunPageState extends BaseObject
 	/**
 	 * Save form api
 	 */
-	static async apiComposeForm(item:ApplicationStatus): Promise<AxiosResponse | null>
+	static async apiComposeForm(item:Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrlCompose(item);
@@ -191,9 +191,9 @@ export class ApplicationsRunPageState extends BaseObject
 	/**
 	 * Return api update url
 	 */
-	static getApiUrlCompose(item: ApplicationStatus)
+	static getApiUrlCompose(item: Application)
 	{
-		let item_id = ApplicationsStatusPageState.getItemId(item);
+		let item_id = ApplicationsPageState.getItemId(item);
 		return "/api/applications/default/compose/" + encodeURIComponent(item_id) + "/";
 	}
 	
@@ -206,8 +206,8 @@ export class ApplicationsRunPageState extends BaseObject
 	 */
 	async doStopForm()
 	{
-		let model:ApplicationsRunPageState = this;
-		let item:ApplicationStatus | null = model.application;
+		let model:ApplicationsEditPageState = this;
+		let item:Application | null = model.application;
 		let response:AxiosResponse | null = null;
 		
 		model.result.setWaitResponse();
@@ -233,7 +233,7 @@ export class ApplicationsRunPageState extends BaseObject
 	/**
 	 * Save form api
 	 */
-	static async apiStopForm(item:ApplicationStatus): Promise<AxiosResponse | null>
+	static async apiStopForm(item:Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrlStop(item);
@@ -258,9 +258,9 @@ export class ApplicationsRunPageState extends BaseObject
 	/**
 	 * Return api update url
 	 */
-	static getApiUrlStop(item: ApplicationStatus)
+	static getApiUrlStop(item: Application)
 	{
-		let item_id = ApplicationsStatusPageState.getItemId(item);
+		let item_id = ApplicationsPageState.getItemId(item);
 		return "/api/applications/default/stop/" + encodeURIComponent(item_id) + "/";
 	}
 	

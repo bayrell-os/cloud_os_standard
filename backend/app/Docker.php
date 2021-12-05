@@ -21,11 +21,11 @@
 namespace App;
 
 use TinyPHP\Utils;
-use App\Models\ApplicationFile;
 use App\Models\Domain;
 use App\Models\NginxFile;
 use App\Models\Route;
-use App\Models\Service;
+use App\Models\DockerService;
+use App\Models\DockerYamlFile;
 
 
 class Docker
@@ -257,7 +257,7 @@ class Docker
 		$balancer_data = Docker::getBalancerData($service, $service_tasks, $nodes);
 		
 		/* Update service */
-		$item = Service::firstOrNew(['docker_name' => $service_name]);
+		$item = DockerService::firstOrNew(['docker_name' => $service_name]);
 		$item->docker_name = $service_name;
 		$item->stack_name = $stack_name;
 		$item->service_name = $service_short_name;
@@ -287,7 +287,7 @@ class Docker
 	public function deleteOldServicesFromDatabase($timestamp)
 	{
 		$db = app("db");
-		$service = new Service();
+		$service = new DockerService();
 		
 		/* Set is deleted */
 		/*
@@ -305,7 +305,7 @@ class Docker
 		
 		/* Delete */
 		/*
-		Service::query()
+		DockerService::query()
 			->where('is_deleted', 1)
 			->where('timestamp', '<', $timestamp - 24*60*60)
 			->delete()
@@ -324,7 +324,7 @@ class Docker
 	 */
 	static function updateUpstreams($network_name)
 	{
-		$services = Service::query()
+		$services = DockerService::query()
 			->where("enable", "=", "1")
 			->where("is_deleted", "=", "0")
 			->where("docker_name", "!=", "")
@@ -487,7 +487,7 @@ class Docker
 		$result = null;
 		
 		/* Save all files */
-		$applications = ApplicationFile::query()->get()->toArray();
+		$applications = DockerYamlFile::query()->get()->toArray();
 		foreach ($applications as $row)
 		{
 			$row_file_name = $row["file_name"];
@@ -499,7 +499,7 @@ class Docker
 		}
 		
 		/* Compose */
-		$item = ApplicationFile::find($app_file_id);
+		$item = DockerYamlFile::find($app_file_id);
 		if ($item)
 		{
 			$yaml_file_path = "/data/yaml/app/" . $item["file_name"];

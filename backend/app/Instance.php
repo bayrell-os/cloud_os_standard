@@ -32,13 +32,13 @@ class Instance extends \TinyPHP\App
 		
 		/* Include api functions */
 		$this->addRoute(\App\Api\ApplicationsCrud::class);
-		$this->addRoute(\App\Api\ApplicationsFilesCrud::class);
 		$this->addRoute(\App\Api\ApplicationsModificatorsCrud::class);
 		$this->addRoute(\App\Api\ApplicationsTemplatesCrud::class);
 		$this->addRoute(\App\Api\DomainsCrud::class);
 		$this->addRoute(\App\Api\NginxFilesCrud::class);
 		$this->addRoute(\App\Api\RoutesCrud::class);
 		$this->addRoute(\App\Api\ServicesCrud::class);
+		$this->addRoute(\App\Api\YamlFilesCrud::class);
 		
 		/* Include bus functions */
 		$this->addRoute(\App\Bus\BusApiRoute::class);
@@ -48,13 +48,13 @@ class Instance extends \TinyPHP\App
 		
 		/* Includes models */
 		$this->addModel(\App\Models\Application::class);
-		$this->addModel(\App\Models\ApplicationFile::class);
 		$this->addModel(\App\Models\ApplicationModificator::class);
 		$this->addModel(\App\Models\ApplicationTemplate::class);
 		$this->addModel(\App\Models\Domain::class);
 		$this->addModel(\App\Models\NginxFile::class);
 		$this->addModel(\App\Models\Route::class);
-		$this->addModel(\App\Models\Service::class);
+		$this->addModel(\App\Models\DockerService::class);
+		$this->addModel(\App\Models\DockerYamlFile::class);
 
 		/* Includes console commands */
 		$this->addConsoleCommand(\App\Console\Docker\NginxUpdate::class);

@@ -23,7 +23,7 @@ import { DialogState } from "vue-helper/Crud/DialogState";
 import axios, { AxiosResponse } from 'axios';
 
 
-export class ApplicationFile extends CrudItem
+export class YamlFile extends CrudItem
 {
 	id: number;
 	file_name: string;
@@ -83,7 +83,7 @@ export class ApplicationFile extends CrudItem
 
 
 
-export class ApplicationsFilesPageState extends CrudState
+export class YamlFilesPageState extends CrudState
 {
 	dialog_compose: DialogState;
 	
@@ -105,9 +105,9 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): ApplicationFile
+	static createNewItem(): YamlFile
 	{
-		return new ApplicationFile();
+		return new YamlFile();
 	}
 	
 	
@@ -125,7 +125,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: ApplicationFile | null): string
+	static getItemId(item: YamlFile | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -138,9 +138,9 @@ export class ApplicationsFilesPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:applications:files",
-			"add": "app:applications:files:add",
-			"edit": "app:applications:files:edit",
+			"list": "app:yaml:files",
+			"add": "app:yaml:files:add",
+			"edit": "app:yaml:files:edit",
 		};
 	}
 	
@@ -149,7 +149,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: ApplicationFile | null): string
+	static getItemName(item: YamlFile | null): string
 	{
 		return (item) ? item.file_name : "";
 	}
@@ -159,7 +159,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: ApplicationFile | null): string
+	static getMessage(message_type: string, item: YamlFile | null): string
 	{
 		if (message_type == "list_title")
 		{
@@ -273,7 +273,7 @@ export class ApplicationsFilesPageState extends CrudState
 	async doCompose()
 	{
 		let response:AxiosResponse | null = null;
-		let item:ApplicationFile = this.dialog_compose.item as ApplicationFile;
+		let item:YamlFile = this.dialog_compose.item as YamlFile;
 		
 		if (item != null)
 		{
@@ -288,7 +288,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Return api update url
 	 */
-	static getApiUrlCompose(item: ApplicationFile)
+	static getApiUrlCompose(item: YamlFile)
 	{
 		return "/api/" + this.getApiObjectName() + "/default/compose/" +
 			encodeURIComponent(this.getItemId(item)) + "/";
@@ -299,7 +299,7 @@ export class ApplicationsFilesPageState extends CrudState
 	/**
 	 * Compose active item
 	 */
-	static async apiCompose(item: ApplicationFile): Promise<AxiosResponse | null>
+	static async apiCompose(item: YamlFile): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrlCompose(item);

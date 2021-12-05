@@ -18,15 +18,15 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
-import ApplicationsRunPage from '@/pages/ApplicationsRun/ApplicationsRunPage.vue'
-import ApplicationsFilesPage from '@/pages/ApplicationsFiles/ApplicationsFilesPage.vue'
+import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
+import ApplicationsEditPage from '@/pages/Applications/ApplicationsEditPage.vue'
 import ApplicationsModificatorsPage from '@/pages/ApplicationsModificators/ApplicationsModificatorsPage.vue'
-import ApplicationsStatusPage from '@/pages/ApplicationsStatus/ApplicationsStatusPage.vue'
 import ApplicationsTemplatesPage from '@/pages/ApplicationsTemplates/ApplicationsTemplatesPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
 import ServicesPage from '@/pages/Services/ServicesPage.vue'
+import YamlFilesPage from '@/pages/YamlFiles/YamlFilesPage.vue'
 import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
 
 const routes: Array<RouteRecordRaw> =
@@ -48,42 +48,18 @@ const routes: Array<RouteRecordRaw> =
 	
 	/* Status */
 	{
-		path: '/applications/status/',
-		name: 'app:applications:status',
-		component: ApplicationsStatusPage,
-		props: { store_path: ["ApplicationsStatusPage"] },
+		path: '/applications/',
+		name: 'app:applications',
+		component: ApplicationsPage,
+		props: { store_path: ["ApplicationsPage"] },
 	},
 	
 	/* Run app */
 	{
-		path: '/applications/status/:id/',
-		name: 'app:applications:status:edit',
-		component: ApplicationsRunPage,
-		props: { store_path: ["ApplicationsRunPage"] },
-	},
-	
-	/* Files */
-	{
-		path: '/applications/files/',
-		name: 'app:applications:files',
-		component: ApplicationsFilesPage,
-		props:
-		{
-			store_path: ["ApplicationsFilesPage"],
-			action: "list",
-		}
-	},
-	{
-		path: '/applications/files/add/',
-		name: 'app:applications:files:add',
-		component: ApplicationsFilesPage,
-		props: { store_path: ["ApplicationsFilesPage"], action: "add" },
-	},
-	{
-		path: '/applications/files/edit/:id/',
-		name: 'app:applications:files:edit',
-		component: ApplicationsFilesPage,
-		props: { store_path: ["ApplicationsFilesPage"], action: "edit" }
+		path: '/applications/edit/:id/',
+		name: 'app:applications:edit',
+		component: ApplicationsEditPage,
+		props: { store_path: ["ApplicationsEditPage"] },
 	},
 	
 	/* Modificators */
@@ -140,6 +116,30 @@ const routes: Array<RouteRecordRaw> =
 		name: 'app:domains',
 		component: DomainsPage,
 		props: { store_path: ["DomainsPage"] },
+	},
+	
+	/* Yaml Files */
+	{
+		path: '/yaml/files/',
+		name: 'app:yaml:files',
+		component: YamlFilesPage,
+		props:
+		{
+			store_path: ["YamlFilesPage"],
+			action: "list",
+		}
+	},
+	{
+		path: '/yaml/files/add/',
+		name: 'app:yaml:files:add',
+		component: YamlFilesPage,
+		props: { store_path: ["YamlFilesPage"], action: "add" },
+	},
+	{
+		path: '/yaml/files/edit/:id/',
+		name: 'app:yaml:files:edit',
+		component: YamlFilesPage,
+		props: { store_path: ["YamlFilesPage"], action: "edit" }
 	},
 	
 	/* Nginx files */

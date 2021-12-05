@@ -24,9 +24,9 @@ use TinyPHP\Model;
 use TinyPHP\Utils;
 
 
-class Service extends Model
+class DockerService extends Model
 {
-	protected $table = "services";
+	protected $table = "docker_services";
 	protected $primaryKey = "service_id";
 	public $incrementing = false;
 	protected $attributes = [

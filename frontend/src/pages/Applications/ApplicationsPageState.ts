@@ -21,7 +21,7 @@ import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/Cr
 import { ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
 
 
-export class ApplicationStatus extends CrudItem
+export class Application extends CrudItem
 {
 	id: number;
 	name: string;
@@ -87,15 +87,15 @@ export class ApplicationStatus extends CrudItem
 
 
 
-export class ApplicationsStatusPageState extends CrudState
+export class ApplicationsPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): ApplicationStatus
+	static createNewItem(): Application
 	{
-		return new ApplicationStatus();
+		return new Application();
 	}
 	
 	
@@ -116,8 +116,8 @@ export class ApplicationsStatusPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:applications:status",
-			"edit": "app:applications:status:edit",
+			"list": "app:applications",
+			"edit": "app:applications:edit",
 		};
 	}
 	
@@ -189,7 +189,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: ApplicationStatus | null): string
+	static getItemName(item: Application | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -199,7 +199,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: ApplicationStatus | null): string
+	static getItemId(item: Application | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -209,7 +209,7 @@ export class ApplicationsStatusPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: ApplicationStatus | null): string
+	static getMessage(message_type: string, item: Application | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

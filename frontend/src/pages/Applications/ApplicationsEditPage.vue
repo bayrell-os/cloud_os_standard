@@ -241,11 +241,11 @@ import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
 
 
 /**
- * Run page
+ * Edit page
  */
-export const ApplicationsRunPage =
+export const ApplicationsEditPage =
 {
-	name: "ApplicationsRunPage",
+	name: "ApplicationsEditPage",
 	mixins: [mixin],
 	props: ["action"],
 	components:
@@ -400,6 +400,6 @@ export const ApplicationsRunPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-export default defineComponent(ApplicationsRunPage);
+export default defineComponent(ApplicationsEditPage);
 
 </script>

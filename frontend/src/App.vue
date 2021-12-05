@@ -117,11 +117,11 @@ export const App =
 					"title": "Docker Swarm",
 					"items":
 					[
-						{ "name": "app:applications:status", "title": "Applications",
-							"routes": [ "app:applications:run" ],
+						{ "name": "app:applications", "title": "Applications",
+							"routes": [ "app:applications:edit" ],
 						},
 						{ "name": "app:services", "title": "Docker services" },
-						{ "name": "app:applications:files", "title": "Docker yaml Files" },
+						{ "name": "app:yaml:files", "title": "Docker yaml Files" },
 					]
 				},
 				

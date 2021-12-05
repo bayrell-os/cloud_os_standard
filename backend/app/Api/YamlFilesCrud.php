@@ -21,7 +21,7 @@
 namespace App\Api;
 
 use App\Docker;
-use App\Models\ApplicationFile;
+use App\Models\DockerYamlFile;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,9 +31,9 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsFilesCrud extends \TinyPHP\ApiCrudRoute
+class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationFile::class;
+	var $class_name = DockerYamlFile::class;
 	var $api_path = "applications_files";
 
 	

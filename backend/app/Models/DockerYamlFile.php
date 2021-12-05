@@ -23,9 +23,9 @@ namespace App\Models;
 use TinyPHP\Model;
 
 
-class ApplicationFile extends Model
+class DockerYamlFile extends Model
 {
-	protected $table = "app_files";
+	protected $table = "docker_yaml_files";
 	protected $primaryKey = "id";
 	public $incrementing = true;
 	protected $attributes = [

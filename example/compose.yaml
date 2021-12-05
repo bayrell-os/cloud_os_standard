@@ -23,7 +23,7 @@ services:
             WWW_GID: 1000
             SSH_USER: "mikuro4ka"
             SSH_PASSWORD: "Yf6ugfdCs2LWQUQ6"
-        restart: unless-stopped
+        restart: always
         networks:
             - cloud_network
         logging:
@@ -45,7 +45,7 @@ services:
             NGINX_CONF: "/srv/nginx_vscode.conf"
             WWW_UID: 1000
             WWW_GID: 1000
-        restart: unless-stopped
+        restart: always
         networks:
             - cloud_network
         logging:
@@ -61,7 +61,7 @@ services:
             - "80:80"
         env_file:
             - ./env.conf
-        restart: unless-stopped
+        restart: always
         networks:
             - cloud_network
         logging:
