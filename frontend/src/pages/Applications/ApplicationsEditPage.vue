@@ -135,8 +135,12 @@
 							<td>{{ index + 1 }}</td>
 							<td>{{ getModificatorName(modificator_id) }}</td>
 							<td>
-								<Button type="danger" small="true"
-									@click="onModificatorDelete(modificator_id)">Delete</Button>
+								<div class="component_row_buttons">
+									<Button type="default" small="true"
+										@click="onModificatorView(modificator_id)">View</Button>
+									<Button type="danger" small="true"
+										@click="onModificatorDelete(modificator_id)">Delete</Button>
+								</div>
 							</td>
 						</tr>
 					</table>
@@ -180,17 +184,56 @@
 		
 		<!-- Application variables -->
 		<div class="applications_run_page__right">
-			<CodeMirror
-				v-bind:value="model.application.yaml"
-				v-bind:crud="{
-					field:
-					{
-						component_params:{
-							mode: 'yaml'
-						}
-					}
-				}"
-			/>
+			
+			<!-- Tabs -->
+			<Tabs @select="onTabSelect($event)">
+				<Tab name="template" label="Template">
+					<CodeMirror
+						ref="code_mirror_template"
+						v-bind:value="model.application.template.content"
+						v-bind:crud="{
+							field:
+							{
+								component_params:{
+									mode: 'xml'
+								}
+							}
+						}"
+					/>
+				</Tab>
+				<Tab name="custom_modificator" label="Custom modificator">
+					Custom modificator
+				</Tab>
+				<Tab name="result" label="Result">
+					<CodeMirror
+						ref="code_mirror_result"
+						v-bind:value="model.application.content"
+						v-bind:crud="{
+							field:
+							{
+								component_params:{
+									mode: 'xml'
+								}
+							}
+						}"
+					/>
+				</Tab>
+				<Tab name="yaml" label="Yaml" :selected="true">
+					<CodeMirror
+						ref="code_mirror_yaml"
+						v-bind:value="model.application.yaml"
+						v-bind:crud="{
+							field:
+							{
+								component_params:{
+									mode: 'yaml'
+								}
+							}
+						}"
+					/>
+				</Tab>
+			</Tabs>
+			
 		</div>
 		
 	</div>
@@ -217,6 +260,29 @@
 			<template v-slot:buttons>
 				<Button type="danger" @click="onDialogAddModificatorButtonClick('yes')">Yes</Button>
 				<Button type="" @click="onDialogAddModificatorButtonClick('no')">No</Button>
+			</template>
+		</Dialog>
+		
+		<Dialog v-bind:store_path="store_path.concat('dialog_view_modificator')" width="800px">
+			<template v-slot:title>
+				View modificator
+			</template>
+			<template v-slot:content>
+				<CodeMirror
+					v-bind:value="model.dialog_view_modificator.tag != null ? model.dialog_view_modificator.tag.content : ''"
+					v-bind:crud="{
+						field:
+						{
+							component_params:{
+								mode: 'xml'
+							}
+						}
+					}"
+				/>
+			</template>
+			<template v-slot:buttons>
+				<Button type="primary"
+					@click="onDialogViewModificatorButtonClick('close')">Close</Button>
 			</template>
 		</Dialog>
 		
@@ -328,6 +394,24 @@ export const ApplicationsEditPage =
 			this.model.dialog_add_modificator.hide();
 		},
 		
+		/* View modificator */
+		onModificatorView(modificator_id)
+		{
+			let modificator = this.model.getModificatorByID(modificator_id);
+			if (modificator)
+			{
+				this.model.dialog_view_modificator.tag = modificator;
+				this.model.dialog_view_modificator.show();
+			}
+		},
+		onDialogViewModificatorButtonClick(button_text)
+		{
+			if (button_text == "close")
+			{
+				this.model.dialog_view_modificator.hide();
+			}
+		},
+		
 		/* Delete modificator */
 		onModificatorDelete(modificator_id)
 		{
@@ -389,6 +473,18 @@ export const ApplicationsEditPage =
 		onBackClick()
 		{
 			this.onCancelClick();
+		},
+		
+		/* Tab select */
+		onTabSelect(tab_name)
+		{
+			let code_mirror = this.$refs["code_mirror_" + tab_name];
+			if (code_mirror)
+			{
+				this.$nextTick(()=>{
+					code_mirror.instance.refresh();
+				});
+			}
 		},
 	},
 	beforeRouteEnter(to, from, next)

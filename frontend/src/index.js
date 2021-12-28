@@ -39,6 +39,8 @@ import Select from 'vue-helper/Crud/Select.vue';
 import SelectLabel from 'vue-helper/Crud/SelectLabel.vue';
 import TextArea from 'vue-helper/Crud/TextArea.vue';
 import CodeMirror from 'vue-helper/Crud/CodeMirror.vue';
+import Tabs from 'vue-helper/Crud/Tabs.vue';
+import Tab from 'vue-helper/Crud/Tab.vue';
 
 /* Create app state */
 let Store = buildStore(AppState);
@@ -50,6 +52,8 @@ app.use(Store);
 app.use(Router);
 
 /* Register components */
+app.component("Tabs", Tabs);
+app.component("Tab", Tab);
 app.component("Input", Input);
 app.component("Label", Label);
 app.component("RowButtons", RowButtons);

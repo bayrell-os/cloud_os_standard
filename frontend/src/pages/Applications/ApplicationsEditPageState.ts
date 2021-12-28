@@ -31,6 +31,7 @@ export class ApplicationsEditPageState extends BaseObject
 	application: Application | null;
 	modificators: Array<ApplicationModificator>;
 	dialog_add_modificator: DialogState;
+	dialog_view_modificator: DialogState;
 	dialog_delete_modificator: DialogState;
 	result: CrudResultState;
 	
@@ -45,6 +46,7 @@ export class ApplicationsEditPageState extends BaseObject
 		this.application = null;
 		this.modificators = new Array<ApplicationModificator>();
 		this.dialog_add_modificator = new DialogState();
+		this.dialog_view_modificator = new DialogState();
 		this.dialog_delete_modificator = new DialogState();
 		this.result = new CrudResultState();
 		
