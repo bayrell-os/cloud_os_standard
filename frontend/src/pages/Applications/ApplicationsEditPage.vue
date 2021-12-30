@@ -201,8 +201,19 @@
 						}"
 					/>
 				</Tab>
-				<Tab name="custom_modificator" label="Custom modificator">
-					Custom modificator
+				<Tab name="custom_patch" label="Custom patch">
+					<CodeMirror
+						ref="code_mirror_custom_patch"
+						v-bind:store_path="store_path.concat('application', 'custom_patch')"
+						v-bind:crud="{
+							field:
+							{
+								component_params:{
+									mode: 'xml'
+								}
+							}
+						}"
+					/>
 				</Tab>
 				<Tab name="result" label="Result">
 					<CodeMirror

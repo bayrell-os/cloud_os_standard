@@ -79,6 +79,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"status",
 					"yaml",
 					"content",
+					"custom_patch",
 					"gmtime_created",
 					"gmtime_updated",
 				]

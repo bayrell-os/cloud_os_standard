@@ -28,6 +28,7 @@ export class Application extends CrudItem
 	yaml: string;
 	status: number;
 	content: string;
+	custom_patch: string;
 	template: ApplicationTemplate | null;
 	variables: Array<any>;
 	modificators: Array<number>;
@@ -47,6 +48,7 @@ export class Application extends CrudItem
 		this.yaml = "";
 		this.status = 0;
 		this.content = "";
+		this.custom_patch = "";
 		this.template = null;
 		this.variables = [];
 		this.modificators = [];
@@ -69,6 +71,7 @@ export class Application extends CrudItem
 		else if (key == "status") this.status = Number(value);
 		else if (key == "yaml") this.yaml = String(value);
 		else if (key == "content") this.content = String(value);
+		else if (key == "custom_patch") this.custom_patch = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else if (key == "template")

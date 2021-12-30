@@ -211,6 +211,24 @@ class Application extends Model
 						}
 					}
 				}
+				
+				if ($this->custom_patch)
+				{
+					$patch_xml = Template::loadXml($this->custom_patch);
+					if ($patch_xml)
+					{
+						Template::patchXml($xml, $patch_xml);
+					}
+					else
+					{
+						$err = libxml_get_errors();
+						$err = Template::getXmlError($err);
+						throw new \Exception(
+							"Error in custom patch\n" . implode("\n", $err)
+						);
+					}
+				}
+				
 			}
 			
 			else
