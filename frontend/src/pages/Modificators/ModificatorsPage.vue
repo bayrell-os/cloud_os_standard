@@ -36,9 +36,9 @@ import { Crud } from "vue-helper/Crud/Crud.vue";
 /**
  * Status page
  */
-export const ApplicationsModificators =
+export const Modificators =
 {
-	name: "ApplicationsModificators",
+	name: "Modificators",
 	mixins: [mixin],
 	components:
 	{
@@ -55,7 +55,7 @@ export const ApplicationsModificators =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(ApplicationsModificators, Crud);
-export default defineComponent(ApplicationsModificators);
+componentExtend(Modificators, Crud);
+export default defineComponent(Modificators);
 
 </script>

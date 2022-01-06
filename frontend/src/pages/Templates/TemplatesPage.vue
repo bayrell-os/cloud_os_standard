@@ -53,9 +53,9 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 /**
  * Status page
  */
-export const ApplicationsTemplatesPage =
+export const TemplatesPage =
 {
-	name: "ApplicationsTemplatesPage",
+	name: "TemplatesPage",
 	mixins: [mixin, Crud],
 	components:
 	{
@@ -64,7 +64,10 @@ export const ApplicationsTemplatesPage =
 	{
 		onCrudEvent: function($event)
 		{
-			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "create_app")
+			if (
+				$event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK &&
+				$event.button_name == "create_app"
+			)
 			{
 				this.model.showCreateAppForm($event.crud_item);
 			}
@@ -117,7 +120,7 @@ export const ApplicationsTemplatesPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(ApplicationsTemplatesPage, Crud);
-export default defineComponent(ApplicationsTemplatesPage);
+componentExtend(TemplatesPage, Crud);
+export default defineComponent(TemplatesPage);
 
 </script>

@@ -17,7 +17,7 @@
  */
 
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { ApplicationsModificatorsPageState, ApplicationModificator } from "../ApplicationsModificators/ApplicationsModificatorsPageState";
+import { ModificatorsPageState, Modificator } from "../Modificators/ModificatorsPageState";
 import { ApplicationsPageState, Application } from "../Applications/ApplicationsPageState";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
@@ -29,7 +29,7 @@ export class ApplicationsEditPageState extends BaseObject
 {
 	action: string;
 	application: Application | null;
-	modificators: Array<ApplicationModificator>;
+	modificators: Array<Modificator>;
 	dialog_add_modificator: DialogState;
 	dialog_view_modificator: DialogState;
 	dialog_delete_modificator: DialogState;
@@ -44,7 +44,7 @@ export class ApplicationsEditPageState extends BaseObject
 		/* Init variables */
 		this.action = "";
 		this.application = null;
-		this.modificators = new Array<ApplicationModificator>();
+		this.modificators = new Array<Modificator>();
 		this.dialog_add_modificator = new DialogState();
 		this.dialog_view_modificator = new DialogState();
 		this.dialog_delete_modificator = new DialogState();
@@ -59,7 +59,7 @@ export class ApplicationsEditPageState extends BaseObject
 	/**
 	 * Returns modificator by id
 	 */
-	getModificatorByID(modificator_id: number): ApplicationModificator | null
+	getModificatorByID(modificator_id: number): Modificator | null
 	{
 		let index = this.modificators.findIndex( (item) => item.id == modificator_id );
 		if (index >= 0) return this.modificators[index];
@@ -90,7 +90,7 @@ export class ApplicationsEditPageState extends BaseObject
 		}
 		
 		/* Load modificators */
-		response = await ApplicationsModificatorsPageState.apiLoadData();
+		response = await ModificatorsPageState.apiLoadData();
 		if (response && response.data.error.code == 1)
 		{
 			this.modificators = [];
@@ -99,8 +99,8 @@ export class ApplicationsEditPageState extends BaseObject
 				let item = response.data.result.items[i];
 				this.modificators.push
 				(
-					ApplicationsModificatorsPageState
-						.createNewItemInstance(item) as ApplicationModificator
+					ModificatorsPageState
+						.createNewItemInstance(item) as Modificator
 				);
 			}
 		}

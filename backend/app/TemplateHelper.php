@@ -23,7 +23,7 @@ namespace App;
 use Symfony\Component\Yaml\Yaml;
 
 
-class Template
+class TemplateHelper
 {
 	
 	/**

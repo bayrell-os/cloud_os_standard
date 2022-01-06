@@ -121,7 +121,7 @@ export const App =
 							"routes": [ "app:applications:edit" ],
 						},
 						{ "name": "app:services", "title": "Docker services" },
-						{ "name": "app:yaml:files", "title": "Docker yaml Files" },
+						{ "name": "app:yaml_files", "title": "Docker yaml Files" },
 					]
 				},
 				
@@ -130,8 +130,8 @@ export const App =
 					"items":
 					[
 						{ "name": "app:marketplace", "title": "Market place" },
-						{ "name": "app:applications:templates", "title": "Templates" },
-						{ "name": "app:applications:modificators", "title": "Modificators" },
+						{ "name": "app:templates", "title": "Templates" },
+						{ "name": "app:modificators", "title": "Modificators" },
 					]
 				},
 				

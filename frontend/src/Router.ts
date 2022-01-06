@@ -20,8 +20,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainPage from '@/pages/Main/MainPage.vue'
 import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
 import ApplicationsEditPage from '@/pages/Applications/ApplicationsEditPage.vue'
-import ApplicationsModificatorsPage from '@/pages/ApplicationsModificators/ApplicationsModificatorsPage.vue'
-import ApplicationsTemplatesPage from '@/pages/ApplicationsTemplates/ApplicationsTemplatesPage.vue'
+import ModificatorsPage from '@/pages/Modificators/ModificatorsPage.vue'
+import TemplatesPage from '@/pages/Templates/TemplatesPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
@@ -64,50 +64,50 @@ const routes: Array<RouteRecordRaw> =
 	
 	/* Modificators */
 	{
-		path: '/applications/modificators/',
-		name: 'app:applications:modificators',
-		component: ApplicationsModificatorsPage,
+		path: '/modificators/',
+		name: 'app:modificators',
+		component: ModificatorsPage,
 		props:
 		{
-			store_path: ["ApplicationsModificatorsPage"],
+			store_path: ["ModificatorsPage"],
 			action: "list"
 		},
 	},
 	{
-		path: '/applications/modificators/add/',
-		name: 'app:applications:modificators:add',
-		component: ApplicationsModificatorsPage,
-		props: { store_path: ["ApplicationsModificatorsPage"], action: "add" },
+		path: '/modificators/add/',
+		name: 'app:modificators:add',
+		component: ModificatorsPage,
+		props: { store_path: ["ModificatorsPage"], action: "add" },
 	},
 	{
-		path: '/applications/modificators/edit/:id/',
-		name: 'app:applications:modificators:edit',
-		component: ApplicationsModificatorsPage,
-		props: { store_path: ["ApplicationsModificatorsPage"], action: "edit" },
+		path: '/modificators/edit/:id/',
+		name: 'app:modificators:edit',
+		component: ModificatorsPage,
+		props: { store_path: ["ModificatorsPage"], action: "edit" },
 	},
 	
 	/* Templates */
 	{
-		path: '/applications/templates/',
-		name: 'app:applications:templates',
-		component: ApplicationsTemplatesPage,
+		path: '/templates/',
+		name: 'app:templates',
+		component: TemplatesPage,
 		props:
 		{
-			store_path: ["ApplicationsTemplatesPage"],
+			store_path: ["TemplatesPage"],
 			action: "list"
 		},
 	},
 	{
-		path: '/applications/templates/add/',
-		name: 'app:applications:templates:add',
-		component: ApplicationsTemplatesPage,
-		props: { store_path: ["ApplicationsTemplatesPage"], action: "add" },
+		path: '/templates/add/',
+		name: 'app:templates:add',
+		component: TemplatesPage,
+		props: { store_path: ["TemplatesPage"], action: "add" },
 	},
 	{
-		path: '/applications/templates/edit/:id/',
-		name: 'app:applications:templates:edit',
-		component: ApplicationsTemplatesPage,
-		props: { store_path: ["ApplicationsTemplatesPage"], action: "edit" },
+		path: '/templates/edit/:id/',
+		name: 'app:templates:edit',
+		component: TemplatesPage,
+		props: { store_path: ["TemplatesPage"], action: "edit" },
 	},
 	
 	/* Domains */
@@ -120,8 +120,8 @@ const routes: Array<RouteRecordRaw> =
 	
 	/* Yaml Files */
 	{
-		path: '/yaml/files/',
-		name: 'app:yaml:files',
+		path: '/yaml_files/',
+		name: 'app:yaml_files',
 		component: YamlFilesPage,
 		props:
 		{
@@ -130,14 +130,14 @@ const routes: Array<RouteRecordRaw> =
 		}
 	},
 	{
-		path: '/yaml/files/add/',
-		name: 'app:yaml:files:add',
+		path: '/yaml_files/add/',
+		name: 'app:yaml_files:add',
 		component: YamlFilesPage,
 		props: { store_path: ["YamlFilesPage"], action: "add" },
 	},
 	{
-		path: '/yaml/files/edit/:id/',
-		name: 'app:yaml:files:edit',
+		path: '/yaml_files/edit/:id/',
+		name: 'app:yaml_files:edit',
 		component: YamlFilesPage,
 		props: { store_path: ["YamlFilesPage"], action: "edit" }
 	},

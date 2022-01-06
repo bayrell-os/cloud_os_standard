@@ -21,7 +21,7 @@ import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 
 
-export class ApplicationModificator extends CrudItem
+export class Modificator extends CrudItem
 {
 	id: number = 0;
 	name: string = "";
@@ -47,15 +47,15 @@ export class ApplicationModificator extends CrudItem
 
 
 
-export class ApplicationsModificatorsPageState extends CrudState
+export class ModificatorsPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): ApplicationModificator
+	static createNewItem(): Modificator
 	{
-		return new ApplicationModificator();
+		return new Modificator();
 	}
 	
 	
@@ -65,7 +65,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "applications_modificators";
+		return "modificators";
 	}
 	
 	
@@ -76,9 +76,9 @@ export class ApplicationsModificatorsPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:applications:modificators",
-			"add": "app:applications:modificators:add",
-			"edit": "app:applications:modificators:edit",
+			"list": "app:modificators",
+			"add": "app:modificators:add",
+			"edit": "app:modificators:edit",
 		};
 	}
 	
@@ -138,7 +138,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: ApplicationModificator | null): string
+	static getItemName(item: Modificator | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -148,7 +148,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: ApplicationModificator | null): string
+	static getItemId(item: Modificator | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -158,7 +158,7 @@ export class ApplicationsModificatorsPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: ApplicationModificator | null): string
+	static getMessage(message_type: string, item: Modificator | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{

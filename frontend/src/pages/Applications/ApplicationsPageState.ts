@@ -18,7 +18,7 @@
 
 import { deepClone } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
-import { ApplicationTemplate } from "../ApplicationsTemplates/ApplicationsTemplatesPageState";
+import { Template } from "../Templates/TemplatesPageState";
 
 
 export class Application extends CrudItem
@@ -29,7 +29,7 @@ export class Application extends CrudItem
 	status: number;
 	content: string;
 	custom_patch: string;
-	template: ApplicationTemplate | null;
+	template: Template | null;
 	variables: Array<any>;
 	modificators: Array<number>;
 	gmtime_created: string;
@@ -76,7 +76,7 @@ export class Application extends CrudItem
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else if (key == "template")
 		{
-			this.template = (value) ? new ApplicationTemplate(value) : null;
+			this.template = (value) ? new Template(value) : null;
 		}
 		else if (key == "modificators")
 			this.modificators = value.map

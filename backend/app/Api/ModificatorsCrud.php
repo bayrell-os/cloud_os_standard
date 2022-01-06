@@ -21,9 +21,7 @@
 namespace App\Api;
 
 use App\Docker;
-use App\Api\ApplicationsCrud;
-use App\Models\Application;
-use App\Models\ApplicationTemplate;
+use App\Models\Modificator;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +31,10 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
+class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = ApplicationTemplate::class;
-	var $api_path = "applications_templates";
+	var $class_name = Modificator::class;
+	var $api_path = "modificators";
 
 	
 	/**
@@ -45,14 +43,6 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 	function routes(RouteCollector $routes)
 	{
 		parent::routes($routes);
-		
-		/* Run template */
-		$routes->addRoute
-		(
-			'POST',
-			'/' . $this->api_path . '/default/create_app/{id}/',
-			[$this, "actionCreateApp"]
-		);
 	}
 	
 	
@@ -81,7 +71,7 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
-	
+
 	
 	
 	/**
@@ -103,31 +93,5 @@ class ApplicationsTemplatesCrud extends \TinyPHP\ApiCrudRoute
 	{
 		$item = parent::toDatabase($item);
 		return $item;
-	}
-	
-	
-	
-	/**
-	 * Do action create app
-	 */
-	function doActionCreateApp()
-	{
-		$template_id = $this->getFindItemId();
-		
-		$this->initOldData();
-		$this->findItem();
-		
-		$app = new Application();
-		$app->name = isset($this->old_data["app_name"]) ? $this->old_data["app_name"] : "";
-		$app->template_id = $template_id;
-		$app->save();
-		$app->updateVariables();
-		$app->patchTemplate();
-		
-		$app_crud = new ApplicationsCrud();
-		$new_data = $app_crud->fromDatabase($app);
-		
-		/* Set result */
-		$this->api_result->success(["item"=>$new_data], "Ok");
 	}
 }

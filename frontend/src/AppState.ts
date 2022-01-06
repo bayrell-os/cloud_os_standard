@@ -19,8 +19,8 @@
 import { MainPageState } from '@/pages/Main/MainPageState'
 import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
 import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
-import { ApplicationsModificatorsPageState } from '@/pages/ApplicationsModificators/ApplicationsModificatorsPageState'
-import { ApplicationsTemplatesPageState } from '@/pages/ApplicationsTemplates/ApplicationsTemplatesPageState'
+import { ModificatorsPageState } from '@/pages/Modificators/ModificatorsPageState'
+import { TemplatesPageState } from '@/pages/Templates/TemplatesPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
@@ -35,8 +35,8 @@ export class AppState
 	MainPage: MainPageState = new MainPageState();
 	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
 	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
-	ApplicationsModificatorsPage: ApplicationsModificatorsPageState = new ApplicationsModificatorsPageState();
-	ApplicationsTemplatesPage: ApplicationsTemplatesPageState = new ApplicationsTemplatesPageState();
+	ModificatorsPage: ModificatorsPageState = new ModificatorsPageState();
+	TemplatesPage: TemplatesPageState = new TemplatesPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();

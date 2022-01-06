@@ -22,8 +22,8 @@ namespace App\Api;
 
 use App\Docker;
 use App\Models\Application;
-use App\Models\ApplicationFile;
-use App\Models\ApplicationTemplate;
+use App\Models\DockerYamlFile;
+use App\Models\Template;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -243,7 +243,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			$template_id = $this->item->template_id;
 			if ($template_id)
 			{
-				$template = ApplicationTemplate::find($template_id);
+				$template = Template::find($template_id);
 				if ($template)
 				{
 					$template = $template->getAttributes();
@@ -277,21 +277,25 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			/* Get app file id */
 			if ($this->item->app_file_id != null)
 			{
-				$app_file = ApplicationFile::find($this->item->app_file_id);
+				$app_file = DockerYamlFile::find($this->item->app_file_id);
+			}
+			
+			/* Find app file by name */
+			if ($app_file == null)
+			{
+				$app_file = DockerYamlFile::query()
+					->where('file_name', '=', $this->item->name . ".yaml")
+					->first();
 			}
 			
 			/* Create app file */
 			if ($app_file == null)
 			{
-				$app_file = new ApplicationFile();
+				$app_file = new DockerYamlFile();
 				$app_file->file_name = $this->item->name . ".yaml";
 				$app_file->content = $this->item->yaml;
 				$app_file->timestamp = time();
 				$app_file->save();
-				
-				/* Save app file id */
-				$this->item->app_file_id = $app_file->id;
-				$this->item->save();
 			}
 			else
 			{
@@ -300,6 +304,10 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				$app_file->timestamp = time();
 				$app_file->save();
 			}
+			
+			/* Save app file id */
+			$this->item->app_file_id = $app_file->id;
+			$this->item->save();
 			
 			/* Update services */
 			$this->item->updateServicesFromYaml();

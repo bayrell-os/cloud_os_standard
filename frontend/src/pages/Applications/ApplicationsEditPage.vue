@@ -369,21 +369,23 @@ export const ApplicationsEditPage =
 		getSelectAddModificators()
 		{
 			let application_modificators = this.model.application.modificators;
-			return this.model.modificators
-				.map
-				(
-					(item) =>
-					{
-						return { id: item.id, value: item.name };
-					}
-				)
-				.filter
-				(
-					(item) =>
-					{
-						return application_modificators.indexOf(item.id) == -1
-					}
-				)
+			return (this.model.modificators != null) ?
+				this.model.modificators
+					.map
+					(
+						(item) =>
+						{
+							return { id: item.id, value: item.name };
+						}
+					)
+					.filter
+					(
+						(item) =>
+						{
+							return application_modificators.indexOf(item.id) == -1
+						}
+					)
+				: []
 			;
 		},
 		onModificatorAdd()

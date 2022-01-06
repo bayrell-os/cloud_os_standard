@@ -23,9 +23,9 @@ namespace App\Models;
 use TinyPHP\Model;
 
 
-class ApplicationTemplate extends Model
+class Modificator extends Model
 {
-	protected $table = "app_templates";
+	protected $table = "modificators";
 	protected $primaryKey = "id";
 	public $incrementing = true;
 	protected $attributes = [

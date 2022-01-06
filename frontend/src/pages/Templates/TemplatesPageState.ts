@@ -23,7 +23,7 @@ import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
 import { FormState } from "vue-helper/Crud/FormState";
 
 
-export class ApplicationTemplate extends CrudItem
+export class Template extends CrudItem
 {
 	id: number;
 	name: string;
@@ -66,7 +66,7 @@ export class ApplicationTemplate extends CrudItem
 
 
 
-export class ApplicationsTemplatesPageState extends CrudState
+export class TemplatesPageState extends CrudState
 {
 	form_run: FormState;
 	dialog_run: DialogState;
@@ -90,9 +90,9 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): ApplicationTemplate
+	static createNewItem(): Template
 	{
-		return new ApplicationTemplate();
+		return new Template();
 	}
 	
 	
@@ -102,7 +102,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "applications_templates";
+		return "templates";
 	}
 	
 	
@@ -113,9 +113,9 @@ export class ApplicationsTemplatesPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:applications:templates",
-			"add": "app:applications:templates:add",
-			"edit": "app:applications:templates:edit",
+			"list": "app:templates",
+			"add": "app:templates:add",
+			"edit": "app:templates:edit",
 		};
 	}
 	
@@ -167,7 +167,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [
 			new CrudButton().assignValues({ "type": "success", "label": "Create app", "action": "create_app" }),
-			new CrudButton().assignValues({ "type": "default", "label": "Edit", "action": "edit", "route": "app:applications:templates:edit" }),
+			new CrudButton().assignValues({ "type": "default", "label": "Edit", "action": "edit", "route": "app:templates:edit" }),
 			new CrudButton().assignValues({ "type": "danger", "label": "Delete", "action": "delete" }),
 		];
 		
@@ -195,7 +195,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: ApplicationTemplate | null): string
+	static getItemName(item: Template | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -205,7 +205,7 @@ export class ApplicationsTemplatesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: ApplicationTemplate | null): string
+	static getItemId(item: Template | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}

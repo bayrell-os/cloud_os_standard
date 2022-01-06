@@ -138,9 +138,9 @@ export class YamlFilesPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:yaml:files",
-			"add": "app:yaml:files:add",
-			"edit": "app:yaml:files:edit",
+			"list": "app:yaml_files",
+			"add": "app:yaml_files:add",
+			"edit": "app:yaml_files:edit",
 		};
 	}
 	
