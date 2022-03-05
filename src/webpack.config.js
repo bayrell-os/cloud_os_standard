@@ -4,7 +4,7 @@ const webpack = require('webpack')
 
 module.exports = {
 	entry: [
-		'./src/index.js',
+		'./vuejs/index.js',
 	],
 	output: {
 		filename: 'bundle.js',
