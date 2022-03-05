@@ -64,6 +64,12 @@
 		width: 55%;
 		padding-left: 5px;
 	}
+	.component_crud_save_back button{
+		margin: 0 2px;
+		&:first-child{
+			margin-left: 0px;
+		}
+	}
 }
 </style>
 
@@ -73,6 +79,12 @@
 		
 		<div class="component_crud_save_back">
 			<Button type="primary" @click="onBackClick()">Back</Button>
+			<Button @click="onChangeTemplate()">
+				Change Template
+			</Button>
+			<Button type="danger" @click="onStopClick()">Stop</Button>
+			<Button type="success" @click="onComposeClick()">Compose</Button>
+			<Button type="primary" @click="onSaveClick()">Save</Button>
 		</div>
 		
 		<div class="applications_run_page__left">
@@ -94,7 +106,9 @@
 					-->
 					<tr class="applications_run_page__info_row">
 						<td class="applications_run_page__info_row_key">Template:</td>
-						<td class="applications_run_page__info_row_name">{{ getTemplateName() }}</td>
+						<td class="applications_run_page__info_row_name">
+							{{ getTemplateName() }}
+						</td>
 					</tr>
 					<!--
 					<tr class="applications_run_page__info_row">
@@ -171,12 +185,14 @@
 				</div>
 			</div>
 			
+			<!--
 			<div class="crud_form__buttons">
 				<Button type="danger" @click="onStopClick()">Stop</Button>
-				<!--<Button type="" @click="onCancelClick()">Cancel</Button>-->
+				<Button type="" @click="onCancelClick()">Cancel</Button>
 				<Button type="success" @click="onComposeClick()">Compose</Button>
 				<Button type="primary" @click="onSaveClick()">Save</Button>
 			</div>
+			-->
 			
 			<CrudResult v-bind:store_path="store_path.concat('result')" />
 			
@@ -498,6 +514,11 @@ export const ApplicationsEditPage =
 					code_mirror.instance.refresh();
 				});
 			}
+		},
+		
+		/* Change template */
+		onChangeTemplate()
+		{
 		},
 	},
 	beforeRouteEnter(to, from, next)

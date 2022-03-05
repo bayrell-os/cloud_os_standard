@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+    
+    code_server:
+        image: bayrell/ubuntu_code_server:3.11.0-8-amd64
+        hostname: "cloud_os_standard.local"
+        volumes:
+            - "code_server_data:/data"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
+        ports:
+            - "8000:8000"
+        environment:
+            TZ: "Asia/Almaty"
+            APP_URL: "http://cloud.docker0:8080/"
+            DOCUMENT_ROOT: "/srv/frontend/html"
+            NGINX_CONF: "/srv/nginx_vscode.conf"
+            WWW_UID: 1000
+            WWW_GID: 1000
+        restart: always
+        networks:
+            - cloud_network
+        logging:
+            driver: journald
+    
+    
+volumes:
+    code_server_data:
+    
+networks:
+    cloud_network:
+        external: true
