@@ -1,9 +1,0 @@
-[submodule "backend/tiny-php"]
-	path = backend/tiny-php
-	url = https://github.com/bayrell/tiny-php
-[submodule "frontend/vue-helper"]
-	path = frontend/vue-helper
-	url = https://github.com/bayrell/vue-helper
-[submodule "backend/tiny-orm"]
-	path = backend/tiny-orm
-	url = https://github.com/tiny-php/orm

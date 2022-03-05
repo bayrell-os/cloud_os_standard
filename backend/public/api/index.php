@@ -18,15 +18,16 @@
  *  limitations under the License.
  */
 
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once dirname(__DIR__) . "/vendor/autoload.php";
+
 
 /* Remove api */
 $uri = $_SERVER['REQUEST_URI'];
 $uri = preg_replace("/^\/api/", "", $uri);
 $_SERVER['REQUEST_URI'] = $uri;
 
+
 /* Run app */
-\TinyPHP\Core::start( __DIR__ . "/../../defs.php" );
-$app = app();
+$app = create_app_instance();
 $app->init();
 $app->run();

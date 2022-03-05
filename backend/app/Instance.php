@@ -24,12 +24,83 @@ class Instance extends \TinyPHP\App
 {
 	
 	/**
+	 * Add modules
+	 */
+	function add_modules()
+	{
+		$this->addModule(\TinyORM\Module::class);
+	}
+	
+	
+	
+	/**
+	 * Register hooks
+	 */
+	function register_hooks()
+	{
+		add_chain("init_di_defs", $this, "init_di_defs", CHAIN_LAST);
+		add_chain("init_routes", $this, "init_routes", CHAIN_LAST);
+		add_chain("init_app", $this, "init_app");
+		add_chain("method_not_found", $this, "method_not_found");
+	}
+	
+	
+	
+	/**
 	 * Init app
 	 */
-	public function init()
+	function init_app()
 	{
-		parent::init();
+		libxml_use_internal_errors(true);
+	}
+	
+	
+	
+	/**
+	 * Init defs
+	 */
+	function init_di_defs($res)
+	{
+		$defs = $res->defs;
 		
+		/* Setup default db connection */
+		$res["db_connection"] = DI\create(\TinyORM\SQLiteConnection::class);
+		
+		/* Connect to database */
+		$res["connectToDatabase"] =
+			function ()
+			{
+				$conn = make("db_connection");
+				$conn->database = "/data/db/cloud_os.db";
+				
+				/* Connect */
+				$conn->connect();
+				
+				if (!$conn->isConnected())
+				{
+					echo "Error: " . $conn->connect_error . "\n";
+					exit(1);
+				}
+				
+				$db_list = app("db_connection_list");
+				$db_list->add("default", $conn);
+				
+				// Set journal_mode wal
+				$conn->query("PRAGMA journal_mode = WAL;");
+				
+				call_chain("connectToDatabase", ["conn"=>$conn]);
+			};
+		
+		$res->defs = $defs;
+	}
+	
+	
+	
+	/**
+	 * Init routes
+	 */
+	public function init_routes()
+	{
 		/* Include api functions */
 		$this->addRoute(\App\Api\ApplicationsCrud::class);
 		$this->addRoute(\App\Api\DomainsCrud::class);
@@ -65,53 +136,16 @@ class Instance extends \TinyPHP\App
 		{
 			$this->addRoute(\App\Api\Test::class);
 		}
-		
-		/* Phinx */
-		/*
-		$this->addConsoleCommand(\Phinx\Console\Command\Breakpoint::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Create::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Init::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\ListAliases::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Migrate::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Rollback::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\SeedCreate::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\SeedRun::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Status::class);
-		$this->addConsoleCommand(\Phinx\Console\Command\Test::class);
-		*/
 	}
 	
 	
 	
 	/**
-	 * Connect to database
+	 * Method not found
 	 */
-	static function connectToDatabase()
+	function method_not_found($res)
 	{
-		$capsule = new \Illuminate\Database\Capsule\Manager;
-		$capsule->addConnection
-		([
-			'driver'    => 'sqlite',
-			'database'  => '/data/db/cloud_os.db',
-			'prefix'    => '',
-		]);
-		
-		// Set event dispatcher
-		$capsule->setEventDispatcher( app(\Illuminate\Events\Dispatcher::class) );
-		
-		// Set the cache manager instance used by connections... (optional)
-		//$capsule->setCacheManager();
-
-		// Make this Capsule instance available globally via static methods... (optional)
-		$capsule->setAsGlobal();
-
-		// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
-		$capsule->bootEloquent();
-		
-		// Set journal_mode wal
-		$capsule::statement("PRAGMA journal_mode = WAL;");
-		
-		return $capsule;
+		$container = $res->container;
 	}
 	
 }
