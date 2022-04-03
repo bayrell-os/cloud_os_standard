@@ -8,7 +8,7 @@ src/vendor
 
 # Frontend
 src/var
-src/html/dist
+src/public/dist
 src/tmp
 
 # Logs
