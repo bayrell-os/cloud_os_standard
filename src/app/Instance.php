@@ -42,6 +42,7 @@ class Instance extends \TinyPHP\App
 		add_chain("init_di_defs", $this, "init_di_defs", CHAIN_LAST);
 		add_chain("register_entities", $this, "register_entities", CHAIN_LAST);
 		add_chain("method_not_found", $this, "method_not_found");
+		add_chain("routes", $this, "routes");
 	}
 	
 	
@@ -107,11 +108,16 @@ class Instance extends \TinyPHP\App
 			$this->addEntity(\App\Api\Test::class);
 		}
 		
+		/* Add api crud */
+		$this->addEntity(\App\Api\DomainsCrud::class);
+		
+		/* Add routes */
+		$this->addEntity(\App\Routes\DatabaseRoute::class);
+		
 		return;
 		
 		/* Include api functions */
 		$this->addEntity(\App\Api\ApplicationsCrud::class);
-		$this->addEntity(\App\Api\DomainsCrud::class);
 		$this->addEntity(\App\Api\ModificatorsCrud::class);
 		$this->addEntity(\App\Api\NginxFilesCrud::class);
 		$this->addEntity(\App\Api\RoutesCrud::class);
@@ -121,9 +127,6 @@ class Instance extends \TinyPHP\App
 		
 		/* Include bus functions */
 		$this->addEntity(\App\Bus\BusApiRoute::class);
-		
-		/* Include routes */
-		$this->addEntity(\App\Routes\DatabaseRoute::class);
 		
 		/* Includes models */
 		$this->addEntity(\App\Models\Application::class);
@@ -149,6 +152,16 @@ class Instance extends \TinyPHP\App
 	function method_not_found($res)
 	{
 		$container = $res->container;
+	}
+	
+	
+	
+	/**
+	 * Routes
+	 */
+	function routes($res)
+	{
+		// var_dump( $res->route_container->routes );
 	}
 	
 }

@@ -50,7 +50,7 @@ class Test extends ApiRoute
 	{
 		$db = app("db");
 		
-		throw new \Exception("Error");
+		//throw new \Exception("Error");
 		
 		$this->api_result->success("Test 123");
 		

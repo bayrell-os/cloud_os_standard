@@ -20,68 +20,30 @@
 
 namespace App\Routes;
 
-use FastRoute\RouteCollector;
 use TinyPHP\RenderContainer;
+use TinyPHP\Route;
+use TinyPHP\RouteContainer;
 
 
-class DatabaseRoute
+class DatabaseRoute extends Route
 {
 	
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteCollector $routes)
+	function routes(RouteContainer $route_container)
 	{
-		$routes->addRoute
-		(
-			'GET',
-			'/database/',
-			[$this, "actionDatabase"]
-		);
-		$routes->addRoute
-		(
-			['GET', 'POST'],
-			'/database/adminer/',
-			[$this, "actionAdminer"]
-		);
-		$routes->addRoute
-		(
-			['GET', 'POST'],
-			'/database/sqlite/',
-			[$this, "actionSQLiteDatabase"]
-		);
-		$routes->addRoute
-		(
-			['GET'],
-			'/database/info/',
-			[$this, "actionInfo"]
-		);
-		$routes->addRoute
-		(
-			['GET'],
-			'/database/test/',
-			[$this, "actionTest"]
-		);
-	}
-	
-	
-	
-	/**
-	 * Request before
-	 */
-	function request_before(RenderContainer $container)
-	{
-		return $container;
-	}
-	
-	
-	
-	/**
-	 * Request after
-	 */
-	function request_after(RenderContainer $container)
-	{
-		return $container;
+		$route_container->addRoute([
+			"url" => "/api/database/",
+			"name" => "site:database",
+			"method" => [$this, "actionDatabase"],
+		]);
+		
+		$route_container->addRoute([
+			"url" => "/api/database/adminer/",
+			"name" => "site:database:adminer",
+			"method" => [$this, "actionAdminer"],
+		]);
 	}
 	
 	
@@ -91,10 +53,6 @@ class DatabaseRoute
 	 */
 	function actionDatabase(RenderContainer $container)
 	{
-		$container->setContext("host", getenv("MYSQL_HOST"));
-		$container->setContext("username", getenv("MYSQL_USERNAME"));
-		$container->setContext("password", getenv("MYSQL_PASSWORD"));
-		
 		/* Set result */
 		return $container->render("@app/database/index.html");
 	}
@@ -106,18 +64,16 @@ class DatabaseRoute
 	 */
 	function actionAdminer(RenderContainer $container)
 	{
-		$file_path = ROOT_PATH . "/app/Templates/database/adminer-sqlite.php";
+		$file_path = BASE_PATH . "/app/Templates/database/adminer-sqlite.php";
 		
 		@ob_start();
-		$_SERVER['REQUEST_URI'] = "/api" . $_SERVER['REQUEST_URI'];
+		$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 		include $file_path;
 		$content = ob_get_contents();
 		@ob_end_clean();
 		
-		//$content = "";
-		
 		/* Set result */
-		return $container->setContent($content);
+		$container->setContent($content);
 	}
 	
 	
@@ -127,7 +83,7 @@ class DatabaseRoute
 	 */
 	function actionSQLiteDatabase(RenderContainer $container)
 	{
-		$file_path = ROOT_PATH . "/app/Templates/database/adminer-sqlite.php";
+		$file_path = BASE_PATH . "/app/Templates/database/adminer-sqlite.php";
 		
 		@ob_start();
 		$_SERVER['REQUEST_URI'] = "/api" . $_SERVER['REQUEST_URI'];

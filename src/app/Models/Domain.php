@@ -20,23 +20,57 @@
 
 namespace App\Models;
 
-use TinyPHP\Model;
+use TinyORM\Model;
 
 
 class Domain extends Model
 {
-	protected $table = "domains";
-	protected $primaryKey = "domain_name";
-	public $incrementing = false;
-	protected $attributes = [
-	];
+	
+	
+	/**
+	 * Return table name
+	 */
+	static function getTableName()
+	{
+		return "domains";
+	}
+	
+	
+	
+	/**
+	 * Return list of primary keys
+	 */
+	static function pk()
+	{
+		return ["domain_name"];
+	}
+	
+	
+	
+	/**
+	 * Return if auto increment
+	 */
+	static function isAutoIncrement()
+	{
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Returns true if need to update timestamp
+	 */
+	static function updateTimestamp()
+	{
+		return true;
+	}
 	
 	
 	
 	/**
 	 * Save the model to the database.
 	 */
-	public function save(array $options = [])
+	public function save($connection_name = "default")
 	{
 		if ($this->nginx_template == "")
 		{
@@ -52,7 +86,7 @@ class Domain extends Model
 			$nginx_template .= "}";
 			$this->nginx_template = $nginx_template;
 		}
-		parent::save($options);
+		parent::save($connection_name);
 	}
 	
 }

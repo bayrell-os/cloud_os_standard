@@ -18,7 +18,8 @@
  *  limitations under the License.
  */
 
-require_once dirname(dirname(__DIR__)) . "/vendor/autoload.php";
+define( "BASE_PATH", dirname(dirname(__DIR__)) );
+require_once BASE_PATH . "/vendor/autoload.php";
 
 global $app;
 

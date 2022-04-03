@@ -8,7 +8,7 @@ module.exports = {
 	],
 	output: {
 		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'html/dist'),
+		path: path.resolve(__dirname, 'public/dist'),
 		libraryExport: 'default'
 	},
 	devtool: 'source-map',
@@ -21,7 +21,7 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			'@': path.resolve(__dirname, 'src')
+			'@': path.resolve(__dirname, 'vuejs')
 		},
 		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue']
 	},
