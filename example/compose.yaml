@@ -3,11 +3,11 @@ version: "3.3"
 services:
     
     standard_node1:
-        image: bayrell/cloud_os_standard:0.4.0-20211122_075351
+        image: bayrell/cloud_os_standard:0.4.0-20220403_102003
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_node1_data:/data"
-            - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.4/src:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
             - "8022:22"
@@ -16,9 +16,8 @@ services:
             - ./env.conf
         environment:
             TZ: "Asia/Almaty"
+            APP_DEBUG: 1
             APP_URL: "http://cloud.docker0:8080/"
-            MYSQL_DATABASE: "cloud_os_standard"
-            DOCUMENT_ROOT: "/srv/frontend/html"
             WWW_UID: 1000
             WWW_GID: 1000
             SSH_USER: "mikuro4ka"
@@ -47,7 +46,6 @@ services:
     
 volumes:
     standard_node1_data:
-    code_server_data:
     router_http_data:
     
 networks:

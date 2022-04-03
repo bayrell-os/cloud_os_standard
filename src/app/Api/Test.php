@@ -22,7 +22,7 @@ namespace App\Api;
 
 use TinyPHP\ApiRoute;
 use TinyPHP\RenderContainer;
-use FastRoute\RouteCollector;
+use TinyPHP\RouteContainer;
 use App\Models\Modificator;
 
 
@@ -32,14 +32,13 @@ class Test extends ApiRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteCollector $routes)
+	function routes(RouteContainer $route_container)
 	{
-		$routes->addRoute
-		(
-			'GET',
-			'/test/',
-			[$this, "actionTest"]
-		);
+		$route_container->addRoute([
+			"url" => "/api/test/",
+			"name" => "site:test",
+			"method" => [$this, "actionTest"],
+		]);
 	}
 	
 	
@@ -51,7 +50,9 @@ class Test extends ApiRoute
 	{
 		$db = app("db");
 		
-		$this->api_result->success("Test");
+		throw new \Exception("Error");
+		
+		$this->api_result->success("Test 123");
 		
 		return $container;
 	}

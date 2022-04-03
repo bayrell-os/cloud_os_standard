@@ -38,9 +38,9 @@ class Instance extends \TinyPHP\App
 	 */
 	function register_hooks()
 	{
-		add_chain("init_di_defs", $this, "init_di_defs", CHAIN_LAST);
-		add_chain("init_routes", $this, "init_routes", CHAIN_LAST);
 		add_chain("init_app", $this, "init_app");
+		add_chain("init_di_defs", $this, "init_di_defs", CHAIN_LAST);
+		add_chain("register_entities", $this, "register_entities", CHAIN_LAST);
 		add_chain("method_not_found", $this, "method_not_found");
 	}
 	
@@ -64,10 +64,10 @@ class Instance extends \TinyPHP\App
 		$defs = $res->defs;
 		
 		/* Setup default db connection */
-		$res["db_connection"] = DI\create(\TinyORM\SQLiteConnection::class);
+		$defs["db_connection"] = \DI\create(\TinyORM\SQLiteConnection::class);
 		
 		/* Connect to database */
-		$res["connectToDatabase"] =
+		$defs["connectToDatabase"] =
 			function ()
 			{
 				$conn = make("db_connection");
@@ -97,45 +97,48 @@ class Instance extends \TinyPHP\App
 	
 	
 	/**
-	 * Init routes
+	 * Register entities
 	 */
-	public function init_routes()
+	public function register_entities()
 	{
+		$is_debug = env("APP_DEBUG");
+		if ($is_debug)
+		{
+			$this->addEntity(\App\Api\Test::class);
+		}
+		
+		return;
+		
 		/* Include api functions */
-		$this->addRoute(\App\Api\ApplicationsCrud::class);
-		$this->addRoute(\App\Api\DomainsCrud::class);
-		$this->addRoute(\App\Api\ModificatorsCrud::class);
-		$this->addRoute(\App\Api\NginxFilesCrud::class);
-		$this->addRoute(\App\Api\RoutesCrud::class);
-		$this->addRoute(\App\Api\ServicesCrud::class);
-		$this->addRoute(\App\Api\TemplatesCrud::class);
-		$this->addRoute(\App\Api\YamlFilesCrud::class);
+		$this->addEntity(\App\Api\ApplicationsCrud::class);
+		$this->addEntity(\App\Api\DomainsCrud::class);
+		$this->addEntity(\App\Api\ModificatorsCrud::class);
+		$this->addEntity(\App\Api\NginxFilesCrud::class);
+		$this->addEntity(\App\Api\RoutesCrud::class);
+		$this->addEntity(\App\Api\ServicesCrud::class);
+		$this->addEntity(\App\Api\TemplatesCrud::class);
+		$this->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Include bus functions */
-		$this->addRoute(\App\Bus\BusApiRoute::class);
+		$this->addEntity(\App\Bus\BusApiRoute::class);
 		
 		/* Include routes */
-		$this->addRoute(\App\Routes\DatabaseRoute::class);
+		$this->addEntity(\App\Routes\DatabaseRoute::class);
 		
 		/* Includes models */
-		$this->addModel(\App\Models\Application::class);
-		$this->addModel(\App\Models\Domain::class);
-		$this->addModel(\App\Models\Modificator::class);
-		$this->addModel(\App\Models\NginxFile::class);
-		$this->addModel(\App\Models\Route::class);
-		$this->addModel(\App\Models\Template::class);
-		$this->addModel(\App\Models\DockerService::class);
-		$this->addModel(\App\Models\DockerYamlFile::class);
+		$this->addEntity(\App\Models\Application::class);
+		$this->addEntity(\App\Models\Domain::class);
+		$this->addEntity(\App\Models\Modificator::class);
+		$this->addEntity(\App\Models\NginxFile::class);
+		$this->addEntity(\App\Models\Route::class);
+		$this->addEntity(\App\Models\Template::class);
+		$this->addEntity(\App\Models\DockerService::class);
+		$this->addEntity(\App\Models\DockerYamlFile::class);
 
 		/* Includes console commands */
-		$this->addConsoleCommand(\App\Console\Docker\NginxUpdate::class);
-		$this->addConsoleCommand(\App\Console\Docker\ServicesUpdate::class);
-		$this->addConsoleCommand(\App\Console\Test::class);
-		
-		if (APP_DEBUG)
-		{
-			$this->addRoute(\App\Api\Test::class);
-		}
+		$this->addEntity(\App\Console\Docker\NginxUpdate::class);
+		$this->addEntity(\App\Console\Docker\ServicesUpdate::class);
+		$this->addEntity(\App\Console\Test::class);
 	}
 	
 	

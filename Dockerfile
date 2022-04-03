@@ -8,12 +8,11 @@ RUN cd ~; \
 	usermod -a -G docker www-data; \
 	echo "Ok"
 
-ADD backend /srv/backend
-ADD frontend/html /srv/frontend/html
+ADD src /srv
 ADD files /src/files
 
 RUN cd ~; \
-	cp /etc/passwd /src/; \
+	cp /etc/passwd /etc/passwd.orig; \
 	cp -rf /src/files/etc/* /etc/; \
 	cp -rf /src/files/root/* /root/; \
 	rm -rf /etc/ssh; \

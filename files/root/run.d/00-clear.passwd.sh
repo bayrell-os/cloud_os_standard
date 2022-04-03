@@ -1,1 +1,1 @@
-yes | cp -f /src/passwd /etc/passwd
+yes | cp -f /etc/passwd.orig /etc/passwd
