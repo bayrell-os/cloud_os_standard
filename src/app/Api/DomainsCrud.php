@@ -32,8 +32,7 @@ use TinyPHP\Rules\ReadOnly;
 class DomainsCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Domain::class;
-	var $api_name = "site:domains";
-	var $api_path = "domains";
+	var $api_name = "domains";
 	
 	
 	/**

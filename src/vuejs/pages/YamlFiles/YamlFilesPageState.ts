@@ -117,7 +117,7 @@ export class YamlFilesPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "applications_files";
+		return "yaml_files";
 	}
 	
 	

@@ -25,8 +25,6 @@ use TinyORM\Model;
 
 class Domain extends Model
 {
-	
-	
 	/**
 	 * Return table name
 	 */
@@ -86,7 +84,7 @@ class Domain extends Model
 			$nginx_template .= "}";
 			$this->nginx_template = $nginx_template;
 		}
-		parent::save($connection_name);
+		return parent::save($connection_name);
 	}
 	
 }

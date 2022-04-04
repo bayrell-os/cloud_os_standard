@@ -23,11 +23,11 @@ namespace App\Api;
 use App\Docker;
 use App\Models\Domain;
 use App\Models\DockerService;
-use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\RenderContainer;
+use TinyPHP\RouteContainer;
 use TinyPHP\Exception\HttpMethodNotAllowedException;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\JsonField;
@@ -37,22 +37,23 @@ use TinyPHP\Rules\ReadOnly;
 class ServicesCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = DockerService::class;
-	var $api_path = "services";
+	var $api_name = "services";
 	
 	
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteCollector $routes)
+	function routes(RouteContainer $route_container)
 	{
-		parent::routes($routes);
+		parent::routes($route_container);
 		
-		$routes->addRoute
-		(
-			'POST',
-			'/' . $this->api_path . '/default/stop/{id}/',
-			[$this, "actionStop"]
-		);
+		/* Stop service */
+		$route_container->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/stop/{id}/",
+			"name" => "api:" . $this->api_name . ":stop",
+			"method" => [$this, "actionStop"],
+		]);
 		
 	}
 	
@@ -100,30 +101,26 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function findQuery($query)
+	public function buildSearchQuery($query, $action)
 	{
 		return $query
-			->where("is_deleted", "=", "0")
+			->addFilter("is_deleted", "=", "0")
 			->orderBy("docker_name", "asc")
 		;
 	}
 	
 	
-	
 	/**
 	 * Before query
 	 */
-	public function beforeQuery()
+	public function initSearch()
 	{
-		parent::beforeQuery();
+		parent::initSearch();
 		
-		if ($this->action == "actionSearch")
+		$refresh = $this->container->request->query->get("refresh");
+		if ($refresh == "1")
 		{
-			$refresh = $this->container->request->query->get("refresh");
-			if ($refresh == "1")
-			{
-				Docker::updateServices();
-			}
+			Docker::updateServices();
 		}
 	}
 	
@@ -132,18 +129,19 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * After query
 	 */
-	public function afterQuery()
+	public function buildResponse($action)
 	{
-		parent::afterQuery();
+		parent::buildResponse($action);
 		
-		if ($this->action == "actionSearch")
+		if ($action == "actionSearch")
 		{
 			$items = $this->api_result->result["items"];
 			foreach ($items as $key => $item)
 			{
 				if (isset($item["docker_tasks"]) && $item["docker_tasks"] != null)
 				{
-					$this->api_result->result["items"][$key]["docker_tasks"] = array_map(
+					$this->api_result->result["items"][$key]["docker_tasks"] = array_map
+					(
 						function($task)
 						{
 							$UpdatedAt = substr($task["UpdatedAt"], 0, 19) . "Z";
@@ -175,7 +173,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Action stop
 	 */
-	function doActionStop()
+	function actionStop()
 	{
 		/* Find item */
 		$this->findItem();
@@ -191,10 +189,20 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 		$this->item->refresh();
 		
 		/* From database */
-		$this->new_data = $this->fromDatabase($this->item);
+		$this->new_data = $this->item->toArray();
+		$old_data = $this->fromDatabase($this->old_data);
+		$new_data = $this->fromDatabase($this->new_data);
 		
 		/* Set result */
-		$this->api_result->success(["item"=>$this->new_data], "Ok");
+		$this->api_result->success
+		(
+			[
+				"old_data"=>$new_data,
+				"new_data"=>$new_data
+			],
+			"Ok"
+		);
+		$this->buildResponse("actionStop");
 	}
 	
 	

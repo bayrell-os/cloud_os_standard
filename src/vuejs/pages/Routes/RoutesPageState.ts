@@ -169,6 +169,14 @@ export class RoutesPageState extends CrudState
 		target_port.component = "Input";
 		this.fields.push( deepClone(target_port) );
 		
+		/* Source port field */
+		let source_port = new FieldInfo();
+		source_port.api_name = "source_port";
+		source_port.label = "Source port";
+		source_port.component = "Input";
+		this.fields.push( deepClone(source_port) );
+		
+		
 		/* Docker name field */
 		let docker_name = new FieldInfo();
 		docker_name.api_name = "docker_name";
@@ -189,6 +197,14 @@ export class RoutesPageState extends CrudState
 		];
 		this.fields.push( deepClone(enable) );
 		
+		/* Docker name field */
+		let nginx_config = new FieldInfo();
+		nginx_config.api_name = "nginx_config";
+		nginx_config.label = "Extended nginx config params";
+		nginx_config.component = "TextArea";
+		nginx_config.options = [];
+		this.fields.push( deepClone(nginx_config) );
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.api_name = "row_number";
@@ -208,8 +224,10 @@ export class RoutesPageState extends CrudState
 		this.form_save.fields.push( deepClone(docker_name) );
 		this.form_save.fields.push( deepClone(route) );
 		this.form_save.fields.push( deepClone(domain_name) );
+		this.form_save.fields.push( deepClone(source_port) );
 		this.form_save.fields.push( deepClone(target_port) );
 		this.form_save.fields.push( deepClone(route_prefix) );
+		this.form_save.fields.push( deepClone(nginx_config) );
 		
 		/* Table fields */
 		enable.component = "SelectLabel";
@@ -217,6 +235,7 @@ export class RoutesPageState extends CrudState
 		protocol.component = "Label";
 		docker_name.component = "SelectLabel";
 		domain_name.component = "SelectLabel";
+		source_port.component = "Label";
 		target_port.component = "Label";
 		route_prefix.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
@@ -225,6 +244,7 @@ export class RoutesPageState extends CrudState
 		this.fields_table.push( deepClone(docker_name) );
 		this.fields_table.push( deepClone(route) );
 		this.fields_table.push( deepClone(domain_name) );
+		this.fields_table.push( deepClone(source_port) );
 		this.fields_table.push( deepClone(target_port) );
 		this.fields_table.push( deepClone(route_prefix) );
 		this.fields_table.push( deepClone(row_buttons) );

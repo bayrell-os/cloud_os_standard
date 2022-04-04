@@ -21,7 +21,6 @@
 namespace App\Api;
 
 use App\Models\NginxFile;
-use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -32,7 +31,7 @@ use TinyPHP\Rules\ReadOnly;
 class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = NginxFile::class;
-	var $api_path = "nginx_files";
+	var $api_name = "nginx_files";
 
 	
 	/**

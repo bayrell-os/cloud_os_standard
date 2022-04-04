@@ -22,7 +22,6 @@ namespace App\Api;
 
 use App\Docker;
 use App\Models\Modificator;
-use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -34,17 +33,7 @@ use TinyPHP\Rules\ReadOnly;
 class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Modificator::class;
-	var $api_path = "modificators";
-
-	
-	/**
-	 * Declare routes
-	 */
-	function routes(RouteCollector $routes)
-	{
-		parent::routes($routes);
-	}
-	
+	var $api_name = "modificators";
 	
 	
 	/**

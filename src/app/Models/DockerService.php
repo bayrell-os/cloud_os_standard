@@ -20,20 +20,50 @@
 
 namespace App\Models;
 
-use TinyPHP\Model;
+use TinyORM\Model;
 use TinyPHP\Utils;
 
 
 class DockerService extends Model
 {
-	protected $table = "docker_services";
-	protected $primaryKey = "service_id";
-	public $incrementing = false;
-	protected $attributes = [
-	];
-    protected $fillable = [
-        "docker_name",
-	];
+	/**
+	 * Return table name
+	 */
+	static function getTableName()
+	{
+		return "docker_services";
+	}
+	
+	
+	
+	/**
+	 * Return list of primary keys
+	 */
+	static function pk()
+	{
+		return ["service_id"];
+	}
+	
+	
+	
+	/**
+	 * Return if auto increment
+	 */
+	static function isAutoIncrement()
+	{
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Returns true if need to update timestamp
+	 */
+	static function updateTimestamp()
+	{
+		return true;
+	}
+	
 	
 	
 	/**

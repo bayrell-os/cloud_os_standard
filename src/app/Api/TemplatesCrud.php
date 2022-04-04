@@ -24,35 +24,37 @@ use App\Docker;
 use App\Api\ApplicationsCrud;
 use App\Models\Application;
 use App\Models\Template;
-use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\Utils;
+use TinyPHP\RouteContainer;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
+use TinyPHP\Utils;
 
 
 class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Template::class;
-	var $api_path = "templates";
+	var $api_name = "templates";
 
 	
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteCollector $routes)
+	function routes(RouteContainer $route_container)
 	{
-		parent::routes($routes);
+		parent::routes($route_container);
 		
 		/* Run template */
+		/*
 		$routes->addRoute
 		(
 			'POST',
 			'/' . $this->api_path . '/default/create_app/{id}/',
 			[$this, "actionCreateApp"]
 		);
+		*/
 	}
 	
 	

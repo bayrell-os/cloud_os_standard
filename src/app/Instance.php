@@ -109,21 +109,19 @@ class Instance extends \TinyPHP\App
 		}
 		
 		/* Add api crud */
+		// $this->addEntity(\App\Api\ApplicationsCrud::class);
 		$this->addEntity(\App\Api\DomainsCrud::class);
+		// $this->addEntity(\App\Api\ModificatorsCrud::class);
+		$this->addEntity(\App\Api\RoutesCrud::class);
+		$this->addEntity(\App\Api\NginxFilesCrud::class);
+		$this->addEntity(\App\Api\ServicesCrud::class);
+		// $this->addEntity(\App\Api\TemplatesCrud::class);
+		$this->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Add routes */
 		$this->addEntity(\App\Routes\DatabaseRoute::class);
 		
 		return;
-		
-		/* Include api functions */
-		$this->addEntity(\App\Api\ApplicationsCrud::class);
-		$this->addEntity(\App\Api\ModificatorsCrud::class);
-		$this->addEntity(\App\Api\NginxFilesCrud::class);
-		$this->addEntity(\App\Api\RoutesCrud::class);
-		$this->addEntity(\App\Api\ServicesCrud::class);
-		$this->addEntity(\App\Api\TemplatesCrud::class);
-		$this->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Include bus functions */
 		$this->addEntity(\App\Bus\BusApiRoute::class);

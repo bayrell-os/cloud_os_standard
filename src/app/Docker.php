@@ -257,7 +257,15 @@ class Docker
 		$balancer_data = Docker::getBalancerData($service, $service_tasks, $nodes);
 		
 		/* Update service */
-		$item = DockerService::firstOrNew(['docker_name' => $service_name]);
+		$item = DockerService::selectQuery()
+			->where([
+				['docker_name', '=', $service_name]
+			])
+			->one()
+		;
+		
+		if (!$item) $item = new DockerService();
+		
 		$item->docker_name = $service_name;
 		$item->stack_name = $stack_name;
 		$item->service_name = $service_short_name;
@@ -290,31 +298,25 @@ class Docker
 		$service = new DockerService();
 		
 		/* Set is deleted */
-		/*
-		Service::query()
-			->where('timestamp', '!=', $timestamp)
-			->update([
+		DockerService::updateQuery()
+			->values([
 				"enable" => 0,
 				"is_deleted" => 1,
 			])
+			->where([
+				['timestamp', '!=', $timestamp],
+			])
+			->execute()
 		;
-		*/
-		$sql = "update " . $service->getTable() .
-			" set `is_deleted`=1, `enable`=0 where `timestamp` != :timestamp";
-		$db::update($db::raw($sql), [ "timestamp" => $timestamp ]);
 		
 		/* Delete */
-		/*
-		DockerService::query()
-			->where('is_deleted', 1)
-			->where('timestamp', '<', $timestamp - 24*60*60)
-			->delete()
+		DockerService::deleteQuery()
+			->where([
+				['is_deleted', '=', 1],
+				['timestamp', '<', $timestamp - 24*60*60],
+			])
+			->execute()
 		;
-		*/
-		/* Delete old services */
-		$sql = "delete from " . $service->getTable() .
-			" where `is_deleted` = 1 and `timestamp` < :timestamp";
-		$db::update($db::raw($sql), [ "timestamp" => $timestamp - 24*60*60 ]);
 	}
 	
 	

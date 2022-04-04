@@ -362,7 +362,7 @@ export class ServicesPageState extends CrudState
 	 */
 	static getApiUrlStop(item: Service)
 	{
-		return "/api/" + this.getApiObjectName() + "/default/stop/" +
+		return "/api/" + this.getApiObjectName() + "/stop/" +
 			encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	

@@ -20,22 +20,51 @@
 
 namespace App\Models;
 
-use TinyPHP\Model;
+use TinyORM\Model;
 use App\Models\Template;
 use App\TemplateHelper;
 
 
 class Application extends Model
 {
-	protected $table = "applications";
-	protected $primaryKey = "id";
-	public $incrementing = true;
-	protected $attributes = [
-	];
-	protected $casts = [
-		'variables' => 'array',
-		'services' => 'array'
-	];
+	
+	/**
+	 * Return table name
+	 */
+	static function getTableName()
+	{
+		return "applications";
+	}
+	
+	
+	
+	/**
+	 * Return list of primary keys
+	 */
+	static function pk()
+	{
+		return ["id"];
+	}
+	
+	
+	
+	/**
+	 * Return if auto increment
+	 */
+	static function isAutoIncrement()
+	{
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Returns true if need to update timestamp
+	 */
+	static function updateTimestamp()
+	{
+		return true;
+	}
 	
 	
 	

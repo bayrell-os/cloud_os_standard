@@ -20,21 +20,54 @@
 
 namespace App\Models;
 
-use TinyPHP\Model;
+use TinyORM\Model;
 
 
 class NginxFile extends Model
 {
-	protected $table = "nginx_files";
-	protected $primaryKey = "name";
-	public $incrementing = false;
-	protected $attributes = [
-	];
-	protected $fillable = [
-		"name",
-	];
+	/**
+	 * Return table name
+	 */
+	static function getTableName()
+	{
+		return "nginx_files";
+	}
 	
 	
+	
+	/**
+	 * Return list of primary keys
+	 */
+	static function pk()
+	{
+		return ["name"];
+	}
+	
+	
+	
+	/**
+	 * Return if auto increment
+	 */
+	static function isAutoIncrement()
+	{
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Returns true if need to update timestamp
+	 */
+	static function updateTimestamp()
+	{
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Update file
+	 */
 	static function updateFile($file_name, $content)
 	{
 		/* Update nginx file */
@@ -56,9 +89,9 @@ class NginxFile extends Model
 	/**
 	 * Save the model to the database.
 	 */
-	public function save(array $options = [])
+	public function save($connection_name = 'default')
 	{
 		$this->timestamp = time();
-		parent::save($options);
+		return parent::save($connection_name);
 	}
 }

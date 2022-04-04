@@ -22,35 +22,37 @@ namespace App\Api;
 
 use App\Docker;
 use App\Models\DockerYamlFile;
-use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\Utils;
+use TinyPHP\RouteContainer;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
+use TinyPHP\Utils;
 
 
 class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = DockerYamlFile::class;
-	var $api_path = "applications_files";
+	var $api_name = "yaml_files";
 
 	
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteCollector $routes)
+	function routes(RouteContainer $route_container)
 	{
-		parent::routes($routes);
+		parent::routes($route_container);
 		
 		/* Compose */
+		/*
 		$routes->addRoute
 		(
 			'POST',
 			'/' . $this->api_path . '/default/compose/{id}/',
 			[$this, "actionCompose"]
 		);
+		*/
 	}
 	
 	
