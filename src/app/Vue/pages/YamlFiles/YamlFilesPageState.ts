@@ -290,7 +290,7 @@ export class YamlFilesPageState extends CrudState
 	 */
 	static getApiUrlCompose(item: YamlFile)
 	{
-		return "/api/" + this.getApiObjectName() + "/default/compose/" +
+		return "/api/" + this.getApiObjectName() + "/compose/" +
 			encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	

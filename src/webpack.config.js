@@ -4,7 +4,7 @@ const webpack = require('webpack')
 
 module.exports = {
 	entry: [
-		'./vuejs/index.js',
+		'./app/Vue/index.js',
 	],
 	output: {
 		filename: 'bundle.js',
@@ -21,7 +21,7 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			'@': path.resolve(__dirname, 'vuejs')
+			'@': path.resolve(__dirname, 'app/Vue')
 		},
 		extensions: ['.ts', '.js', '.css', '.scss', '.sass', '.vue']
 	},

@@ -13,7 +13,7 @@
 		// "rootDir": ".",
 		"baseUrl": ".",
 		"paths": {
-			"@/*": [ "vuejs/*" ]
+			"@/*": [ "app/Vue/*" ]
 		},
 		"types": [
 			"webpack-env",
@@ -27,13 +27,13 @@
 		],
 	},
 	"include": [
-		"vuejs",
-		"./vuejs/*.ts",
-		"./vuejs/*.vue",
-		"./vuejs/**/*.ts",
-		"./vuejs/**/*.vue",
-		"./vuejs/**/**/*.ts",
-		"./vuejs/**/**/*.vue",
+		"app/Vue",
+		"./app/Vue/*.ts",
+		"./app/Vue/*.vue",
+		"./app/Vue/**/*.ts",
+		"./app/Vue/**/*.vue",
+		"./app/Vue/**/**/*.ts",
+		"./app/Vue/**/**/*.vue"
 	],
 	"exclude": [
 		"node_modules",
