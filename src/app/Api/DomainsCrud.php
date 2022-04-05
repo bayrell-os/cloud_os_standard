@@ -46,6 +46,7 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
+					"id",
 					"domain_name",
 					"nginx_template",
 					"space_id",

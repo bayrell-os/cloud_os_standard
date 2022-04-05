@@ -1,1 +1,1 @@
-# sqlite3 /data/cloud_os.db < /srv/example/cloud_os_sqlite.sql
+# sqlite3 /data/db/cloud_os.db < /root/cloud_os_sqlite.sql

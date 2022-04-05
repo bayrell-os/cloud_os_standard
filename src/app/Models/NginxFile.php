@@ -71,7 +71,12 @@ class NginxFile extends Model
 	static function updateFile($file_name, $content)
 	{
 		/* Update nginx file */
-		$item = NginxFile::getById($file_name);
+		$item = NginxFile::selectQuery()
+			->where([
+				["name", "=", $file_name],
+			])
+			->one()
+		;
 		
 		if (!$item) $item = new NginxFile();
 		if ($item->name != $file_name) $item->name = $file_name;

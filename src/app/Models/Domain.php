@@ -40,7 +40,7 @@ class Domain extends Model
 	 */
 	static function pk()
 	{
-		return ["domain_name"];
+		return ["id"];
 	}
 	
 	
@@ -50,7 +50,7 @@ class Domain extends Model
 	 */
 	static function isAutoIncrement()
 	{
-		return false;
+		return true;
 	}
 	
 	

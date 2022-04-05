@@ -3,7 +3,7 @@ version: "3.3"
 services:
     
     standard_node1:
-        image: bayrell/cloud_os_standard:0.4.0-20220403_102003
+        image: bayrell/cloud_os_standard:0.4.0-20220405_164336
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_node1_data:/data"
@@ -28,25 +28,8 @@ services:
         logging:
             driver: journald
     
-    
-    router_http_node1:
-        image: bayrell/cloud_router_http:0.4.0
-        volumes:
-            - "router_http_data:/data"
-            - "/home/ubuntu/bayrell/cloud_router_http/files/root/router.php:/root/router.php"
-        ports:
-            - "80:80"
-        env_file:
-            - ./env.conf
-        restart: always
-        networks:
-            - cloud_network
-        logging:
-            driver: journald
-    
 volumes:
     standard_node1_data:
-    router_http_data:
     
 networks:
     cloud_network:

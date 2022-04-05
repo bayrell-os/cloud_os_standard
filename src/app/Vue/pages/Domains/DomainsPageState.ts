@@ -23,6 +23,7 @@ import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 export class Domain extends CrudItem
 {
+	id: number;
 	domain_name: string;
 	nginx_template: string;
 	space_id: number | null;
@@ -37,6 +38,7 @@ export class Domain extends CrudItem
 	init(params:any)
 	{
 		/* Init variables */
+		this.id = 0;
 		this.domain_name = "";
 		this.nginx_template = "";
 		this.space_id = null;
@@ -54,7 +56,8 @@ export class Domain extends CrudItem
 	 */
 	assignValue(key:string, value:any)
 	{
-		if (key == "domain_name") this.domain_name = String(value);
+		if (key == "id") this.id = Number(value);
+		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "nginx_template") this.nginx_template = String(value);
 		else if (key == "space_id") this.space_id = notNull(value) ? Number(value) : null;
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
@@ -94,12 +97,17 @@ export class DomainsPageState extends CrudState
 	 */
 	crudInit()
 	{
+		/* ID field */
+		let id = new FieldInfo();
+		id.api_name = "id";
+		id.primary = true;
+		this.fields.push( deepClone(id) );
+		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
 		domain_name.api_name = "domain_name";
 		domain_name.label = "Domain name";
 		domain_name.component = "Input";
-		domain_name.primary = true;
 		this.fields.push( deepClone(domain_name) );
 		
 		/* Nginx template */
@@ -149,7 +157,7 @@ export class DomainsPageState extends CrudState
 	 */
 	static getItemId(item: Domain | null): string
 	{
-		return (item != null) ? item.domain_name : "";
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	
