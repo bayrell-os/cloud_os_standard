@@ -40,7 +40,7 @@ class NginxFile extends Model
 	 */
 	static function pk()
 	{
-		return ["name"];
+		return ["id"];
 	}
 	
 	
@@ -50,7 +50,7 @@ class NginxFile extends Model
 	 */
 	static function isAutoIncrement()
 	{
-		return false;
+		return true;
 	}
 	
 	
@@ -71,7 +71,9 @@ class NginxFile extends Model
 	static function updateFile($file_name, $content)
 	{
 		/* Update nginx file */
-		$item = NginxFile::firstOrNew(['name' => $file_name]);
+		$item = NginxFile::getById($file_name);
+		
+		if (!$item) $item = new NginxFile();
 		if ($item->name != $file_name) $item->name = $file_name;
 		if ($item->content != $content) $item->content = $content;
 		if ($item->enable != true) $item->enable = true;

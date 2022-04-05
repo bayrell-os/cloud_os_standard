@@ -326,19 +326,23 @@ class Docker
 	 */
 	static function updateUpstreams($network_name)
 	{
-		$services = DockerService::query()
-			->where("enable", "=", "1")
-			->where("is_deleted", "=", "0")
-			->where("docker_name", "!=", "")
-			->orderBy("docker_name", "asc")
-			->get()
+		$services = DockerService::selectQuery()
+			->where([
+				["enable", "=", "1"],
+				["is_deleted", "=", "0"],
+				["docker_name", "!=", ""],
+			])
+			->orderBy("docker_name asc")
+			->all()
 		;
 		
-		$routes = Route::query()
-			->where("enable", "=", 1)
-			->where("protocol", "=", "http")
-			->orderBy("route", "desc")
-			->get()
+		$routes = Route::selectQuery()
+			->where([
+				["enable", "=", 1],
+				["protocol", "=", "http"],
+			])
+			->orderBy("route desc")
+			->all()
 		;
 		
 		$upstreams = [];
@@ -348,7 +352,7 @@ class Docker
 			$docker_name = $service["docker_name"];
 			$service_routes = array_filter
 			(
-				$routes->toArray(),
+				$routes,
 				function($route) use ($docker_name)
 				{
 					return $route["docker_name"] == $docker_name;
@@ -365,9 +369,9 @@ class Docker
 					$upstream_s .= "upstream " . $upstream_name . " {\n";
 					foreach ($ip_arr as $ip)
 					{
-						$upstream_s .= "\tserver " . $ip . ":" . $route["target_port"] . ";\n";
+						$upstream_s .= "  server " . $ip . ":" . $route["target_port"] . ";\n";
 					}
-					$upstream_s .= "}\n";
+					$upstream_s .= "  }\n";
 					$upstream_names[] = $upstream_name;
 				}
 			}
@@ -397,19 +401,20 @@ class Docker
 	 */
 	static function updateDomains()
 	{
-		$domains = Domain::query()
-			->get()
-			->toArray()
+		$domains = Domain::selectQuery()
+			->all()
 		;
 		
 		foreach ($domains as $domain)
 		{
-			$routes = Route::query()
-				->where("enable", "=", 1)
-				->where("protocol", "=", "http")
-				->where("domain_name", "=", $domain["domain_name"])
-				->orderBy("route", "desc")
-				->get()
+			$routes = Route::selectQuery()
+				->where([
+					["enable", "=", 1],
+					["protocol", "=", "http"],
+					["domain_name", "=", $domain["domain_name"]],
+				])
+				->orderBy("route desc")
+				->all()
 			;
 			
 			$nginx_routes = [];
@@ -429,40 +434,40 @@ class Docker
 				if ($domain_route_prefix == "/") $domain_route_prefix = "";
 				
 				$nginx_route .= "location " . $domain_route_url . " {\n";
-				$nginx_route .= "\tproxy_pass http://" . $upstream_name .
+				$nginx_route .= "    proxy_pass http://" . $upstream_name .
 					$domain_route_prefix . ";\n";
-				$nginx_route .= "\tinclude proxy_params;\n";
+				$nginx_route .= "    include proxy_params;\n";
 				
 				/* Add websocket settings */
 				if ($has_websocket)
 				{
-					$nginx_route .= "\tproxy_http_version 1.1;\n";
-					$nginx_route .= "\tproxy_set_header Upgrade \$http_upgrade;\n";
-					$nginx_route .= "\tproxy_set_header Connection \"upgrade\";\n";
+					$nginx_route .= "    proxy_http_version 1.1;\n";
+					$nginx_route .= "    proxy_set_header Upgrade \$http_upgrade;\n";
+					$nginx_route .= "    proxy_set_header Connection \"upgrade\";\n";
 				}
 				
 				/* Add route prefix */
 				if ($domain_route_prefix != "")
 				{
-					$nginx_route .= "\tproxy_set_header X-ROUTE-PREFIX \"" .
+					$nginx_route .= "    proxy_set_header X-ROUTE-PREFIX \"" .
 						$domain_route_prefix . "\";\n";
 				}
 				
 				/* Add space id */
 				if ($domain["space_id"] != "")
 				{
-					$nginx_route .= "\tproxy_set_header X-SPACE-ID \"" .
+					$nginx_route .= "    proxy_set_header X-SPACE-ID \"" .
 						$domain["space_id"] . "\";\n";
 				}
 				
 				/* Add layer uid */
 				if ($route["layer_uid"] != "")
 				{
-					$nginx_route .= "\tproxy_set_header X-LAYER-UID \"" .
+					$nginx_route .= "    proxy_set_header X-LAYER-UID \"" .
 						$route["layer_uid"] . "\";\n";
 				}
 				
-				$nginx_route .= "}";
+				$nginx_route .= "  }";
 				$nginx_routes[] = $nginx_route;
 			}
 			
@@ -489,7 +494,7 @@ class Docker
 		$result = null;
 		
 		/* Save all files */
-		$applications = DockerYamlFile::query()->get()->toArray();
+		$applications = DockerYamlFile::selectQuery()->all();
 		foreach ($applications as $row)
 		{
 			$row_file_name = $row["file_name"];
@@ -501,7 +506,7 @@ class Docker
 		}
 		
 		/* Compose */
-		$item = DockerYamlFile::find($app_file_id);
+		$item = DockerYamlFile::getById($app_file_id);
 		if ($item)
 		{
 			$yaml_file_path = "/data/yaml/app/" . $item["file_name"];

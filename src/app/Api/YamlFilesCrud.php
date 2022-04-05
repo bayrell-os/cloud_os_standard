@@ -25,6 +25,7 @@ use App\Models\DockerYamlFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
+use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
@@ -45,14 +46,12 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 		parent::routes($route_container);
 		
 		/* Compose */
-		/*
-		$routes->addRoute
-		(
-			'POST',
-			'/' . $this->api_path . '/default/compose/{id}/',
-			[$this, "actionCompose"]
-		);
-		*/
+		$route_container->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/compose/{id}/",
+			"name" => "api:" . $this->api_name . ":compose",
+			"method" => [$this, "actionCompose"],
+		]);
 	}
 	
 	
@@ -102,10 +101,10 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Action compose
 	 */
-	function doActionCompose()
+	function actionCompose(RenderContainer $container)
 	{
 		/* Save */
-		$this->doActionEdit();
+		$this->actionEdit($container);
 		
 		/* Compose */
 		if ($this->item)

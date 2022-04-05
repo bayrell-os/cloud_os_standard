@@ -20,39 +20,22 @@
 
 namespace App\Bus;
 
-use FastRoute\RouteCollector;
 use TinyPHP\ApiResult;
+use TinyPHP\ApiRoute;
 use TinyPHP\RenderContainer;
+use TinyPHP\RouteContainer;
 use TinyPHP\Utils;
-use App\Models\NginxFile;
 
 
-class BusApiRoute
+class BusApiRoute extends ApiRoute
 {
-	var $api_result;
-	
-	
-	/**
-	 * Declare routes
-	 */
-	function routes(RouteCollector $routes)
-	{
-		$routes->addRoute
-		(
-			['GET', 'POST'],
-			'/bus/get_nginx_changes/',
-			[$this, "actionGetNginxChanges"]
-		);
-	}
-	
-	
 	
 	/**
 	 * Request before
 	 */
 	function request_before(RenderContainer $container)
 	{
-		$this->api_result = make(ApiResult::class);
+		parent::request_before($container);
 		
 		/* Get post */
 		$post = json_decode($container->request->getContent(), true);
@@ -71,8 +54,6 @@ class BusApiRoute
 		{
 			throw new \Exception("Sign error");
 		}
-		
-		return $container;
 	}
 	
 	
@@ -82,46 +63,7 @@ class BusApiRoute
 	 */
 	function request_after(RenderContainer $container)
 	{
-		return $container;
-	}
-	
-	
-	
-	/**
-	 * Returns nginx changes
-	 */
-	function actionGetNginxChanges(RenderContainer $container)
-	{
-		$result = [];
-		$post = json_decode($container->request->getContent(), true);
-		$timestamp = Utils::attr($post, ["data", "timestamp"], 0);
-		
-		$files = NginxFile::query()
-			->where("timestamp", ">=", $timestamp)
-			->get()
-			->toArray()
-		;
-		
-		$files = array_map
-		(
-			function ($item)
-			{
-				return Utils::object_intersect
-				(
-					$item, ["name", "enable", "content", "timestamp", "is_deleted"]
-				);
-			},
-			$files
-		);
-		
-		return $container
-			->setResponse
-			(
-				$this->api_result
-					->success( $files, "Ok" )
-					->getResponse()
-			)
-		;
+		parent::request_after($container);
 	}
 	
 }

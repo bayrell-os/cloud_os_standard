@@ -19,14 +19,12 @@
  *  limitations under the License.
  */
 
-require __DIR__ . '/vendor/autoload.php';
+define( "BASE_PATH", __DIR__ );
+require_once BASE_PATH . "/vendor/autoload.php";
 
-\TinyPHP\Core::start( __DIR__ . "/defs.php" );
+global $app;
 
-/* Create app */
-$app = app();
+/* Run app */
+$app = create_app_instance();
 $app->init();
-$console = $app->createConsoleApp();
-
-/* Run console */
-$console->run();
+$app->runConsoleApp();

@@ -45,6 +45,8 @@ class Test extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+		return Command::SUCCESS;
+		
 		$template = '<?xml version="1.0" encoding="UTF-8" ?>
 		<template>
 			<name>WordPress</name>

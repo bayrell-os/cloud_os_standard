@@ -74,13 +74,13 @@ class Domain extends Model
 		{
 			$nginx_template = "";
 			$nginx_template .= "server {\n";
-			$nginx_template .= "listen 80;\n";
-			$nginx_template .= "server_name %DOMAIN_NAME%;\n";
-			$nginx_template .= "root /usr/share/nginx/default;\n";
-			$nginx_template .= "index index.html;\n";
-			$nginx_template .= "autoindex off;\n";
-			$nginx_template .= "%ROUTES%\n";
-			$nginx_template .= "%SSL%\n";
+			$nginx_template .= "  listen 80;\n";
+			$nginx_template .= "  server_name %DOMAIN_NAME%;\n";
+			$nginx_template .= "  root /usr/share/nginx/default;\n";
+			$nginx_template .= "  index index.html;\n";
+			$nginx_template .= "  autoindex off;\n";
+			$nginx_template .= "  %ROUTES%\n";
+			$nginx_template .= "  %SSL%\n";
 			$nginx_template .= "}";
 			$this->nginx_template = $nginx_template;
 		}

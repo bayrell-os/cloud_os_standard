@@ -45,6 +45,7 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 			([
 				"fields" =>
 				[
+					"id",
 					"name",
 					"enable",
 					"content",

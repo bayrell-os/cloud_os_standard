@@ -105,7 +105,7 @@ class Instance extends \TinyPHP\App
 		$is_debug = env("APP_DEBUG");
 		if ($is_debug)
 		{
-			$this->addEntity(\App\Api\Test::class);
+			// $this->addEntity(\App\Api\Test::class);
 		}
 		
 		/* Add api crud */
@@ -121,25 +121,14 @@ class Instance extends \TinyPHP\App
 		/* Add routes */
 		$this->addEntity(\App\Routes\DatabaseRoute::class);
 		
-		return;
+		/* Bus functions */
+		$this->addEntity(\App\Bus\DefaultBus::class);
 		
-		/* Include bus functions */
-		$this->addEntity(\App\Bus\BusApiRoute::class);
-		
-		/* Includes models */
-		$this->addEntity(\App\Models\Application::class);
-		$this->addEntity(\App\Models\Domain::class);
-		$this->addEntity(\App\Models\Modificator::class);
-		$this->addEntity(\App\Models\NginxFile::class);
-		$this->addEntity(\App\Models\Route::class);
-		$this->addEntity(\App\Models\Template::class);
-		$this->addEntity(\App\Models\DockerService::class);
-		$this->addEntity(\App\Models\DockerYamlFile::class);
-
-		/* Includes console commands */
+		/* Console commands */
 		$this->addEntity(\App\Console\Docker\NginxUpdate::class);
 		$this->addEntity(\App\Console\Docker\ServicesUpdate::class);
-		$this->addEntity(\App\Console\Test::class);
+		// $this->addEntity(\App\Console\Test::class);
+		
 	}
 	
 	

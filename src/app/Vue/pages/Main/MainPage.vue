@@ -22,7 +22,7 @@
 
 <template>
 	<div class="page_home">
-		Cloud OS Version 0.4
+		Cloud OS Version 0.4.0
 	</div>
 </template>
 

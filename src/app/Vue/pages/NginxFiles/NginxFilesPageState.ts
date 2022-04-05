@@ -23,6 +23,7 @@ import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/Cr
 
 export class NginxFile extends CrudItem
 {
+	id: number;
 	name: string;
 	enable: boolean;
 	content: string;
@@ -39,6 +40,7 @@ export class NginxFile extends CrudItem
 	init(params:any)
 	{
 		/* Init variables */
+		this.id = 0;
 		this.name = "";
 		this.enable = false;
 		this.content = "";
@@ -58,7 +60,8 @@ export class NginxFile extends CrudItem
 	 */
 	assignValue(key:string, value:any)
 	{
-		if (key == "name") this.name = String(value);
+		if (key == "id") this.id = Number(value);
+		else if (key == "name") this.name = String(value);
 		else if (key == "enable") this.enable = value == "1" || value == "true";
 		else if (key == "content") this.content = String(value);
 		else if (key == "timestamp") this.timestamp = Number(value);
@@ -111,7 +114,7 @@ export class NginxFilesPageState extends CrudState
 		name.api_name = "name";
 		name.label = "Name";
 		name.component = "Input";
-		name.primary = true;
+		name.primary = false;
 		this.fields.push( deepClone(name) );
 		
 		/* Enable field */
@@ -176,7 +179,7 @@ export class NginxFilesPageState extends CrudState
 	 */
 	static getItemId(item: NginxFile | null): string
 	{
-		return (item != null) ? item.name : "";
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	
