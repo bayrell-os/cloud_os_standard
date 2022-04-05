@@ -1,7 +1,5 @@
 #!/bin/bash
 
-exit 0
-
 while true
 do
     sleep 15
