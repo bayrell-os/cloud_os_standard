@@ -1,7 +1,7 @@
 INSERT INTO "docker_yaml_files" ("file_name", "stack_name", "content", "timestamp", "is_deleted", "gmtime_created", "gmtime_updated") VALUES ('router_http.yaml',	'cloud_os',	'version: ''3.7''
 services:
   router_http:
-    image: ''bayrell/cloud_router_http:0.4.0''
+    image: ''bayrell/load_balancer_http:0.4.0''
     hostname: ''{{.Service.Name}}.{{.Task.ID}}.local''
     volumes:
       - ''router_http_data:/data''
