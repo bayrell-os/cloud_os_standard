@@ -4,7 +4,7 @@ services:
     
     code_server:
         image: bayrell/ubuntu_code_server:3.11.0-8-amd64
-        hostname: "cloud_os_standard.local"
+        hostname: "code_server.local"
         volumes:
             - "code_server_data:/data"
             - "/home/ubuntu/bayrell/cloud_os_standard_0.4:/srv"

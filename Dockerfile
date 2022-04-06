@@ -4,7 +4,7 @@ FROM bayrell/ubuntu_php_fpm:7.4-3${ARCH}
 RUN cd ~; \
 	export DEBIAN_FRONTEND='noninteractive'; \
 	apt-get update; \
-	apt-get install docker.io dnsmasq sqlite mysql-client openssh-server -y; \
+	apt-get install docker.io dnsmasq sqlite openssh-server -y; \
 	usermod -a -G docker www-data; \
 	echo "Ok"
 

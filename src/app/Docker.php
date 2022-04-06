@@ -371,7 +371,7 @@ class Docker
 					{
 						$upstream_s .= "  server " . $ip . ":" . $route["target_port"] . ";\n";
 					}
-					$upstream_s .= "  }\n";
+					$upstream_s .= "}\n";
 					$upstream_names[] = $upstream_name;
 				}
 			}
@@ -498,8 +498,9 @@ class Docker
 		foreach ($applications as $row)
 		{
 			$row_file_name = $row["file_name"];
+			$row_stack_name = $row["stack_name"];
 			$row_content = $row["content"];
-			$file_path = "/data/yaml/app/" . $row_file_name;
+			$file_path = "/data/yaml/" . $row_stack_name . "/" . $row_file_name;
 			$file_dirname = dirname($file_path);
 			@mkdir($file_dirname, 0755, true);
 			file_put_contents($file_path, $row_content);
@@ -509,7 +510,7 @@ class Docker
 		$item = DockerYamlFile::getById($app_file_id);
 		if ($item)
 		{
-			$yaml_file_path = "/data/yaml/app/" . $item["file_name"];
+			$yaml_file_path = "/data/yaml/" . $item["stack_name"] . "/" . $item["file_name"];
 			$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " app --with-registry-auth";
 			$result = Docker::exec($cmd . " 2>&1");
 		}
