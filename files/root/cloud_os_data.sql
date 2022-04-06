@@ -1,10 +1,10 @@
-INSERT INTO "docker_yaml_files" ("file_name", "stack_name", "content", "timestamp", "is_deleted", "gmtime_created", "gmtime_updated") VALUES ('router_http.yaml',	'cloud_os',	'version: ''3.7''
+INSERT INTO "docker_yaml_files" ("file_name", "stack_name", "content", "timestamp", "is_deleted", "gmtime_created", "gmtime_updated") VALUES ('load_balancer_http.yaml',	'cloud_os',	'version: ''3.7''
 services:
-  router_http:
+  load_balancer_http:
     image: ''bayrell/load_balancer_http:0.4.0''
     hostname: ''{{.Service.Name}}.{{.Task.ID}}.local''
     volumes:
-      - ''router_http_data:/data''
+      - ''load_balancer_http_data:/data''
     ports:
       - target: 80
         published: 80
@@ -37,7 +37,7 @@ services:
     logging:
       driver: journald
 volumes:
-  router_http_data:
+  load_balancer_http_data:
 networks:
   cloud_network:
     external: true
