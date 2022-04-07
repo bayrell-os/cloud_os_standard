@@ -24,6 +24,7 @@ services:
       update_config:
         parallelism: 1
         failure_action: rollback
+        order: start-first
         delay: 5s
       restart_policy:
         condition: on-failure
@@ -69,6 +70,7 @@ services:
       update_config:
         parallelism: 1
         failure_action: rollback
+        order: start-first
         delay: 5s
       restart_policy:
         condition: on-failure
