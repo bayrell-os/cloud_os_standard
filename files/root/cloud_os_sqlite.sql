@@ -98,6 +98,7 @@ CREATE TABLE "domains" (
 );
 
 CREATE INDEX "domains_space_id" ON "domains" ("space_id");
+CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
 
 
 DROP TABLE IF EXISTS "layers";
