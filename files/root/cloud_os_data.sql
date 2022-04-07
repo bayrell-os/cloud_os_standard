@@ -86,4 +86,4 @@ volumes:
 networks:
   cloud_network:
     external: true
-',	'0',	'0',	2022-04-07 14:50:04,	2022-04-07 15:00:49);
+',	'0',	'0',	'%GMTIME%',	'%GMTIME%');
