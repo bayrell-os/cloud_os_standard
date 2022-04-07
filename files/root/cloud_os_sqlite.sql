@@ -89,12 +89,12 @@ CREATE UNIQUE INDEX "app_files_file_name" ON "docker_yaml_files" ("file_name");
 
 DROP TABLE IF EXISTS "domains";
 CREATE TABLE "domains" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "domain_name" text NOT NULL,
   "nginx_template" text NOT NULL DEFAULT '',
   "space_id" integer NULL,
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  PRIMARY KEY ("domain_name")
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE INDEX "domains_space_id" ON "domains" ("space_id");
