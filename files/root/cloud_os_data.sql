@@ -76,7 +76,7 @@ services:
         window: 120s
       placement:
         constraints:
-          - ''node.hostname == raspa1''
+          - ''node.hostname == docker0''
     networks:
       - cloud_network
     logging:
