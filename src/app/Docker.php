@@ -511,7 +511,8 @@ class Docker
 		if ($item)
 		{
 			$yaml_file_path = "/data/yaml/" . $item["stack_name"] . "/" . $item["file_name"];
-			$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " app --with-registry-auth";
+			$cmd = "sudo docker stack deploy -c " . $yaml_file_path . " " . $item["stack_name"] .
+				" --with-registry-auth";
 			$result = Docker::exec($cmd . " 2>&1");
 		}
 		
