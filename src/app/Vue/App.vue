@@ -126,6 +126,15 @@ export const App =
 					]
 				},
 				*/
+				
+				{
+					"title": "Applications",
+					"items":
+					[
+						{ "name": "app:modificators", "title": "Modificators" },
+					]
+				},
+				
 				{
 					"title": "Docker Swarm",
 					"items":
@@ -142,7 +151,7 @@ export const App =
 						{ "name": "app:domains", "title": "Domains" },
 						{ "name": "app:routes","title": "Routes" },
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
-						/* { "name": "app:users", "title": "Users" }, */
+						{ "name": "app:users", "title": "Users" },
 					]
 				},
 				

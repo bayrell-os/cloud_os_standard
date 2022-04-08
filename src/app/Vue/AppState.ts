@@ -24,6 +24,7 @@ import { TemplatesPageState } from '@/pages/Templates/TemplatesPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
+import { UsersPageState } from '@/pages/Users/UsersPageState'
 import { ServicesPageState } from '@/pages/Services/ServicesPageState'
 import { YamlFilesPageState } from '@/pages/YamlFiles/YamlFilesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
@@ -40,6 +41,7 @@ export class AppState
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();
+	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();

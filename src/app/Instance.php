@@ -52,7 +52,6 @@ class Instance extends \TinyPHP\App
 	 */
 	function init_app()
 	{
-		libxml_use_internal_errors(true);
 	}
 	
 	
@@ -111,11 +110,12 @@ class Instance extends \TinyPHP\App
 		/* Add api crud */
 		// $this->addEntity(\App\Api\ApplicationsCrud::class);
 		$this->addEntity(\App\Api\DomainsCrud::class);
-		// $this->addEntity(\App\Api\ModificatorsCrud::class);
+		$this->addEntity(\App\Api\ModificatorsCrud::class);
 		$this->addEntity(\App\Api\RoutesCrud::class);
 		$this->addEntity(\App\Api\NginxFilesCrud::class);
 		$this->addEntity(\App\Api\ServicesCrud::class);
 		// $this->addEntity(\App\Api\TemplatesCrud::class);
+		$this->addEntity(\App\Api\UsersCrud::class);
 		$this->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Add routes */

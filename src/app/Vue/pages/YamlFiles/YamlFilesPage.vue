@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:action="action">
+	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
 		<template v-slot:component_crud_save>
 			<Form v-bind:store_path="store_path.concat('form_save')">

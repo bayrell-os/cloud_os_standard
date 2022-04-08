@@ -20,21 +20,20 @@
 
 namespace App\Api;
 
-use App\Docker;
-use App\Models\Modificator;
-use App\XML;
+use App\Models\Domain;
+use App\Models\User;
+use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\Utils;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
+class UsersCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Modificator::class;
-	var $api_name = "modificators";
+	var $class_name = User::class;
+	var $api_name = "users";
 	
 	
 	/**
@@ -49,61 +48,18 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
+					"login",
 					"name",
-					"type",
-					"content",
+					"banned",
+					"is_deleted",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
-			new ReadOnly([ "api_name" => "name" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
-	
-	
-	
-	/**
-	 * Find query
-	 */
-	public function findQuery($query)
-	{
-		return $query
-			->orderBy("name", "asc")
-		;
-	}
-	
-	
-	
-	/**
-	 * To database
-	 */
-	function toDatabase($item)
-	{
-		$item = parent::toDatabase($item);
-		return $item;
-	}
-	
-	
-	/**
-	 * Validation
-	 */
-	function validate($action)
-	{
-		if ($action == "actionCreate" || $action == "actionEdit")
-		{
-			$content = $this->update_data["content"];
-			
-			list($xml, $errors) = XML::loadXml($content);
-			if (!$xml)
-			{
-				throw new \Exception("XML error: " . implode(". ", $errors));
-			}
-			
-			$name = (string)$xml->name;
-			$this->update_data["name"] = $name;
-		}
-	}
+
 }

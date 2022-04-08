@@ -25,6 +25,7 @@ import TemplatesPage from '@/pages/Templates/TemplatesPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
+import UsersPage from '@/pages/Users/UsersPage.vue'
 import ServicesPage from '@/pages/Services/ServicesPage.vue'
 import YamlFilesPage from '@/pages/YamlFiles/YamlFilesPage.vue'
 import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
@@ -70,20 +71,20 @@ const routes: Array<RouteRecordRaw> =
 		props:
 		{
 			store_path: ["ModificatorsPage"],
-			action: "list"
+			page_action: "list"
 		},
 	},
 	{
 		path: '/modificators/add/',
 		name: 'app:modificators:add',
 		component: ModificatorsPage,
-		props: { store_path: ["ModificatorsPage"], action: "add" },
+		props: { store_path: ["ModificatorsPage"], page_action: "add" },
 	},
 	{
 		path: '/modificators/edit/:id/',
 		name: 'app:modificators:edit',
 		component: ModificatorsPage,
-		props: { store_path: ["ModificatorsPage"], action: "edit" },
+		props: { store_path: ["ModificatorsPage"], page_action: "edit" },
 	},
 	
 	/* Templates */
@@ -94,20 +95,20 @@ const routes: Array<RouteRecordRaw> =
 		props:
 		{
 			store_path: ["TemplatesPage"],
-			action: "list"
+			page_action: "list"
 		},
 	},
 	{
 		path: '/templates/add/',
 		name: 'app:templates:add',
 		component: TemplatesPage,
-		props: { store_path: ["TemplatesPage"], action: "add" },
+		props: { store_path: ["TemplatesPage"], page_action: "add" },
 	},
 	{
 		path: '/templates/edit/:id/',
 		name: 'app:templates:edit',
 		component: TemplatesPage,
-		props: { store_path: ["TemplatesPage"], action: "edit" },
+		props: { store_path: ["TemplatesPage"], page_action: "edit" },
 	},
 	
 	/* Domains */
@@ -133,13 +134,13 @@ const routes: Array<RouteRecordRaw> =
 		path: '/yaml_files/add/',
 		name: 'app:yaml_files:add',
 		component: YamlFilesPage,
-		props: { store_path: ["YamlFilesPage"], action: "add" },
+		props: { store_path: ["YamlFilesPage"], page_action: "add" },
 	},
 	{
 		path: '/yaml_files/edit/:id/',
 		name: 'app:yaml_files:edit',
 		component: YamlFilesPage,
-		props: { store_path: ["YamlFilesPage"], action: "edit" }
+		props: { store_path: ["YamlFilesPage"], page_action: "edit" }
 	},
 	
 	/* Nginx files */
@@ -170,8 +171,8 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/users/',
 		name: 'app:users',
-		component: NotFoundPage,
-		props: { store_path: ["NotFoundPage"] },
+		component: UsersPage,
+		props: { store_path: ["UsersPage"] },
 	},
 	
 	/* Page not found */

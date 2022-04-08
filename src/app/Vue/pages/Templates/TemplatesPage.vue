@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:action="action"></Crud>
+	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action"></Crud>
 	<Dialog v-bind:store_path="store_path.concat('dialog_run')"
 		width="800px" buttons="false"
 	>

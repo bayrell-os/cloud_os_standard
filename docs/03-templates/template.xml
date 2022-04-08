@@ -1,0 +1,32 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<template>
+	<id>org.bayrell.alpine_wordpress</id>
+	<name>WordPress</name>
+	<version>5.7.2-2-amd64</version>
+	<maintainer>Ildar &lt;ildar@bayrell.org&gt;</maintainer>
+	<marketplace>https://cloud_os.bayrell.org/</marketplace>
+    <link name="Main site">https://wordpress.org/</link>
+	<link name="Docker image">https://hub.docker.com/r/bayrell/alpine_php_fpm</link>
+	<link name="Docker image source code">https://github.com/bayrell-os/alpine_php_fpm</link>
+	<license>GNU GPL 2+</license>
+    <description locale="en_US">WordPress (WP, WordPress.org) is a free and open-source content management system (CMS) written in PHP[4] and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system, referred to within WordPress as Themes. WordPress was originally created as a blog-publishing system but has evolved to support other web content types including more traditional mailing lists and forums, media galleries, membership sites, learning management systems (LMS) and online stores. One of the most popular content management system solutions in use, WordPress is used by 42.8% of the top 10 million websites as of October 2021.</description>
+    <description locale="ru_RU">WordPress - cвободно распространяемая система управления содержимым сайта с открытым исходным кодом; написана на PHP; сервер базы данных — MySQL; выпущена под лицензией GNU GPL версии 2. Сфера применения — от блогов до достаточно сложных новостных ресурсов. Встроенная система «тем» и «плагинов» вместе с удачной архитектурой позволяет конструировать проекты широкой функциональной сложности.</description>
+	<yaml>
+		<services>
+			<_var_service_name_>
+				<image>docker.io/bayrell/alpine_wordpress:5.7.2-2-amd64</image>
+				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
+				<environment>
+					<WWW_UID>1000</WWW_UID>
+					<WWW_GID>1000</WWW_GID>
+				</environment>
+			</_var_service_name_>
+		</services>
+	</yaml>
+	<varibales>
+		<varibale>
+			<name>_var_service_name_</name>
+			<type>string</type>
+		</varibale>
+	</varibales>
+</template>

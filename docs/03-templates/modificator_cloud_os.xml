@@ -1,0 +1,52 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<patch>
+	<name>Cloud OS</name>
+	<operations>
+		<operation type="add">
+			<path>/template/yaml/services/_var_service_name_</path>
+			<value>
+				<logging>
+					<driver>journald</driver>
+				</logging>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/_var_service_name_</path>
+			<value>
+				<deploy>
+					<replicas>1</replicas>
+					<endpoint_mode>dnsrr</endpoint_mode>
+					<update_config>
+						<parallelism>1</parallelism>
+						<failure_action>rollback</failure_action>
+						<order>start-first</order>
+						<delay>5s</delay>
+					</update_config>
+					<restart_policy>
+						<condition>on-failure</condition>
+						<delay>10s</delay>
+						<window>120s</window>
+					</restart_policy>
+				</deploy>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/_var_service_name_</path>
+			<value>
+				<networks>cloud_network</networks>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/networks</path>
+			<value>
+				<cloud_network>
+					<external>true</external>
+				</cloud_network>
+			</value>
+		</operation>
+		
+	</operations>
+</patch>

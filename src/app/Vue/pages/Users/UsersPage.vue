@@ -16,33 +16,22 @@
  *  limitations under the License.
 -->
 
-<style lang="scss">
-
-</style>
-
-
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action"></Crud>
+	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action" />
 </template>
-
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
+import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
 import { Crud } from "vue-helper/Crud/Crud.vue";
+import { UsersPageState } from './UsersPageState';
 
 
-/**
- * Status page
- */
-export const Modificators =
+export const UsersPage =
 {
-	name: "Modificators",
+	name: "UsersPage",
 	mixins: [mixin],
-	components:
-	{
-	},
 	methods:
 	{
 	},
@@ -55,7 +44,8 @@ export const Modificators =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(Modificators, Crud);
-export default defineComponent(Modificators);
+
+componentExtend(UsersPage, Crud);
+export default defineComponent(UsersPage);
 
 </script>

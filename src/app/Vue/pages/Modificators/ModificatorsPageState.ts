@@ -123,7 +123,7 @@ export class ModificatorsPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form_save.fields.push( deepClone(name) );
+		/* this.form_save.fields.push( deepClone(name) );*/
 		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
