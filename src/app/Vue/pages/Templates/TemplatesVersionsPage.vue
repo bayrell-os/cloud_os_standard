@@ -23,24 +23,7 @@
 
 <template>
 	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
-		<template v-slot:top_buttons>
-			<div class="component_crud__top_button" >
-				
-				<router-link custom
-					:to="{ name: 'app:templates:import'}"
-					v-slot="{ href, navigate, route }"
-				>
-					<a :href="href" @click="navigate" class="nolink"
-						v-bind:data-route-name="route.name"
-					>
-						<Button type="success">
-							Import template
-						</Button>
-					</a>
-				</router-link>
-				
-			</div>
-		</template>
+		<template v-slot:top_buttons>&nbsp;</template>
 	</Crud>
 </template>
 
@@ -57,9 +40,9 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 /**
  * Status page
  */
-export const TemplatesPage =
+export const TemplatesVersionsPage =
 {
-	name: "TemplatesPage",
+	name: "TemplatesVersionsPage",
 	mixins: [mixin, Crud],
 	components:
 	{
@@ -76,7 +59,7 @@ export const TemplatesPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(TemplatesPage, Crud);
-export default defineComponent(TemplatesPage);
+componentExtend(TemplatesVersionsPage, Crud);
+export default defineComponent(TemplatesVersionsPage);
 
 </script>

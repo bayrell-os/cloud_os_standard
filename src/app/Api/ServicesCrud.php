@@ -26,9 +26,9 @@ use App\Models\DockerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
+use TinyPHP\Exception\MethodNotAllowedException;
 use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
-use TinyPHP\Exception\HttpMethodNotAllowedException;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
@@ -212,7 +212,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function actionCreate(RenderContainer $container)
 	{
-		throw new HttpMethodNotAllowedException();
+		throw new MethodNotAllowedException();
 	}
 	
 	
@@ -222,7 +222,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function actionEdit(RenderContainer $container)
 	{
-		throw new HttpMethodNotAllowedException();
+		throw new MethodNotAllowedException();
 	}
 	
 	
@@ -232,6 +232,6 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function actionDelete(RenderContainer $container)
 	{
-		throw new HttpMethodNotAllowedException();
+		throw new MethodNotAllowedException();
 	}
 }

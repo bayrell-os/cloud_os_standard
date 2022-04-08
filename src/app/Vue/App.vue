@@ -131,6 +131,7 @@ export const App =
 					"title": "Applications",
 					"items":
 					[
+						{ "name": "app:templates", "title": "Templates" },
 						{ "name": "app:modificators", "title": "Modificators" },
 					]
 				},

@@ -21,6 +21,8 @@ import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageStat
 import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
 import { ModificatorsPageState } from '@/pages/Modificators/ModificatorsPageState'
 import { TemplatesPageState } from '@/pages/Templates/TemplatesPageState'
+import { TemplatesVersionsPageState } from '@/pages/Templates/TemplatesVersionsPageState'
+import { TemplateEditPageState } from '@/pages/Templates/TemplateEditPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
@@ -38,6 +40,8 @@ export class AppState
 	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
 	ModificatorsPage: ModificatorsPageState = new ModificatorsPageState();
 	TemplatesPage: TemplatesPageState = new TemplatesPageState();
+	TemplatesVersionsPage: TemplatesVersionsPageState = new TemplatesVersionsPageState();
+	TemplateEditPage: TemplateEditPageState = new TemplateEditPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();

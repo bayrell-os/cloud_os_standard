@@ -24,6 +24,7 @@ use App\Docker;
 use App\Api\ApplicationsCrud;
 use App\Models\Application;
 use App\Models\Template;
+use App\Models\TemplateVersion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -35,11 +36,13 @@ use TinyPHP\Rules\ReadOnly;
 use TinyPHP\Utils;
 
 
-class TemplatesCrud extends \TinyPHP\ApiCrudRoute
+class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Template::class;
-	var $api_name = "templates";
-
+	var $class_name = TemplateVersion::class;
+	var $api_name = "templates_versions";
+	var $template = null;
+	var $template_id = 0;
+	
 	
 	/**
 	 * Declare routes
@@ -47,14 +50,6 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	function routes(RouteContainer $route_container)
 	{
 		parent::routes($route_container);
-		
-		$route_container->addRoute([
-			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/import/",
-			"name" => "api:" . $this->api_name . ":import",
-			"method" => [$this, "actionImport"],
-		]);
-		
 	}
 	
 	
@@ -71,14 +66,16 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
-					"type",
-					"name",
+					"template_id",
+					"version",
 					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "template_id", "can_create" => true ]),
+			new ReadOnly([ "api_name" => "version" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
@@ -87,24 +84,61 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
-	 * Find query
+	 * Init
 	 */
-	public function findQuery($query)
+	function init($action)
 	{
-		return $query
-			->orderBy("name", "asc")
-		;
+		if ($action == "actionSearch")
+		{
+			$this->template_id = (int)$this->container->post("template_id");
+			$this->template = Template::getById( $this->template_id );
+			if ($this->template == null)
+			{
+				throw new \TinyPHP\Exception\ItemNotFoundException("Template");
+			}
+		}
+		
+		parent::init($action);
 	}
 	
 	
 	
 	/**
-	 * To database
+	 * Build search response
 	 */
-	function toDatabase($item)
+	function buildResponse($action)
 	{
-		$item = parent::toDatabase($item);
-		return $item;
+		parent::buildResponse($action);
+		
+		if ($action == "actionSearch")
+		{
+			$this->api_result->result["template_id"] = $this->template_id;
+			$this->api_result->result["template"] = \TinyPHP\Utils::object_intersect
+			(
+				$this->template->toArray(),
+				[
+					"id", "uid", "name", "gmtime_created", "gmtime_updated"
+				]
+			);
+		}
+	}
+	
+	
+	
+	/**
+	 * Find query
+	 */
+	public function buildSearchQuery($query, $action)
+	{
+		if ($action == "actionSearch")
+		{
+			$query
+				->addWhere("template_id", "=", $this->template_id)
+				->orderBy("version", "desc")
+			;
+		}
+		
+		return $query;
 	}
 	
 	
@@ -119,6 +153,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	
+	
 	/**
 	 * Edit action
 	 */
@@ -127,15 +162,6 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 		throw new MethodNotAllowedException();
 	}
 	
-	
-	
-	/**
-	 * Delete action
-	 */
-	function actionDelete(RenderContainer $container)
-	{
-		throw new MethodNotAllowedException();
-	}
 	
 	
 }

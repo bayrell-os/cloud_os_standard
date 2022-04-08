@@ -22,6 +22,8 @@ import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
 import ApplicationsEditPage from '@/pages/Applications/ApplicationsEditPage.vue'
 import ModificatorsPage from '@/pages/Modificators/ModificatorsPage.vue'
 import TemplatesPage from '@/pages/Templates/TemplatesPage.vue'
+import TemplateEditPage from '@/pages/Templates/TemplateEditPage.vue'
+import TemplatesVersionsPage from '@/pages/Templates/TemplatesVersionsPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
@@ -99,16 +101,22 @@ const routes: Array<RouteRecordRaw> =
 		},
 	},
 	{
-		path: '/templates/add/',
-		name: 'app:templates:add',
-		component: TemplatesPage,
-		props: { store_path: ["TemplatesPage"], page_action: "add" },
+		path: '/templates/view/:template_id/',
+		name: 'app:templates:view',
+		component: TemplatesVersionsPage,
+		props: { store_path: ["TemplatesVersionsPage"], page_action: "list" },
+	},
+	{
+		path: '/templates/import/',
+		name: 'app:templates:import',
+		component: TemplateEditPage,
+		props: { store_path: ["TemplateEditPage"], page_action: "add" },
 	},
 	{
 		path: '/templates/edit/:id/',
 		name: 'app:templates:edit',
-		component: TemplatesPage,
-		props: { store_path: ["TemplatesPage"], page_action: "edit" },
+		component: TemplateEditPage,
+		props: { store_path: ["TemplateEditPage"], page_action: "edit" },
 	},
 	
 	/* Domains */

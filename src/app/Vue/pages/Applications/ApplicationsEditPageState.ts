@@ -90,7 +90,7 @@ export class ApplicationsEditPageState extends BaseObject
 		}
 		
 		/* Load modificators */
-		response = await ModificatorsPageState.apiLoadData();
+		response = await ModificatorsPageState.apiLoadData(null);
 		if (response && response.data.error.code == 1)
 		{
 			this.modificators = [];

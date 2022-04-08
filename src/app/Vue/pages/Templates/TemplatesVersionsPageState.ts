@@ -23,10 +23,11 @@ import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
 import { FormState } from "vue-helper/Crud/FormState";
 
 
-export class Template extends CrudItem
+export class TemplateVersion extends CrudItem
 {
 	id: number;
-	name: string;
+	template_id: number;
+	version: string;
 	content: string;
 	gmtime_created: string;
 	gmtime_updated: string;
@@ -39,7 +40,8 @@ export class Template extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
-		this.name = "";
+		this.template_id = 0;
+		this.version = "";
 		this.content = "";
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
@@ -55,7 +57,8 @@ export class Template extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
-		else if (key == "name") this.name = String(value);
+		else if (key == "template_id") this.template_id = Number(value);
+		else if (key == "version") this.version = String(value);
 		else if (key == "content") this.content = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
@@ -66,10 +69,11 @@ export class Template extends CrudItem
 
 
 
-export class TemplatesPageState extends CrudState
+export class TemplatesVersionsPageState extends CrudState
 {
-	
-	
+	template_id: number;
+    
+    
 	/**
 	 * Init class
 	 */
@@ -84,9 +88,9 @@ export class TemplatesPageState extends CrudState
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): Template
+	static createNewItem(): TemplateVersion
 	{
-		return new Template();
+		return new TemplateVersion();
 	}
 	
 	
@@ -96,7 +100,7 @@ export class TemplatesPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "templates";
+		return "templates_versions";
 	}
 	
 	
@@ -107,9 +111,7 @@ export class TemplatesPageState extends CrudState
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:templates",
-			// "add": "app:templates:add",
-			// "edit": "app:templates:edit",
+			"list": "app:templates_versions",
 		};
 	}
 	
@@ -126,19 +128,12 @@ export class TemplatesPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Stack name field */
-		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
-		stack_name.label = "Stack name";
-		stack_name.component = "Input";
-		this.fields.push( deepClone(stack_name) );
-		
-		/* Name field */
-		let name = new FieldInfo();
-		name.api_name = "name";
-		name.label = "name";
-		name.component = "Input";
-		this.fields.push( deepClone(name) );
+		/* Version field */
+		let version = new FieldInfo();
+		version.api_name = "version";
+		version.label = "Version";
+		version.component = "Input";
+		this.fields.push( deepClone(version) );
 		
 		/* Content field */
 		let content = new FieldInfo();
@@ -162,14 +157,9 @@ export class TemplatesPageState extends CrudState
 		row_buttons.component_params["buttons"] = [
 			new CrudButton().assignValues({
 				"type": "default",
-				"label": "View",
-				"action": "view",
-				"route": "app:templates:view",
-				"params": (res: any, crud: any, button: any) => {
-					return {
-						"template_id": (this.constructor as any).getItemId(crud.item),
-					};
-				},
+				"label": "Edit",
+				"action": "edit",
+				"route": "app:templates:edit"
 			}),
 			new CrudButton().assignValues({
 				"type": "danger",
@@ -182,17 +172,10 @@ export class TemplatesPageState extends CrudState
 		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
-		name.component = "Label";
-		stack_name.component = "Label";
+		version.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(version) );
 		this.fields_table.push( deepClone(row_buttons) );
-		
-		/* App name field */
-		let app_name = new FieldInfo();
-		app_name.api_name = "app_name";
-		app_name.label = "app_name";
-		app_name.component = "Input";
 	}
 	
 	
@@ -200,9 +183,9 @@ export class TemplatesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Template | null): string
+	static getItemName(item: TemplateVersion | null): string
 	{
-		return (item) ? item.name : "";
+		return (item) ? item.version : "";
 	}
 	
 	
@@ -210,7 +193,7 @@ export class TemplatesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: Template | null): string
+	static getItemId(item: TemplateVersion | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -237,5 +220,27 @@ export class TemplatesPageState extends CrudState
 		return super.getMessage(message_type, item);
 	}
 	
+	
+    
+    /**
+	 * Page data
+	 */
+	async pageLoadData(route: any)
+	{
+        this.template_id = Number(route.to.params.template_id);
+        await super.pageLoadData(route);
+    }
+    
+    
+    
+    /**
+	 * Search filter
+	 */
+	getSearchData(route: any)
+	{
+        let res: any = super.getSearchData(route);
+		res["template_id"] = this.template_id;
+		return res;
+	}
 	
 }
