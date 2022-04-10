@@ -30,6 +30,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
+import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 import { Crud } from "vue-helper/Crud/Crud.vue";
 
 
@@ -45,6 +46,16 @@ export const ApplicationsStatusPage =
 	},
 	methods:
 	{
+		onCrudFormEvent: function($event, form_name)
+		{
+			if ($event.event_name == CRUD_EVENTS.ITEM_CHANGE)
+			{
+				if ($event.item_name == "template")
+				{
+					this.model.reloadTemplatesVersions();
+				}
+			}
+		},
 	},
 	beforeRouteEnter(to, from, next)
 	{

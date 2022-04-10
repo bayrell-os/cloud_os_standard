@@ -16,15 +16,18 @@
  *  limitations under the License.
  */
 
-import { deepClone } from "vue-helper";
+import { AxiosResponse } from "axios";
+import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { Template } from "../Templates/TemplatesPageState";
+import { TemplatesVersionsPageState } from "../Templates/TemplatesVersionsPageState";
 
 
 export class Application extends CrudItem
 {
 	id: number;
 	name: string;
+	stack_name: string;
 	yaml: string;
 	status: number;
 	content: string;
@@ -45,6 +48,7 @@ export class Application extends CrudItem
 		/* Init variables */
 		this.id = 0;
 		this.name = "";
+		this.stack_name = "";
 		this.yaml = "";
 		this.status = 0;
 		this.content = "";
@@ -68,6 +72,7 @@ export class Application extends CrudItem
 	{
 		if (key == "id") this.id = Number(value);
 		else if (key == "name") this.name = String(value);
+		else if (key == "stack_name") this.stack_name = String(value);
 		else if (key == "status") this.status = Number(value);
 		else if (key == "yaml") this.yaml = String(value);
 		else if (key == "content") this.content = String(value);
@@ -149,6 +154,13 @@ export class ApplicationsPageState extends CrudState
 		];
 		this.fields.push( deepClone(status) );
 		
+		/* Stack name field */
+		let stack_name = new FieldInfo();
+		stack_name.api_name = "stack_name";
+		stack_name.label = "Stack name";
+		stack_name.component = "Input";
+		this.fields.push( deepClone(stack_name) );
+		
 		/* Name field */
 		let name = new FieldInfo();
 		name.api_name = "name";
@@ -163,6 +175,20 @@ export class ApplicationsPageState extends CrudState
 		content.component = "TextArea";
 		this.fields.push( deepClone(content) );
 		
+		/* Template field */
+		let template = new FieldInfo();
+		template.api_name = "template";
+		template.label = "Template";
+		template.component = "Select";
+		this.fields.push( deepClone(template) );
+		
+		/* Template version field */
+		let template_version = new FieldInfo();
+		template_version.api_name = "template_version_id";
+		template_version.label = "Template version";
+		template_version.component = "Select";
+		this.fields.push( deepClone(template_version) );
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.api_name = "row_number";
@@ -176,12 +202,17 @@ export class ApplicationsPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
+		this.form_save.fields.push( deepClone(stack_name) );
 		this.form_save.fields.push( deepClone(name) );
+		this.form_save.fields.push( deepClone(template) );
+		this.form_save.fields.push( deepClone(template_version) );
 		
 		/* Table fields */
 		name.component = "Label";
+		stack_name.component = "Label";
 		status.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(stack_name) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(status) );
 		this.fields_table.push( deepClone(row_buttons) );
@@ -223,6 +254,72 @@ export class ApplicationsPageState extends CrudState
 			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	
+	/**
+	 * After api
+	 */
+	async afterApi(kind: string, response:AxiosResponse | null)
+	{
+		if (kind == "listPageLoadData")
+		{
+			if (response && responseOk(response))
+			{
+				if (notNull(response.data.result.dictionary.templates) &&
+					response.data.result.dictionary.templates instanceof Array
+				)
+				{
+					let templates: any = response.data.result.dictionary.templates.map
+					(
+						function (template: any)
+						{
+							return {
+								"id": template["id"],
+								"value": template["name"],
+							};
+						}
+					);
+					this.editField(["all"], "template", (field: FieldInfo) => {
+						field.options = deepClone(templates);
+					});
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Reload template versions
+	 */
+	async reloadTemplatesVersions()
+	{
+		let template_id: number = Number(this.form_save.item.template);
+		
+		if (template_id > 0)
+		{
+			let response:AxiosResponse | null = await TemplatesVersionsPageState.apiLoadData({
+				"template_id": template_id,
+			});
+			
+			if (response && responseOk(response) && notNull(response.data.result.items))
+			{
+				let items: any = response.data.result.items.map
+				(
+					function (item: any)
+					{
+						return {
+							"id": item["id"],
+							"value": item["version"],
+						};
+					}
+				);
+				this.editField(["all"], "template_version_id", (field: FieldInfo) => {
+					field.options = deepClone(items);
+				});
+			}
+		}
 	}
 	
 }

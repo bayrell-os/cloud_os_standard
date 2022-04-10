@@ -108,7 +108,7 @@ class Instance extends \TinyPHP\App
 		}
 		
 		/* Add api crud */
-		// $this->addEntity(\App\Api\ApplicationsCrud::class);
+		$this->addEntity(\App\Api\ApplicationsCrud::class);
 		$this->addEntity(\App\Api\DomainsCrud::class);
 		$this->addEntity(\App\Api\ModificatorsCrud::class);
 		$this->addEntity(\App\Api\RoutesCrud::class);

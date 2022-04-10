@@ -74,7 +74,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 				"class_name" => Domain::class,
 				"buildSearchQuery" => function ($query){
 					$query
-						->orderBy("domain_name asc")
+						->orderBy("domain_name", "asc")
 					;
 					return $query;
 				},
@@ -89,7 +89,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 				"buildSearchQuery" => function ($query){
 					$query
 						->addFilter("is_deleted", "=", "0")
-						->orderBy("docker_name asc")
+						->orderBy("docker_name", "asc")
 					;
 					return $query;
 				},

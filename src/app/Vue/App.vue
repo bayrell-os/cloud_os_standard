@@ -112,25 +112,12 @@ export const App =
 			[
 				
 				{ "name": "app:main", "title": "Main" },
-				/*
-				{
-					"title": "Applications",
-					"items":
-					[
-						{ "name": "app:applications", "title": "Applications",
-							"routes": [ "app:applications:edit" ],
-						},
-						{ "name": "app:marketplace", "title": "Market place" },
-						{ "name": "app:templates", "title": "Templates" },
-						{ "name": "app:modificators", "title": "Modificators" },
-					]
-				},
-				*/
 				
 				{
 					"title": "Applications",
 					"items":
 					[
+						{ "name": "app:applications", "title": "Applications" },
 						{ "name": "app:templates", "title": "Templates" },
 						{ "name": "app:modificators", "title": "Modificators" },
 					]
