@@ -46,6 +46,24 @@ class Modificator extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"name" => [],
+			"content" => [],
+			"priority" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()
@@ -62,4 +80,26 @@ class Modificator extends Model
 	{
 		return true;
 	}
+	
+	
+	
+	/**
+	 * Returns app modificators
+	 */
+	static function getAppModificators($app_id)
+	{
+		return static::selectQuery()
+			->fields(["t.*"])
+			->innerJoin
+			(
+				"app_modificators",
+				"app_m",
+				"app_m.modificator_id = t.id"
+			)
+			->addWhere("app_m.app_id", "=", $app_id)
+			->orderBy("t.name", "asc")
+			->all()
+		;
+	}
+	
 }

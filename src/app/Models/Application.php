@@ -22,7 +22,8 @@ namespace App\Models;
 
 use TinyORM\Model;
 use App\Models\Template;
-use App\TemplateHelper;
+use App\Models\TemplateVersion;
+use App\XML;
 
 
 class Application extends Model
@@ -49,6 +50,30 @@ class Application extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"stack_name" => [],
+			"name" => [],
+			"template_version_id" => [],
+			"status" => [],
+			"content" => [],
+			"custom_patch" => [],
+			"yaml" => [],
+			"yaml_file_id" => [],
+			"variables" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()
@@ -69,338 +94,94 @@ class Application extends Model
 	
 	
 	/**
-	 * Get all variables
+	 * To database
 	 */
-	function getAllVariables()
+	static function to_database($data, $is_update)
 	{
-		$vars = $this->variables;
-		$current_object_variables = [];
-		if (gettype($vars) == "array")
+		if (isset($data["variables"]))
 		{
-			foreach ($vars as $var)
-			{
-				$var_name = isset($var["name"]) ? $var["name"] : "";
-				if ($var_name)
-				{
-					$current_object_variables[$var_name] = $var;
-				}
-			}
+			$data["variables"] = json_encode($data["variables"]);
 		}
-		return $current_object_variables;
+		return parent::to_database($data, $is_update);
 	}
 	
 	
 	
 	/**
-	 * Get current variables
+	 * From database
 	 */
-	function getCurrentVariables()
+	static function from_database($data)
 	{
-		$result = [];
-		$current_object_variables = $this->getAllVariables();
-		
-		$xml = TemplateHelper::loadXml($this->content);
-		if ($xml->variables != null && $xml->variables->getName() == "variables")
+		if (isset($data["variables"]))
 		{
-			foreach ($xml->variables->children() as $xml_variable)
+			$data["variables"] = @json_decode($data["variables"], true);
+			if (gettype($data["variables"]) != "array")
 			{
-				if ($xml_variable->getName() == 'variable')
-				{
-					$var_name = TemplateHelper::clearValue((string)$xml_variable->name);
-					if (isset($current_object_variables[$var_name]))
-					{
-						$result[$var_name] = $current_object_variables[$var_name];
-					}
-					else
-					{
-						$var_name = TemplateHelper::clearValue((string)$xml_variable->name);
-						$var_label = TemplateHelper::getNames($xml_variable, "label");
-						$result[$var_name] =
-						[
-							"name" => $var_name,
-							"value" => "",
-							"label" => $var_label,
-						];
-					}
-				}
+				$data["variables"] = [];
 			}
 		}
-		
-		return $result;
+		return parent::from_database($data);
 	}
 	
 	
 	
 	/**
-	 * Get modificators
+	 * Update yaml content
 	 */
-	function getModificators()
+	function updateYamlContent()
 	{
-		$db = app("db");
+		$template_version_id = $this->template_version_id;
 		
-		/* App id */
-		$app_id = $this->id;
-		
-		$modificators = Modificator::query()
-			->where("app_id", "=", $app_id)
-			->join
-			(
-				"app_modificators",
-				"app_modificators.modificator_id", "=", "modificators.id"
-			)
-			->get()
-			->toArray()
-		;
-		
-		$modificators = array_map
-		(
-			function ($item)
-			{
-				return (array)$item;
-			},
-			$modificators
-		);
-		
-		return $modificators;
-	}
-	
-	
-	
-	/**
-	 * Update modificators
-	 */
-	function updateModificators($modificators)
-	{
-		$db = app("db");
-		
-		/* Get app id */
-		$app_id = $this->id;
-		
-		/* Delete */
-		$db::table("app_modificators")
-			->where('app_id', $app_id)
-			->delete()
-		;
-		
-		/* Insert modificators */
-		foreach ($modificators as $modificator_id)
+		/* Get template content */
+		$template_content = "";
+		$template_version = TemplateVersion::getById($template_version_id);
+		if ($template_version)
 		{
-			$db::table("app_modificators")
-				->insert
-				([
-					"app_id" => $app_id,
-					"modificator_id" => $modificator_id
-				])
-			;
-		}
-	}
-	
-	
-	
-	/**
-	 * Patch template
-	 */
-	function patchTemplate()
-	{
-		/* Get app id */
-		$app_id = $this->id;
-		$template_id = $this->template_id;
-		
-		/* Find template */
-		$template = Template::find($template_id);
-		
-		/* Find modificators */
-		$modificators = $this->getModificators();
-		
-		if ($template)
-		{
-			$xml = $template["content"];
-			$xml = TemplateHelper::loadXml($xml);
-			if ($xml)
-			{
-				if (count($modificators) > 0)
-				{
-					foreach ($modificators as $modificator)
-					{
-						$patch_xml = $modificator["content"];
-						$patch_xml = TemplateHelper::loadXml($patch_xml);
-						if ($patch_xml)
-						{
-							TemplateHelper::patchXml($xml, $patch_xml);
-						}
-						else
-						{
-							$err = libxml_get_errors();
-							$err = TemplateHelper::getXmlError($err);
-							throw new \Exception(
-								"Error modificator " .
-								$modificator["name"] . "\n" . implode("\n", $err)
-							);
-						}
-					}
-				}
-				
-				if ($this->custom_patch)
-				{
-					$patch_xml = TemplateHelper::loadXml($this->custom_patch);
-					if ($patch_xml)
-					{
-						TemplateHelper::patchXml($xml, $patch_xml);
-					}
-					else
-					{
-						$err = libxml_get_errors();
-						$err = TemplateHelper::getXmlError($err);
-						throw new \Exception(
-							"Error in custom patch\n" . implode("\n", $err)
-						);
-					}
-				}
-				
-			}
-			
-			else
-			{
-				$err = libxml_get_errors();
-				$err = TemplateHelper::getXmlError($err);
-				throw new \Exception(
-					"Error template " . $template->name .
-					"\n" . implode("\n", $err)
-				);
-			}
-			
-			/* Convert to xml */
-			$this->content = TemplateHelper::toXml($xml);
-			
-			/* Load current variables */
-			$current_object_variables = $this->getAllVariables();
-			
-			/* Add service name */
-			$current_object_variables = array_filter($current_object_variables,
-				function ($item)
-				{
-					return $item["name"] != "_var_service_name_";
-				}
-			);
-			$current_object_variables[] =
-			[
-				"name" => "_var_service_name_",
-				"value" => $this->name,
-			];
-			
-			/* Convert to yaml */
-			$data = TemplateHelper::xmlToArray($xml->yaml, $current_object_variables);
-			$this->yaml_json = json_encode($data);
-			$this->yaml = TemplateHelper::toYaml($data);
-			
-			/* Save */
-			$this->save();
+			$template_content = $template_version->content;
 		}
 		
-	}
-	
-	
-	
-	/**
-	 * Update variables
-	 */
-	function updateVariables($variable_values = null)
-	{
-		if ($this->variables == null)
-		{
-			$this->variables = [];
-		}
+		/* Get modificators */
+		$modificators = Modificator::getAppModificators($this->id);
 		
-		/* Load current variables */
-		$current_object_variables = $this->getAllVariables();
+		/* Sort modificators by priority */
+		usort($modificators, function($a, $b){
+			return $a->priority > $b->priority ? 1 : -1;
+		});
 		
-		/* Load xml variables */
-		$current_xml_variables = [];
-		$xml = TemplateHelper::loadXml($this->content);
-		$xml_variables = $xml->variables;
-		if ($xml_variables)
-		{
-			foreach ($xml_variables->children() as $xml_variable)
-			{
-				if ($xml_variable->getName() == 'variable')
-				{
-					$var_name = TemplateHelper::clearValue((string)$xml_variable->name);
-					$var_label = TemplateHelper::getNames($xml_variable, "label");
-					if ($var_name != "" && !in_array($var_name, $current_xml_variables))
-					{
-						$current_xml_variables[$var_name] =
-						[
-							"name" => $var_name,
-							"label" => $var_label,
-						];
-					}
-				}
-			}
-		}
+		/* Get variables */
+		$variables = $this->variables;
 		
-		/* Add new variables */
-		foreach ($current_xml_variables as $var_name => $var)
-		{
-			if (!isset($current_object_variables[$var_name]))
-			{
-				$current_object_variables[$var_name] =
-				[
-					"name" => $var_name,
-					"value" => "",
-				];
-			}
-			$current_object_variables[$var_name]["label"] = $var["label"];
-			if (isset($variable_values[$var_name]))
-			{
-				$current_object_variables[$var_name]["value"] = $variable_values[$var_name];
-			}
-		}
+		/* Patch xml */
+		$template_xml = XML::patch($template_content, $modificators, $variables);
 		
-		/* Remove variables */
-		/*
-		$delete_variables = [];
-		foreach ($current_object_variables as $var)
-		{
-			$var_name = $var["name"];
-			if (!isset($current_xml_variables[$var_name]))
-			{
-				$delete_variables[] = $var_name;
-			}
-		}
-		foreach ($delete_variables as $var_name)
-		{
-			if (isset($current_object_variables[$var_name]))
-			{
-				unset($current_object_variables[$var_name]);
-			}
-		}
-		*/
+		/* Convert to xml */
+		$this->content = XML::toXml($template_xml);
 		
-		$this->variables = array_values($current_object_variables);
-		
-		/* Save */
+		/* Save item */
 		$this->save();
+		
+		/* Update variables */
+		$this->updateVariablesDefs($template_xml);
 	}
 	
 	
 	
 	/**
-	 * Update services from yaml
+	 * Get variables defs
 	 */
-	function updateServicesFromYaml()
+	function updateVariablesDefs($template_xml = null)
 	{
-		$services = [];
-		
-		$data = @json_decode($this->yaml_json, true);
-		if ($data && isset($data["services"]) && gettype($data["services"]) == "array")
+		if ($template_xml == null) 
 		{
-			foreach ($data["services"] as $service_name => $value)
-			{
-				$services[] = "app_" . $service_name;
-			}
+			list($template_xml, $errors) = XML::loadXml($this->content);
 		}
-		
-		$this->services = $services;
-		$this->save();
+		if ($template_xml)
+		{
+			$this->variables_defs = XML::getVariables($template_xml);
+		}
+		else
+		{
+			$this->variables_defs = [];
+		}
 	}
 }

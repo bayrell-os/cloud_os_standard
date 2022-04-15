@@ -46,6 +46,24 @@ class TemplateVersion extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"template_id" => [],
+			"version" => [],
+			"content" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()

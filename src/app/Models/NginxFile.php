@@ -46,6 +46,26 @@ class NginxFile extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"name" => [],
+			"enable" => [],
+			"content" => [],
+			"timestamp" => [],
+			"is_deleted" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()

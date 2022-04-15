@@ -99,6 +99,8 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"template_name",
 					"template_version",
 					"template_version_id",
+					"variables",
+					"variables_defs",
 					"status",
 					"yaml",
 					"content",
@@ -181,6 +183,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"id",
 					"name",
 					"content",
+					"priority",
 				],
 			]),
 			
@@ -203,6 +206,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 							"app_m.modificator_id = t.id"
 						)
 						->addWhere("app_m.app_id", "=", $app_id)
+						->orderBy("t.priority", "asc")
 						->orderBy("t.name", "asc")
 					;
 					return $query;
@@ -211,6 +215,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				[
 					"id",
 					"name",
+					"priority",
 				],
 			]),
 			
@@ -233,6 +238,29 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->orderBy("t.stack_name", "asc")
 			->orderBy("t.name", "asc")
 		;
+	}
+	
+	
+	
+	/**
+	 * Build search response
+	 */
+	function buildResponse($action)
+	{
+		/* Update yaml */
+		if (in_array($action, ["actionCreate", "actionEdit"]))
+		{
+			$this->item->updateYamlContent();
+			$this->new_data = $this->item->toArray();
+		}
+		
+		/* Get by id */
+		else if ($action == "actionGetById")
+		{
+			$this->item->updateVariablesDefs();
+		}
+		
+		parent::buildResponse($action);
 	}
 	
 	
@@ -273,6 +301,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->execute()
 		;
 		
+		/* Update yaml */
+		$this->item->updateYamlContent();
+		
 		$this->api_result->success("Ok");
 	}
 	
@@ -283,6 +314,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	public function actionModificatorDelete()
 	{
+		/* Find app */
+		$this->findItem();
+		
 		$app_id = $this->container->arg("id");
 		$modificator_id = $this->container->arg("mod_id");
 		
@@ -294,6 +328,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->addWhere("modificator_id", "=", $modificator_id)
 			->execute()
 		;
+		
+		/* Update yaml */
+		$this->item->updateYamlContent();
 		
 		$this->api_result->success("Ok");
 	}

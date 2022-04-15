@@ -46,6 +46,32 @@ class Route extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"enable" => [],
+			"protocol" => [],
+			"protocol_data" => [],
+			"domain_name" => [],
+			"route" => [],
+			"docker_name" => [],
+			"source_port" => [],
+			"target_port" => [],
+			"route_prefix" => [],
+			"layer_uid" => [],
+			"nginx_config" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()

@@ -26,6 +26,7 @@ export class Modificator extends CrudItem
 	id: number = 0;
 	name: string = "";
 	content: string = "";
+	priority: number = 0;
 	gmtime_created: string = "";
 	gmtime_updated: string = "";
 	
@@ -38,6 +39,7 @@ export class Modificator extends CrudItem
 		if (key == "id") this.id = Number(value);
 		else if (key == "name") this.name = String(value);
 		else if (key == "content") this.content = String(value);
+		else if (key == "priority") this.priority = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else super.assignValue(key, value);
@@ -110,6 +112,13 @@ export class ModificatorsPageState extends CrudState
 		content.component_params["lang"] = "xml";
 		this.fields.push( deepClone(content) );
 		
+		/* Priority field */
+		let priority = new FieldInfo();
+		priority.api_name = "priority";
+		priority.label = "Priority";
+		priority.component = "Input";
+		this.fields.push( deepClone(priority) );
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.api_name = "row_number";
@@ -128,8 +137,10 @@ export class ModificatorsPageState extends CrudState
 		
 		/* Table fields */
 		name.component = "Label";
+		priority.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(priority) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

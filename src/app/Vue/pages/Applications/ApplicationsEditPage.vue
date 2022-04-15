@@ -39,7 +39,7 @@
 			</Button>
 			<Button @click="onStopClick()">Stop</Button>
 			<Button @click="onComposeClick()">Compose</Button>
-			<Button type="success" @click="onSaveClick()">Save</Button>
+			<Button type="success" @click="onSaveFormButtonSaveClick()">Save</Button>
 		</div>
 		
 		<Tabs>
@@ -56,7 +56,7 @@
 				</Form>
 			</Tab>
 			<Tab name="modificators" label="Modificators" selected="true">
-				<div v-if="model.dictionary.modificators_item">
+				<div v-if="model.dictionary && model.dictionary.modificators_item">
 					<div class="component_crud__top_buttons">
 						<div class="component_crud__top_button">
 							<Button type="success" @click="onModificatorAdd()">
@@ -69,6 +69,7 @@
 							<tr class="component_crud__header">
 								<th></th>
 								<th>Name</th>
+								<th>Priority</th>
 								<th></th>
 							</tr>
 							<tr class="component_crud__row"
@@ -77,6 +78,7 @@
 							>
 								<td>{{ index + 1 }}</td>
 								<td>{{ modificator.name }}</td>
+								<td>{{ modificator.priority }}</td>
 								<td>
 									<div class="component_row_buttons">
 										<Button type="default" small="true"
@@ -197,6 +199,7 @@ export const ApplicationsEditPage =
 					if (response && responseOk(response))
 					{
 						this.model.dictionary.modificators_item.push(modificator);
+						this.model.sortModificatorsItems();
 						this.model.dialog_add_modificator.hide();
 					}
 				}

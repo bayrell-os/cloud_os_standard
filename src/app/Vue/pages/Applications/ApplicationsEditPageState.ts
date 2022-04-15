@@ -22,6 +22,7 @@ import { ApplicationsPageState, Application } from "../Applications/Applications
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 import { CrudState } from "vue-helper/Crud/CrudState";
+import { isNull } from "vue-helper";
 
 
 
@@ -53,6 +54,25 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	
 	
 	/**
+	 * Sort modificators items
+	 */
+	sortModificatorsItems()
+	{
+		this.dictionary.modificators_item = this.dictionary.modificators_item
+			.sort((a:Modificator, b:Modificator) =>
+			{
+				if (a.priority == b.priority)
+				{
+					return a.name < b.name ? -1 : 1;
+				}
+				return a.priority < b.priority ? -1 : 1;
+			})
+		;
+	}
+	
+	
+	
+	/**
 	 * Returns modificator by id
 	 */
 	getModificatorByID(modificator_id: number): Modificator | null
@@ -75,6 +95,9 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	 */
 	getSelectAddModificators()
 	{
+		if (isNull(this.dictionary)) return [];
+		if (isNull(this.dictionary.modificators)) return [];
+		
 		let modificators = this.dictionary.modificators;
 		let modificators_item = this.dictionary.modificators_item
 			.map(
@@ -142,7 +165,8 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	/**
 	 * Delete modificator
 	 */
-	static async apiDeleteModificator(
+	static async apiDeleteModificator
+	(
 		item_id: number,
 		modificator_id: number
 	): Promise<AxiosResponse | null>

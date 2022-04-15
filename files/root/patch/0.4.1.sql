@@ -1,5 +1,6 @@
 
 -- Rename id in users --
+
 BEGIN;
 CREATE TABLE "adminer_users" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +21,7 @@ CREATE UNIQUE INDEX "users_login" ON "users" ("login");
 
 
 -- Add uid, remove content from templates --
+
 BEGIN;
 CREATE TABLE "adminer_templates" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -51,6 +53,7 @@ CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versi
  ("template_id", "version");
 
 
+
 -- applications
 
 BEGIN;
@@ -63,17 +66,34 @@ CREATE TABLE "adminer_applications" (
   "content" text NOT NULL DEFAULT '',
   "custom_patch" text NOT NULL DEFAULT '',
   "yaml" text NOT NULL DEFAULT '',
-  "yaml_json" text NOT NULL DEFAULT '',
-  "variables" text NOT NULL DEFAULT '',
-  "services" text NOT NULL DEFAULT '',
   "yaml_file_id" integer NULL,
+  "variables" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL,
   FOREIGN KEY ("template_version_id") REFERENCES "templates" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY ("app_file_id") REFERENCES "docker_yaml_files" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
-INSERT INTO "adminer_applications" ("id", "name", "template_version_id", "status", "content", "custom_patch", "yaml", "yaml_json", "variables", "services", "yaml_file_id", "gmtime_created", "gmtime_updated") SELECT "id", "name", "template_id", "status", "content", "custom_patch", "yaml", "yaml_json", "variables", "services", "app_file_id", "gmtime_created", "gmtime_updated" FROM "applications";
+INSERT INTO "adminer_applications" ("id", "name", "template_version_id", "status", "content", "custom_patch", "yaml", "variables", "yaml_file_id", "gmtime_created", "gmtime_updated") SELECT "id", "name", "template_id", "status", "content", "custom_patch", "yaml", "variables", "app_file_id", "gmtime_created", "gmtime_updated" FROM "applications";
 DROP TABLE "applications";
 ALTER TABLE "adminer_applications" RENAME TO "applications";
 CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
 COMMIT;
+
+
+
+-- add priority to modificators
+
+BEGIN;
+CREATE TABLE "adminer_modificators" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" text NOT NULL,
+  "content" text NOT NULL DEFAULT '',
+  "priority" numeric NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_modificators" ("id", "name", "content", "gmtime_created", "gmtime_updated") SELECT "id", "name", "content", "gmtime_created", "gmtime_updated" FROM "modificators";
+DROP TABLE "modificators";
+ALTER TABLE "adminer_modificators" RENAME TO "modificators";
+COMMIT;
+

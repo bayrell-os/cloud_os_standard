@@ -47,6 +47,38 @@ class DockerService extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"service_id" => [],
+			"stack_name" => [],
+			"service_name" => [],
+			"software_api_name" => [],
+			"have_admin_page" => [],
+			"admin_port" => [],
+			"admin_route" => [],
+			"admin_custom_nginx" => [],
+			"enable" => [],
+			"is_deleted" => [],
+			"data" => [],
+			"docker_name" => [],
+			"docker_image" => [],
+			"docker_content" => [],
+			"docker_json" => [],
+			"docker_tasks" => [],
+			"docker_balancer" => [],
+			"timestamp" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()

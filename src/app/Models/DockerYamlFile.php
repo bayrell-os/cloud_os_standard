@@ -46,6 +46,26 @@ class DockerYamlFile extends Model
 	
 	
 	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"id" => [],
+			"file_name" => [],
+			"stack_name" => [],
+			"content" => [],
+			"timestamp" => [],
+			"is_deleted" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
 	 * Return if auto increment
 	 */
 	static function isAutoIncrement()

@@ -77,7 +77,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 	/**
 	 * Init api
 	 */
-	function initUpdateData()
+	function initUpdateData($action)
 	{
 		$post = $this->container->post();
 		if ($post == null || (gettype($post) == "array" && count($post) == 0))
@@ -91,7 +91,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 			throw new \Exception("Post item is empty");
 		}
 		
-		$this->update_data = $this->toDatabase($update_data);
+		$this->update_data = $this->toDatabase($action, $update_data);
     }
     
     
@@ -189,7 +189,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 	 */
 	function actionImport()
 	{
-		$this->initUpdateData();
+		$this->initUpdateData("actionImport");
 		$this->parseTemplate();
 		
 		/* Create template if need */
@@ -214,8 +214,8 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		$this->new_data = $this->template_version->save()->refresh();
 		
 		/* Create result */
-		$old_data = $this->fromDatabase($this->old_data);
-		$new_data = $this->fromDatabase($this->new_data);
+		$old_data = $this->fromDatabase("actionImport", $this->old_data);
+		$new_data = $this->fromDatabase("actionImport", $this->new_data);
 		
 		$result =
 		[

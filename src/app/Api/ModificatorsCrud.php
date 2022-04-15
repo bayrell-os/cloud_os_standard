@@ -35,6 +35,7 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Modificator::class;
 	var $api_name = "modificators";
+	var $xml = null;
 	
 	
 	/**
@@ -50,14 +51,15 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				[
 					"id",
 					"name",
-					"type",
 					"content",
+					"priority",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
 			new ReadOnly([ "api_name" => "name" ]),
+			new ReadOnly([ "api_name" => "priority" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
@@ -87,6 +89,7 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	}
 	
 	
+	
 	/**
 	 * Validation
 	 */
@@ -102,8 +105,25 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				throw new \Exception("XML error: " . implode(". ", $errors));
 			}
 			
-			$name = (string)$xml->name;
-			$this->update_data["name"] = $name;
+			$this->xml = $xml;
+		}
+	}
+	
+	
+	
+	/**
+	 * Process item
+	 */
+	function processItem($action)
+	{
+		parent::processItem($action);
+		
+		if ($action == "actionCreate" || $action == "actionEdit")
+		{
+			$name = (string)$this->xml->name;
+			$priority = (int)$this->xml->priority;
+			$this->item["name"] = $name;
+			$this->item["priority"] = $priority;
 		}
 	}
 }
