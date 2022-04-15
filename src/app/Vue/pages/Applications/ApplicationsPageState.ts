@@ -176,18 +176,32 @@ export class ApplicationsPageState extends CrudState
 		this.fields.push( deepClone(content) );
 		
 		/* Template field */
-		let template = new FieldInfo();
-		template.api_name = "template";
-		template.label = "Template";
-		template.component = "Select";
-		this.fields.push( deepClone(template) );
+		let template_name = new FieldInfo();
+		template_name.api_name = "template_name";
+		template_name.label = "Template name";
+		template_name.component = "Label";
+		this.fields.push( deepClone(template_name) );
 		
 		/* Template version field */
 		let template_version = new FieldInfo();
 		template_version.api_name = "template_version_id";
 		template_version.label = "Template version";
-		template_version.component = "Select";
+		template_version.component = "Label";
 		this.fields.push( deepClone(template_version) );
+		
+		/* Template field */
+		let template_id = new FieldInfo();
+		template_id.api_name = "template_id";
+		template_id.label = "Template";
+		template_id.component = "Select";
+		this.fields.push( deepClone(template_id) );
+		
+		/* Template version field */
+		let template_version_id = new FieldInfo();
+		template_version_id.api_name = "template_version_id";
+		template_version_id.label = "Template version";
+		template_version_id.component = "Select";
+		this.fields.push( deepClone(template_version_id) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -204,8 +218,8 @@ export class ApplicationsPageState extends CrudState
 		/* Form fields */
 		this.form_save.fields.push( deepClone(stack_name) );
 		this.form_save.fields.push( deepClone(name) );
-		this.form_save.fields.push( deepClone(template) );
-		this.form_save.fields.push( deepClone(template_version) );
+		this.form_save.fields.push( deepClone(template_id) );
+		this.form_save.fields.push( deepClone(template_version_id) );
 		
 		/* Table fields */
 		name.component = "Label";
@@ -215,6 +229,8 @@ export class ApplicationsPageState extends CrudState
 		this.fields_table.push( deepClone(stack_name) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(status) );
+		this.fields_table.push( deepClone(template_name) );
+		this.fields_table.push( deepClone(template_version) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -263,31 +279,57 @@ export class ApplicationsPageState extends CrudState
 	 */
 	async afterApi(kind: string, response:AxiosResponse | null)
 	{
-		if (kind == "listPageLoadData")
+		super.afterApi(kind, response);
+		
+		if (["listPageLoadData", "editPageLoadData"].indexOf(kind) >= 0)
 		{
 			if (response && responseOk(response))
 			{
-				if (notNull(response.data.result.dictionary.templates) &&
-					response.data.result.dictionary.templates instanceof Array
-				)
-				{
-					let templates: any = response.data.result.dictionary.templates.map
-					(
-						function (template: any)
-						{
-							return {
-								"id": template["id"],
-								"value": template["name"],
-							};
-						}
-					);
-					this.editField(["all"], "template", (field: FieldInfo) => {
-						field.options = deepClone(templates);
-					});
-				}
+				/* Read templates */
+				this.readDictionary
+				(
+					response,
+					["all"],
+					"template_id",
+					"templates",
+					function (item: any)
+					{
+						return new SelectOption()
+							.assignValues({
+								"id": item["id"],
+								"value": item["name"],
+							})
+						;
+					}
+				);
 			}
 		}
+		
+		if (["editPageLoadData"].indexOf(kind) >= 0)
+		{
+			if (response && responseOk(response))
+			{
+				/* Read templates */
+				this.readDictionary
+				(
+					response,
+					["all"],
+					"template_version_id",
+					"templates_versions",
+					function (item: any)
+					{
+						return new SelectOption()
+							.assignValues({
+								"id": item["id"],
+								"value": item["version"],
+							})
+						;
+					}
+				);
+			}			
+		}
 	}
+	
 	
 	
 	/**
@@ -295,7 +337,7 @@ export class ApplicationsPageState extends CrudState
 	 */
 	async reloadTemplatesVersions()
 	{
-		let template_id: number = Number(this.form_save.item.template);
+		let template_id: number = Number(this.form_save.item.template_id);
 		
 		if (template_id > 0)
 		{

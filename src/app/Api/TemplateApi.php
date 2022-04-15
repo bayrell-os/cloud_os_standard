@@ -99,7 +99,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
     /**
 	 * To database
 	 */
-	function toDatabase($item)
+	function toDatabase($action, $item)
 	{
 		return $item;
 	}
@@ -109,7 +109,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 	/**
 	 * From database
 	 */
-	function fromDatabase($item)
+	function fromDatabase($action, $item)
 	{
 		if ($item instanceof \TinyORM\Model)
 		{

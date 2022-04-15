@@ -89,7 +89,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function findQuery($query)
+	public function buildSearchQuery($action, $query)
 	{
 		return $query
 			->orderBy("name", "asc")
@@ -101,7 +101,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * To database
 	 */
-	function toDatabase($item)
+	function toDatabase($action, $item)
 	{
 		$item = parent::toDatabase($item);
 		return $item;

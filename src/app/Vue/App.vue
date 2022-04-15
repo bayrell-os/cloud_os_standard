@@ -59,7 +59,7 @@
 	position: relative;
 	height: calc(100% - 70px);
 	padding-bottom: 0;
-	padding-right: 0;
+	/*padding-right: 0;*/
 }
 .app_layout_menu{
 	position: relative;

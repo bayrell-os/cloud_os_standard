@@ -66,7 +66,7 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function findQuery($query)
+	public function buildSearchQuery($action, $query)
 	{
 		return $query
 			->where("is_deleted", "=", "0")

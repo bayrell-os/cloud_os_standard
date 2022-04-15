@@ -101,7 +101,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function buildSearchQuery($query, $action)
+	public function buildSearchQuery($action, $query)
 	{
 		return $query
 			->addFilter("is_deleted", "=", "0")

@@ -21,11 +21,156 @@ import { ModificatorsPageState, Modificator } from "../Modificators/Modificators
 import { ApplicationsPageState, Application } from "../Applications/ApplicationsPageState";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
-import { BaseObject } from "vue-helper";
+import { CrudState } from "vue-helper/Crud/CrudState";
 
 
 
-export class ApplicationsEditPageState extends BaseObject
+export class ApplicationsEditPageState extends ApplicationsPageState
+{
+	dialog_add_modificator: DialogState;
+	dialog_view_modificator: DialogState;
+	dialog_delete_modificator: DialogState;
+	select_add_modificator_id: any;
+	result: CrudResultState;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.dialog_add_modificator = new DialogState();
+		this.dialog_view_modificator = new DialogState();
+		this.dialog_delete_modificator = new DialogState();
+		this.select_add_modificator_id = 0;
+		this.result = new CrudResultState();
+		
+		/* Init class */
+		super.init(params);
+	}
+	
+	
+	
+	/**
+	 * Returns modificator by id
+	 */
+	getModificatorByID(modificator_id: number): Modificator | null
+	{
+		let index = this.dictionary.modificators
+			.findIndex( (item:any) => item.id == modificator_id )
+		;		
+		let modificator: Modificator | null = null;
+		if (index >= 0)
+		{
+			modificator = (new Modificator()).assignValues(this.dictionary.modificators[index]);
+		}
+		return modificator;
+	}
+	
+	
+	
+	/**
+	 * Returns modificators for select add
+	 */
+	getSelectAddModificators()
+	{
+		let modificators = this.dictionary.modificators;
+		let modificators_item = this.dictionary.modificators_item
+			.map(
+				(item:any) =>
+				{
+					return Number(item.id);
+				}
+			)
+		;
+		return (modificators != null) ?
+			modificators
+				.map
+				(
+					(item:any) =>
+					{
+						return { id: item.id, value: item.name };
+					}
+				)
+				.filter
+				(
+					(item:any) =>
+					{
+						return modificators_item.indexOf( Number(item.id) ) == -1
+					}
+				)
+			: []
+		;
+	}
+	
+	
+	
+	/**
+	 * Add modificator
+	 */
+	static async apiAddModificator
+	(
+		item_id: number,
+		modificator_id: number
+	): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		let url = this.getApiUrlItem(String(item_id)) + "modificator/add/";
+		
+		try
+		{
+			response = await axios.post
+			(
+				url,
+				{ "modificator_id": modificator_id }
+			);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Delete modificator
+	 */
+	static async apiDeleteModificator(
+		item_id: number,
+		modificator_id: number
+	): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		let url = this.getApiUrlItem(String(item_id)) + "modificator/delete/" + modificator_id + "/";
+		
+		try
+		{
+			response = await axios.delete(url);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+}
+
+
+
+
+export class ApplicationsEditPageStateOld extends CrudState
 {
 	action: string;
 	application: Application | null;
@@ -57,62 +202,9 @@ export class ApplicationsEditPageState extends BaseObject
 	
 	
 	/**
-	 * Returns modificator by id
-	 */
-	getModificatorByID(modificator_id: number): Modificator | null
-	{
-		let index = this.modificators.findIndex( (item) => item.id == modificator_id );
-		if (index >= 0) return this.modificators[index];
-		return null;
-	}
-	
-	
-	
-	/**
-	 * Page data
-	 */
-	async pageLoadData(route: any)
-	{
-		let response: AxiosResponse | null = null;
-		let app_id = route.to.params.id;
-		
-		route.setPageTitle("Edit application");
-		
-		/* Load app id */
-		response = await ApplicationsPageState.apiLoadItem(app_id);
-		if (response && response.data.error.code == 1)
-		{
-			this.application = ApplicationsPageState.createNewItemInstance
-				(
-					response.data.result.item
-				) as Application
-			;
-		}
-		
-		/* Load modificators */
-		response = await ModificatorsPageState.apiLoadData(null);
-		if (response && response.data.error.code == 1)
-		{
-			this.modificators = [];
-			for (let i=0; i<response.data.result.items.length; i++)
-			{
-				let item = response.data.result.items[i];
-				this.modificators.push
-				(
-					ModificatorsPageState
-						.createNewItemInstance(item) as Modificator
-				);
-			}
-		}
-		
-	}
-	
-	
-	
-	/**
 	 * Save form
 	 */
-	async doSaveForm()
+	async doSaveFormOld()
 	{
 		let item:Application | null = this.application;
 		
@@ -208,6 +300,7 @@ export class ApplicationsEditPageState extends BaseObject
 	 */
 	async doStopForm()
 	{
+		/*
 		let model:ApplicationsEditPageState = this;
 		let item:Application | null = model.application;
 		let response:AxiosResponse | null = null;
@@ -227,7 +320,7 @@ export class ApplicationsEditPageState extends BaseObject
 		)
 		{
 			model.application.status = Number( response.data.result.item["status"] );
-		}
+		}*/
 	}
 	
 	

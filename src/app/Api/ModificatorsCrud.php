@@ -68,7 +68,7 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function findQuery($query)
+	public function buildSearchQuery($action, $query)
 	{
 		return $query
 			->orderBy("name", "asc")
@@ -80,9 +80,9 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * To database
 	 */
-	function toDatabase($item)
+	function toDatabase($action, $item)
 	{
-		$item = parent::toDatabase($item);
+		$item = parent::toDatabase($action, $item);
 		return $item;
 	}
 	

@@ -37,9 +37,9 @@ import { Crud } from "vue-helper/Crud/Crud.vue";
 /**
  * Status page
  */
-export const ApplicationsStatusPage =
+export const ApplicationsPage =
 {
-	name: "ApplicationsStatusPage",
+	name: "ApplicationsPage",
 	mixins: [mixin],
 	components:
 	{
@@ -48,9 +48,9 @@ export const ApplicationsStatusPage =
 	{
 		onCrudFormEvent: function($event, form_name)
 		{
-			if ($event.event_name == CRUD_EVENTS.ITEM_CHANGE)
+			if (form_name == "form_save" && $event.event_name == CRUD_EVENTS.ITEM_CHANGE)
 			{
-				if ($event.item_name == "template")
+				if ($event.item_name == "template_id")
 				{
 					this.model.reloadTemplatesVersions();
 				}
@@ -66,7 +66,7 @@ export const ApplicationsStatusPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(ApplicationsStatusPage, Crud);
-export default defineComponent(ApplicationsStatusPage);
+componentExtend(ApplicationsPage, Crud);
+export default defineComponent(ApplicationsPage);
 
 </script>

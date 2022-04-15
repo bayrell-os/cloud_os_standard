@@ -128,7 +128,7 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function buildSearchQuery($query, $action)
+	public function buildSearchQuery($action, $query)
 	{
 		if ($action == "actionSearch")
 		{

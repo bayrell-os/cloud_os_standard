@@ -3,8 +3,7 @@
 	"version": "0.4.0",
 	"description": "Cloud OS",
 	"scripts": {
-		"build": "webpack --mode development",
-		"build:prod": "webpack",
+		"build": "webpack --mode production",
 		"watch": "webpack --watch --progress --mode development"
 	},
 	"devDependencies": {

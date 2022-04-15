@@ -62,7 +62,7 @@ const routes: Array<RouteRecordRaw> =
 		path: '/applications/edit/:id/',
 		name: 'app:applications:edit',
 		component: ApplicationsEditPage,
-		props: { store_path: ["ApplicationsEditPage"] },
+		props: { store_path: ["ApplicationsEditPage"], page_action: "edit" },
 	},
 	
 	/* Modificators */
