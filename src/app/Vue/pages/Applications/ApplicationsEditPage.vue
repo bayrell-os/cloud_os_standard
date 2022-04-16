@@ -26,69 +26,129 @@
 			}
 		}
 	}
+	
+	&__form{
+		padding-bottom: 10px;
+		.crud_form__buttons, .crud_form__result{
+			display: none;
+		}
+	}
+	
+	&__modificators{
+		display: flex;
+		align-items: flex-start;
+	}
+	&__modificators_item{
+		width: 50%;
+	}
+	
+	&__variables{
+		padding-right: 10px;
+	}
+	&__variable{
+		padding-bottom: 15px;
+		&_label{
+			font-weight: bold;
+			padding-bottom: 5px;
+		}
+	}
 }
 </style>
 
 
 <template>
 	<div class="applications_run_page">
+		
 		<div class="applications_run_page__buttons component_crud__top_buttons">
 			<Button type="primary" @click="onBackClick()">Back</Button>
-			<Button @click="onChangeTemplate()">
-				Change Template
-			</Button>
-			<Button @click="onStopClick()">Stop</Button>
 			<Button @click="onComposeClick()">Compose</Button>
+			<Button @click="onStopClick()">Stop</Button>
 			<Button type="success" @click="onSaveFormButtonSaveClick()">Save</Button>
 		</div>
 		
-		<Tabs>
-			<Tab name="info" label="Info">
-				<Form v-bind:store_path="store_path.concat('form_save')"
-					@crudEvent="onCrudFormEvent($event, 'form_save')"
-				>
-					<template v-slot:buttons>
-						<Button type="primary"
-							@click="onDialogFormButtonClick('form_save')">Save</Button>
-						<Button type=""
-							@click="onDialogFormButtonClick('form_cancel')">Cancel</Button>
-					</template>
-				</Form>
-			</Tab>
-			<Tab name="modificators" label="Modificators" selected="true">
-				<div v-if="model.dictionary && model.dictionary.modificators_item">
-					<div class="component_crud__top_buttons">
-						<div class="component_crud__top_button">
-							<Button type="success" @click="onModificatorAdd()">
-								[+] Add modificator
-							</Button>
-						</div>
-					</div>
-					<div class="component_crud__table">
-						<table>
-							<tr class="component_crud__header">
-								<th></th>
-								<th>Name</th>
-								<th>Priority</th>
-								<th></th>
-							</tr>
-							<tr class="component_crud__row"
-								v-for="modificator, index in model.dictionary.modificators_item"
-								:key="modificator.id"
+		<Tabs @select="onTabSelect($event)">
+			<Tab name="info" label="Info" selected="true">
+				
+				<div class="applications_run_page__form">
+					<Form v-bind:store_path="store_path.concat('form_save')"
+						@crudEvent="onCrudFormEvent($event, 'form_save')"
+					>
+						<template v-slot:buttons>&nbsp;</template>
+					</Form>
+				</div>
+				
+				<div class="applications_run_page__modificators">
+					<div class="applications_run_page__modificators_item 
+						applications_run_page__variables"
+					>
+						
+						<div v-if="notNull(model.form_save.item) &&
+							notNull(model.form_save.item.variables_defs)">
+							
+							<div v-for="variable in model.form_save.item.variables_defs"
+								:key="variable.name"
 							>
-								<td>{{ index + 1 }}</td>
-								<td>{{ modificator.name }}</td>
-								<td>{{ modificator.priority }}</td>
-								<td>
-									<div class="component_row_buttons">
-										<Button type="default" small="true"
-											@click="onModificatorView(modificator.id)">View</Button>
-										<Button type="danger" small="true"
-											@click="onModificatorDelete(modificator.id)">Delete</Button>
+								<div v-if="variable.name != '_var_service_name_'"
+									class="applications_run_page__variable"
+								>
+									<div class="applications_run_page__variable_label">
+										{{ variable.label || variable.name }}
 									</div>
-								</td>
-							</tr>
-						</table>
+									<div class="applications_run_page__variable_value">
+										<Input
+											v-bind:name="variable.name"
+											v-bind:store_path="store_path.concat([
+												'form_save', 'item', 
+												'variables', variable.name])"
+										/>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						
+					</div>
+					
+					<div class="applications_run_page__modificators_item">
+						<div v-if="model.dictionary && model.dictionary.modificators_item">
+							<div class="component_crud__top_buttons">
+								<div class="component_crud__top_button">
+									<Button type="success" @click="onModificatorAdd()">
+										[+] Add modificator
+									</Button>
+								</div>
+							</div>
+							<div class="component_crud__table">
+								<table>
+									<tr class="component_crud__header">
+										<th></th>
+										<th>Name</th>
+										<th>Priority</th>
+										<th></th>
+									</tr>
+									<tr class="component_crud__row"
+										v-for="modificator, index in model.dictionary.modificators_item"
+										:key="modificator.id"
+									>
+										<td>{{ index + 1 }}</td>
+										<td>{{ modificator.name }}</td>
+										<td>{{ modificator.priority }}</td>
+										<td>
+											<div class="component_row_buttons">
+												<Button type="default" small="true"
+													@click="onModificatorView(modificator.id)">
+													View
+												</Button>
+												<Button type="danger" small="true"
+													@click="onModificatorDelete(modificator.id)">
+													Delete
+												</Button>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 				
@@ -133,8 +193,49 @@
 				</Dialog>
 				
 			</Tab>
+			<Tab name="custom_patch" label="Custom patch">
+				<CodeMirror
+					ref="code_mirror_custom_patch"
+					v-bind:store_path="store_path.concat('form_save','item','custom_patch')"
+					v-bind:crud="{
+						field:
+						{
+							component_params:{
+								mode: 'xml'
+							}
+						}
+					}"
+				/>
+			</Tab>
 			<Tab name="template" label="Template">
-				3
+				<CodeMirror
+					ref="code_mirror_template"
+					v-bind:value="model.form_save.item.content"
+					v-bind:crud="{
+						field:
+						{
+							component_params:{
+								mode: 'xml',
+								readOnly: true,
+							}
+						}
+					}"
+				/>
+			</Tab>
+			<Tab name="yaml" label="Yaml">
+				<CodeMirror
+					ref="code_mirror_yaml"
+					v-bind:value="model.form_save.item.yaml"
+					v-bind:crud="{
+						field:
+						{
+							component_params:{
+								mode: 'yaml',
+								readOnly: true,
+							}
+						}
+					}"
+				/>
 			</Tab>
 		</Tabs>
 	</div>
@@ -145,7 +246,8 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, deepClone, onRouteUpdate, responseOk } from "vue-helper";
+import { mixin, componentExtend, deepClone, onRouteUpdate, responseOk, notNull, isNull }
+	from "vue-helper";
 import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 import { Crud } from "vue-helper/Crud/Crud.vue";
 
@@ -163,6 +265,7 @@ export const ApplicationsEditPage =
 	},
 	methods:
 	{
+		notNull, isNull,
 		onCrudFormEvent: function($event, form_name)
 		{
 			if (form_name == "form_save" && $event.event_name == CRUD_EVENTS.ITEM_CHANGE)
@@ -171,6 +274,18 @@ export const ApplicationsEditPage =
 				{
 					this.model.reloadTemplatesVersions();
 				}
+			}
+		},
+		
+		/* Tab select */
+		onTabSelect(tab_name)
+		{
+			let code_mirror = this.$refs["code_mirror_" + tab_name];
+			if (code_mirror)
+			{
+				this.$nextTick(()=>{
+					code_mirror.instance.refresh();
+				});
 			}
 		},
 		

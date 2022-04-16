@@ -115,9 +115,6 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "id" ]),
 			new ReadOnly([ "api_name" => "yaml" ]),
 			new ReadOnly([ "api_name" => "content" ]),
-			new ReadOnly([ "api_name" => "template_id" ]),
-			new ReadOnly([ "api_name" => "template_name" ]),
-			new ReadOnly([ "api_name" => "template_version" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 			
@@ -257,7 +254,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Get by id */
 		else if ($action == "actionGetById")
 		{
-			$this->item->updateVariablesDefs();
+			$this->item->generateVariables();
 		}
 		
 		parent::buildResponse($action);

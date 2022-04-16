@@ -146,10 +146,12 @@ class XML
 				if ($variable->getName() == "variable")
 				{
 					$name = (string)$variable->name;
+					$label = (string)$variable->label;
 					$type = (string)$variable->type;
 					$res[] =
 					[
 						"name" => $name,
+						"label" => $label,
 						"type" => $type,
 					];
 				}
@@ -163,7 +165,7 @@ class XML
 	/**
 	 * Patch
 	 */
-	static function patch($template_content, $modificators, $variables)
+	static function patch($template_content, $modificators)
 	{
 		list($template_xml, $errors) = static::loadXml($template_content);
 		if (!$template_xml)
@@ -230,4 +232,145 @@ class XML
 		}
 	}
 	
+	
+	
+	/**
+	 * Clear value
+	 */
+	static function clearValue($value)
+	{
+		$value = trim($value, " \n\r\t\v\0");
+		return $value;
+	}
+	
+	
+	
+	/**
+	 * Returns yaml
+	 */
+	static function patchVariables($s, $variables)
+	{
+		foreach ($variables as $var)
+		{
+			$var_name = $var["name"];
+			$var_value = $var["value"];
+			$s = str_replace($var_name, $var_value, $s);
+		}
+		return $s;
+	}
+	
+	
+	
+	/**
+	 * Returns yaml
+	 */
+	static function xmlToArray($xml, $variables)
+	{
+		if ($xml instanceof \SimpleXMLElement)
+		{
+			$childs = $xml->children();
+			if (count($childs) == 0)
+			{
+				return (string)$xml;
+			}
+			else
+			{
+				$res = [];
+				foreach ($childs as $item)
+				{
+					$key = $item->getName();
+					$value = static::xmlToArray($item, $variables);
+					
+					/* Set key by node name */
+					$node_name = (string)$item->attributes()->node_name;
+					if ($node_name != "")
+					{
+						$key = $node_name;
+					}
+					
+					/* Patch variables */
+					$key = static::patchVariables($key, $variables);
+					$value_type = gettype($value);
+					if ($value_type == "string")
+					{
+						$value = static::patchVariables($value, $variables);
+					}
+					
+					/* Trim */
+					if ($trim != "false" && gettype($value) == "string")
+					{
+						$value = static::clearValue($value);
+					}
+					
+					/* Value type */
+					$type = (string) ($item->attributes()->type);
+					$trim = (string) ($item->attributes()->trim);
+					if ($type == "boolean" || $type == "bool")
+					{
+						if (mb_strtolower($value) == "true" || $value == "1") $value = true;
+						else $value = false;
+					}
+					else if ($type == "number" || $type == "integer" || $type == "int")
+					{
+						$value = (int)$value;
+					}
+					else if ($type == "float")
+					{
+						$value = (float)$value;
+					}
+					else if ($type == "array")
+					{
+						if (gettype($value) != "array")
+						{
+							$value = [ $value ];
+						}
+					}
+					else if ($type == "map")
+					{
+						if (gettype($value) != "array")
+						{
+							$value = [];
+						}
+					}
+					
+					/* Set result */
+					if (isset($res[$key]))
+					{
+						if (gettype($res[$key]) != "array")
+						{
+							$res[$key] = [ $res[$key] ];
+						}
+						if ($type == "array")
+						{
+							$res[$key] = array_concat($res[$key], $value);
+						}
+						else
+						{
+							$res[$key][] = $value;
+						}
+					}
+					else
+					{
+						$res[$key] = $value;
+					}
+					
+				}
+				
+				return $res;
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	
+	/**
+	 * To yaml
+	 */
+	static function toYaml($data)
+	{
+		$yaml = Yaml::dump($data, 10, 2);
+		return $yaml;
+	}	
 }

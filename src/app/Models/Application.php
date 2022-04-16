@@ -143,33 +143,46 @@ class Application extends Model
 		/* Get modificators */
 		$modificators = Modificator::getAppModificators($this->id);
 		
+		/* To array */
+		$modificators = array_map(function($item){ return $item->toArray(); }, $modificators);
+		
 		/* Sort modificators by priority */
 		usort($modificators, function($a, $b){
-			return $a->priority > $b->priority ? 1 : -1;
+			return $a["priority"] > $b["priority"] ? 1 : -1;
 		});
+		
+		/* Add custom patch */
+		$modificators[] = 
+		[
+			"name" => "Custom patch",
+			"content" => $this->custom_patch,
+		];
 		
 		/* Get variables */
 		$variables = $this->variables;
 		
 		/* Patch xml */
-		$template_xml = XML::patch($template_content, $modificators, $variables);
+		$template_xml = XML::patch($template_content, $modificators);
 		
 		/* Convert to xml */
 		$this->content = XML::toXml($template_xml);
 		
+		/* Generate variables */
+		$this->generateVariables($template_xml);
+		
+		/* Generate yaml content */
+		$this->generateYamlContent($template_xml);
+		
 		/* Save item */
 		$this->save();
-		
-		/* Update variables */
-		$this->updateVariablesDefs($template_xml);
 	}
 	
 	
 	
 	/**
-	 * Get variables defs
+	 * Setup variables
 	 */
-	function updateVariablesDefs($template_xml = null)
+	function generateVariables($template_xml = null)
 	{
 		if ($template_xml == null) 
 		{
@@ -177,11 +190,49 @@ class Application extends Model
 		}
 		if ($template_xml)
 		{
-			$this->variables_defs = XML::getVariables($template_xml);
+			$template_variables = XML::getVariables($template_xml);
+			
+			/* Add service_name */
+			$this->set("variables", "_var_service_name_", strtolower($this->name));
+			
+			/* Get variables values */
+			$template_variables = array_map
+			(
+				function ($item)
+				{
+					$name = isset($item["name"]) ? $item["name"] : "";
+					$value = isset($this->variables[$name]) ? $this->variables[$name] : "";
+					$item["value"] = $value;
+					return $item;
+				},
+				$template_variables
+			);
+			
+			$this->variables_defs = $template_variables;
 		}
 		else
 		{
 			$this->variables_defs = [];
+		}
+	}
+	
+	
+	
+	/**
+	 * Update yaml content
+	 */
+	function generateYamlContent($template_xml = null)
+	{
+		if ($template_xml == null) 
+		{
+			list($template_xml, $errors) = XML::loadXml($this->content);
+		}
+		if ($template_xml)
+		{
+			/* Convert to yaml */
+			$data = XML::xmlToArray($template_xml->yaml, $this->variables_defs);
+			// $this->yaml_json = json_encode($data);
+			$this->yaml = XML::toYaml($data);
 		}
 	}
 }
