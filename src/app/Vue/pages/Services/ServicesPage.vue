@@ -136,7 +136,7 @@ export const ServicesPage =
 		{
 			this.model.doRefresh();
 		},
-		onCrudEvent: function($event)
+		onCrudComponentEvent: function($event)
 		{
 			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK && $event.button_name == "stop")
 			{
@@ -144,7 +144,7 @@ export const ServicesPage =
 			}
 			else
 			{
-				Crud.methods.onCrudEvent.apply(this, [$event]);
+				Crud.methods.onCrudComponentEvent.apply(this, [$event]);
 			}
 		},
 		onDialogFormButtonClick: function(action)

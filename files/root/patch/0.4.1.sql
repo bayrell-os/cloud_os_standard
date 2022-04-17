@@ -97,3 +97,7 @@ DROP TABLE "modificators";
 ALTER TABLE "adminer_modificators" RENAME TO "modificators";
 COMMIT;
 
+
+DROP INDEX "app_files_file_name";
+CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
+CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");

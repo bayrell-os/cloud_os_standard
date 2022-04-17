@@ -69,7 +69,7 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 	public function buildSearchQuery($action, $query)
 	{
 		return $query
-			->where("is_deleted", "=", "0")
+			->where("is_deleted", "0")
 			->orderBy("name", "asc")
 		;
 	}

@@ -126,9 +126,9 @@ class Application extends Model
 	
 	
 	/**
-	 * Update yaml content
+	 * Generate yaml content
 	 */
-	function updateYamlContent()
+	function generateYamlContent()
 	{
 		$template_version_id = $this->template_version_id;
 		
@@ -168,10 +168,10 @@ class Application extends Model
 		$this->content = XML::toXml($template_xml);
 		
 		/* Generate variables */
-		$this->generateVariables($template_xml);
+		$this->updateVariables($template_xml);
 		
 		/* Generate yaml content */
-		$this->generateYamlContent($template_xml);
+		$this->updateYamlContent($template_xml);
 		
 		/* Save item */
 		$this->save();
@@ -182,7 +182,7 @@ class Application extends Model
 	/**
 	 * Setup variables
 	 */
-	function generateVariables($template_xml = null)
+	function updateVariables($template_xml = null)
 	{
 		if ($template_xml == null) 
 		{
@@ -221,7 +221,7 @@ class Application extends Model
 	/**
 	 * Update yaml content
 	 */
-	function generateYamlContent($template_xml = null)
+	function updateYamlContent($template_xml = null)
 	{
 		if ($template_xml == null) 
 		{
@@ -234,5 +234,51 @@ class Application extends Model
 			// $this->yaml_json = json_encode($data);
 			$this->yaml = XML::toYaml($data);
 		}
+	}
+	
+	
+	
+	/**
+	 * Get yaml file
+	 */
+	function getYamlFile()
+	{
+		$file_name = $this->name . ".yaml";
+		
+		/* Find yaml */
+		$yaml = DockerYamlFile::selectQuery()
+			->where([
+				"stack_name" => $this->stack_name,
+				"file_name" => $file_name,
+			])
+			->one()
+		;
+		
+		/* If yaml already exists */
+		if ($yaml && $this->yaml_file_id != $yaml->id)
+		{
+			throw new \Exception("Yaml file with the same name is already exists");
+		}
+		
+		/* Create yaml */
+		if (!$yaml)
+		{
+			$yaml = new DockerYamlFile();
+			$yaml->file_name = $file_name;
+			$yaml->stack_name = $this->stack_name;
+			$yaml->content = $this->yaml;
+			$yaml->save()->refresh();
+			
+			/* Set yaml_file_id */
+			$this->yaml_file_id = $yaml->id;
+			$this->save();
+		}
+		else
+		{
+			$yaml->content = $this->yaml;
+			$yaml->save()->refresh();
+		}
+		
+		return $yaml;
 	}
 }

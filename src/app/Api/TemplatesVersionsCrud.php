@@ -133,7 +133,7 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 		if ($action == "actionSearch")
 		{
 			$query
-				->addWhere("template_id", "=", $this->template_id)
+				->where("template_id", "=", $this->template_id)
 				->orderBy("version", "desc")
 			;
 		}
@@ -146,7 +146,7 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Create action
 	 */
-	function actionCreate(RenderContainer $container)
+	function actionCreate()
 	{
 		throw new MethodNotAllowedException();
 	}
@@ -157,7 +157,7 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Edit action
 	 */
-	function actionEdit(RenderContainer $container)
+	function actionEdit()
 	{
 		throw new MethodNotAllowedException();
 	}

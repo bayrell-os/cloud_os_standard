@@ -62,20 +62,19 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			"method" => [$this, "actionModificatorDelete"],
 		]);
 		
-		/*
-		$routes->addRoute
-		(
-			'POST',
-			'/' . $this->api_path . '/compose/{id}/',
-			[$this, "actionCompose"]
-		);
+		$route_container->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/crud/item/{id}/compose/",
+			"name" => "api:" . $this->api_name . ":compose",
+			"method" => [$this, "actionCompose"],
+		]);
 		
-		$routes->addRoute
-		(
-			'POST',
-			'/' . $this->api_path . '/stop/{id}/',
-			[$this, "actionStop"]
-		);*/
+		$route_container->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/crud/item/{id}/stop/",
+			"name" => "api:" . $this->api_name . ":stop",
+			"method" => [$this, "actionStop"],
+		]);
 	}
 	
 	
@@ -115,6 +114,10 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "id" ]),
 			new ReadOnly([ "api_name" => "yaml" ]),
 			new ReadOnly([ "api_name" => "content" ]),
+			new ReadOnly([ "api_name" => "template_id" ]),
+			new ReadOnly([ "api_name" => "template_name" ]),
+			new ReadOnly([ "api_name" => "template_version" ]),
+			new ReadOnly([ "api_name" => "variables_defs" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 			
@@ -148,7 +151,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				{
 					$template_id = $rule->route->item->template_id;
 					$query
-						->addWhere("template_id", "=", $template_id)
+						->where("template_id", $template_id)
 						->orderBy("version", "asc")
 					;
 					return $query;
@@ -202,7 +205,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 							"app_m",
 							"app_m.modificator_id = t.id"
 						)
-						->addWhere("app_m.app_id", "=", $app_id)
+						->where("app_m.app_id", $app_id)
 						->orderBy("t.priority", "asc")
 						->orderBy("t.name", "asc")
 					;
@@ -247,14 +250,14 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Update yaml */
 		if (in_array($action, ["actionCreate", "actionEdit"]))
 		{
-			$this->item->updateYamlContent();
+			$this->item->generateYamlContent();
 			$this->new_data = $this->item->toArray();
 		}
 		
 		/* Get by id */
 		else if ($action == "actionGetById")
 		{
-			$this->item->generateVariables();
+			$this->item->updateVariables();
 		}
 		
 		parent::buildResponse($action);
@@ -277,8 +280,10 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		$row = make("db_query")
 			->select()
 			->from("app_modificators")
-			->addWhere("app_id", "=", $app_id)
-			->addWhere("modificator_id", "=", $modificator_id)
+			->where([
+				"app_id" => $app_id,
+				"modificator_id" => $modificator_id,
+			])
 			->one()
 		;
 		
@@ -299,7 +304,12 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		;
 		
 		/* Update yaml */
-		$this->item->updateYamlContent();
+		$this->item->generateYamlContent();
+		
+		/* Refresh item */
+		$this->refreshItem();
+		$this->new_data = $this->item->toArray();
+		$new_data = $this->fromDatabase("actionModificatorAdd", $this->new_data);
 		
 		$this->api_result->success("Ok");
 	}
@@ -321,14 +331,64 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		$row = make("db_query")
 			->delete()
 			->table("app_modificators")
-			->addWhere("app_id", "=", $app_id)
-			->addWhere("modificator_id", "=", $modificator_id)
+			->where([
+				"app_id" => $app_id,
+				"modificator_id" => $modificator_id,
+			])
 			->execute()
 		;
 		
 		/* Update yaml */
-		$this->item->updateYamlContent();
+		$this->item->generateYamlContent();
 		
+		/* Refresh item */
+		$this->refreshItem();
+		$this->new_data = $this->item->toArray();
+		$new_data = $this->fromDatabase("actionModificatorDelete", $this->new_data);
+		
+		$this->api_result->success("Ok", ["item"=>$new_data]);
+	}
+	
+	
+	
+	/**
+	 * Compose
+	 */
+	public function actionCompose()
+	{
+		/* Find app */
+		$this->actionEdit();
+		
+		/* Get yaml file */
+		$yaml = $this->item->getYamlFile();
+		
+		/* Compose yaml */
+		if ($yaml)
+		{
+			$result = Docker::compose($yaml->id);
+			$this->api_result->error_str = $result;
+		}
+		else
+		{
+			throw new \Exception("Yaml does not created");
+		}
+	}
+	
+	
+	
+	/**
+	 * Stop
+	 */
+	public function actionStop(RenderContainer $container)
+	{
+		/* Find app */
+		$this->findItem();
+		
+		$service_name = $this->item->stack_name . "_" . $this->item->name;
 		$this->api_result->success("Ok");
+		
+		/* Stop service */
+		$result = Docker::removeService($service_name);
+		$this->api_result->error_str = $result;
 	}
 }

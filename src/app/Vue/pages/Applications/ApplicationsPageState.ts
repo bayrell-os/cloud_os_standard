@@ -184,7 +184,7 @@ export class ApplicationsPageState extends CrudState
 		
 		/* Template version field */
 		let template_version = new FieldInfo();
-		template_version.api_name = "template_version_id";
+		template_version.api_name = "template_version";
 		template_version.label = "Template version";
 		template_version.component = "Label";
 		this.fields.push( deepClone(template_version) );

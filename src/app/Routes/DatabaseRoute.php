@@ -51,7 +51,7 @@ class DatabaseRoute extends Route
 	/**
 	 * Action database
 	 */
-	function actionDatabase(RenderContainer $container)
+	function actionDatabase()
 	{
 		/* Set result */
 		return $container->render("@app/database/index.html");
@@ -62,7 +62,7 @@ class DatabaseRoute extends Route
 	/**
 	 * Adminer
 	 */
-	function actionAdminer(RenderContainer $container)
+	function actionAdminer()
 	{
 		$file_path = BASE_PATH . "/app/Templates/database/adminer-sqlite.php";
 		
@@ -73,7 +73,7 @@ class DatabaseRoute extends Route
 		@ob_end_clean();
 		
 		/* Set result */
-		$container->setContent($content);
+		$this->container->setContent($content);
 	}
 	
 	
@@ -81,7 +81,7 @@ class DatabaseRoute extends Route
 	/**
 	 * Adminer for sqlite
 	 */
-	function actionSQLiteDatabase(RenderContainer $container)
+	function actionSQLiteDatabase()
 	{
 		$file_path = BASE_PATH . "/app/Templates/database/adminer-sqlite.php";
 		
@@ -94,7 +94,7 @@ class DatabaseRoute extends Route
 		//$content = "";
 		
 		/* Set result */
-		return $container->setContent($content);
+		$this->container->setContent($content);
 	}
 	
 	
@@ -102,7 +102,7 @@ class DatabaseRoute extends Route
 	/**
 	 * PHP info
 	 */
-	function actionInfo(RenderContainer $container)
+	function actionInfo()
 	{
 		@ob_start();
 		phpinfo();
@@ -110,7 +110,7 @@ class DatabaseRoute extends Route
 		@ob_end_clean();
 		
 		/* Set result */
-		return $container->setContent($content);
+		$this->container->setContent($content);
 	}
 	
 	
@@ -118,7 +118,7 @@ class DatabaseRoute extends Route
 	/**
 	 * PHP info
 	 */
-	function actionTest(RenderContainer $container)
+	function actionTest()
 	{
 		@ob_start();
 		echo date("Y-m-d H:i:s");
@@ -126,7 +126,7 @@ class DatabaseRoute extends Route
 		@ob_end_clean();
 		
 		/* Set result */
-		return $container->setContent($content);
+		$this->container->setContent($content);
 	}
 	
 }

@@ -112,7 +112,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Create action
 	 */
-	function actionCreate(RenderContainer $container)
+	function actionCreate()
 	{
 		throw new MethodNotAllowedException();
 	}
@@ -122,7 +122,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Edit action
 	 */
-	function actionEdit(RenderContainer $container)
+	function actionEdit()
 	{
 		throw new MethodNotAllowedException();
 	}
@@ -132,7 +132,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Delete action
 	 */
-	function actionDelete(RenderContainer $container)
+	function actionDelete()
 	{
 		throw new MethodNotAllowedException();
 	}

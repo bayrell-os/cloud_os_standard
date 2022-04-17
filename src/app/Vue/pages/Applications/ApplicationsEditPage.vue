@@ -192,6 +192,30 @@
 					</template>
 				</Dialog>
 				
+				<Dialog v-bind:store_path="store_path.concat('dialog_view_modificator')" 
+					width="800px"
+				>
+					<template v-slot:content>
+						<CodeMirror
+							v-bind:value="model.dialog_view_modificator.tag != null ?
+								model.dialog_view_modificator.tag.content : ''"
+							v-bind:crud="{
+								field:
+								{
+									component_params: {
+										mode: 'xml',
+										readOnly: true,
+									}
+								}
+							}"
+						/>
+					</template>
+					<template v-slot:buttons>
+						<Button type="primary"
+							@click="onDialogViewModificatorButtonClick('close')">Close</Button>
+					</template>
+				</Dialog>
+				
 			</Tab>
 			<Tab name="custom_patch" label="Custom patch">
 				<CodeMirror
@@ -238,6 +262,25 @@
 				/>
 			</Tab>
 		</Tabs>
+		
+		<Dialog v-bind:store_path="store_path.concat('dialog_compose_app')">
+			<template v-slot:buttons>
+				<Button type="danger"
+					@click="onDialogComposeAppButtonClick('yes')">Yes</Button>
+				<Button type=""
+					@click="onDialogComposeAppButtonClick('close')">Close</Button>
+			</template>
+		</Dialog>
+		
+		<Dialog v-bind:store_path="store_path.concat('dialog_stop_app')">
+			<template v-slot:buttons>
+				<Button type="danger"
+					@click="onDialogStopAppButtonClick('yes')">Yes</Button>
+				<Button type=""
+					@click="onDialogStopAppButtonClick('close')">No</Button>
+			</template>
+		</Dialog>
+		
 	</div>
 	
 </template>
@@ -289,7 +332,7 @@ export const ApplicationsEditPage =
 			}
 		},
 		
-		/* Modificators */
+		/* Add modificator */
 		onModificatorAdd()
 		{
 			this.model.select_add_modificator_id = -1;
@@ -324,6 +367,8 @@ export const ApplicationsEditPage =
 				this.model.dialog_add_modificator.hide();
 			}
 		},
+		
+		/* Delete modificator */
 		onModificatorDelete(modificator_id)
 		{
 			let modificator = this.model.getModificatorByID(modificator_id);
@@ -376,6 +421,82 @@ export const ApplicationsEditPage =
 			}
 		},
 		
+		/* View modificator */
+		onModificatorView(modificator_id)
+		{
+			let modificator = this.model.getModificatorByID(modificator_id);
+			if (modificator)
+			{
+				this.model.dialog_view_modificator.title = "View modificator " + modificator.name;
+				this.model.dialog_view_modificator.tag = modificator;
+				this.model.dialog_view_modificator.show();
+			}
+		},
+		onDialogViewModificatorButtonClick(button_text)
+		{
+			if (button_text == "close")
+			{
+				this.model.dialog_view_modificator.hide();
+			}
+		},
+		
+		/* Compose */
+		onComposeClick()
+		{
+			this.model.dialog_compose_app.title = "Compose " +
+				this.model.form_save.item.name + " ?"
+			;
+			this.model.dialog_compose_app.show();
+			// this.model.doComposeForm(this);
+		},
+		
+		onDialogComposeAppButtonClick: async function(button_text)
+		{
+			if (button_text == "yes")
+			{
+				this.model.dialog_compose_app.setWaitResponse();
+				
+				let response = await this.model.constructor
+					.apiCompose(this.model.form_save.item)
+				;
+				this.model.dialog_compose_app.setAxiosResponse(response);
+				
+				if (response && responseOk(response))
+				{
+					/* Hide dialog */
+					// this.model.dialog_compose_app.hide();
+				}
+			}
+			else if (button_text == "close")
+			{
+				this.model.dialog_compose_app.hide();
+			}
+		},
+		
+		/* Stop */
+		onStopClick()
+		{
+			this.model.dialog_stop_app.title = "Stop app " + this.model.form_save.item.name + " ?";
+			this.model.dialog_stop_app.show();
+			// this.model.doStopForm(this);
+		},
+		
+		onDialogStopAppButtonClick: async function(button_text)
+		{
+			if (button_text == "yes")
+			{
+				this.model.dialog_stop_app.setWaitResponse();
+				
+				let response = await this.model.constructor
+					.apiStop(this.model.form_save.item.id)
+				;
+				this.model.dialog_stop_app.setAxiosResponse(response);
+			}
+			else if (button_text == "close")
+			{
+				this.model.dialog_stop_app.hide();
+			}
+		},
 	},
 	beforeRouteEnter(to, from, next)
 	{

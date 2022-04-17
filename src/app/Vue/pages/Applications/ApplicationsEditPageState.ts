@@ -31,8 +31,10 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	dialog_add_modificator: DialogState;
 	dialog_view_modificator: DialogState;
 	dialog_delete_modificator: DialogState;
+	dialog_compose_app: DialogState;
+	dialog_stop_app: DialogState;
 	select_add_modificator_id: any;
-	result: CrudResultState;
+	compose_result: CrudResultState;
 	
 	
 	/**
@@ -44,8 +46,10 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 		this.dialog_add_modificator = new DialogState();
 		this.dialog_view_modificator = new DialogState();
 		this.dialog_delete_modificator = new DialogState();
+		this.dialog_compose_app = new DialogState();
+		this.dialog_stop_app = new DialogState();
 		this.select_add_modificator_id = 0;
-		this.result = new CrudResultState();
+		this.compose_result = new CrudResultState();
 		
 		/* Init class */
 		super.init(params);
@@ -172,7 +176,8 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlItem(String(item_id)) + "modificator/delete/" + modificator_id + "/";
+		let url = this.getApiUrlItem(String(item_id)) +
+			"modificator/delete/" + modificator_id + "/";
 		
 		try
 		{
@@ -189,105 +194,15 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 		return response;
 	}
 	
-}
-
-
-
-
-export class ApplicationsEditPageStateOld extends CrudState
-{
-	action: string;
-	application: Application | null;
-	modificators: Array<Modificator>;
-	dialog_add_modificator: DialogState;
-	dialog_view_modificator: DialogState;
-	dialog_delete_modificator: DialogState;
-	result: CrudResultState;
 	
 	
 	/**
-	 * Init
+	 * Compose application
 	 */
-	init(params:any)
-	{
-		/* Init variables */
-		this.action = "";
-		this.application = null;
-		this.modificators = new Array<Modificator>();
-		this.dialog_add_modificator = new DialogState();
-		this.dialog_view_modificator = new DialogState();
-		this.dialog_delete_modificator = new DialogState();
-		this.result = new CrudResultState();
-		
-		/* Init class */
-		super.init(params);
-	}
-	
-	
-	
-	/**
-	 * Save form
-	 */
-	async doSaveFormOld()
-	{
-		let item:Application | null = this.application;
-		
-		if (item)
-		{
-			this.result.setWaitResponse();
-			let response:AxiosResponse | null = await ApplicationsPageState
-				.apiSaveForm(item, item)
-			;
-			this.result.setAxiosResponse(response);
-			
-			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				this.application = ApplicationsPageState.createNewItemInstance
-					(
-						response.data.result.item
-					) as Application
-				;
-			}
-		}
-	}
-	
-	
-	/*********************** Compose ***********************/
-	
-	/**
-	 * Compose form
-	 */
-	async doComposeForm()
-	{
-		let item:Application | null = this.application;
-		let response:AxiosResponse | null = null;
-		
-		this.result.setWaitResponse();
-		if (item)
-		{
-			response = await (this.constructor as any).apiComposeForm(item);
-		}
-		this.result.setAxiosResponse(response);
-		
-		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
-		{
-			this.application = ApplicationsPageState.createNewItemInstance
-				(
-					response.data.result.item
-				) as Application
-			;
-		}
-	}
-	
-	
-	
-	/**
-	 * Save form api
-	 */
-	static async apiComposeForm(item:Application): Promise<AxiosResponse | null>
+	static async apiCompose(item: Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlCompose(item);
+		let url = this.getApiUrlItem(String(item.id)) + "compose/";
 		
 		try
 		{
@@ -307,59 +222,16 @@ export class ApplicationsEditPageStateOld extends CrudState
 	
 	
 	/**
-	 * Return api update url
+	 * Stop application
 	 */
-	static getApiUrlCompose(item: Application)
-	{
-		let item_id = ApplicationsPageState.getItemId(item);
-		return "/api/applications/default/compose/" + encodeURIComponent(item_id) + "/";
-	}
-	
-	
-	
-	/************************ Stop *************************/
-	
-	/**
-	 * Stop form
-	 */
-	async doStopForm()
-	{
-		/*
-		let model:ApplicationsEditPageState = this;
-		let item:Application | null = model.application;
-		let response:AxiosResponse | null = null;
-		
-		model.result.setWaitResponse();
-		if (item)
-		{
-			response = await (this.constructor as any).apiStopForm(item);
-		}
-		model.result.setAxiosResponse(response);
-		
-		if (
-			response &&
-			typeof(response.data) == "object" &&
-			response.data.error.code == 1 &&
-			model.application != null
-		)
-		{
-			model.application.status = Number( response.data.result.item["status"] );
-		}*/
-	}
-	
-	
-	
-	/**
-	 * Save form api
-	 */
-	static async apiStopForm(item:Application): Promise<AxiosResponse | null>
+	static async apiStop(item_id: number): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlStop(item);
+		let url = this.getApiUrlItem(String(item_id)) + "stop/";
 		
 		try
 		{
-			response = await axios.post(url, {"item": item});
+			response = await axios.post(url);
 		}
 		catch (e)
 		{
@@ -370,17 +242,6 @@ export class ApplicationsEditPageStateOld extends CrudState
 		}
 		
 		return response;
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	static getApiUrlStop(item: Application)
-	{
-		let item_id = ApplicationsPageState.getItemId(item);
-		return "/api/applications/default/stop/" + encodeURIComponent(item_id) + "/";
 	}
 	
 }

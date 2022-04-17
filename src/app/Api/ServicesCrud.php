@@ -104,7 +104,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	public function buildSearchQuery($action, $query)
 	{
 		return $query
-			->addFilter("is_deleted", "=", "0")
+			->where("is_deleted", "=", "0")
 			->orderBy("docker_name", "asc")
 		;
 	}
@@ -190,8 +190,8 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 		
 		/* From database */
 		$this->new_data = $this->item->toArray();
-		$old_data = $this->fromDatabase($this->old_data);
-		$new_data = $this->fromDatabase($this->new_data);
+		$old_data = $this->fromDatabase("actionStop", $this->old_data);
+		$new_data = $this->fromDatabase("actionStop", $this->new_data);
 		
 		/* Set result */
 		$this->api_result->success
@@ -210,7 +210,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Create action
 	 */
-	function actionCreate(RenderContainer $container)
+	function actionCreate()
 	{
 		throw new MethodNotAllowedException();
 	}
@@ -220,7 +220,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Edit action
 	 */
-	function actionEdit(RenderContainer $container)
+	function actionEdit()
 	{
 		throw new MethodNotAllowedException();
 	}
@@ -230,7 +230,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Delete action
 	 */
-	function actionDelete(RenderContainer $container)
+	function actionDelete()
 	{
 		throw new MethodNotAllowedException();
 	}

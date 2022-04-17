@@ -96,7 +96,7 @@ class Modificator extends Model
 				"app_m",
 				"app_m.modificator_id = t.id"
 			)
-			->addWhere("app_m.app_id", "=", $app_id)
+			->where("app_m.app_id", "=", $app_id)
 			->orderBy("t.name", "asc")
 			->all()
 		;

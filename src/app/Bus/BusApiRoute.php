@@ -61,9 +61,9 @@ class BusApiRoute extends ApiRoute
 	/**
 	 * Request after
 	 */
-	function request_after(RenderContainer $container)
+	function request_after()
 	{
-		parent::request_after($container);
+		parent::request_after();
 	}
 	
 }

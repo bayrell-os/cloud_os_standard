@@ -207,7 +207,7 @@ class XML
 				if ($patch_item->getName() == 'operation')
 				{
 					$type = $patch_item->attributes()->type;
-					$path = $patch_item->path;
+					$path = (string)$patch_item->path;
 					$value = $patch_item->value;
 					if ($type == "add")
 					{
