@@ -34,6 +34,13 @@
 		}
 	}
 	
+	&__subtitle{
+		font-size: 20px;
+		font-weight: bold;
+		padding-top: 1.2em;
+		padding-bottom: 0.8em;
+	}
+	
 	&__modificators{
 		display: flex;
 		align-items: flex-start;
@@ -52,6 +59,13 @@
 			padding-bottom: 5px;
 		}
 	}
+	
+	&__params{
+		display: flex;
+		.component_crud__table{
+			padding-right: 10px;
+		}
+	}
 }
 </style>
 
@@ -60,10 +74,10 @@
 	<div class="applications_run_page">
 		
 		<div class="applications_run_page__buttons component_crud__top_buttons">
-			<Button type="primary" @click="onBackClick()">Back</Button>
+			<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
 			<Button @click="onComposeClick()">Compose</Button>
 			<Button @click="onStopClick()">Stop</Button>
-			<Button type="success" @click="onSaveFormButtonSaveClick()">Save</Button>
+			<Button type="success" @click="onSaveClick()">Save</Button>
 		</div>
 		
 		<Tabs @select="onTabSelect($event)">
@@ -75,6 +89,10 @@
 					>
 						<template v-slot:buttons>&nbsp;</template>
 					</Form>
+				</div>
+				
+				<div class="applications_run_page__subtitle">
+					Modificators
 				</div>
 				
 				<div class="applications_run_page__modificators">
@@ -150,6 +168,21 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				
+				<div class="applications_run_page__subtitle">
+					Other
+				</div>
+				
+				<div class="applications_run_page__params">
+					<ApplicationParams
+						v-bind:items="model.form_save.item.environments"
+						item_name="environment"
+					/>
+					<ApplicationParams
+						v-bind:items="model.form_save.item.volumes"
+						item_name="volume"
+					/>
 				</div>
 				
 				<Dialog v-bind:store_path="store_path.concat('dialog_add_modificator')">
@@ -281,6 +314,12 @@
 			</template>
 		</Dialog>
 		
+		<Dialog v-bind:store_path="store_path.concat('dialog_save_app')">
+			<template v-slot:buttons>
+				<Button @click="onDialogSaveAppButtonClick('close')">Close</Button>
+			</template>
+		</Dialog>
+		
 	</div>
 	
 </template>
@@ -293,6 +332,7 @@ import { mixin, componentExtend, deepClone, onRouteUpdate, responseOk, notNull, 
 	from "vue-helper";
 import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 import { Crud } from "vue-helper/Crud/Crud.vue";
+import { ApplicationParams } from "./ApplicationParams.vue";
 
 
 /**
@@ -305,6 +345,7 @@ export const ApplicationsEditPage =
 	props: ["page_action"],
 	components:
 	{
+		ApplicationParams,
 	},
 	methods:
 	{
@@ -440,6 +481,26 @@ export const ApplicationsEditPage =
 			}
 		},
 		
+		/* Save */
+		onSaveClick: async function()
+		{
+			this.model.dialog_save_app.title = "Save app";
+			this.model.dialog_save_app.show();
+			
+			/* Save form */
+			this.model.dialog_save_app.setWaitResponse();
+			await this.model.doSaveForm();
+			
+			/* Set result message */
+			this.model.dialog_save_app.message = this.model.form_save.message;
+			this.model.dialog_save_app.error_code = this.model.form_save.error_code;
+		},
+		
+		onDialogSaveAppButtonClick: function()
+		{
+			this.model.dialog_save_app.hide();
+		},
+		
 		/* Compose */
 		onComposeClick()
 		{
@@ -447,7 +508,6 @@ export const ApplicationsEditPage =
 				this.model.form_save.item.name + " ?"
 			;
 			this.model.dialog_compose_app.show();
-			// this.model.doComposeForm(this);
 		},
 		
 		onDialogComposeAppButtonClick: async function(button_text)

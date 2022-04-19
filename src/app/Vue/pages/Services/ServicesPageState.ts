@@ -148,34 +148,34 @@ export class ServicesPageState extends CrudState
 	{
 		/* ID field */
 		let service_id = new FieldInfo();
-		service_id.api_name = "service_id";
+		service_id.name = "service_id";
 		service_id.primary = true;
 		this.fields.push( deepClone(service_id) );
 		
 		/* Stack name field */
 		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
+		stack_name.name = "stack_name";
 		stack_name.label = "Stack name";
 		stack_name.component = "Input";
 		this.fields.push( deepClone(stack_name) );
 		
 		/* Service name field */
 		let service_name = new FieldInfo();
-		service_name.api_name = "service_name";
+		service_name.name = "service_name";
 		service_name.label = "Service name";
 		service_name.component = "Input";
 		this.fields.push( deepClone(service_name) );
 		
 		/* Software api name field */
 		let software_api_name = new FieldInfo();
-		software_api_name.api_name = "software_api_name";
+		software_api_name.name = "software_api_name";
 		software_api_name.label = "Software api name";
 		software_api_name.component = "Input";
 		this.fields.push( deepClone(software_api_name) );
 		
 		/* Enable field */
 		let enable = new FieldInfo();
-		enable.api_name = "enable";
+		enable.name = "enable";
 		enable.label = "Enable";
 		enable.component = "Select";
 		enable.options =
@@ -187,33 +187,33 @@ export class ServicesPageState extends CrudState
 		
 		/* Docker name field */
 		let docker_name = new FieldInfo();
-		docker_name.api_name = "docker_name";
+		docker_name.name = "docker_name";
 		docker_name.label = "Docker name";
 		docker_name.component = "Input";
 		this.fields.push( deepClone(docker_name) );
 		
 		/* Docker name field */
 		let docker_image = new FieldInfo();
-		docker_image.api_name = "docker_image";
+		docker_image.name = "docker_image";
 		docker_image.label = "Docker image";
 		docker_image.component = "Input";
 		this.fields.push( deepClone(docker_image) );
 		
 		/* Replicas field */
 		let replicas = new FieldInfo();
-		replicas.api_name = "replicas";
+		replicas.name = "replicas";
 		replicas.label = "Replicas";
 		this.fields.push( deepClone(replicas) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [

@@ -66,7 +66,7 @@ export class Template extends CrudItem
 
 
 
-export class TemplatesPageState extends CrudState
+export class TemplatesListPageState extends CrudState
 {
 	
 	
@@ -122,41 +122,33 @@ export class TemplatesPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Stack name field */
-		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
-		stack_name.label = "Stack name";
-		stack_name.component = "Input";
-		this.fields.push( deepClone(stack_name) );
-		
 		/* Name field */
 		let name = new FieldInfo();
-		name.api_name = "name";
+		name.name = "name";
 		name.label = "name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
-		/* Content field */
-		let content = new FieldInfo();
-		content.api_name = "content";
-		content.label = "Content";
-		content.component = "CodeMirror";
-		content.component_params["lang"] = "xml";
-		this.fields.push( deepClone(content) );
+		/* UID field */
+		let uid = new FieldInfo();
+		uid.name = "uid";
+		uid.label = "uid";
+		uid.component = "Input";
+		this.fields.push( deepClone(uid) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [
@@ -165,9 +157,9 @@ export class TemplatesPageState extends CrudState
 				"label": "View",
 				"action": "view",
 				"route": "app:templates:view",
-				"params": (res: any, crud: any, button: any) => {
+				"params": (res: any, component: any, button: any) => {
 					return {
-						"template_id": (this.constructor as any).getItemId(crud.item),
+						"template_id": (this.constructor as any).getItemId(component.crud_item),
 					};
 				},
 			}),
@@ -179,20 +171,15 @@ export class TemplatesPageState extends CrudState
 		];
 		
 		/* Form fields */
-		this.form_save.fields.push( deepClone(content) );
+		// this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		name.component = "Label";
-		stack_name.component = "Label";
+		uid.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(uid) );
 		this.fields_table.push( deepClone(row_buttons) );
-		
-		/* App name field */
-		let app_name = new FieldInfo();
-		app_name.api_name = "app_name";
-		app_name.label = "app_name";
-		app_name.component = "Input";
 	}
 	
 	

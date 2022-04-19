@@ -1,4 +1,7 @@
 
+PRAGMA foreign_keys=off;
+
+
 -- Rename id in users --
 
 BEGIN;
@@ -44,8 +47,7 @@ CREATE TABLE "templates_versions" (
   "version" text NOT NULL,
   "content" text NOT NULL,
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("template_id") REFERENCES "templates" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
@@ -69,9 +71,7 @@ CREATE TABLE "adminer_applications" (
   "yaml_file_id" integer NULL,
   "variables" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("template_version_id") REFERENCES "templates" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY ("app_file_id") REFERENCES "docker_yaml_files" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 INSERT INTO "adminer_applications" ("id", "name", "template_version_id", "status", "content", "custom_patch", "yaml", "variables", "yaml_file_id", "gmtime_created", "gmtime_updated") SELECT "id", "name", "template_id", "status", "content", "custom_patch", "yaml", "variables", "app_file_id", "gmtime_created", "gmtime_updated" FROM "applications";
 DROP TABLE "applications";
@@ -101,3 +101,6 @@ COMMIT;
 DROP INDEX "app_files_file_name";
 CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
 CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
+
+
+PRAGMA foreign_keys=on;

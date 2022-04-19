@@ -102,27 +102,27 @@ export class UsersPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Login field */
 		let login = new FieldInfo();
-		login.api_name = "login";
+		login.name = "login";
 		login.label = "Login";
 		login.component = "Input";
 		this.fields.push( deepClone(login) );
 		
 		/* Name field */
 		let name = new FieldInfo();
-		name.api_name = "name";
+		name.name = "name";
 		name.label = "Name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
 		/* Banned field */
 		let banned = new FieldInfo();
-		banned.api_name = "banned";
+		banned.name = "banned";
 		banned.label = "Banned";
 		banned.component = "Select";
 		banned.options =
@@ -134,7 +134,7 @@ export class UsersPageState extends CrudState
 		
 		/* Is deleted field */
 		let is_deleted = new FieldInfo();
-		is_deleted.api_name = "is_deleted";
+		is_deleted.name = "is_deleted";
 		is_deleted.label = "Is deleted";
 		is_deleted.component = "Select";
 		is_deleted.options =
@@ -146,13 +146,13 @@ export class UsersPageState extends CrudState
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		

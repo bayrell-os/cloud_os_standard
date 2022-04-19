@@ -115,13 +115,13 @@ export class RoutesPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Protocol field */
 		let protocol = new FieldInfo();
-		protocol.api_name = "protocol";
+		protocol.name = "protocol";
 		protocol.label = "Protocol";
 		protocol.component = "Select";
 		protocol.options = [
@@ -131,7 +131,7 @@ export class RoutesPageState extends CrudState
 		
 		/* Protocol field */
 		let web_socket = new FieldInfo();
-		web_socket.api_name = "protocol_data.websocket";
+		web_socket.name = "protocol_data.websocket";
 		web_socket.label = "Web socket";
 		web_socket.component = "Select";
 		web_socket.options = [
@@ -142,7 +142,7 @@ export class RoutesPageState extends CrudState
 		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
-		domain_name.api_name = "domain_name";
+		domain_name.name = "domain_name";
 		domain_name.label = "Domain name";
 		domain_name.component = "Select";
 		domain_name.options = [];
@@ -150,28 +150,28 @@ export class RoutesPageState extends CrudState
 		
 		/* Route field */
 		let route = new FieldInfo();
-		route.api_name = "route";
+		route.name = "route";
 		route.label = "Route";
 		route.component = "Input";
 		this.fields.push( deepClone(route) );
 		
 		/* Route prefix field */
 		let route_prefix = new FieldInfo();
-		route_prefix.api_name = "route_prefix";
+		route_prefix.name = "route_prefix";
 		route_prefix.label = "Route prefix";
 		route_prefix.component = "Input";
 		this.fields.push( deepClone(route_prefix) );
 		
 		/* Target port field */
 		let target_port = new FieldInfo();
-		target_port.api_name = "target_port";
+		target_port.name = "target_port";
 		target_port.label = "Target port";
 		target_port.component = "Input";
 		this.fields.push( deepClone(target_port) );
 		
 		/* Source port field */
 		let source_port = new FieldInfo();
-		source_port.api_name = "source_port";
+		source_port.name = "source_port";
 		source_port.label = "Source port";
 		source_port.component = "Input";
 		this.fields.push( deepClone(source_port) );
@@ -179,7 +179,7 @@ export class RoutesPageState extends CrudState
 		
 		/* Docker name field */
 		let docker_name = new FieldInfo();
-		docker_name.api_name = "docker_name";
+		docker_name.name = "docker_name";
 		docker_name.label = "Docker name";
 		docker_name.component = "Select";
 		docker_name.options = [];
@@ -187,7 +187,7 @@ export class RoutesPageState extends CrudState
 		
 		/* Enable field */
 		let enable = new FieldInfo();
-		enable.api_name = "enable";
+		enable.name = "enable";
 		enable.label = "Enable";
 		enable.component = "Select";
 		enable.options =
@@ -199,7 +199,7 @@ export class RoutesPageState extends CrudState
 		
 		/* Docker name field */
 		let nginx_config = new FieldInfo();
-		nginx_config.api_name = "nginx_config";
+		nginx_config.name = "nginx_config";
 		nginx_config.label = "Extended nginx config params";
 		nginx_config.component = "TextArea";
 		nginx_config.options = [];
@@ -207,13 +207,13 @@ export class RoutesPageState extends CrudState
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		
@@ -320,7 +320,7 @@ export class RoutesPageState extends CrudState
 					for (let i=0; i<this.fields_table.length; i++)
 					{
 						let field: FieldInfo = this.fields_table[i];
-						if (field.api_name == "domain_name")
+						if (field.name == "domain_name")
 						{
 							field.options = deepClone(domains);
 						}
@@ -330,7 +330,7 @@ export class RoutesPageState extends CrudState
 					for (let i=0; i<this.form_save.fields.length; i++)
 					{
 						let field: FieldInfo = this.form_save.fields[i];
-						if (field.api_name == "domain_name")
+						if (field.name == "domain_name")
 						{
 							field.options = deepClone(domains);
 						}
@@ -356,7 +356,7 @@ export class RoutesPageState extends CrudState
 					for (let i=0; i<this.fields_table.length; i++)
 					{
 						let field: FieldInfo = this.fields_table[i];
-						if (field.api_name == "docker_name")
+						if (field.name == "docker_name")
 						{
 							field.options = deepClone(services);
 						}
@@ -366,7 +366,7 @@ export class RoutesPageState extends CrudState
 					for (let i=0; i<this.form_save.fields.length; i++)
 					{
 						let field: FieldInfo = this.form_save.fields[i];
-						if (field.api_name == "docker_name")
+						if (field.name == "docker_name")
 						{
 							field.options = deepClone(services);
 						}

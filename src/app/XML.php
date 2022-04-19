@@ -213,6 +213,13 @@ class XML
 					{
 						static::patchAdd($xml, $path, $value);
 					}
+					
+					/*
+					if ($type == "addFirst")
+					if ($type == "remove")
+					if ($type == "addAttr")
+					*/
+					
 				}
 			}
 		}
@@ -237,7 +244,7 @@ class XML
 	/**
 	 * Clear value
 	 */
-	static function clearValue($value)
+	static function trimValue($value)
 	{
 		$value = trim($value, " \n\r\t\v\0");
 		return $value;
@@ -296,15 +303,16 @@ class XML
 						$value = static::patchVariables($value, $variables);
 					}
 					
-					/* Trim */
-					if ($trim != "false" && gettype($value) == "string")
-					{
-						$value = static::clearValue($value);
-					}
-					
 					/* Value type */
 					$type = (string) ($item->attributes()->type);
 					$trim = (string) ($item->attributes()->trim);
+					
+					/* Trim */
+					if ($trim != "false" && gettype($value) == "string")
+					{
+						$value = static::trimValue($value);
+					}
+					
 					if ($type == "boolean" || $type == "bool")
 					{
 						if (mb_strtolower($value) == "true" || $value == "1") $value = true;

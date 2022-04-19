@@ -65,7 +65,9 @@ class Application extends Model
 			"custom_patch" => [],
 			"yaml" => [],
 			"yaml_file_id" => [],
+			"environments" => [],
 			"variables" => [],
+			"volumes" => [],
 			"gmtime_created" => [],
 			"gmtime_updated" => [],
 		];
@@ -98,10 +100,21 @@ class Application extends Model
 	 */
 	static function to_database($data, $is_update)
 	{
-		if (isset($data["variables"]))
+		$field_names =
+		[
+			"environments",
+			"variables",
+			"volumes",
+		];
+		
+		foreach ($field_names as $field_name)
 		{
-			$data["variables"] = json_encode($data["variables"]);
+			if (isset($data[$field_name]))
+			{
+				$data[$field_name] = json_encode($data[$field_name]);
+			}
 		}
+		
 		return parent::to_database($data, $is_update);
 	}
 	
@@ -112,14 +125,25 @@ class Application extends Model
 	 */
 	static function from_database($data)
 	{
-		if (isset($data["variables"]))
+		$field_names =
+		[
+			"environments",
+			"variables",
+			"volumes",
+		];
+		
+		foreach ($field_names as $field_name)
 		{
-			$data["variables"] = @json_decode($data["variables"], true);
-			if (gettype($data["variables"]) != "array")
+			if (isset($data[$field_name]))
 			{
-				$data["variables"] = [];
+				$data[$field_name] = @json_decode($data[$field_name], true);
+				if (gettype($data[$field_name]) != "array")
+				{
+					$data[$field_name] = [];
+				}
 			}
 		}
+		
 		return parent::from_database($data);
 	}
 	

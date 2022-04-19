@@ -19,8 +19,8 @@
 import { AxiosResponse } from "axios";
 import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
-import { Template } from "../Templates/TemplatesPageState";
-import { TemplatesVersionsPageState } from "../Templates/TemplatesVersionsPageState";
+import { Template } from "../Templates/TemplatesListPageState";
+import { TemplatesViewPageState } from "../Templates/TemplatesViewPageState";
 
 
 export class Application extends CrudItem
@@ -138,13 +138,13 @@ export class ApplicationsPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Status */
 		let status = new FieldInfo();
-		status.api_name = "status";
+		status.name = "status";
 		status.label = "status";
 		status.component = "SelectLabel";
 		status.options = [
@@ -156,62 +156,62 @@ export class ApplicationsPageState extends CrudState
 		
 		/* Stack name field */
 		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
+		stack_name.name = "stack_name";
 		stack_name.label = "Stack name";
 		stack_name.component = "Input";
 		this.fields.push( deepClone(stack_name) );
 		
 		/* Name field */
 		let name = new FieldInfo();
-		name.api_name = "name";
-		name.label = "name";
+		name.name = "name";
+		name.label = "App name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
 		/* Content field */
 		let content = new FieldInfo();
-		content.api_name = "content";
+		content.name = "content";
 		content.label = "Content";
 		content.component = "TextArea";
 		this.fields.push( deepClone(content) );
 		
 		/* Template field */
 		let template_name = new FieldInfo();
-		template_name.api_name = "template_name";
+		template_name.name = "template_name";
 		template_name.label = "Template name";
 		template_name.component = "Label";
 		this.fields.push( deepClone(template_name) );
 		
 		/* Template version field */
 		let template_version = new FieldInfo();
-		template_version.api_name = "template_version";
+		template_version.name = "template_version";
 		template_version.label = "Template version";
 		template_version.component = "Label";
 		this.fields.push( deepClone(template_version) );
 		
 		/* Template field */
 		let template_id = new FieldInfo();
-		template_id.api_name = "template_id";
+		template_id.name = "template_id";
 		template_id.label = "Template";
 		template_id.component = "Select";
 		this.fields.push( deepClone(template_id) );
 		
 		/* Template version field */
 		let template_version_id = new FieldInfo();
-		template_version_id.api_name = "template_version_id";
+		template_version_id.name = "template_version_id";
 		template_version_id.label = "Template version";
 		template_version_id.component = "Select";
 		this.fields.push( deepClone(template_version_id) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		
@@ -341,7 +341,7 @@ export class ApplicationsPageState extends CrudState
 		
 		if (template_id > 0)
 		{
-			let response:AxiosResponse | null = await TemplatesVersionsPageState.apiLoadData({
+			let response:AxiosResponse | null = await TemplatesViewPageState.apiLoadData({
 				"template_id": template_id,
 			});
 			

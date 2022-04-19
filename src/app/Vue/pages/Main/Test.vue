@@ -21,11 +21,8 @@
 
 
 <template>
-	<div class="page_home">
-		Cloud OS Version 0.4.0
-		
-		<Test name="test" value="test value" />
-		
+	<div class="test">
+        Test
 	</div>
 </template>
 
@@ -35,45 +32,28 @@
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
 import { DialogState } from "vue-helper/Crud/DialogState";
-import { Test } from "./Test.vue";
 
 
-export const MainPage =
+export const Test =
 {
 	mixins: [ mixin ],
+    props: ["name"],
 	data: function()
 	{
 		let obj = {
-			"value": "Test2",
-			dialog: new DialogState(),
-		};
-		
-		obj.dialog.title = "Dialog 123";
-		
+        };
 		return obj;
 	},
-	components:
+	computed:
 	{
-		Test,
 	},
 	methods:
 	{
-		onAddClick: function()
-		{
-			this.dialog.title = "Add item";
-			this.dialog.show();
-			// this.$forceUpdate();
-		},
-		onDialogButtonClick: function()
-		{
-			this.dialog.hide();
-		},
 	},
 	mounted() {
-		this.setPageTitle("Index page");
 	}
 };
 
-export default defineComponent(MainPage);
+export default defineComponent(Test);
 
 </script>

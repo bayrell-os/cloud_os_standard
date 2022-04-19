@@ -99,33 +99,33 @@ export class DomainsPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
-		domain_name.api_name = "domain_name";
+		domain_name.name = "domain_name";
 		domain_name.label = "Domain name";
 		domain_name.component = "Input";
 		this.fields.push( deepClone(domain_name) );
 		
 		/* Nginx template */
 		let nginx_template = new FieldInfo();
-		nginx_template.api_name = "nginx_template";
+		nginx_template.name = "nginx_template";
 		nginx_template.label = "Nginx template";
 		nginx_template.component = "TextArea";
 		this.fields.push( deepClone(nginx_template) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		

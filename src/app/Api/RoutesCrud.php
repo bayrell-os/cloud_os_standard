@@ -72,7 +72,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "domains",
 				"class_name" => Domain::class,
-				"buildSearchQuery" => function ($query){
+				"buildSearchQuery" => function ($route, $action, $query){
 					$query
 						->orderBy("domain_name", "asc")
 					;
@@ -86,9 +86,9 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "services",
 				"class_name" => DockerService::class,
-				"buildSearchQuery" => function ($query){
+				"buildSearchQuery" => function ($route, $action, $query){
 					$query
-						->addFilter("is_deleted", "=", "0")
+						->where("is_deleted", "=", "0")
 						->orderBy("docker_name", "asc")
 					;
 					return $query;

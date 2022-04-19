@@ -17,10 +17,9 @@
  */
 
 import axios, { AxiosResponse } from "axios";
-import { deepClone } from "vue-helper";
+import { deepClone, responseOk } from "vue-helper";
 import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
-import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
-import { FormState } from "vue-helper/Crud/FormState";
+import { Template } from "./TemplatesListPageState";
 
 
 export class TemplateVersion extends CrudItem
@@ -69,17 +68,17 @@ export class TemplateVersion extends CrudItem
 
 
 
-export class TemplatesVersionsPageState extends CrudState
+export class TemplatesViewPageState extends CrudState
 {
+	template: Template | null = null;
 	template_id: number;
-    
-    
+	
+	
 	/**
 	 * Init class
 	 */
 	init(params:any)
 	{
-		/* Init class */
 		super.init(params);
 	}
 	
@@ -124,20 +123,20 @@ export class TemplatesVersionsPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Version field */
 		let version = new FieldInfo();
-		version.api_name = "version";
+		version.name = "version";
 		version.label = "Version";
 		version.component = "Input";
 		this.fields.push( deepClone(version) );
 		
 		/* Content field */
 		let content = new FieldInfo();
-		content.api_name = "content";
+		content.name = "content";
 		content.label = "Content";
 		content.component = "CodeMirror";
 		content.component_params["lang"] = "xml";
@@ -145,13 +144,13 @@ export class TemplatesVersionsPageState extends CrudState
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [
@@ -221,26 +220,43 @@ export class TemplatesVersionsPageState extends CrudState
 	}
 	
 	
-    
-    /**
+	
+	/**
 	 * Page data
 	 */
 	async pageLoadData(route: any)
 	{
-        this.template_id = Number(route.to.params.template_id);
-        await super.pageLoadData(route);
-    }
-    
-    
-    
-    /**
+		this.template_id = Number(route.to.params.template_id);
+		await super.pageLoadData(route);
+	}
+	
+	
+	
+	/**
 	 * Search filter
 	 */
 	getSearchData(route: any)
 	{
-        let res: any = super.getSearchData(route);
+		let res: any = super.getSearchData(route);
 		res["template_id"] = this.template_id;
 		return res;
 	}
 	
+	
+	
+	/**
+	 * After api
+	 */
+	async afterApi(kind: string, response:AxiosResponse | null)
+	{
+		super.afterApi(kind, response);
+		
+		if (kind == "listPageLoadData")
+		{
+			if (response && responseOk(response))
+			{
+				this.template = (new Template()).assignValues(response.data.result.template);
+			}
+		}
+	}
 }

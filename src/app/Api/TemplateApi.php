@@ -142,7 +142,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		$this->xml_version = (string)$xml->version;
 		
 		/* Get existing template if edit */
-		if ($this->container->route->name == "api:template:edit")
+		if ($this->container->route_info["name"] == "api:template:edit")
 		{
 			$template_id = $this->container->arg("id");
 			$this->template_version = TemplateVersion::selectQuery()
@@ -191,6 +191,15 @@ class TemplateApi extends \TinyPHP\ApiRoute
 	{
 		$this->initUpdateData("actionImport");
 		$this->parseTemplate();
+		
+		/*
+		api:template:edit
+		api:template:import
+		$this->container->route_info["name"]
+		var_dump( $this->container->route_info["name"] );
+		var_dump( $this->container->route_info );
+		*/
+		//var_dump( $this->container->route->name );
 		
 		/* Create template if need */
 		if ($this->template == null)

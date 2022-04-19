@@ -17,13 +17,42 @@
 -->
 
 <style lang="scss">
-
+.template_view_page__table_before{
+	/* padding-bottom: 10px; */
+	label{
+		display: block;
+		font-weight: bold;
+		padding-bottom: 5px;
+	}
+	&_row{
+		padding-bottom: 10px;
+	}
+}
 </style>
 
 
 <template>
 	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
-		<template v-slot:top_buttons>&nbsp;</template>
+		<template v-slot:top_buttons>
+			<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
+		</template>
+		
+		<template v-slot:table_before>
+			<div class="template_view_page__table_before">
+				<div class="template_view_page__table_before_row">
+					<label>Template:</label>
+					<div class="template_view_page__table_before_value">
+						{{ model.template.name }}
+					</div>
+				</div>
+				<div class="template_view_page__table_before_row">
+					<label>UID:</label>
+					<div class="template_view_page__table_before_value">
+						{{ model.template.uid }}
+					</div>
+				</div>
+			</div>
+		</template>
 	</Crud>
 </template>
 
@@ -49,6 +78,12 @@ export const TemplatesVersionsPage =
 	},
 	methods:
 	{
+		onSaveFormButtonBackClick: function()
+		{
+			this.$router.push({
+				name: "app:templates"
+			});
+		},
 	},
 	beforeRouteEnter(to, from, next)
 	{

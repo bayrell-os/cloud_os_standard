@@ -105,13 +105,13 @@ export class NginxFilesPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Name field */
 		let name = new FieldInfo();
-		name.api_name = "name";
+		name.name = "name";
 		name.label = "Name";
 		name.component = "Input";
 		name.primary = false;
@@ -119,7 +119,7 @@ export class NginxFilesPageState extends CrudState
 		
 		/* Enable field */
 		let enable = new FieldInfo();
-		enable.api_name = "enable";
+		enable.name = "enable";
 		enable.label = "Enable";
 		enable.component = "Select";
 		enable.options =
@@ -131,20 +131,20 @@ export class NginxFilesPageState extends CrudState
 		
 		/* Content */
 		let content = new FieldInfo();
-		content.api_name = "content";
+		content.name = "content";
 		content.label = "Content";
 		content.component = "TextArea";
 		this.fields.push( deepClone(content) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		

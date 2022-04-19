@@ -19,7 +19,7 @@
 import axios, { AxiosResponse } from "axios";
 import { deepClone } from "vue-helper";
 import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
-import { TemplateVersion } from "./TemplatesVersionsPageState";
+import { TemplateVersion } from "./TemplatesViewPageState";
 
 
 export class TemplateEditPageState extends CrudState
@@ -76,20 +76,20 @@ export class TemplateEditPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Version field */
 		let version = new FieldInfo();
-		version.api_name = "version";
+		version.name = "version";
 		version.label = "Version";
 		version.component = "Input";
 		this.fields.push( deepClone(version) );
 		
 		/* Content field */
 		let content = new FieldInfo();
-		content.api_name = "content";
+		content.name = "content";
 		content.label = "Content";
 		content.component = "CodeMirror";
 		content.component_params["lang"] = "xml";
@@ -97,13 +97,13 @@ export class TemplateEditPageState extends CrudState
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [

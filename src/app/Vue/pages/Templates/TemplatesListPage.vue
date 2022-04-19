@@ -57,9 +57,9 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 /**
  * Status page
  */
-export const TemplatesPage =
+export const TemplatesListPage =
 {
-	name: "TemplatesPage",
+	name: "TemplatesListPage",
 	mixins: [mixin, Crud],
 	components:
 	{
@@ -76,7 +76,7 @@ export const TemplatesPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(TemplatesPage, Crud);
-export default defineComponent(TemplatesPage);
+componentExtend(TemplatesListPage, Crud);
+export default defineComponent(TemplatesListPage);
 
 </script>

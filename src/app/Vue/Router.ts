@@ -21,9 +21,9 @@ import MainPage from '@/pages/Main/MainPage.vue'
 import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
 import ApplicationsEditPage from '@/pages/Applications/ApplicationsEditPage.vue'
 import ModificatorsPage from '@/pages/Modificators/ModificatorsPage.vue'
-import TemplatesPage from '@/pages/Templates/TemplatesPage.vue'
 import TemplateEditPage from '@/pages/Templates/TemplateEditPage.vue'
-import TemplatesVersionsPage from '@/pages/Templates/TemplatesVersionsPage.vue'
+import TemplatesListPage from '@/pages/Templates/TemplatesListPage.vue'
+import TemplatesViewPage from '@/pages/Templates/TemplatesViewPage.vue'
 import DomainsPage from '@/pages/Domains/DomainsPage.vue'
 import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
@@ -93,18 +93,18 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/templates/',
 		name: 'app:templates',
-		component: TemplatesPage,
+		component: TemplatesListPage,
 		props:
 		{
-			store_path: ["TemplatesPage"],
+			store_path: ["TemplatesListPage"],
 			page_action: "list"
 		},
 	},
 	{
 		path: '/templates/view/:template_id/',
 		name: 'app:templates:view',
-		component: TemplatesVersionsPage,
-		props: { store_path: ["TemplatesVersionsPage"], page_action: "list" },
+		component: TemplatesViewPage,
+		props: { store_path: ["TemplatesViewPage"], page_action: "list" },
 	},
 	{
 		path: '/templates/import/',

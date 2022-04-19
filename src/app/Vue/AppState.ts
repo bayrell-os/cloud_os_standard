@@ -20,8 +20,8 @@ import { MainPageState } from '@/pages/Main/MainPageState'
 import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
 import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
 import { ModificatorsPageState } from '@/pages/Modificators/ModificatorsPageState'
-import { TemplatesPageState } from '@/pages/Templates/TemplatesPageState'
-import { TemplatesVersionsPageState } from '@/pages/Templates/TemplatesVersionsPageState'
+import { TemplatesListPageState } from '@/pages/Templates/TemplatesListPageState'
+import { TemplatesViewPageState } from '@/pages/Templates/TemplatesViewPageState'
 import { TemplateEditPageState } from '@/pages/Templates/TemplateEditPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
@@ -39,8 +39,8 @@ export class AppState
 	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
 	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
 	ModificatorsPage: ModificatorsPageState = new ModificatorsPageState();
-	TemplatesPage: TemplatesPageState = new TemplatesPageState();
-	TemplatesVersionsPage: TemplatesVersionsPageState = new TemplatesVersionsPageState();
+	TemplatesListPage: TemplatesListPageState = new TemplatesListPageState();
+	TemplatesViewPage: TemplatesViewPageState = new TemplatesViewPageState();
 	TemplateEditPage: TemplateEditPageState = new TemplateEditPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();

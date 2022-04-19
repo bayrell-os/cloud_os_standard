@@ -71,9 +71,8 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
-					"type",
+					"uid",
 					"name",
-					"content",
 					"gmtime_created",
 					"gmtime_updated",
 				]

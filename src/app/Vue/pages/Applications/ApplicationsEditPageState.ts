@@ -31,6 +31,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	dialog_add_modificator: DialogState;
 	dialog_view_modificator: DialogState;
 	dialog_delete_modificator: DialogState;
+	dialog_save_app: DialogState;
 	dialog_compose_app: DialogState;
 	dialog_stop_app: DialogState;
 	select_add_modificator_id: any;
@@ -46,6 +47,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 		this.dialog_add_modificator = new DialogState();
 		this.dialog_view_modificator = new DialogState();
 		this.dialog_delete_modificator = new DialogState();
+		this.dialog_save_app = new DialogState();
 		this.dialog_compose_app = new DialogState();
 		this.dialog_stop_app = new DialogState();
 		this.select_add_modificator_id = 0;
@@ -129,6 +131,33 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 				)
 			: []
 		;
+	}
+	
+	
+	
+	/**
+	 * After api
+	 */
+	async afterApi(kind: string, response:AxiosResponse | null)
+	{
+		super.afterApi(kind, response);
+		
+		if (["editPageLoadData"].indexOf(kind) >= 0)
+		{
+			if (this.form_save.item.environments instanceof Array)
+			{
+				this.form_save.item.environments.sort((a: any, b: any)=>{
+					return a.key > b.key ? 1 : -1;
+				});
+			}
+			if (this.form_save.item.volumes instanceof Array)
+			{
+				this.form_save.item.volumes.sort((a: any, b: any)=>{
+					return a.key > b.key ? 1 : -1;
+				});
+			}
+		}
+		
 	}
 	
 	

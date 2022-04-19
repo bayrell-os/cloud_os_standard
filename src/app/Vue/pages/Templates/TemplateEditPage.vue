@@ -47,6 +47,24 @@ export const TemplateEditPage =
 	},
 	methods:
 	{
+		onSaveFormButtonBackClick: function()
+		{
+			if (this.model.page_action == "add")
+			{
+				this.$router.push({
+					name: "app:templates"
+				});
+			}
+			else
+			{
+				this.$router.push({
+					name: "app:templates:view",
+					params: {
+						template_id: this.model.form_save.item.template_id
+					}
+				});
+			}
+		},
 	},
 	beforeRouteEnter(to, from, next)
 	{

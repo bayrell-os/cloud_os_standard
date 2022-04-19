@@ -16,30 +16,21 @@
  *  limitations under the License.
  */
 
-export class MainPageState
+import { FieldInfo } from "vue-helper/Crud/CrudState";
+import { BaseObject } from "vue-helper";
+
+export class MainPageState extends BaseObject
 {
-
+	
+	input_props: FieldInfo;
+	
 	/**
-	 * Returns methods list
+	 * Init
 	 */
-	static mutations(): Array<string>
+	init(params:any)
 	{
-		let res: Array<string> =
-		[
-		];
-		return res;
-	}
-
-
-	/**
-	 * Returns modules
-	 */
-	static modules(): Record<string, any>
-	{
-		let res: Record<string, any> =
-		{
-		};
-		return res;
+		this.input_props = new FieldInfo();
+		this.input_props.name = "test";
 	}
 
 }

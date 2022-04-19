@@ -201,27 +201,27 @@ export class YamlFilesPageState extends CrudState
 	{
 		/* ID field */
 		let id = new FieldInfo();
-		id.api_name = "id";
+		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
 		/* Name field */
 		let file_name = new FieldInfo();
-		file_name.api_name = "file_name";
+		file_name.name = "file_name";
 		file_name.label = "File name";
 		file_name.component = "Input";
 		this.fields.push( deepClone(file_name) );
 		
 		/* Stack name field */
 		let stack_name = new FieldInfo();
-		stack_name.api_name = "stack_name";
+		stack_name.name = "stack_name";
 		stack_name.label = "Stack name";
 		stack_name.component = "Input";
 		this.fields.push( deepClone(stack_name) );
 		
 		/* Content field */
 		let content = new FieldInfo();
-		content.api_name = "content";
+		content.name = "content";
 		content.label = "Content";
 		content.component = "CodeMirror";
 		//content.component_params["min-height"] = "500px";
@@ -229,13 +229,13 @@ export class YamlFilesPageState extends CrudState
 		
 		/* Row number */
 		let row_number = new FieldInfo();
-		row_number.api_name = "row_number";
+		row_number.name = "row_number";
 		row_number.label = "";
 		row_number.component = "RowNumber";
 		
 		/* Row buttons */
 		let row_buttons = new FieldInfo();
-		row_buttons.api_name = "row_buttons";
+		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		
