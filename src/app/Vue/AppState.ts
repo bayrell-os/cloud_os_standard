@@ -35,6 +35,7 @@ import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
 export class AppState
 {
 	title: string = "";
+	app_version: string = "0.4.1";
 	MainPage: MainPageState = new MainPageState();
 	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
 	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();

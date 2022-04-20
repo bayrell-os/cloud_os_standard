@@ -120,8 +120,8 @@ export const ApplicationParams =
 		
 		if (this.item_name == "volume")
 		{
-			field_key.label = "Mount point inside container";
-			field_value.label = "Dest";
+			field_key.label = "Source";
+			field_value.label = "Mount point inside container";
 		}
 		
 		data.form_save.fields.push( deepClone(field_key) );
@@ -136,12 +136,12 @@ export const ApplicationParams =
 	{
 		getLabelKey: function()
 		{
-			if (this.item_name == "volume") return "Mount point";
+			if (this.item_name == "volume") return "Source";
 			return "key";
 		},
 		getLabelValue: function()
 		{
-			if (this.item_name == "volume") return "Dest";
+			if (this.item_name == "volume") return "Mount point";
 			return "value";
 		},
 		onAddClick: function()

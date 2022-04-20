@@ -41,14 +41,6 @@
 		padding-bottom: 0.8em;
 	}
 	
-	&__modificators{
-		display: flex;
-		align-items: flex-start;
-	}
-	&__modificators_item{
-		width: 50%;
-	}
-	
 	&__variables{
 		padding-right: 10px;
 	}
@@ -81,8 +73,10 @@
 		</div>
 		
 		<Tabs @select="onTabSelect($event)">
+			
 			<Tab name="info" label="Info" selected="true">
 				
+				<!-- Form -->
 				<div class="applications_run_page__form">
 					<Form v-bind:store_path="store_path.concat('form_save')"
 						@crudEvent="onCrudFormEvent($event, 'form_save')"
@@ -91,85 +85,12 @@
 					</Form>
 				</div>
 				
-				<div class="applications_run_page__subtitle">
-					Modificators
-				</div>
+				<!-- Modificators -->
+				<ApplicationModificators
+					v-bind:store_path="store_path"
+				/>
 				
-				<div class="applications_run_page__modificators">
-					<div class="applications_run_page__modificators_item 
-						applications_run_page__variables"
-					>
-						
-						<div v-if="notNull(model.form_save.item) &&
-							notNull(model.form_save.item.variables_defs)">
-							
-							<div v-for="variable in model.form_save.item.variables_defs"
-								:key="variable.name"
-							>
-								<div v-if="variable.name != '_var_service_name_'"
-									class="applications_run_page__variable"
-								>
-									<div class="applications_run_page__variable_label">
-										{{ variable.label || variable.name }}
-									</div>
-									<div class="applications_run_page__variable_value">
-										<Input
-											v-bind:name="variable.name"
-											v-bind:store_path="store_path.concat([
-												'form_save', 'item', 
-												'variables', variable.name])"
-										/>
-									</div>
-								</div>
-							</div>
-							
-						</div>
-						
-					</div>
-					
-					<div class="applications_run_page__modificators_item">
-						<div v-if="model.dictionary && model.dictionary.modificators_item">
-							<div class="component_crud__top_buttons">
-								<div class="component_crud__top_button">
-									<Button type="success" @click="onModificatorAdd()">
-										[+] Add modificator
-									</Button>
-								</div>
-							</div>
-							<div class="component_crud__table">
-								<table>
-									<tr class="component_crud__header">
-										<th></th>
-										<th>Name</th>
-										<th>Priority</th>
-										<th></th>
-									</tr>
-									<tr class="component_crud__row"
-										v-for="modificator, index in model.dictionary.modificators_item"
-										:key="modificator.id"
-									>
-										<td>{{ index + 1 }}</td>
-										<td>{{ modificator.name }}</td>
-										<td>{{ modificator.priority }}</td>
-										<td>
-											<div class="component_row_buttons">
-												<Button type="default" small="true"
-													@click="onModificatorView(modificator.id)">
-													View
-												</Button>
-												<Button type="danger" small="true"
-													@click="onModificatorDelete(modificator.id)">
-													Delete
-												</Button>
-											</div>
-										</td>
-									</tr>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				
+				<!-- Params -->
 				<div class="applications_run_page__params">
 					<div class="applications_run_page__param">
 						<div class="applications_run_page__subtitle">
@@ -191,115 +112,47 @@
 					</div>
 				</div>
 				
-				<Dialog v-bind:store_path="store_path.concat('dialog_add_modificator')">
-					<template v-slot:title>
-						Add modificator
-					</template>
-					<template v-slot:content>
-						<div class="applications_run_page__select_add_modificator">
-							<label>Select modificator:</label>
-							<Select
-								v-bind:store_path="store_path.concat(['select_add_modificator_id'])"
-								v-bind:crud="{
-									field:
-									{
-										options: model.getSelectAddModificators()
-									}
-								}"
-							/>
-						</div>
-					</template>
-					<template v-slot:buttons>
-						<Button type="danger" @click="onDialogAddModificatorButtonClick('yes')">
-							Yes
-						</Button>
-						<Button type="" @click="onDialogAddModificatorButtonClick('no')">
-							No
-						</Button>
-					</template>
-				</Dialog>
-				
-				<Dialog v-bind:store_path="store_path.concat('dialog_delete_modificator')">
-					<template v-slot:title>
-						Delete modificator
-					</template>
-					<template v-slot:buttons>
-						<Button type="danger"
-							@click="onDialogDeleteModificatorButtonClick('yes')">Yes</Button>
-						<Button type=""
-							@click="onDialogDeleteModificatorButtonClick('no')">No</Button>
-					</template>
-				</Dialog>
-				
-				<Dialog v-bind:store_path="store_path.concat('dialog_view_modificator')" 
-					width="800px"
-				>
-					<template v-slot:content>
-						<CodeMirror
-							v-bind:value="model.dialog_view_modificator.tag != null ?
-								model.dialog_view_modificator.tag.content : ''"
-							v-bind:crud="{
-								field:
-								{
-									component_params: {
-										mode: 'xml',
-										readOnly: true,
-									}
-								}
-							}"
-						/>
-					</template>
-					<template v-slot:buttons>
-						<Button type="primary"
-							@click="onDialogViewModificatorButtonClick('close')">Close</Button>
-					</template>
-				</Dialog>
-				
 			</Tab>
+			
 			<Tab name="custom_patch" label="Custom patch">
 				<CodeMirror
 					ref="code_mirror_custom_patch"
 					v-bind:store_path="store_path.concat('form_save','item','custom_patch')"
-					v-bind:crud="{
-						field:
-						{
-							component_params:{
-								mode: 'xml'
-							}
-						}
+					v-bind:component_params="{
+						mode: 'xml',
 					}"
 				/>
 			</Tab>
-			<Tab name="template" label="Template">
+			
+			<Tab name="total_patches" label="Total patches">
+				<ApplicationTotalPatches
+					ref="total_patches"
+					v-bind:store_path="store_path"
+				/>
+			</Tab>
+			
+			<Tab name="template" label="Result">
 				<CodeMirror
 					ref="code_mirror_template"
 					v-bind:value="model.form_save.item.content"
-					v-bind:crud="{
-						field:
-						{
-							component_params:{
-								mode: 'xml',
-								readOnly: true,
-							}
-						}
+					v-bind:component_params="{
+						mode: 'xml',
+						readOnly: true,
 					}"
 				/>
 			</Tab>
+			
 			<Tab name="yaml" label="Yaml">
 				<CodeMirror
 					ref="code_mirror_yaml"
 					v-bind:value="model.form_save.item.yaml"
-					v-bind:crud="{
-						field:
-						{
-							component_params:{
-								mode: 'yaml',
-								readOnly: true,
-							}
-						}
+					v-bind:component_params="{
+						mode: 'yaml',
+						readOnly: true,
 					}"
 				/>
 			</Tab>
+			
 		</Tabs>
 		
 		<Dialog v-bind:store_path="store_path.concat('dialog_compose_app')">
@@ -338,7 +191,9 @@ import { mixin, componentExtend, deepClone, onRouteUpdate, responseOk, notNull, 
 	from "vue-helper";
 import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 import { Crud } from "vue-helper/Crud/Crud.vue";
+import { ApplicationModificators } from "./ApplicationModificators.vue";
 import { ApplicationParams } from "./ApplicationParams.vue";
+import { ApplicationTotalPatches } from "./ApplicationTotalPatches.vue";
 
 
 /**
@@ -348,14 +203,20 @@ export const ApplicationsEditPage =
 {
 	name: "ApplicationsEditPage",
 	mixins: [mixin],
-	props: ["page_action"],
 	components:
 	{
+		ApplicationModificators,
 		ApplicationParams,
+		ApplicationTotalPatches,
 	},
 	methods:
 	{
-		notNull, isNull,
+		notNull,
+		isNull,
+		
+		/**
+		 * Crud form event
+		 */
 		onCrudFormEvent: function($event, form_name)
 		{
 			if (form_name == "form_save" && $event.event_name == CRUD_EVENTS.ITEM_CHANGE)
@@ -377,113 +238,10 @@ export const ApplicationsEditPage =
 					code_mirror.instance.refresh();
 				});
 			}
-		},
-		
-		/* Add modificator */
-		onModificatorAdd()
-		{
-			this.model.select_add_modificator_id = -1;
-			this.model.dialog_add_modificator.show();
-		},
-		onDialogAddModificatorButtonClick: async function(button_text)
-		{
-			if (button_text == "yes")
+			
+			if (tab_name == "total_patches")
 			{
-				let select_add_modificator_id = Number(this.model.select_add_modificator_id);
-				let modificator = this.model.getModificatorByID(select_add_modificator_id);
-				
-				if (modificator)
-				{
-					this.model.dialog_add_modificator.setWaitResponse();
-					
-					let response = await this.model.constructor
-						.apiAddModificator(this.model.form_save.item.id, modificator.id)
-					;
-					this.model.dialog_add_modificator.setAxiosResponse(response);
-					
-					if (response && responseOk(response))
-					{
-						this.model.dictionary.modificators_item.push(modificator);
-						this.model.sortModificatorsItems();
-						this.model.dialog_add_modificator.hide();
-					}
-				}
-			}
-			else
-			{
-				this.model.dialog_add_modificator.hide();
-			}
-		},
-		
-		/* Delete modificator */
-		onModificatorDelete(modificator_id)
-		{
-			let modificator = this.model.getModificatorByID(modificator_id);
-			if (modificator)
-			{
-				this.model.dialog_delete_modificator.text = "Do you sure to delete \"" +
-					modificator.name + "\" ?";
-				this.model.dialog_delete_modificator.tag = modificator;
-				this.model.dialog_delete_modificator.show();
-			}
-		},
-		onDialogDeleteModificatorButtonClick: async function(button_text)
-		{
-			if (button_text == "yes")
-			{
-				let modificator = this.model.dialog_delete_modificator.tag;
-				
-				if (modificator)
-				{
-					this.model.dialog_delete_modificator.setWaitResponse();
-					
-					let response = await this.model.constructor
-						.apiDeleteModificator(this.model.form_save.item.id, modificator.id)
-					;
-					this.model.dialog_delete_modificator.setAxiosResponse(response);
-					
-					if (response && responseOk(response))
-					{
-						/* Find index of modificator in modificators_item */
-						let index = this.model.dictionary.modificators_item
-							.findIndex((item)=>{
-								return item.id == modificator.id;
-							})
-						;
-						
-						/* Remove modificators */
-						if (index > -1)
-						{
-							this.model.dictionary.modificators_item.splice(index, 1);
-						}
-						
-						/* Hide dialog */
-						this.model.dialog_delete_modificator.hide();
-					}
-				}
-			}
-			else
-			{
-				this.model.dialog_delete_modificator.hide();
-			}
-		},
-		
-		/* View modificator */
-		onModificatorView(modificator_id)
-		{
-			let modificator = this.model.getModificatorByID(modificator_id);
-			if (modificator)
-			{
-				this.model.dialog_view_modificator.title = "View modificator " + modificator.name;
-				this.model.dialog_view_modificator.tag = modificator;
-				this.model.dialog_view_modificator.show();
-			}
-		},
-		onDialogViewModificatorButtonClick(button_text)
-		{
-			if (button_text == "close")
-			{
-				this.model.dialog_view_modificator.hide();
+				this.$refs["total_patches"].refresh();
 			}
 		},
 		

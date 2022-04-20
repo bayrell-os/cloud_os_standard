@@ -98,6 +98,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"template_name",
 					"template_version",
 					"template_version_id",
+					"template_content",
 					"modificators",
 					"environments",
 					"variables",
@@ -120,6 +121,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "template_id" ]),
 			new ReadOnly([ "api_name" => "template_name" ]),
 			new ReadOnly([ "api_name" => "template_version" ]),
+			new ReadOnly([ "api_name" => "template_content" ]),
 			new ReadOnly([ "api_name" => "variables_defs" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
@@ -236,6 +238,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->addField("tv.version as template_version")
 			->addField("tpl.id as template_id")
 			->addField("tpl.name as template_name")
+			->addField("tv.content as template_content")
 			->leftJoin(TemplateVersion::getTableName(), "tv", "tv.id = t.template_version_id")
 			->innerJoin(Template::getTableName(), "tpl", "tpl.id = tv.template_id")
 			->orderBy("t.stack_name", "asc")

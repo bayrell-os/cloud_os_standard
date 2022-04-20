@@ -22,10 +22,7 @@
 
 <template>
 	<div class="page_home">
-		Cloud OS Version 0.4.0
-		
-		<Test name="test" value="test value" />
-		
+		Cloud OS Version {{ state.app_version }}
 	</div>
 </template>
 
