@@ -208,9 +208,6 @@ class Application extends Model
 		$patch_xml[] = '  <name>Volumes</name>';
 		$patch_xml[] = '  <priority>50</priority>';
 		$patch_xml[] = '  <operations>';
-		$patch_xml[] = '    <operation type="add">';
-		$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_</path>';
-		$patch_xml[] = '      <value>';
 		
 		if (gettype($volumes) == "array" && count($volumes) > 0)
 		{
@@ -218,12 +215,28 @@ class Application extends Model
 			{
 				$env_name = $env["key"];
 				$env_value = $env["value"];
+				
+				/* Add volume to service */
+				$patch_xml[] = '    <operation type="add">';
+				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_</path>';
+				$patch_xml[] = '      <value>';
 				$patch_xml[] = "        <volumes>".$env_name.":".$env_value."</volumes>";
+				$patch_xml[] = '      </value>';
+				$patch_xml[] = '    </operation>';
+				
+				/* Add volume description */
+				if (strpos($env_name, "/") === false)
+				{
+					$patch_xml[] = '    <operation type="add">';
+					$patch_xml[] = '      <path>/template/yaml/volumes</path>';
+					$patch_xml[] = '      <value>';
+					$patch_xml[] = "        <".$env_name."/>";
+					$patch_xml[] = '      </value>';
+					$patch_xml[] = '    </operation>';
+				}
 			}
 		}
 		
-		$patch_xml[] = '      </value>';
-		$patch_xml[] = '    </operation>';
 		$patch_xml[] = '  </operations>';
 		$patch_xml[] = '</patch>';
 		
