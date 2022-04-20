@@ -98,6 +98,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"template_name",
 					"template_version",
 					"template_version_id",
+					"modificators",
 					"environments",
 					"variables",
 					"variables_defs",
@@ -260,6 +261,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		else if ($action == "actionGetById")
 		{
 			$this->item->updateVariables();
+			//$this->item->updateModificators();
 		}
 		
 		parent::buildResponse($action);

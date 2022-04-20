@@ -33,8 +33,8 @@
 	<table>
 		<tr class="component_crud__header">
 			<th></th>
-			<th>Key</th>
-			<th>Value</th>
+			<th>{{ getLabelKey() }}</th>
+			<th>{{ getLabelValue() }}</th>
 			<th></th>
 		</tr>
 		<tr class="component_crud__row"
@@ -120,7 +120,7 @@ export const ApplicationParams =
 		
 		if (this.item_name == "volume")
 		{
-			field_key.label = "Source";
+			field_key.label = "Mount point inside container";
 			field_value.label = "Dest";
 		}
 		
@@ -134,6 +134,16 @@ export const ApplicationParams =
 	},
 	methods:
 	{
+		getLabelKey: function()
+		{
+			if (this.item_name == "volume") return "Mount point";
+			return "key";
+		},
+		getLabelValue: function()
+		{
+			if (this.item_name == "volume") return "Dest";
+			return "value";
+		},
 		onAddClick: function()
 		{
 			this.form_save.clear();

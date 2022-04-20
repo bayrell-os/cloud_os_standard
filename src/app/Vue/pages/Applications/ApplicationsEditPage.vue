@@ -62,9 +62,9 @@
 	
 	&__params{
 		display: flex;
-		.component_crud__table{
-			padding-right: 10px;
-		}
+	}
+	&__param{
+		padding-right: 10px;
 	}
 }
 </style>
@@ -170,19 +170,25 @@
 					</div>
 				</div>
 				
-				<div class="applications_run_page__subtitle">
-					Other
-				</div>
-				
 				<div class="applications_run_page__params">
-					<ApplicationParams
-						v-bind:items="model.form_save.item.environments"
-						item_name="environment"
-					/>
-					<ApplicationParams
-						v-bind:items="model.form_save.item.volumes"
-						item_name="volume"
-					/>
+					<div class="applications_run_page__param">
+						<div class="applications_run_page__subtitle">
+							Environments
+						</div>
+						<ApplicationParams
+							v-bind:items="model.form_save.item.environments"
+							item_name="environment"
+						/>
+					</div>
+					<div class="applications_run_page__param">
+						<div class="applications_run_page__subtitle">
+							Volumes
+						</div>
+						<ApplicationParams
+							v-bind:items="model.form_save.item.volumes"
+							item_name="volume"
+						/>
+					</div>
 				</div>
 				
 				<Dialog v-bind:store_path="store_path.concat('dialog_add_modificator')">

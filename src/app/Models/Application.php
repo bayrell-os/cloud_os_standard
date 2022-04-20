@@ -62,6 +62,7 @@ class Application extends Model
 			"template_version_id" => [],
 			"status" => [],
 			"content" => [],
+			"modificators" => [],
 			"custom_patch" => [],
 			"yaml" => [],
 			"yaml_file_id" => [],
@@ -102,6 +103,7 @@ class Application extends Model
 	{
 		$field_names =
 		[
+			"modificators",
 			"environments",
 			"variables",
 			"volumes",
@@ -127,6 +129,7 @@ class Application extends Model
 	{
 		$field_names =
 		[
+			"modificators",
 			"environments",
 			"variables",
 			"volumes",
@@ -150,6 +153,149 @@ class Application extends Model
 	
 	
 	/**
+	 * Get environment patch
+	 */
+	function getEnvironmentPatch()
+	{
+		$environments = $this->environments;
+		
+		$patch_xml = [];
+		$patch_xml[] = '<?xml version="1.1" encoding="UTF-8" ?>';
+		$patch_xml[] = '<patch>';
+		$patch_xml[] = '  <name>Environments</name>';
+		$patch_xml[] = '  <priority>50</priority>';
+		$patch_xml[] = '  <operations>';
+		
+		if (gettype($environments) == "array" && count($environments) > 0)
+		{
+			foreach ($environments as $env)
+			{
+				$env_name = $env["key"];
+				$env_value = $env["value"];
+				
+				$patch_xml[] = '    <operation type="remove">';
+				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_/environment/'.
+					$env_name.'</path>';
+				$patch_xml[] = '    </operation>';
+				
+				$patch_xml[] = '    <operation type="add">';
+				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_/environment</path>';
+				$patch_xml[] = '      <value>';
+				$patch_xml[] = "        <".$env_name.">".$env_value."</".$env_name.">";
+				$patch_xml[] = '      </value>';
+				$patch_xml[] = '    </operation>';
+			}
+		}
+		
+		$patch_xml[] = '  </operations>';
+		$patch_xml[] = '</patch>';
+		
+		return implode("\n", $patch_xml);
+	}
+	
+	
+	
+	/**
+	 * Get volumes patch
+	 */
+	function getVolumesPatch()
+	{
+		$volumes = $this->volumes;
+		
+		$patch_xml = [];
+		$patch_xml[] = '<?xml version="1.1" encoding="UTF-8" ?>';
+		$patch_xml[] = '<patch>';
+		$patch_xml[] = '  <name>Volumes</name>';
+		$patch_xml[] = '  <priority>50</priority>';
+		$patch_xml[] = '  <operations>';
+		$patch_xml[] = '    <operation type="add">';
+		$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_</path>';
+		$patch_xml[] = '      <value>';
+		
+		if (gettype($volumes) == "array" && count($volumes) > 0)
+		{
+			foreach ($volumes as $env)
+			{
+				$env_name = $env["key"];
+				$env_value = $env["value"];
+				$patch_xml[] = "        <volumes>".$env_name.":".$env_value."</volumes>";
+			}
+		}
+		
+		$patch_xml[] = '      </value>';
+		$patch_xml[] = '    </operation>';
+		$patch_xml[] = '  </operations>';
+		$patch_xml[] = '</patch>';
+		
+		return implode("\n", $patch_xml);
+	}
+	
+	
+	
+	/**
+	 * Get modificators
+	 */
+	function getModificators($template_xml)
+	{
+		/* Get modificators */
+		$modificators = Modificator::getAppModificators($this->id);
+		
+		/* To array */
+		$modificators = array_map(function($item){ return $item->toArray(); }, $modificators);
+		
+		/* Sort modificators by priority */
+		usort($modificators, function($a, $b){
+			return $a["priority"] > $b["priority"] ? 1 : -1;
+		});
+		
+		/* Add environment */
+		$modificators[] = 
+		[
+			"name" => "Environments",
+			"content" => $this->getEnvironmentPatch(),
+		];
+		
+		/* Add volumes */
+		$modificators[] = 
+		[
+			"name" => "Volumes",
+			"content" => $this->getVolumesPatch(),
+		];
+		
+		/* Add template patch */
+		$template_patch = $template_xml->patch;
+		if ($template_patch->exists())
+		{
+			$modificators[] = 
+			[
+				"name" => "Template patch",
+				"content" => XML::toXml( $template_patch ),
+			];
+		}
+		
+		/* Add custom patch */
+		$modificators[] = 
+		[
+			"name" => "Custom patch",
+			"content" => $this->custom_patch,
+		];
+		
+		return $modificators;
+	}
+	
+	
+	
+	/**
+	 * Get modificators
+	 */
+	function updateModificators($template_xml)
+	{
+		$this->modificators = $this->getModificators($template_xml);
+	}
+	
+	
+	
+	/**
 	 * Generate yaml content
 	 */
 	function generateYamlContent()
@@ -164,29 +310,18 @@ class Application extends Model
 			$template_content = $template_version->content;
 		}
 		
-		/* Get modificators */
-		$modificators = Modificator::getAppModificators($this->id);
+		/* Get template xml */
+		list($template_xml, $errors) = XML::loadXml($template_content);
+		if (!$template_xml)
+		{
+			throw new \Exception("Template XML error: " . implode(". ", $errors));
+		}
 		
-		/* To array */
-		$modificators = array_map(function($item){ return $item->toArray(); }, $modificators);
-		
-		/* Sort modificators by priority */
-		usort($modificators, function($a, $b){
-			return $a["priority"] > $b["priority"] ? 1 : -1;
-		});
-		
-		/* Add custom patch */
-		$modificators[] = 
-		[
-			"name" => "Custom patch",
-			"content" => $this->custom_patch,
-		];
-		
-		/* Get variables */
-		$variables = $this->variables;
+		/* Update modificators */
+		$this->updateModificators($template_xml);
 		
 		/* Patch xml */
-		$template_xml = XML::patch($template_content, $modificators);
+		XML::patch($template_xml, $this->modificators);
 		
 		/* Convert to xml */
 		$this->content = XML::toXml($template_xml);

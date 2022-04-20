@@ -103,4 +103,31 @@ CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
 CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
 
 
+-- add modificators
+
+BEGIN;
+CREATE TABLE "adminer_applications" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "stack_name" text NOT NULL,
+  "name" text NOT NULL,
+  "template_version_id" integer NULL,
+  "status" integer NOT NULL DEFAULT '0',
+  "content" text NOT NULL DEFAULT '',
+  "modificators" text NOT NULL DEFAULT '',
+  "custom_patch" text NOT NULL DEFAULT '',
+  "yaml" text NOT NULL DEFAULT '',
+  "yaml_file_id" integer NULL,
+  "variables" text NOT NULL DEFAULT '',
+  "environments" text NOT NULL DEFAULT '',
+  "volumes" text NOT NULL DEFAULT '',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_applications" ("id", "stack_name", "name", "template_version_id", "status", "content", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated") SELECT "id", "stack_name", "name", "template_version_id", "status", "content", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated" FROM "applications";
+DROP TABLE "applications";
+ALTER TABLE "adminer_applications" RENAME TO "applications";
+CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
+COMMIT;
+
+
 PRAGMA foreign_keys=on;

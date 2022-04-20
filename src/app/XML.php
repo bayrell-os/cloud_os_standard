@@ -23,6 +23,96 @@ namespace App;
 use Symfony\Component\Yaml\Yaml;
 
 
+class XMLElement extends \SimpleXMLElement
+{
+	
+	/**
+	 * Returns dom element
+	 */
+	function getDomElement()
+	{
+		return dom_import_simplexml($this);
+	}
+	
+	
+	
+	/**
+	 * Prepend child
+	 */
+	function prependChild($name, $content = "")
+	{
+		$dom = $this->getDomElement();
+		$elem = $dom->ownerDocument->createElement($name, $content);
+		$item = $dom->insertBefore($elem, $dom->firstChild);
+		$item = simplexml_import_dom($item);
+		return $item;
+	}
+	
+	
+	
+	/**
+	 * Get attribute
+	 */
+	function getAttribute($name)
+	{
+		$attrs = $this->attributes();
+		if (isset($attrs[$name]))
+		{
+			return $attrs[$name];
+		}
+		return null;
+	}
+	
+	
+	
+	/**
+	 * Remove Attribute
+	 */
+	function removeAttribute($name)
+	{
+		$dom = $this->getDomElement();
+		$dom->removeAttribute($name);
+	}
+	 
+	
+	
+	/**
+	 * Add and replace attribute
+	 */
+	function addAttribute($name, $value = NULL, $ns = NULL)
+	{
+		$attrs = $this->attributes();
+		if (isset($attrs[$name]))
+		{
+			$this->removeAttribute($name);
+		}
+		parent::addAttribute($name, $value, $ns);
+	}
+	
+	
+	
+	/**
+	 * Remove current element
+	 */
+	function remove()
+	{
+		$item = $this->getDomElement();
+		$item->parentNode->removeChild($item);
+	}
+	
+	
+	
+	/**
+	 * Returns true if element is exists
+	 */
+	function exists()
+	{
+		return $this->getName() != "";
+	}
+}
+
+
+
 class XML
 {
 	/**
@@ -32,7 +122,7 @@ class XML
 	{
 		$old_value = libxml_use_internal_errors(true);
 		libxml_clear_errors();
-		$xml = simplexml_load_string($xml_str, "SimpleXMLElement", LIBXML_NOCDATA);
+		$xml = simplexml_load_string($xml_str, XMLElement::class, LIBXML_NOCDATA);
 		$errors = static::getErrors();
 		libxml_use_internal_errors($old_value);
 		return [$xml, $errors];
@@ -93,7 +183,6 @@ class XML
 				$item->addAttribute($n, $v);
 			}
 		}
-		
 	}
 	
 	
@@ -106,6 +195,48 @@ class XML
 		foreach ($append->children() as $child)
 		{
 			static::appendXML($xml, $child);
+		}
+	}
+	
+	
+	
+	/**
+	 * Prepend XML
+	 */
+	static function prependXml($xml, $prepend)
+	{
+		$item = null;
+		$name = $prepend->getName();
+		
+		if (count($prepend->children()) == 0)
+		{
+			$item = $xml->prependChild($name, (string)$prepend);
+		}
+		else
+		{
+			$item = $xml->prependChild($name);
+			static::appendChildsXml($item, $prepend);
+		}
+		
+		if ($item != null)
+		{
+			foreach ($prepend->attributes() as $n => $v)
+			{
+				$item->addAttribute($n, $v);
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Prepend XML
+	 */
+	static function prependChildsXml($xml, $prepend)
+	{
+		foreach ($prepend->children() as $child)
+		{
+			static::prependXML($xml, $child);
 		}
 	}
 	
@@ -165,17 +296,17 @@ class XML
 	/**
 	 * Patch
 	 */
-	static function patch($template_content, $modificators)
+	static function patch($template_xml, $modificators)
 	{
-		list($template_xml, $errors) = static::loadXml($template_content);
-		if (!$template_xml)
-		{
-			throw new \Exception("Template XML error: " . implode(". ", $errors));
-		}
-		
+		/* Get patch operations */
+		$patch_items = [];
 		foreach ($modificators as $modificator)
 		{
-			$modificator_xml = $modificator["content"];
+			$modificator_xml = trim($modificator["content"]);
+			
+			/* Skip modificator if empty */
+			if ($modificator_xml == "") continue;
+			
 			list($modificator_xml, $errors) = static::loadXml($modificator_xml);
 			if (!$modificator_xml)
 			{
@@ -186,10 +317,49 @@ class XML
 				);
 			}
 			
-			static::patchXml($template_xml, $modificator_xml);
+			/* Add operations from modificator_xml */
+			$modificator_priority = (int)( $modificator_xml->priority );
+			$operations = $modificator_xml->operations;
+			if ($operations && $operations->getName() == 'operations')
+			{
+				foreach ($operations->children() as $patch_item)
+				{
+					if ($patch_item->getName() == 'operation')
+					{
+						$patch_item_priority = (string)( $patch_item->getAttribute("priority") );
+						if ($patch_item_priority == "")
+						{
+							$patch_item_priority = $modificator_priority;
+						}
+						else
+						{
+							$patch_item_priority = (int)( $patch_item_priority );
+						}
+						
+						$patch_item->addAttribute("priority", $patch_item_priority);
+						$patch_items[] = $patch_item;
+					}
+				}
+			}
 		}
 		
-		return $template_xml;
+		/* Sort operations by priority */
+		usort
+		(
+			$patch_items,
+			function ($a, $b)
+			{
+				$priority_a = (int)( $a->getAttribute("priority") );
+				$priority_b = (int)( $b->getAttribute("priority") );
+				return $priority_a > $priority_b ? 1 : -1;
+			}
+		);
+		
+		/* Execute patch */
+		foreach ($patch_items as $patch_item)
+		{
+			static::patchXml($template_xml, $patch_item);
+		}
 	}
 	
 	
@@ -197,31 +367,22 @@ class XML
 	/**
 	 * Patch xml
 	 */
-	static function patchXml($xml, $patch_xml)
+	static function patchXml($xml, $patch_item)
 	{
-		$operations = $patch_xml->operations;
-		if ($operations && $operations->getName() == 'operations')
+		$type = $patch_item->attributes()->type;
+		if ($type == "add")
 		{
-			foreach ($operations->children() as $patch_item)
-			{
-				if ($patch_item->getName() == 'operation')
-				{
-					$type = $patch_item->attributes()->type;
-					$path = (string)$patch_item->path;
-					$value = $patch_item->value;
-					if ($type == "add")
-					{
-						static::patchAdd($xml, $path, $value);
-					}
-					
-					/*
-					if ($type == "addFirst")
-					if ($type == "remove")
-					if ($type == "addAttr")
-					*/
-					
-				}
-			}
+			static::patchAdd($xml, $patch_item);
+		}
+		
+		else if ($type == "addAttribute")
+		{
+			static::patchAddAttribute($xml, $patch_item);
+		}
+		
+		else if ($type == "remove")
+		{
+			static::patchRemove($xml, $patch_item);
 		}
 	}
 	
@@ -230,12 +391,71 @@ class XML
 	/**
 	 * Patch add xml
 	 */
-	static function patchAdd($xml, $path, $value)
+	static function patchAdd($xml, $patch_item)
 	{
+		$path = (string)( $patch_item->path );
+		$value = $patch_item->value;
+		$notExists = (string)( $patch_item->notExists );
+		$position = (string)( $patch_item->attributes()->position );
+		$result = $xml->xpath($path);
+		if ($notExists != "")
+		{
+			$notExists = $xml->xpath($notExists);
+		}
+		
+		/* Skip */
+		$skip = false;
+		if (gettype($notExists) == "array")
+		{
+			if (count($notExists) > 0) $skip = true;
+		}
+		
+		if (!$skip)
+		{
+			foreach ($result as $item)
+			{
+				if ($position == "first")
+				{
+					static::prependChildsXml($item, $value);
+				}
+				else
+				{
+					static::appendChildsXml($item, $value);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Patch remove
+	 */
+	static function patchRemove($xml, $patch_item)
+	{
+		$path = (string)( $patch_item->path );
 		$result = $xml->xpath($path);
 		foreach ($result as $item)
 		{
-			static::appendChildsXml($item, $value);
+			$item->remove();
+		}
+	}
+	
+	
+	
+	/**
+	 * Patch add attribute
+	 */
+	static function patchAddAttribute($xml, $patch_item)
+	{
+		$attr_name = (string)( $patch_item->name );
+		$attr_value = (string)( $patch_item->value );
+		$path = (string)( $patch_item->path );
+		
+		$result = $xml->xpath($path);
+		foreach ($result as $item)
+		{
+			$item->addAttribute($attr_name, $attr_value);
 		}
 	}
 	
@@ -348,9 +568,9 @@ class XML
 						{
 							$res[$key] = [ $res[$key] ];
 						}
-						if ($type == "array")
+						if ($type == "array" || $type == "map" || gettype($value) == "array")
 						{
-							$res[$key] = array_concat($res[$key], $value);
+							$res[$key] = array_merge($res[$key], $value);
 						}
 						else
 						{
@@ -361,7 +581,6 @@ class XML
 					{
 						$res[$key] = $value;
 					}
-					
 				}
 				
 				return $res;
