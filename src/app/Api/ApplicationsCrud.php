@@ -94,6 +94,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"id",
 					"stack_name",
 					"name",
+					"service_name",
 					"template_id",
 					"template_name",
 					"template_version",
@@ -118,6 +119,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "id" ]),
 			new ReadOnly([ "api_name" => "yaml" ]),
 			new ReadOnly([ "api_name" => "content" ]),
+			new ReadOnly([ "api_name" => "service_name" ]),
 			new ReadOnly([ "api_name" => "template_id" ]),
 			new ReadOnly([ "api_name" => "template_name" ]),
 			new ReadOnly([ "api_name" => "template_version" ]),
@@ -235,6 +237,8 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	public function buildSearchQuery($action, $query)
 	{
 		return $query
+			//->debug(true)
+			->addField("t.stack_name || '_' || t.name as service_name")
 			->addField("tv.version as template_version")
 			->addField("tpl.id as template_id")
 			->addField("tpl.name as template_name")

@@ -168,6 +168,13 @@ export class ApplicationsPageState extends CrudState
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
+		/* Name field */
+		let service_name = new FieldInfo();
+		service_name.name = "service_name";
+		service_name.label = "Service name";
+		service_name.component = "Input";
+		this.fields.push( deepClone(service_name) );
+		
 		/* Content field */
 		let content = new FieldInfo();
 		content.name = "content";
@@ -224,11 +231,11 @@ export class ApplicationsPageState extends CrudState
 		/* Table fields */
 		name.component = "Label";
 		stack_name.component = "Label";
+		service_name.component = "Label";
 		status.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(stack_name) );
-		this.fields_table.push( deepClone(name) );
-		this.fields_table.push( deepClone(status) );
+		this.fields_table.push( deepClone(service_name) );
+		// this.fields_table.push( deepClone(status) );
 		this.fields_table.push( deepClone(template_name) );
 		this.fields_table.push( deepClone(template_version) );
 		this.fields_table.push( deepClone(row_buttons) );

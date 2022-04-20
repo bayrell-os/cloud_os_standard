@@ -1,38 +1,34 @@
--- Adminer 4.7.1 SQLite 3 dump
-
 DROP TABLE IF EXISTS "app_modificators";
 CREATE TABLE "app_modificators" (
   "app_id" integer NOT NULL,
-  "modificator_id" integer NOT NULL,
-  FOREIGN KEY ("modificator_id") REFERENCES "modificators" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("app_id") REFERENCES "applications" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "modificator_id" integer NOT NULL
 );
 
-CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
-
 CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
+
+CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
 
 
 DROP TABLE IF EXISTS "applications";
 CREATE TABLE "applications" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "stack_name" text NOT NULL,
   "name" text NOT NULL,
-  "template_id" integer NULL,
+  "template_version_id" integer NULL,
   "status" integer NOT NULL DEFAULT '0',
   "content" text NOT NULL DEFAULT '',
+  "modificators" text NOT NULL DEFAULT '',
   "custom_patch" text NOT NULL DEFAULT '',
   "yaml" text NOT NULL DEFAULT '',
-  "yaml_json" text NOT NULL DEFAULT '',
+  "yaml_file_id" integer NULL,
   "variables" text NOT NULL DEFAULT '',
-  "services" text NOT NULL DEFAULT '',
-  "app_file_id" integer NULL,
+  "environments" text NOT NULL DEFAULT '',
+  "volumes" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("app_file_id") REFERENCES "docker_yaml_files" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY ("template_id") REFERENCES "templates" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
-CREATE INDEX "app_status_template_id" ON "applications" ("template_id");
+CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
 
 
 DROP TABLE IF EXISTS "cron";
@@ -67,9 +63,9 @@ CREATE TABLE "docker_services" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
-
 CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
+
+CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
 
 
 DROP TABLE IF EXISTS "docker_yaml_files";
@@ -84,7 +80,9 @@ CREATE TABLE "docker_yaml_files" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "app_files_file_name" ON "docker_yaml_files" ("file_name");
+CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
+
+CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
 
 
 DROP TABLE IF EXISTS "domains";
@@ -97,8 +95,9 @@ CREATE TABLE "domains" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE INDEX "domains_space_id" ON "domains" ("space_id");
 CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
+
+CREATE INDEX "domains_space_id" ON "domains" ("space_id");
 
 
 DROP TABLE IF EXISTS "layers";
@@ -117,6 +116,7 @@ CREATE TABLE "modificators" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL,
   "content" text NOT NULL DEFAULT '',
+  "priority" numeric NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
@@ -175,6 +175,10 @@ CREATE TABLE "spaces" (
 );
 
 
+DROP TABLE IF EXISTS "sqlite_sequence";
+CREATE TABLE sqlite_sequence(name,seq);
+
+
 DROP TABLE IF EXISTS "stacks";
 CREATE TABLE "stacks" (
   "stack_name" integer NOT NULL,
@@ -187,38 +191,42 @@ CREATE TABLE "stacks" (
 DROP TABLE IF EXISTS "templates";
 CREATE TABLE "templates" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" text NOT NULL,
   "name" text NOT NULL,
-  "content" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
 
+CREATE UNIQUE INDEX "templates_uid" ON "templates" ("uid");
 
-DROP TABLE IF EXISTS "test";
-CREATE TABLE "test" (
+
+DROP TABLE IF EXISTS "templates_versions";
+CREATE TABLE "templates_versions" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "type" integer NOT NULL,
-  "name" text NULL
+  "template_id" integer NOT NULL,
+  "version" text NOT NULL,
+  "content" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
 );
 
+CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
 
-DROP TABLE IF EXISTS "top_menu";
-CREATE TABLE "top_menu" (
-  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "name" text NOT NULL,
-  "href" text NOT NULL,
-  "pos" integer NOT NULL
-);
+CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
 
 
 DROP TABLE IF EXISTS "users";
 CREATE TABLE "users" (
-  "user_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "login" text NOT NULL,
-  "name" text NOT NULL,
-  "banned" integer NOT NULL,
-  "is_deleted" integer NOT NULL
+  "name" text NOT NULL DEFAULT '',
+  "banned" integer NOT NULL DEFAULT '0',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
 );
+
+CREATE UNIQUE INDEX "users_login" ON "users" ("login");
 
 
 DROP TABLE IF EXISTS "users_auth";
@@ -229,6 +237,3 @@ CREATE TABLE `users_auth` (
 );
 
 CREATE UNIQUE INDEX "users_auth_user_id_method" ON "users_auth" ("user_id", "method");
-
-
--- 
