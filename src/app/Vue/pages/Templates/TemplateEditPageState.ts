@@ -17,14 +17,16 @@
  */
 
 import axios, { AxiosResponse } from "axios";
-import { deepClone } from "vue-helper";
+import { deepClone, responseOk } from "vue-helper";
 import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { Template } from "./TemplatesListPageState";
 import { TemplateVersion } from "./TemplatesViewPageState";
 
 
 export class TemplateEditPageState extends CrudState
 {
 	template_id: number;
+	template: Template | null;
     
     
 	/**
@@ -180,4 +182,21 @@ export class TemplateEditPageState extends CrudState
 		return "/api/template/edit/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	
+	
+	
+	/**
+	 * After api
+	 */
+	async afterApi(kind: string, response:AxiosResponse | null)
+	{
+		super.afterApi(kind, response);
+		
+		if (kind == "editPageLoadData")
+		{
+			if (response && responseOk(response))
+			{
+				this.template = (new Template()).assignValues(response.data.result.template);
+			}
+		}
+	}
 }

@@ -36,6 +36,9 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	var $class_name = Modificator::class;
 	var $api_name = "modificators";
 	var $xml = null;
+    var $xml_uid = null;
+    var $xml_name = null;
+    var $xml_version = null;
 	
 	
 	/**
@@ -50,6 +53,8 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
+					"uid",
+					"version",
 					"name",
 					"content",
 					"priority",
@@ -58,7 +63,9 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "uid" ]),
 			new ReadOnly([ "api_name" => "name" ]),
+			new ReadOnly([ "api_name" => "version" ]),
 			new ReadOnly([ "api_name" => "priority" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
@@ -106,6 +113,24 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 			}
 			
 			$this->xml = $xml;
+			
+			$this->xml_uid = (string)$xml->uid;
+			$this->xml_name = (string)$xml->name;
+			$this->xml_version = (string)$xml->version;
+			
+			/* Check xml params */
+			if ($this->xml_uid == "")
+			{
+				throw new \Exception("XML uid is not defined");
+			}
+			if ($this->xml_version == "")
+			{
+				throw new \Exception("XML version is not defined");
+			}
+			if ($this->xml_name == "")
+			{
+				throw new \Exception("XML name is not defined");
+			}
 		}
 	}
 	
@@ -120,10 +145,14 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 		
 		if ($action == "actionCreate" || $action == "actionEdit")
 		{
+			$uid = (string)$this->xml->uid;
 			$name = (string)$this->xml->name;
+			$version = (string)$this->xml->version;
 			$priority = (int)$this->xml->priority;
+			$this->item["uid"] = $uid;
 			$this->item["name"] = $name;
 			$this->item["priority"] = $priority;
+			$this->item["version"] = $version;
 		}
 	}
 }

@@ -60,6 +60,17 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	
 	
 	/**
+	 * Returns service name
+	 */
+	getServiceName()
+	{
+		if (isNull(this.form_save.item)) return "";
+		return this.form_save.item.stack_name + "_" + this.form_save.item.name;
+	}
+	
+	
+	
+	/**
 	 * Sort modificators items
 	 */
 	sortModificatorsItems()

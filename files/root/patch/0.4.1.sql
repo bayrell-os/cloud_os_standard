@@ -130,4 +130,23 @@ CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
 COMMIT;
 
 
+-- Add uid, version to modificators
+
+BEGIN;
+CREATE TABLE "adminer_modificators" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" text NOT NULL DEFAULT '',
+  "version" text NOT NULL DEFAULT '',
+  "name" text NOT NULL DEFAULT '',
+  "content" text NOT NULL DEFAULT '',
+  "priority" numeric NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_modificators" ("id", "name", "content", "priority", "gmtime_created", "gmtime_updated") SELECT "id", "name", "content", "priority", "gmtime_created", "gmtime_updated" FROM "modificators";
+DROP TABLE "modificators";
+ALTER TABLE "adminer_modificators" RENAME TO "modificators";
+COMMIT;
+
+
 PRAGMA foreign_keys=on;

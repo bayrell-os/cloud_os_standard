@@ -22,7 +22,26 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action"></Crud>
+	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+		
+		<template v-slot:component_crud_save_before>
+			<div class="template_view_page__table_before" v-if="model.template != null">
+				<div class="template_view_page__table_before_row">
+					<label>Template:</label>
+					<div class="template_view_page__table_before_value">
+						{{ model.template.name }}
+					</div>
+				</div>
+				<div class="template_view_page__table_before_row">
+					<label>UID:</label>
+					<div class="template_view_page__table_before_value">
+						{{ model.template.uid }}
+					</div>
+				</div>
+			</div>
+		</template>
+		
+	</Crud>
 </template>
 
 

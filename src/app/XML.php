@@ -299,6 +299,7 @@ class XML
 	static function patch($template_xml, $modificators)
 	{
 		/* Get patch operations */
+		$pos = 0;
 		$patch_items = [];
 		foreach ($modificators as $modificator)
 		{
@@ -337,7 +338,9 @@ class XML
 						}
 						
 						$patch_item->addAttribute("priority", $patch_item_priority);
+						$patch_item->addAttribute("pos", $pos);
 						$patch_items[] = $patch_item;
+						$pos++;
 					}
 				}
 			}
@@ -351,6 +354,14 @@ class XML
 			{
 				$priority_a = (int)( $a->getAttribute("priority") );
 				$priority_b = (int)( $b->getAttribute("priority") );
+				
+				if ($priority_a == $priority_b)
+				{
+					$pos_a = (int)( $a->getAttribute("pos") );
+					$pos_b = (int)( $b->getAttribute("pos") );
+					return $pos_a > $pos_b ? 1 : -1;
+				}
+				
 				return $priority_a > $priority_b ? 1 : -1;
 			}
 		);
@@ -398,6 +409,8 @@ class XML
 		$notExists = (string)( $patch_item->notExists );
 		$position = (string)( $patch_item->attributes()->position );
 		$result = $xml->xpath($path);
+		
+		/* Get not exists */
 		if ($notExists != "")
 		{
 			$notExists = $xml->xpath($notExists);
@@ -548,10 +561,12 @@ class XML
 					}
 					else if ($type == "array")
 					{
+						$value = [ $value ];
+						/*
 						if (gettype($value) != "array")
 						{
 							$value = [ $value ];
-						}
+						}*/
 					}
 					else if ($type == "map")
 					{

@@ -53,6 +53,8 @@ class Modificator extends Model
 		return
 		[
 			"id" => [],
+			"uid" => [],
+			"version" => [],
 			"name" => [],
 			"content" => [],
 			"priority" => [],

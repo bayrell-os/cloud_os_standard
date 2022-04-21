@@ -40,7 +40,8 @@ use TinyPHP\Utils;
 class TemplateApi extends \TinyPHP\ApiRoute
 {
 	var $update_data = null;
-    var $xml_id = null;
+    var $xml = null;
+    var $xml_uid = null;
     var $xml_name = null;
     var $xml_version = null;
     var $template = null;
@@ -137,9 +138,24 @@ class TemplateApi extends \TinyPHP\ApiRoute
 			throw new \Exception("XML error: " . implode(". ", $errors));
 		}
 		
-		$this->xml_id = (string)$xml->id;
+		$this->xml = $xml;
+		$this->xml_uid = (string)$xml->uid;
 		$this->xml_name = (string)$xml->name;
 		$this->xml_version = (string)$xml->version;
+		
+		/* Check xml params */
+		if ($this->xml_uid == "")
+		{
+			throw new \Exception("XML uid is not defined");
+		}
+		if ($this->xml_version == "")
+		{
+			throw new \Exception("XML version is not defined");
+		}
+		if ($this->xml_name == "")
+		{
+			throw new \Exception("XML name is not defined");
+		}
 		
 		/* Get existing template if edit */
 		if ($this->container->route_info["name"] == "api:template:edit")
@@ -158,7 +174,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		{
 			$this->template = Template::selectQuery()
 				->where([
-					["uid", "=", $this->xml_id],
+					["uid", "=", $this->xml_uid],
 				])
 				->one()
 			;
@@ -192,20 +208,11 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		$this->initUpdateData("actionImport");
 		$this->parseTemplate();
 		
-		/*
-		api:template:edit
-		api:template:import
-		$this->container->route_info["name"]
-		var_dump( $this->container->route_info["name"] );
-		var_dump( $this->container->route_info );
-		*/
-		//var_dump( $this->container->route->name );
-		
 		/* Create template if need */
 		if ($this->template == null)
 		{
 			$this->template = new Template();
-			$this->template->uid = $this->xml_id;
+			$this->template->uid = $this->xml_uid;
 			$this->template->name = $this->xml_name;
 			$this->template->save()->refresh();
 		}

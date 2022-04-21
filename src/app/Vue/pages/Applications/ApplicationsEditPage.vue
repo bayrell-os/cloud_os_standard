@@ -269,7 +269,7 @@ export const ApplicationsEditPage =
 		onComposeClick()
 		{
 			this.model.dialog_compose_app.title = "Compose " +
-				this.model.form_save.item.name + " ?"
+				this.model.getServiceName() + " ?"
 			;
 			this.model.dialog_compose_app.show();
 		},
@@ -300,7 +300,7 @@ export const ApplicationsEditPage =
 		/* Stop */
 		onStopClick()
 		{
-			this.model.dialog_stop_app.title = "Stop app " + this.model.form_save.item.name + " ?";
+			this.model.dialog_stop_app.title = "Stop app " + this.model.getServiceName() + " ?";
 			this.model.dialog_stop_app.show();
 			// this.model.doStopForm(this);
 		},

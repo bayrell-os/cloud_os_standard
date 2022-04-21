@@ -88,17 +88,34 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function init($action)
 	{
+		parent::init($action);
+		
+		if ($action == "actionSearch")
+		{
+			$this->template_id = (int)$this->container->post("template_id");
+		}
+	}
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	function validate($action)
+	{
 		if ($action == "actionSearch")
 		{
 			$this->template_id = (int)$this->container->post("template_id");
 			$this->template = Template::getById( $this->template_id );
-			if ($this->template == null)
-			{
-				throw new \TinyPHP\Exception\ItemNotFoundException("Template");
-			}
 		}
 		
-		parent::init($action);
+		else if ($action == "actionGetById")
+		{
+			$this->template_id = $this->item->template_id;
+			$this->template = Template::getById( $this->template_id );
+		}
+		
+		parent::validate($action);
 	}
 	
 	
@@ -110,16 +127,23 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	{
 		parent::buildResponse($action);
 		
-		if ($action == "actionSearch")
+		if ($action == "actionSearch" || $action == "actionGetById")
 		{
 			$this->api_result->result["template_id"] = $this->template_id;
-			$this->api_result->result["template"] = \TinyPHP\Utils::object_intersect
-			(
-				$this->template->toArray(),
-				[
-					"id", "uid", "name", "gmtime_created", "gmtime_updated"
-				]
-			);
+			if ($this->template)
+			{
+				$this->api_result->result["template"] = \TinyPHP\Utils::object_intersect
+				(
+					$this->template->toArray(),
+					[
+						"id", "uid", "name", "gmtime_created", "gmtime_updated"
+					]
+				);
+			}
+			else
+			{
+				$this->api_result->result["template"] = null;
+			}
 		}
 	}
 	

@@ -101,10 +101,10 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Action compose
 	 */
-	function actionCompose(RenderContainer $container)
+	function actionCompose()
 	{
 		/* Save */
-		$this->actionEdit($container);
+		$this->actionEdit();
 		
 		/* Compose */
 		if ($this->item)

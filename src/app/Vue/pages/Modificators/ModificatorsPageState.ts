@@ -97,12 +97,26 @@ export class ModificatorsPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
+		/* UID field */
+		let uid = new FieldInfo();
+		uid.name = "uid";
+		uid.label = "uid";
+		uid.component = "Input";
+		this.fields.push( deepClone(uid) );
+		
 		/* Name field */
 		let name = new FieldInfo();
 		name.name = "name";
 		name.label = "name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
+		
+		/* Version field */
+		let version = new FieldInfo();
+		version.name = "version";
+		version.label = "version";
+		version.component = "Input";
+		this.fields.push( deepClone(version) );
 		
 		/* Content field */
 		let content = new FieldInfo();
@@ -136,10 +150,14 @@ export class ModificatorsPageState extends CrudState
 		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
+		uid.component = "Label";
 		name.component = "Label";
+		version.component = "Label";
 		priority.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(uid) );
+		this.fields_table.push( deepClone(version) );
 		this.fields_table.push( deepClone(priority) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}

@@ -24,6 +24,7 @@ use App\Docker;
 use App\Api\ApplicationsCrud;
 use App\Models\Application;
 use App\Models\Template;
+use App\Models\TemplateVersion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -109,6 +110,30 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
+	 * Validate
+	 */
+	function validate($action)
+	{
+		if ($action == "actionDelete")
+		{
+			$versions = TemplateVersion::selectQuery()
+				->where("template_id", "=", $this->item->id)
+				->all()
+			;
+			
+			if (count($versions) > 0)
+			{
+				throw new \Exception("Template versions is exists");
+			}
+			
+		}
+		
+		parent::validate($action);
+	}
+	
+	
+	
+	/**
 	 * Create action
 	 */
 	function actionCreate()
@@ -133,7 +158,7 @@ class TemplatesCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function actionDelete()
 	{
-		throw new MethodNotAllowedException();
+		parent::actionDelete();
 	}
 	
 	
