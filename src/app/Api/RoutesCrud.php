@@ -80,6 +80,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 				},
 				"fields" =>
 				[
+					"id",
 					"domain_name",
 				],
 			]),

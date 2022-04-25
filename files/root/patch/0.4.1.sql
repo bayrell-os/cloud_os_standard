@@ -149,4 +149,20 @@ ALTER TABLE "adminer_modificators" RENAME TO "modificators";
 COMMIT;
 
 
+-- Change space table
+
+BEGIN;
+CREATE TABLE "adminer_spaces" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" text NOT NULL DEFAULT '',
+  "name" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_spaces" ("id", "name") SELECT "space_id", "name" FROM "spaces";
+DROP TABLE "spaces";
+ALTER TABLE "adminer_spaces" RENAME TO "spaces";
+COMMIT;
+
+
 PRAGMA foreign_keys=on;

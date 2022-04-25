@@ -293,7 +293,7 @@ export class ApplicationsPageState extends CrudState
 			if (response && responseOk(response))
 			{
 				/* Read templates */
-				this.readDictionary
+				this.setOptionsFromDictionary
 				(
 					response,
 					["all"],
@@ -317,7 +317,7 @@ export class ApplicationsPageState extends CrudState
 			if (response && responseOk(response))
 			{
 				/* Read templates */
-				this.readDictionary
+				this.setOptionsFromDictionary
 				(
 					response,
 					["all"],

@@ -30,6 +30,7 @@ import { UsersPageState } from '@/pages/Users/UsersPageState'
 import { ServicesPageState } from '@/pages/Services/ServicesPageState'
 import { YamlFilesPageState } from '@/pages/YamlFiles/YamlFilesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
+import { SpacesPageState } from './pages/Spaces/SpacesPageState'
 
 
 export class AppState
@@ -49,5 +50,6 @@ export class AppState
 	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
+	SpacesPage: SpacesPageState = new SpacesPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();
 }

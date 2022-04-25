@@ -16,18 +16,15 @@
  *  limitations under the License.
  */
 
-import { AxiosResponse } from "axios";
-import { deepClone, notNull, responseOk } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { deepClone, notNull } from "vue-helper";
+import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 
 
-export class Domain extends CrudItem
+export class Space extends CrudItem
 {
 	id: number;
-	domain_name: string;
-	nginx_template: string;
-	space_id: number | null;
+	name: string;
 	gmtime_created: string;
 	gmtime_updated: string;
 	
@@ -40,9 +37,7 @@ export class Domain extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
-		this.domain_name = "";
-		this.nginx_template = "";
-		this.space_id = null;
+		this.name = "";
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
 		
@@ -58,9 +53,7 @@ export class Domain extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
-		else if (key == "domain_name") this.domain_name = String(value);
-		else if (key == "nginx_template") this.nginx_template = String(value);
-		else if (key == "space_id") this.space_id = notNull(value) ? Number(value) : null;
+		else if (key == "name") this.name = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else return super.assignValue(key, value);
@@ -70,15 +63,15 @@ export class Domain extends CrudItem
 
 
 
-export class DomainsPageState extends CrudState
+export class SpacesPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): Domain
+	static createNewItem(): Space
 	{
-		return new Domain();
+		return new Space();
 	}
 	
 	
@@ -88,7 +81,7 @@ export class DomainsPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "domains";
+		return "spaces";
 	}
 	
 	
@@ -104,19 +97,19 @@ export class DomainsPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Domain name field */
-		let domain_name = new FieldInfo();
-		domain_name.name = "domain_name";
-		domain_name.label = "Domain name";
-		domain_name.component = "Input";
-		this.fields.push( deepClone(domain_name) );
+		/* Name field */
+		let name = new FieldInfo();
+		name.name = "name";
+		name.label = "Space name";
+		name.component = "Input";
+		this.fields.push( deepClone(name) );
 		
-		/* Space id field */
-		let space_id = new FieldInfo();
-		space_id.name = "space_id";
-		space_id.label = "Space";
-		space_id.component = "Select";
-		this.fields.push( deepClone(space_id) );
+		/* Name field */
+		let uid = new FieldInfo();
+		uid.name = "uid";
+		uid.label = "Space uid";
+		uid.component = "Input";
+		this.fields.push( deepClone(uid) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -131,15 +124,15 @@ export class DomainsPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form_save.fields.push( deepClone(domain_name) );
-		this.form_save.fields.push( deepClone(space_id) );
+		this.form_save.fields.push( deepClone(name) );
+		this.form_save.fields.push( deepClone(uid) );
 		
 		/* Table fields */
-		domain_name.component = "Label";
-		space_id.component = "SelectLabel";
+		name.component = "Label";
+		uid.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(domain_name) );
-		this.fields_table.push( deepClone(space_id) );
+		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(uid) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -148,9 +141,9 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Domain | null): string
+	static getItemName(item: Space | null): string
 	{
-		return (item) ? item.domain_name : "";
+		return (item) ? item.name : "";
 	}
 	
 	
@@ -158,7 +151,7 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: Domain | null): string
+	static getItemId(item: Space | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -168,51 +161,16 @@ export class DomainsPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Domain | null): string
+	static getMessage(message_type: string, item: Space | null): string
 	{
 		if (message_type == "dialog_delete_title")
 		{
-			return "Delete domain";
+			return "Delete space";
 		}
 		if (message_type == "dialog_delete_text")
 		{
-			return "Do you sure to delete domain \"" + this.getItemName(item) + "\" ?";
+			return "Do you sure to delete space \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
-	}
-	
-	
-	
-	/**
-	 * After api
-	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
-	{
-		super.afterApi(kind, response);
-		
-		if (["listPageLoadData"].indexOf(kind) >= 0)
-		{
-			if (response && responseOk(response))
-			{
-				/* Read templates */
-				this.setOptionsFromDictionary
-				(
-					response,
-					["all"],
-					"space_id",
-					"spaces",
-					function (item: any)
-					{
-						return new SelectOption()
-							.assignValues({
-								"id": item["id"],
-								"value": item["name"],
-							})
-						;
-					}
-				);
-			}
-		}
-		
 	}
 }

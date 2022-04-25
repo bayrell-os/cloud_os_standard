@@ -114,6 +114,7 @@ class Instance extends \TinyPHP\App
 		$this->addEntity(\App\Api\RoutesCrud::class);
 		$this->addEntity(\App\Api\NginxFilesCrud::class);
 		$this->addEntity(\App\Api\ServicesCrud::class);
+		$this->addEntity(\App\Api\SpacesCrud::class);
 		$this->addEntity(\App\Api\TemplateApi::class);
 		$this->addEntity(\App\Api\TemplatesCrud::class);
 		$this->addEntity(\App\Api\TemplatesVersionsCrud::class);

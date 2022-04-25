@@ -29,6 +29,7 @@ import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
 import RoutesPage from '@/pages/Routes/RoutesPage.vue'
 import UsersPage from '@/pages/Users/UsersPage.vue'
 import ServicesPage from '@/pages/Services/ServicesPage.vue'
+import SpacesPage from '@/pages/Spaces/SpacesPage.vue'
 import YamlFilesPage from '@/pages/YamlFiles/YamlFilesPage.vue'
 import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
 
@@ -173,6 +174,14 @@ const routes: Array<RouteRecordRaw> =
 		name: 'app:services',
 		component: ServicesPage,
 		props: { store_path: ["ServicesPage"] },
+	},
+	
+	/* Spaces */
+	{
+		path: '/spaces/',
+		name: 'app:spaces',
+		component: SpacesPage,
+		props: { store_path: ["SpacesPage"] },
 	},
 	
 	/* Users */

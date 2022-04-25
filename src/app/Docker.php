@@ -332,7 +332,7 @@ class Docker
 				["is_deleted", "=", "0"],
 				["docker_name", "!=", ""],
 			])
-			->orderBy("docker_name asc")
+			->orderBy("docker_name", "asc")
 			->all()
 		;
 		
@@ -341,7 +341,7 @@ class Docker
 				["enable", "=", 1],
 				["protocol", "=", "http"],
 			])
-			->orderBy("route desc")
+			->orderBy("route", "desc")
 			->all()
 		;
 		
@@ -402,6 +402,8 @@ class Docker
 	static function updateDomains()
 	{
 		$domains = Domain::selectQuery()
+			->fields(["t.*", "s.uid as space_uid"])
+			->leftJoin("spaces", "s", "s.id = t.space_id")
 			->all()
 		;
 		
@@ -413,7 +415,7 @@ class Docker
 					["protocol", "=", "http"],
 					["domain_name", "=", $domain["domain_name"]],
 				])
-				->orderBy("route desc")
+				->orderBy("route", "desc")
 				->all()
 			;
 			
@@ -454,17 +456,26 @@ class Docker
 				}
 				
 				/* Add space id */
-				if ($domain["space_id"] != "")
+				if ($domain["space_uid"] != "")
 				{
-					$nginx_route .= "    proxy_set_header X-SPACE-ID \"" .
-						$domain["space_id"] . "\";\n";
+					$nginx_route .= "    proxy_set_header X-SPACE-UID \"" .
+						$domain["space_uid"] . "\";\n";
+				}
+				else
+				{
+					$nginx_route .= "    proxy_set_header X-SPACE-UID \"0\";\n";
 				}
 				
-				/* Add layer uid */
-				if ($route["layer_uid"] != "")
+				/* Add nginx_config */
+				$nginx_config = trim($route["nginx_config"]);
+				if ($nginx_config != "")
 				{
-					$nginx_route .= "    proxy_set_header X-LAYER-UID \"" .
-						$route["layer_uid"] . "\";\n";
+					$nginx_config = explode("\n", $nginx_config);
+					$nginx_config = array_map(function($s){
+						return "    " . $s;
+					}, $nginx_config);
+					$nginx_config = implode("\n", $nginx_config);
+					$nginx_route .= $nginx_config . "\n";
 				}
 				
 				$nginx_route .= "  }";
