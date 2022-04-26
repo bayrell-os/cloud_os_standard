@@ -178,12 +178,12 @@ class Application extends Model
 				$env_value = $env["value"];
 				
 				$patch_xml[] = '    <operation type="remove">';
-				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_/environment/'.
+				$patch_xml[] = '      <path>/template/yaml/services/_var_app_name_/environment/'.
 					$env_name.'</path>';
 				$patch_xml[] = '    </operation>';
 				
 				$patch_xml[] = '    <operation type="add">';
-				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_/environment</path>';
+				$patch_xml[] = '      <path>/template/yaml/services/_var_app_name_/environment</path>';
 				$patch_xml[] = '      <value>';
 				$patch_xml[] = "        <".$env_name.">".$env_value."</".$env_name.">";
 				$patch_xml[] = '      </value>';
@@ -222,7 +222,7 @@ class Application extends Model
 				
 				/* Add volume to service */
 				$patch_xml[] = '    <operation type="add">';
-				$patch_xml[] = '      <path>/template/yaml/services/_var_service_name_</path>';
+				$patch_xml[] = '      <path>/template/yaml/services/_var_app_name_</path>';
 				$patch_xml[] = '      <value>';
 				$patch_xml[] = "        <volumes>".$env_name.":".$env_value."</volumes>";
 				$patch_xml[] = '      </value>';

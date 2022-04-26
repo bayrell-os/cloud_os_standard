@@ -1,3 +1,5 @@
+-- Adminer 4.7.1 SQLite 3 dump
+
 DROP TABLE IF EXISTS "app_modificators";
 CREATE TABLE "app_modificators" (
   "app_id" integer NOT NULL,
@@ -28,8 +30,18 @@ CREATE TABLE "applications" (
   "gmtime_updated" numeric NOT NULL
 );
 
+CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
+
 CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
 
+
+DELIMITER ;;
+CREATE TRIGGER "applications_delete" AFTER DELETE ON "applications" FOR EACH ROW
+BEGIN
+delete from app_modificators where app_id=OLD.id;
+END;;
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS "cron";
 CREATE TABLE `cron` (
@@ -114,13 +126,25 @@ CREATE INDEX "layers_space_id" ON "layers" ("space_id");
 DROP TABLE IF EXISTS "modificators";
 CREATE TABLE "modificators" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "name" text NOT NULL,
+  "uid" text NOT NULL DEFAULT '',
+  "version" text NOT NULL DEFAULT '',
+  "name" text NOT NULL DEFAULT '',
   "content" text NOT NULL DEFAULT '',
   "priority" numeric NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
 
+CREATE UNIQUE INDEX "modificators_uid" ON "modificators" ("uid");
+
+
+DELIMITER ;;
+CREATE TRIGGER "modificators_delete" AFTER DELETE ON "modificators" FOR EACH ROW
+BEGIN
+delete from app_modificators where modificator_id=OLD.id;
+END;;
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS "nginx_files";
 CREATE TABLE "nginx_files" (
@@ -133,6 +157,15 @@ CREATE TABLE "nginx_files" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
+
+
+DROP TABLE IF EXISTS "options";
+CREATE TABLE "options" (
+  "key" text NOT NULL,
+  "value" text NOT NULL
+);
+
+CREATE UNIQUE INDEX "options_key" ON "options" ("key");
 
 
 DROP TABLE IF EXISTS "roles";
@@ -168,10 +201,11 @@ CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
 
 DROP TABLE IF EXISTS "spaces";
 CREATE TABLE "spaces" (
-  "space_id" integer NOT NULL,
-  "api_name" text NOT NULL,
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" text NOT NULL DEFAULT '',
   "name" text NOT NULL,
-  PRIMARY KEY ("space_id")
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
 );
 
 
@@ -199,6 +233,14 @@ CREATE TABLE "templates" (
 
 CREATE UNIQUE INDEX "templates_uid" ON "templates" ("uid");
 
+
+DELIMITER ;;
+CREATE TRIGGER "templates_delete" AFTER DELETE ON "templates" FOR EACH ROW
+BEGIN
+delete from templates_versions where template_id=OLD.id;
+END;;
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS "templates_versions";
 CREATE TABLE "templates_versions" (
@@ -237,3 +279,6 @@ CREATE TABLE `users_auth` (
 );
 
 CREATE UNIQUE INDEX "users_auth_user_id_method" ON "users_auth" ("user_id", "method");
+
+
+-- 
