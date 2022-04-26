@@ -51,6 +51,17 @@ class XMLElement extends \SimpleXMLElement
 	
 	
 	/**
+	 * Get value
+	 */
+	function getValue()
+	{
+		$value = trim((string)$this);
+		return $value;
+	}
+	
+	
+	
+	/**
 	 * Get attribute
 	 */
 	function getAttribute($name)

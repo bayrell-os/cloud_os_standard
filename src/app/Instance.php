@@ -128,8 +128,9 @@ class Instance extends \TinyPHP\App
 		$this->addEntity(\App\Bus\DefaultBus::class);
 		
 		/* Console commands */
-		$this->addEntity(\App\Console\Docker\NginxUpdate::class);
-		$this->addEntity(\App\Console\Docker\ServicesUpdate::class);
+		$this->addEntity(\App\Console\AdminNginxUpdate::class);
+		$this->addEntity(\App\Console\DockerNginxUpdate::class);
+		$this->addEntity(\App\Console\DockerServicesUpdate::class);
 		// $this->addEntity(\App\Console\Test::class);
 		
 	}

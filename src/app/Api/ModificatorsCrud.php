@@ -102,6 +102,8 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function validate($action)
 	{
+		parent::validate($action);
+		
 		if ($action == "actionCreate" || $action == "actionEdit")
 		{
 			$content = $this->update_data["content"];

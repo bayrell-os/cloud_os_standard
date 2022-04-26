@@ -21,6 +21,7 @@
 namespace App;
 
 use TinyPHP\Utils;
+use App\Models\Application;
 use App\Models\Domain;
 use App\Models\NginxFile;
 use App\Models\Route;
@@ -126,10 +127,14 @@ class Docker
 	/**
 	 * Stop services
 	 */
-	public function removeService($service_name)
+	public static function removeService($service_name)
 	{
 		$url_api = "/services/" . $service_name;
 		$content = static::dockerApi($url_api, "DELETE");
+		
+		/* Update admin domain */
+		static::setOption("update_admin_domain", 1);
+		
 		return $content;
 	}
 	
@@ -138,7 +143,7 @@ class Docker
 	/**
 	 * Returns balancer data
 	 */
-	public function getBalancerData($service, $service_tasks, $nodes)
+	public static function getBalancerData($service, $service_tasks, $nodes)
 	{
 		$res =
 		[
@@ -207,7 +212,7 @@ class Docker
 	/**
 	 * Update services
 	 */
-	public function updateServices($output = null)
+	public static function updateServices($output = null)
 	{
 		$current_timestamp = time();
 		$nodes = Docker::getNodes();
@@ -239,7 +244,7 @@ class Docker
 	/**
 	 * Update service into database by json from docker api
 	 */
-	public function updateServiceIntoDatabase($service, $params)
+	public static function updateServiceIntoDatabase($service, $params)
 	{
 		$nodes = isset($params["nodes"]) ? $params["nodes"] : null;
 		$service_tasks = isset($params["service_tasks"]) ? $params["service_tasks"] : null;
@@ -292,22 +297,31 @@ class Docker
 	/**
 	 * Delete old services from database
 	 */
-	public function deleteOldServicesFromDatabase($timestamp)
+	public static function deleteOldServicesFromDatabase($timestamp)
 	{
 		$db = app("db");
 		$service = new DockerService();
 		
 		/* Set is deleted */
-		DockerService::updateQuery()
+		$cursor = DockerService::updateQuery()
 			->values([
 				"enable" => 0,
 				"is_deleted" => 1,
 			])
 			->where([
+				['is_deleted', '=', 0],
 				['timestamp', '!=', $timestamp],
 			])
-			->execute()
+			->query()
 		;
+		
+		$rows = $cursor->rowCount();
+		if ($rows > 0)
+		{
+			static::setOption("update_admin_domain", 1);
+		}
+		
+		$cursor->close();
 		
 		/* Delete */
 		DockerService::deleteQuery()
@@ -320,6 +334,81 @@ class Docker
 	}
 	
 	
+	
+	/**
+	 * Update admin upstreams
+	 */
+	static function updateAdminDomain($network_name)
+	{
+		$services = DockerService::selectQuery()
+			->where([
+				'enable' => 1,
+				'is_deleted' => 0,
+			])
+			->all()
+		;
+		
+		$services_admin_page = [];
+		$upstreams = [];
+		
+		foreach ($services as $service)
+		{
+			$ip_arr = $service->getIpAddresses($network_name);
+			
+			$app = Application::selectQuery()
+				->where([
+					"stack_name" => $service->stack_name,
+					"name" => $service->service_name,
+				])
+				->one()
+			;
+			
+			// 15672.app_rabbitmq.cloud_network.example
+			
+			
+			if ($app)
+			{
+				$xml = $app->getContentXML();
+				if ($xml && $xml->admin->nginx && $xml->admin->nginx->getName() == "nginx")
+				{
+					$app->updateVariables($xml);
+					
+					/* Get nginx content of the service */
+					$nginx_content = $xml->admin->nginx->getValue();
+					$nginx_content = $app->patchVariables($nginx_content);
+					
+					$services_admin_page[] = "# Service " . $service->docker_name;
+					$services_admin_page[] = $nginx_content;
+					
+					/* Build upstream */
+					$target_port = $xml->admin->port->getValue();
+					$upstream_name = $target_port . "." .
+						$service->docker_name . "." . $network_name . ".example"
+					;
+					
+					/* Add ip to upstream */
+					$upstream_content = "upstream " . $upstream_name . " {\n";
+					foreach ($ip_arr as $ip)
+					{
+						$upstream_content .= "  server " . $ip . ":" . $target_port . ";\n";
+					}
+					$upstream_content .= "}\n";
+					
+					$upstreams[] = $upstream_content;
+				}
+			}
+		}
+		
+		/* Save nginx content */
+		$services_admin_page_content = implode("\n", $services_admin_page);
+		file_put_contents("/etc/nginx/inc/services_admin_page.inc", $services_admin_page_content);
+		
+		/* Save upstreams */
+		$upstreams = implode("\n", $upstreams);
+		file_put_contents("/etc/nginx/conf.d/99-admin-upstreams.conf", $upstreams);
+	}
+	 
+	 
 	
 	/**
 	 * Update upstreams
@@ -527,6 +616,79 @@ class Docker
 			$result = Docker::exec($cmd . " 2>&1");
 		}
 		
+		/* Update admin domain */
+		static::setOption("update_admin_domain", 1);
+		
 		return $result;
+	}
+	
+	
+	
+	/**
+	 * Reload nginx
+	 */
+	public static function nginx_reload()
+	{
+		$s = shell_exec("/usr/sbin/nginx -s reload");
+	}
+	
+	
+	
+	/**
+	 * Get option
+	 */
+	public static function getOption($key, $def_value = null)
+	{
+		$option = make("db_query")
+			->select()
+			->from("options")
+			->where([
+				"key" => $key,
+			])
+			->one()
+		;
+		
+		if (!$option) return $def_value;
+		return $option["value"];
+	}
+	
+	
+	
+	/**
+	 * Save option
+	 */
+	public static function setOption($key, $value)
+	{
+		$option = make("db_query")
+			->select()
+			->from("options")
+			->where([
+				"key" => $key,
+			])
+			->one()
+		;
+		
+		if (!$option)
+		{
+			make("db_query")
+				->insert("options")
+				->values([
+					"key" => $key,
+					"value" => $value,
+				])
+				->execute()
+			;
+		}
+		else
+		{
+			make("db_query")
+				->update("options")
+				->where("key", $key)
+				->values([
+					"value" => $value,
+				])
+				->execute()
+			;
+		}
 	}
 }

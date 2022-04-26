@@ -21,6 +21,7 @@
 namespace App\Models;
 
 use TinyORM\Model;
+use App\Models\Modificator;
 use App\Models\Template;
 use App\Models\TemplateVersion;
 use App\XML;
@@ -28,6 +29,9 @@ use App\XML;
 
 class Application extends Model
 {
+	
+	var $content_xml = null;
+	
 	
 	/**
 	 * Return table name
@@ -246,6 +250,73 @@ class Application extends Model
 	
 	
 	/**
+	 * Add modificator
+	 */
+	function addModificator($modificator)
+	{
+		$app_id = $this->id;
+		$modificator_id = $modificator;
+		if ($modificator instanceof Modificator)
+		{
+			$modificator_id = $modificator->id;
+		}
+		
+		/* Find modificator */
+		$row = make("db_query")
+			->select()
+			->from("app_modificators")
+			->where([
+				"app_id" => $app_id,
+				"modificator_id" => $modificator_id,
+			])
+			->one()
+		;
+		
+		/* Insert modificator */
+		if (!$row)
+		{
+			make("db_query")
+				->insert()
+				->table("app_modificators")
+				->values([
+					"app_id" => $app_id,
+					"modificator_id" => $modificator_id,
+				])
+				->execute()
+			;
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * Delete modificator
+	 */
+	function deleteModificator($modificator)
+	{
+		$app_id = $this->item->id;
+		$modificator_id = $modificator;
+		if ($modificator instanceof Modificator)
+		{
+			$modificator_id = $modificator->id;
+		}
+		
+		/* Delete modificator */
+		$row = make("db_query")
+			->delete()
+			->table("app_modificators")
+			->where([
+				"app_id" => $app_id,
+				"modificator_id" => $modificator_id,
+			])
+			->execute()
+		;
+	}
+	
+	
+	
+	/**
 	 * Get modificators
 	 */
 	function getModificators($template_xml)
@@ -338,6 +409,7 @@ class Application extends Model
 		
 		/* Convert to xml */
 		$this->content = XML::toXml($template_xml);
+		$this->content_xml = null;
 		
 		/* Generate variables */
 		$this->updateVariables($template_xml);
@@ -365,7 +437,10 @@ class Application extends Model
 			$template_variables = XML::getVariables($template_xml);
 			
 			/* Add service_name */
-			$this->set("variables", "_var_service_name_", strtolower($this->name));
+			$this->set("variables", "_var_app_name_", strtolower($this->name));
+			$this->set("variables", "_var_service_name_",
+				strtolower($this->stack_name . "_" . $this->name)
+			);
 			
 			/* Get variables values */
 			$template_variables = array_map
@@ -380,7 +455,13 @@ class Application extends Model
 				$template_variables
 			);
 			
-			$this->variables_defs = $template_variables;
+			/* Update variables defs */
+			$variables_defs = $template_variables;
+			$variables_defs[] = [
+				"name" => "_var_service_name_",
+				"value" => strtolower($this->stack_name . "_" . $this->name),
+			];
+			$this->variables_defs = $variables_defs;
 		}
 		else
 		{
@@ -452,5 +533,31 @@ class Application extends Model
 		}
 		
 		return $yaml;
+	}
+	
+	
+	
+	/**
+	 * Patch variables
+	 */
+	function patchVariables($content)
+	{
+		$content = XML::patchVariables($content, $this->variables_defs);
+		return $content;
+	}
+	
+	
+	
+	/**
+	 * Get content XML
+	 */
+	function getContentXML()
+	{
+		if ($this->content_xml == null)
+		{
+			list($content_xml, $errors) = XML::loadXml($this->content);
+			$this->content_xml = $content_xml;
+		}
+		return $this->content_xml;
 	}
 }

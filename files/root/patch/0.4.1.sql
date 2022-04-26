@@ -165,4 +165,56 @@ ALTER TABLE "adminer_spaces" RENAME TO "spaces";
 COMMIT;
 
 
+-- Add key uid to modificators
+CREATE UNIQUE INDEX "modificators_uid" ON "modificators" ("uid");
+
+
+-- Add key uid to applications
+
+CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
+
+
+-- Add delete trigger to applications
+
+DELIMITER ;;
+CREATE TRIGGER "applications_delete" AFTER DELETE ON "applications" FOR EACH ROW
+BEGIN
+delete from app_modificators where app_id=OLD.id;
+END
+;;
+DELIMITER ;
+
+
+-- Add delete trigger to modificators
+
+DELIMITER ;;
+CREATE TRIGGER "modificators_delete" AFTER DELETE ON "modificators" FOR EACH ROW
+BEGIN
+delete from app_modificators where modificator_id=OLD.id;
+END
+;;
+DELIMITER ;
+
+
+-- Add delete trigger to templates
+
+DELIMITER ;;
+CREATE TRIGGER "templates_delete" AFTER DELETE ON "templates" FOR EACH ROW
+BEGIN
+delete from templates_versions where template_id=OLD.id;
+END
+;;
+DELIMITER ;
+
+
+-- Add table options
+
+CREATE TABLE "options" (
+  "key" text NOT NULL,
+  "value" text NOT NULL
+);
+
+CREATE UNIQUE INDEX "options_key" ON "options" ("key");
+
+
 PRAGMA foreign_keys=on;

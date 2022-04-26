@@ -18,10 +18,9 @@
  *  limitations under the License.
  */
 
-namespace App\Console\Docker;
+namespace App\Console;
 
 use App\Docker;
-use App\Models\Service;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,25 +28,26 @@ use Illuminate\Database\Capsule\Manager as DB;
 use TinyPHP\Utils;
 
 
-class ServicesUpdate extends Command
+class DockerNginxUpdate extends Command
 {
-    protected static $defaultName = 'docker:services:update';
+    protected static $defaultName = 'docker:nginx:update';
 
     protected function configure(): void
     {
         $this
 			// the short description
-			->setDescription('Update docker services into database')
+			->setDescription('Update docker nginx files into database')
 
 			// the full command description shown when running the command with
 			// the "--help" option
-			->setHelp('Update docker services into database')
+			->setHelp('Update docker nginx files into database')
 		;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		Docker::updateServices($output);
+		Docker::updateUpstreams("cloud_network");
+		Docker::updateDomains();
         return Command::SUCCESS;
     }
 	

@@ -21,6 +21,7 @@
 namespace App\Api;
 
 use App\Docker;
+use App\XML;
 use App\Models\Application;
 use App\Models\Modificator;
 use App\Models\Template;
@@ -39,7 +40,9 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = Application::class;
 	var $api_name = "applications";
-
+	var $template_version = null;
+	var $template_xml = null;
+	
 	
 	/**
 	 * Declare routes
@@ -109,6 +112,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"yaml",
 					"content",
 					"custom_patch",
+					"have_admin",
 					"gmtime_created",
 					"gmtime_updated",
 				]
@@ -125,6 +129,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "template_version" ]),
 			new ReadOnly([ "api_name" => "template_content" ]),
 			new ReadOnly([ "api_name" => "variables_defs" ]),
+			new ReadOnly([ "api_name" => "have_admin" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 			
@@ -253,10 +258,85 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
-	 * Build search response
+	 * Validation
 	 */
-	function buildResponse($action)
+	function validate($action)
 	{
+		parent::validate($action);
+		
+		if (in_array($action, ["actionCreate", "actionEdit"]))
+		{
+			$template_version_id = $this->update_data["template_version_id"];
+			$this->template_version = TemplateVersion::getById( $template_version_id );
+			
+			if (!$this->template_version)
+			{
+				throw new \Exception("Template version is not defined");
+			}
+			
+			list($xml, $errors) = XML::loadXml($this->template_version->content);
+			if (!$xml)
+			{
+				throw new \Exception("Template XML error: " . implode(". ", $errors));
+			}
+			$this->template_xml = $xml;
+		}
+		
+		/* Check service name */
+		if (in_array($action, ["actionCreate"]))
+		{
+			$app_name = $this->update_data["name"];
+			$stack_name = $this->update_data["stack_name"];
+			$docker_service_name = $app_name . "_" . $stack_name;
+			
+			$item = Application::selectQuery()
+				->where("name", $app_name)
+				->where("stack_name", $stack_name)
+				->one()
+			;
+			if ($item)
+			{
+				throw new \Exception("App with same name already exists");
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Process after
+	 */
+	function processAfter($action)
+	{
+		parent::processAfter($action);
+		
+		if ($action == "actionCreate")
+		{
+			
+			/* Add defaults modificators from template XML */
+			$modificators = $this->template_xml->modificators;
+			if ($modificators->getName() == "modificators")
+			{
+				$childs = $modificators->children();
+				foreach ($childs as $item)
+				{
+					if ($item->getName() == "li")
+					{
+						$modificator_uid = $item->getValue();
+						$modificator = Modificator::selectQuery()
+							->where("uid", $modificator_uid)
+							->one()
+						;
+						
+						if ($modificator)
+						{
+							$this->item->addModificator( $modificator );
+						}
+					}
+				}
+			}
+		}
+		
 		/* Update yaml */
 		if (in_array($action, ["actionCreate", "actionEdit"]))
 		{
@@ -271,7 +351,22 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			//$this->item->updateModificators();
 		}
 		
-		parent::buildResponse($action);
+		/* Update have admin */
+		if ($action == "actionSearch")
+		{
+			foreach ($this->items as $item)
+			{
+				$xml = $item->getContentXML();
+				if ($xml && $xml->admin->getName() == "admin")
+				{
+					$item->have_admin = 1;
+				}
+				else
+				{
+					$item->have_admin = 0;
+				}
+			}
+		}
 	}
 	
 	
@@ -284,35 +379,11 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Find app */
 		$this->findItem();
 		
-		$app_id = $this->item->id;
+		/* Get modificator id */
 		$modificator_id = $this->container->post("modificator_id");
 		
-		/* Find modificator */
-		$row = make("db_query")
-			->select()
-			->from("app_modificators")
-			->where([
-				"app_id" => $app_id,
-				"modificator_id" => $modificator_id,
-			])
-			->one()
-		;
-		
-		if ($row)
-		{
-			throw new \Exception("Modificator already exists");
-		}
-		
-		/* Insert modificator */
-		$row = make("db_query")
-			->insert()
-			->table("app_modificators")
-			->values([
-				"app_id" => $app_id,
-				"modificator_id" => $modificator_id,
-			])
-			->execute()
-		;
+		/* Add modificator */
+		$this->item->addModificator($modificator_id);
 		
 		/* Update yaml */
 		$this->item->generateYamlContent();
@@ -335,19 +406,11 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Find app */
 		$this->findItem();
 		
-		$app_id = $this->container->arg("id");
+		/* Get modificator id */
 		$modificator_id = $this->container->arg("mod_id");
 		
 		/* Delete modificator */
-		$row = make("db_query")
-			->delete()
-			->table("app_modificators")
-			->where([
-				"app_id" => $app_id,
-				"modificator_id" => $modificator_id,
-			])
-			->execute()
-		;
+		$this->item->deleteModificator($modificator_id);
 		
 		/* Update yaml */
 		$this->item->generateYamlContent();

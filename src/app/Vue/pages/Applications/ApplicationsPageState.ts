@@ -210,6 +210,12 @@ export class ApplicationsPageState extends CrudState
 		template_version_id.component = "Select";
 		this.fields.push( deepClone(template_version_id) );
 		
+		/* Admin button */
+		let admin_button = new FieldInfo();
+		admin_button.name = "have_admin";
+		admin_button.label = "Admin";
+		admin_button.component = "ApplicationAdminButton";
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.name = "row_number";
@@ -235,9 +241,9 @@ export class ApplicationsPageState extends CrudState
 		status.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(service_name) );
-		// this.fields_table.push( deepClone(status) );
 		this.fields_table.push( deepClone(template_name) );
 		this.fields_table.push( deepClone(template_version) );
+		this.fields_table.push( deepClone(admin_button) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

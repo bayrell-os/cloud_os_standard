@@ -42,6 +42,9 @@ import CodeMirror from 'vue-helper/Crud/CodeMirror.vue';
 import Tabs from 'vue-helper/Crud/Tabs.vue';
 import Tab from 'vue-helper/Crud/Tab.vue';
 
+/* App components */
+import ApplicationAdminButton from './pages/Applications/ApplicationAdminButton.vue';
+
 /* Create app state */
 let Store = buildStore(AppState);
 
@@ -50,6 +53,9 @@ var app = createApp(App);
 /* Register modules */
 app.use(Store);
 app.use(Router);
+
+/* Register app components */
+app.component("ApplicationAdminButton", ApplicationAdminButton);
 
 /* Register components */
 app.component("Tabs", Tabs);

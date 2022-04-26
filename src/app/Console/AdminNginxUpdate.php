@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-namespace App\Console\Docker;
+namespace App\Console;
 
 use App\Docker;
 use Symfony\Component\Console\Command\Command;
@@ -28,26 +28,32 @@ use Illuminate\Database\Capsule\Manager as DB;
 use TinyPHP\Utils;
 
 
-class NginxUpdate extends Command
+class AdminNginxUpdate extends Command
 {
-    protected static $defaultName = 'docker:nginx:update';
+    protected static $defaultName = 'cloud_os:nginx:update';
 
     protected function configure(): void
     {
         $this
 			// the short description
-			->setDescription('Update docker nginx files into database')
+			->setDescription('Update cloud_os nginx file')
 
 			// the full command description shown when running the command with
 			// the "--help" option
-			->setHelp('Update docker nginx files into database')
+			->setHelp('Update cloud_os nginx file')
 		;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		Docker::updateUpstreams("cloud_network");
-		Docker::updateDomains();
+		$is_update = Docker::getOption("update_admin_domain");
+		if ($is_update)
+		{
+			$output->writeln("Update admin domain");
+			Docker::updateAdminDomain("cloud_network");
+			Docker::nginx_reload();
+			Docker::setOption("update_admin_domain", 0);
+		}
         return Command::SUCCESS;
     }
 	
