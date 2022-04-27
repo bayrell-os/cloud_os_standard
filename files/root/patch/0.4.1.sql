@@ -211,10 +211,9 @@ DELIMITER ;
 
 CREATE TABLE "options" (
   "key" text NOT NULL,
-  "value" text NOT NULL
+  "value" text NOT NULL,
+  PRIMARY KEY ("key")
 );
-
-CREATE UNIQUE INDEX "options_key" ON "options" ("key");
 
 
 PRAGMA foreign_keys=on;
