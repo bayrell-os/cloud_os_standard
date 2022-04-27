@@ -163,13 +163,13 @@ export class SpacesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Space | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete space";
+			return "Spaces";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete space \"" + this.getItemName(item) + "\" ?";
+			return "space";
 		}
 		return super.getMessage(message_type, item);
 	}

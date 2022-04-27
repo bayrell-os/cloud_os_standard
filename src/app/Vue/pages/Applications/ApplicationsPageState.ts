@@ -274,13 +274,13 @@ export class ApplicationsPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Application | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete application";
+			return "Applications";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
+			return "application";
 		}
 		return super.getMessage(message_type, item);
 	}

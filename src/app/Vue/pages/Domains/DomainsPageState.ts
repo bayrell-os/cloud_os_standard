@@ -170,13 +170,13 @@ export class DomainsPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Domain | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete domain";
+			return "Domains";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete domain \"" + this.getItemName(item) + "\" ?";
+			return "domain";
 		}
 		return super.getMessage(message_type, item);
 	}

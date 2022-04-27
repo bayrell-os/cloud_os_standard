@@ -163,31 +163,11 @@ export class YamlFilesPageState extends CrudState
 	{
 		if (message_type == "list_title")
 		{
-			return "Files";
+			return "Yaml files";
 		}
-		else if (message_type == "add_title")
+		else if (message_type == "item")
 		{
-			return "Add file";
-		}
-		else if (message_type == "edit_title")
-		{
-			if (item != null)
-			{
-				return "Edit file " + this.getItemName(item);
-			}
-			return "Edit file";
-		}
-		else if (message_type == "delete_title")
-		{
-			return "Delete file";
-		}
-		else if (message_type == "delete_text")
-		{
-			return "Do you sure to delete \"" + this.getItemName(item) + "\" ?";
-		}
-		else if (message_type == "top_button_show_add_title")
-		{
-			return "Add";
+			return "yaml file";
 		}
 		return super.getMessage(message_type, item);
 	}

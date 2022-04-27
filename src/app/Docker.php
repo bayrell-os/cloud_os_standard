@@ -133,7 +133,7 @@ class Docker
 		$content = static::dockerApi($url_api, "DELETE");
 		
 		/* Update admin domain */
-		static::setOption("update_admin_domain", 1);
+		// static::setOption("update_admin_domain", 1);
 		
 		return $content;
 	}
@@ -318,7 +318,7 @@ class Docker
 		$rows = $cursor->rowCount();
 		if ($rows > 0)
 		{
-			static::setOption("update_admin_domain", 1);
+			// static::setOption("update_admin_domain", 1);
 		}
 		
 		$cursor->close();
@@ -363,9 +363,6 @@ class Docker
 				->one()
 			;
 			
-			// 15672.app_rabbitmq.cloud_network.example
-			
-			
 			if ($app)
 			{
 				$xml = $app->getContentXML();
@@ -401,14 +398,24 @@ class Docker
 		
 		/* Save nginx content */
 		$services_admin_page_content = implode("\n", $services_admin_page);
-		file_put_contents("/etc/nginx/inc/services_admin_page.inc", $services_admin_page_content);
+		$res1 = static::updateLocalFile
+		(
+			"/etc/nginx/inc/services_admin_page.inc",
+			$services_admin_page_content
+		);
 		
 		/* Save upstreams */
 		$upstreams = implode("\n", $upstreams);
-		file_put_contents("/etc/nginx/conf.d/99-admin-upstreams.conf", $upstreams);
+		$res2 = static::updateLocalFile
+		(
+			"/etc/nginx/conf.d/99-admin-upstreams.conf",
+			$upstreams
+		);
+		
+		return $res1 || $res2;
 	}
-	 
-	 
+	
+	
 	
 	/**
 	 * Update upstreams
@@ -617,7 +624,7 @@ class Docker
 		}
 		
 		/* Update admin domain */
-		static::setOption("update_admin_domain", 1);
+		// static::setOption("update_admin_domain", 1);
 		
 		return $result;
 	}
@@ -690,5 +697,29 @@ class Docker
 				->execute()
 			;
 		}
+	}
+	
+	
+	
+	/**
+	 * Update local file
+	 */
+	static function updateLocalFile($file, $new_content)
+	{
+		$old_content = "";
+		$file_exists = file_exists($file);
+		
+		if ($file_exists)
+		{
+			$old_content = @file_get_contents($file);
+		}
+		
+		if ($old_content != $new_content || !$file_exists)
+		{
+			file_put_contents($file, $new_content);
+			return true;
+		}
+	
+		return false;
 	}
 }

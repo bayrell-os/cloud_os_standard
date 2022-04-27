@@ -204,17 +204,13 @@ export class TemplatesViewPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: any | null): string
 	{
-		if (message_type == "form_run_title")
+		if (message_type == "list_title")
 		{
-			return "Do you sure to create application \"" + item.template_name + "\" ?";
+			return "Template versions";
 		}
-		if (message_type == "dialog_delete_title")
+		else if (message_type == "item")
 		{
-			return "Delete application";
-		}
-		if (message_type == "dialog_delete_text")
-		{
-			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
+			return "template version";
 		}
 		return super.getMessage(message_type, item);
 	}

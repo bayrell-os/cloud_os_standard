@@ -189,13 +189,13 @@ export class NginxFilesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: NginxFile | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete nginx file";
+			return "Nginx files";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete nginx file \"" + this.getItemName(item) + "\" ?";
+			return "nginx file";
 		}
 		return super.getMessage(message_type, item);
 	}

@@ -189,13 +189,13 @@ export class ModificatorsPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Modificator | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete application";
+			return "Modificators";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete application \"" + this.getItemName(item) + "\" ?";
+			return "modificator";
 		}
 		return super.getMessage(message_type, item);
 	}

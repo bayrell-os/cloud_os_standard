@@ -159,6 +159,14 @@ export class TemplateEditPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: any | null): string
 	{
+		if (message_type == "item")
+		{
+			return "template version";
+		}
+		else if (message_type == "add_title")
+		{
+			return "Import template";
+		}
 		return super.getMessage(message_type, item);
 	}
 	

@@ -23,6 +23,7 @@ namespace App\Console;
 use App\Docker;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Illuminate\Database\Capsule\Manager as DB;
 use TinyPHP\Utils;
@@ -30,11 +31,11 @@ use TinyPHP\Utils;
 
 class AdminNginxUpdate extends Command
 {
-    protected static $defaultName = 'cloud_os:nginx:update';
+	protected static $defaultName = 'cloud_os:nginx:update';
 
-    protected function configure(): void
-    {
-        $this
+	protected function configure(): void
+	{
+		$this
 			// the short description
 			->setDescription('Update cloud_os nginx file')
 
@@ -42,19 +43,17 @@ class AdminNginxUpdate extends Command
 			// the "--help" option
 			->setHelp('Update cloud_os nginx file')
 		;
-    }
+	}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$is_update = Docker::getOption("update_admin_domain");
-		if ($is_update)
+		$res = Docker::updateAdminDomain("cloud_network");
+		if ($res)
 		{
-			$output->writeln("Update admin domain");
-			Docker::updateAdminDomain("cloud_network");
+			$output->writeln("Reload nginx");
 			Docker::nginx_reload();
-			Docker::setOption("update_admin_domain", 0);
 		}
-        return Command::SUCCESS;
-    }
+		return Command::SUCCESS;
+	}
 	
 }

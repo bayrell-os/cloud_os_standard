@@ -277,13 +277,13 @@ export class RoutesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Route | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete route";
+			return "Routes";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete route \"" + this.getItemName(item) + "\" ?";
+			return "route";
 		}
 		return super.getMessage(message_type, item);
 	}

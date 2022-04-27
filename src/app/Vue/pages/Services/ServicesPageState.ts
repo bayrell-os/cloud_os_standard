@@ -266,21 +266,21 @@ export class ServicesPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: Service | null): string
 	{
-		if (message_type == "dialog_stop_title")
+		if (message_type == "list_title")
+		{
+			return "Services";
+		}
+		else if (message_type == "item")
+		{
+			return "service";
+		}
+		else if (message_type == "dialog_stop_title")
 		{
 			return "Stop service";
 		}
-		if (message_type == "dialog_stop_text")
+		else if (message_type == "dialog_stop_text")
 		{
 			return "Do you sure to stop service \"" + this.getItemName(item) + "\" ?";
-		}
-		if (message_type == "dialog_delete_title")
-		{
-			return "Delete service";
-		}
-		if (message_type == "dialog_delete_text")
-		{
-			return "Do you sure to delete service \"" + this.getItemName(item) + "\" ?";
 		}
 		return super.getMessage(message_type, item);
 	}

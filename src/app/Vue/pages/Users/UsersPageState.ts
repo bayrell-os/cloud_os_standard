@@ -202,13 +202,13 @@ export class UsersPageState extends CrudState
 	 */
 	static getMessage(message_type: string, item: User | null): string
 	{
-		if (message_type == "dialog_delete_title")
+		if (message_type == "list_title")
 		{
-			return "Delete user";
+			return "Users";
 		}
-		if (message_type == "dialog_delete_text")
+		else if (message_type == "item")
 		{
-			return "Do you sure to delete user \"" + this.getItemName(item) + "\" ?";
+			return "user";
 		}
 		return super.getMessage(message_type, item);
 	}
