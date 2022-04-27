@@ -596,9 +596,9 @@ class Docker
 	/**
 	 * Compose file
 	 */
-	function compose($app_file_id)
+	function composeYamlFile($yaml_file_id)
 	{
-		$result = null;
+		$result = "Yaml not found";
 		
 		/* Save all files */
 		$applications = DockerYamlFile::selectQuery()->all();
@@ -614,7 +614,7 @@ class Docker
 		}
 		
 		/* Compose */
-		$item = DockerYamlFile::getById($app_file_id);
+		$item = DockerYamlFile::getById($yaml_file_id);
 		if ($item)
 		{
 			$yaml_file_path = "/data/yaml/" . $item["stack_name"] . "/" . $item["file_name"];

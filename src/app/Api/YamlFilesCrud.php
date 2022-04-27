@@ -109,7 +109,7 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 		/* Compose */
 		if ($this->item)
 		{
-			$result = Docker::compose($this->item->id);
+			$result = Docker::composeYamlFile($this->item->id);
 			$this->api_result->error_str = $result;
 		}
 	}

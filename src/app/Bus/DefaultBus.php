@@ -48,10 +48,10 @@ class DefaultBus extends BusApiRoute
 	/**
 	 * Returns nginx changes
 	 */
-	function actionGetNginxChanges(RenderContainer $container)
+	function actionGetNginxChanges()
 	{
 		$result = [];
-		$post = json_decode($container->request->getContent(), true);
+		$post = json_decode($this->container->request->getContent(), true);
 		$timestamp = Utils::attr($post, ["data", "timestamp"], 0);
 		
 		$files = NginxFile::selectQuery()

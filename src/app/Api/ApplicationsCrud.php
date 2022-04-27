@@ -420,7 +420,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		$this->new_data = $this->item->toArray();
 		$new_data = $this->fromDatabase("actionModificatorDelete", $this->new_data);
 		
-		$this->api_result->success("Ok", ["item"=>$new_data]);
+		$this->api_result->success(["item"=>$new_data], "Ok");
 	}
 	
 	
@@ -439,7 +439,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		/* Compose yaml */
 		if ($yaml)
 		{
-			$result = Docker::compose($yaml->id);
+			$result = Docker::composeYamlFile($yaml->id);
 			$this->api_result->error_str = $result;
 		}
 		else

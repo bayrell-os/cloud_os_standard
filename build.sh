@@ -5,13 +5,15 @@ SCRIPT_PATH=`dirname $SCRIPT`
 BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
-VERSION=0.4.0
+VERSION=0.4.1
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in
 	
 	test)
+		mkdir -p test
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-$TAG --file Dockerfile
+		docker image save bayrell/cloud_os_standard:$VERSION-$TAG > test/cloud_os_standard_$VERSION.tar
 		cd ..
 	;;
 	

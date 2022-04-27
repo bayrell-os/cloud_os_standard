@@ -295,7 +295,7 @@ class Application extends Model
 	 */
 	function deleteModificator($modificator)
 	{
-		$app_id = $this->item->id;
+		$app_id = $this->id;
 		$modificator_id = $modificator;
 		if ($modificator instanceof Modificator)
 		{

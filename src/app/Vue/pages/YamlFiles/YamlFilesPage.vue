@@ -27,9 +27,8 @@
 		<template v-slot:component_crud_save>
 			<Form v-bind:store_path="store_path.concat('form_save')">
 				<template v-slot:buttons>
-					<!--<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>-->
-					<Button type="success" @click="onDialogFormButtonClick('form_compose')">Compose</Button>
-					<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
+					<Button type="success" @click="onSaveFormButtonComposeClick()">Compose</Button>
+					<Button type="primary" @click="onSaveFormButtonSaveClick()">Save</Button>
 				</template>
 			</Form>
 		</template>
@@ -70,16 +69,9 @@ export const ApplicationsFilesPage =
 	},
 	methods:
 	{
-		onDialogFormButtonClick: function(action)
+		onSaveFormButtonComposeClick: function()
 		{
-			if (action == "form_compose")
-			{
-				this.model.showCompose(this.model.form_save.item);
-			}
-			else
-			{
-				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
-			}
+			this.model.showCompose(this.model.form_save.item);
 		},
 		onDialogComposeButtonClick: function(button_name)
 		{
