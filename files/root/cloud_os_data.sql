@@ -292,3 +292,9 @@ INSERT INTO "applications" ("stack_name", "name", "template_version_id",
 VALUES ('cloud_os',	'load_balancer', 1,	'0',	'%GMTIME%',	'%GMTIME%');
 
 
+-- Add Cloud OS Modificators
+
+INSERT INTO "app_modificators" ("app_id", "modificator_id") VALUES (1,	1);
+INSERT INTO "app_modificators" ("app_id", "modificator_id") VALUES (1,	3);
+
+-- 

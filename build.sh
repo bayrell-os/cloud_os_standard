@@ -13,7 +13,17 @@ case "$1" in
 	test)
 		mkdir -p test
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-$TAG --file Dockerfile
-		docker image save bayrell/cloud_os_standard:$VERSION-$TAG > test/cloud_os_standard_$VERSION.tar
+		docker image save bayrell/cloud_os_standard:$VERSION-$TAG \
+			> test/cloud_os_standard_$VERSION.tar
+		cd ..
+	;;
+	
+	test-arm64v8)
+		mkdir -p test
+		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
+			--file Dockerfile --build-arg ARCH=-arm64v8
+		docker image save bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
+			> test/cloud_os_standard_${VERSION}_arm64v8.tar
 		cd ..
 	;;
 	
@@ -54,7 +64,7 @@ case "$1" in
 	;;
 	
 	*)
-		echo "Usage: $0 {amd64|arm64v8|arm32v7|manifest|all|test}"
+		echo "Usage: $0 {amd64|arm64v8|arm32v7|manifest|all|test|test-arm64v8}"
 		RETVAL=1
 
 esac
