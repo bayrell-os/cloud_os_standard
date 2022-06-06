@@ -84,7 +84,7 @@
 
 <script lang="js">
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
+import { mixin, isNull } from "vue-helper";
 
 export const AppMenu =
 {
@@ -102,21 +102,37 @@ export const AppMenu =
 		isActive: function(route)
 		{
 			let route_name = route.name;
-			if (this.$router.currentRoute.value.name != undefined)
+			let current_route_name = this.$router.currentRoute.value.name;
+			if (current_route_name != undefined)
 			{
 				if (route.routes != undefined)
 				{
-					if (route.routes.indexOf(this.$router.currentRoute.value.name) > -1)
+					if (route.routes.indexOf(current_route_name) > -1)
 					{
 						return true;
 					}
 				}
 				if
 				(
-					this.$router.currentRoute.value.name.substr(0, route_name.length) == route_name
+					current_route_name.substr(0, route_name.length) == route_name
 				)
 				{
 					return true;
+				}
+				
+				if (!isNull(route.names))
+				{
+					for (let i in route.names)
+					{
+						let current_name = route.names[i];
+						if
+						(
+							current_route_name.substr(0, current_name.length) == current_name
+						)
+						{
+							return true;
+						}
+					}
 				}
 			}
 			return false;

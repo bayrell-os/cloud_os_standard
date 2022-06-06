@@ -135,7 +135,10 @@ export const App =
 						{ "name": "app:domains", "title": "Domains" },
 						{ "name": "app:routes","title": "Routes" },
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
-						{ "name": "app:users", "title": "Settings" },
+						{ "name": "app:users", "title": "Settings", "names":[
+							"app:users",
+							"app:groups",
+						] },
 					]
 				}
 				

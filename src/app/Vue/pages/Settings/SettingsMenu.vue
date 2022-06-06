@@ -47,7 +47,7 @@
 			
 			<!-- Database -->
 			<a class="components_tabs__tab nolink"
-				href="/api/database/adminer/">
+				href="/api/database/">
 					Database
 			</a>
 		</div>

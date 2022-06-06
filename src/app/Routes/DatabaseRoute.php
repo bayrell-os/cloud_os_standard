@@ -54,7 +54,7 @@ class DatabaseRoute extends Route
 	function actionDatabase()
 	{
 		/* Set result */
-		$this->container->render("@app/database/index.html");
+		$this->render("@app/database/index.html");
 	}
 	
 	
@@ -73,7 +73,7 @@ class DatabaseRoute extends Route
 		@ob_end_clean();
 		
 		/* Set result */
-		$this->container->setContent($content);
+		$this->setContent($content);
 	}
 	
 	
@@ -94,7 +94,7 @@ class DatabaseRoute extends Route
 		//$content = "";
 		
 		/* Set result */
-		$this->container->setContent($content);
+		$this->setContent($content);
 	}
 	
 	
