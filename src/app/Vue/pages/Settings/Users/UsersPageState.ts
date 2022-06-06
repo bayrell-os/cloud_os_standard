@@ -16,19 +16,18 @@
  *  limitations under the License.
  */
 
-import { deepClone } from "vue-helper";
+import { deepClone, notNull } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
-export class NginxFile extends CrudItem
+export class User extends CrudItem
 {
 	id: number;
+	login: string;
 	name: string;
-	enable: boolean;
-	content: string;
-	timestamp: number;
-	is_deleted: boolean;
+	banned: number;
+	is_deleted: number;
 	gmtime_created: string;
 	gmtime_updated: string;
 	
@@ -41,11 +40,10 @@ export class NginxFile extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
+		this.login = "";
 		this.name = "";
-		this.enable = false;
-		this.content = "";
-		this.timestamp = 0;
-		this.is_deleted = false;
+		this.banned = 0;
+		this.is_deleted = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
 		
@@ -61,29 +59,28 @@ export class NginxFile extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
+		else if (key == "login") this.login = String(value);
 		else if (key == "name") this.name = String(value);
-		else if (key == "enable") this.enable = value == "1" || value == "true";
-		else if (key == "content") this.content = String(value);
-		else if (key == "timestamp") this.timestamp = Number(value);
-		else if (key == "is_deleted") this.is_deleted = value == "1" || value == "true";
+		else if (key == "banned") this.banned = Number(value);
+		else if (key == "is_deleted") this.is_deleted = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
-		else super.assignValue(key, value);
+		else return super.assignValue(key, value);
 	}
 	
 }
 
 
 
-export class NginxFilesPageState extends CrudState
+export class UsersPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): NginxFile
+	static createNewItem(): User
 	{
-		return new NginxFile();
+		return new User();
 	}
 	
 	
@@ -93,7 +90,7 @@ export class NginxFilesPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "nginx_files";
+		return "users";
 	}
 	
 	
@@ -109,32 +106,43 @@ export class NginxFilesPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
+		/* Login field */
+		let login = new FieldInfo();
+		login.name = "login";
+		login.label = "Login";
+		login.component = "Input";
+		this.fields.push( deepClone(login) );
+		
 		/* Name field */
 		let name = new FieldInfo();
 		name.name = "name";
 		name.label = "Name";
 		name.component = "Input";
-		name.primary = false;
 		this.fields.push( deepClone(name) );
 		
-		/* Enable field */
-		let enable = new FieldInfo();
-		enable.name = "enable";
-		enable.label = "Enable";
-		enable.component = "Select";
-		enable.options =
+		/* Banned field */
+		let banned = new FieldInfo();
+		banned.name = "banned";
+		banned.label = "Banned";
+		banned.component = "Select";
+		banned.options =
 		[
 			new SelectOption().assignValues({"id": "0", "value": "No"}),
 			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
 		];
-		this.fields.push( deepClone(enable) );
+		this.fields.push( deepClone(banned) );
 		
-		/* Content */
-		let content = new FieldInfo();
-		content.name = "content";
-		content.label = "Content";
-		content.component = "TextArea";
-		this.fields.push( deepClone(content) );
+		/* Is deleted field */
+		let is_deleted = new FieldInfo();
+		is_deleted.name = "is_deleted";
+		is_deleted.label = "Is deleted";
+		is_deleted.component = "Select";
+		is_deleted.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
+		this.fields.push( deepClone(is_deleted) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -149,16 +157,21 @@ export class NginxFilesPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
+		this.form_save.fields.push( deepClone(login) );
 		this.form_save.fields.push( deepClone(name) );
-		this.form_save.fields.push( deepClone(enable) );
-		this.form_save.fields.push( deepClone(content) );
+		this.form_save.fields.push( deepClone(banned) );
+		this.form_save.fields.push( deepClone(is_deleted) );
 		
 		/* Table fields */
+		login.component = "Label";
 		name.component = "Label";
-		enable.component = "SelectLabel";
+		banned.component = "SelectLabel";
+		is_deleted.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(login) );
 		this.fields_table.push( deepClone(name) );
-		this.fields_table.push( deepClone(enable) );
+		this.fields_table.push( deepClone(banned) );
+		this.fields_table.push( deepClone(is_deleted) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -167,9 +180,9 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: NginxFile | null): string
+	static getItemName(item: User | null): string
 	{
-		return (item) ? item.name : "";
+		return (item) ? item.login : "";
 	}
 	
 	
@@ -177,7 +190,7 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: NginxFile | null): string
+	static getItemId(item: User | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -187,15 +200,15 @@ export class NginxFilesPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: NginxFile | null): string
+	static getMessage(message_type: string, item: User | null): string
 	{
 		if (message_type == "list_title")
 		{
-			return "Nginx files";
+			return "Users";
 		}
 		else if (message_type == "item")
 		{
-			return "nginx file";
+			return "user";
 		}
 		return super.getMessage(message_type, item);
 	}

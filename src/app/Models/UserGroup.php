@@ -23,14 +23,14 @@ namespace App\Models;
 use TinyORM\Model;
 
 
-class TemplateVersion extends Model
+class UserGroup extends Model
 {
 	/**
 	 * Return table name
 	 */
 	static function getTableName()
 	{
-		return "templates_versions";
+		return "users_groups";
 	}
 	
 	
@@ -53,9 +53,8 @@ class TemplateVersion extends Model
 		return
 		[
 			"id" => [],
-			"template_id" => [],
-			"version" => [],
-			"content" => [],
+			"name" => [],
+			"is_deleted" => [],
 			"gmtime_created" => [],
 			"gmtime_updated" => [],
 		];
@@ -80,4 +79,15 @@ class TemplateVersion extends Model
 	{
 		return true;
 	}
+	
+	
+	
+	/**
+	 * Save the model to the database.
+	 */
+	public function save($connection_name = "default")
+	{
+		return parent::save($connection_name);
+	}
+	
 }

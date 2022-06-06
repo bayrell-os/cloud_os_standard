@@ -16,44 +16,39 @@
  *  limitations under the License.
 -->
 
-<style lang="scss">
-</style>
-
-
 <template>
-	<div class="test">
-        Test
-	</div>
+	<SettingsMenu>
+		<Crud v-bind:store_path="store_path" v-bind:page_action="page_action" />
+	</SettingsMenu>
 </template>
 
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin } from "vue-helper";
-import { DialogState } from "vue-helper/Crud/DialogState";
+import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
+import { Crud } from "vue-helper/Crud/Crud.vue";
+import { GroupsPageState } from './GroupsPageState';
 
 
-export const Test =
+export const GroupsPage =
 {
-	mixins: [ mixin ],
-    props: ["name"],
-	data: function()
-	{
-		let obj = {
-        };
-		return obj;
-	},
-	computed:
-	{
-	},
+	name: "GroupsPage",
+	mixins: [mixin],
 	methods:
 	{
 	},
-	mounted() {
+	beforeRouteEnter(to, from, next)
+	{
+		onRouteUpdate("beforeRouteEnter", to, from, next);
+	},
+	beforeRouteUpdate(to, from, next)
+	{
+		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
-};
+}
 
-export default defineComponent(Test);
+componentExtend(GroupsPage, Crud);
+export default defineComponent(GroupsPage);
 
 </script>

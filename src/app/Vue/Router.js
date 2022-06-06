@@ -17,28 +17,14 @@
  */
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import MainPage from '@/pages/Main/MainPage.vue'
-import ApplicationsPage from '@/pages/Applications/ApplicationsPage.vue'
-import ApplicationsEditPage from '@/pages/Applications/ApplicationsEditPage.vue'
-import ModificatorsPage from '@/pages/Modificators/ModificatorsPage.vue'
-import TemplateEditPage from '@/pages/Templates/TemplateEditPage.vue'
-import TemplatesListPage from '@/pages/Templates/TemplatesListPage.vue'
-import TemplatesViewPage from '@/pages/Templates/TemplatesViewPage.vue'
-import DomainsPage from '@/pages/Domains/DomainsPage.vue'
-import NginxFilesPage from '@/pages/NginxFiles/NginxFilesPage.vue'
-import RoutesPage from '@/pages/Routes/RoutesPage.vue'
-import UsersPage from '@/pages/Users/UsersPage.vue'
-import ServicesPage from '@/pages/Services/ServicesPage.vue'
-import SpacesPage from '@/pages/Spaces/SpacesPage.vue'
-import YamlFilesPage from '@/pages/YamlFiles/YamlFilesPage.vue'
-import NotFoundPage from '@/pages/NotFound/NotFoundPage.vue'
+import components from "./components.js";
 
-const routes: Array<RouteRecordRaw> =
+const routes =
 [
 	{
 		path: '/',
 		name: 'app:main',
-		component: MainPage,
+		component: components.MainPage,
 		props: { store_path: ["MainPage"] },
 	},
 	
@@ -46,7 +32,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/marketplace/',
 		name: 'app:marketplace',
-		component: NotFoundPage,
+		component: components.NotFoundPage,
 		props: { store_path: ["NotFoundPage"] },
 	},
 	
@@ -54,7 +40,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/applications/',
 		name: 'app:applications',
-		component: ApplicationsPage,
+		component: components.ApplicationsPage,
 		props: { store_path: ["ApplicationsPage"] },
 	},
 	
@@ -62,7 +48,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/applications/edit/:id/',
 		name: 'app:applications:edit',
-		component: ApplicationsEditPage,
+		component: components.ApplicationsEditPage,
 		props: { store_path: ["ApplicationsEditPage"], page_action: "edit" },
 	},
 	
@@ -70,7 +56,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/modificators/',
 		name: 'app:modificators',
-		component: ModificatorsPage,
+		component: components.ModificatorsPage,
 		props:
 		{
 			store_path: ["ModificatorsPage"],
@@ -80,13 +66,13 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/modificators/add/',
 		name: 'app:modificators:add',
-		component: ModificatorsPage,
+		component: components.ModificatorsPage,
 		props: { store_path: ["ModificatorsPage"], page_action: "add" },
 	},
 	{
 		path: '/modificators/edit/:id/',
 		name: 'app:modificators:edit',
-		component: ModificatorsPage,
+		component: components.ModificatorsPage,
 		props: { store_path: ["ModificatorsPage"], page_action: "edit" },
 	},
 	
@@ -94,7 +80,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/templates/',
 		name: 'app:templates',
-		component: TemplatesListPage,
+		component: components.TemplatesListPage,
 		props:
 		{
 			store_path: ["TemplatesListPage"],
@@ -104,19 +90,19 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/templates/view/:template_id/',
 		name: 'app:templates:view',
-		component: TemplatesViewPage,
+		component: components.TemplatesViewPage,
 		props: { store_path: ["TemplatesViewPage"], page_action: "list" },
 	},
 	{
 		path: '/templates/import/',
 		name: 'app:templates:import',
-		component: TemplateEditPage,
+		component: components.TemplateEditPage,
 		props: { store_path: ["TemplateEditPage"], page_action: "add" },
 	},
 	{
 		path: '/templates/edit/:id/',
 		name: 'app:templates:edit',
-		component: TemplateEditPage,
+		component: components.TemplateEditPage,
 		props: { store_path: ["TemplateEditPage"], page_action: "edit" },
 	},
 	
@@ -124,7 +110,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/domains/',
 		name: 'app:domains',
-		component: DomainsPage,
+		component: components.DomainsPage,
 		props: { store_path: ["DomainsPage"] },
 	},
 	
@@ -132,7 +118,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/yaml_files/',
 		name: 'app:yaml_files',
-		component: YamlFilesPage,
+		component: components.YamlFilesPage,
 		props:
 		{
 			store_path: ["YamlFilesPage"],
@@ -142,13 +128,13 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/yaml_files/add/',
 		name: 'app:yaml_files:add',
-		component: YamlFilesPage,
+		component: components.YamlFilesPage,
 		props: { store_path: ["YamlFilesPage"], page_action: "add" },
 	},
 	{
 		path: '/yaml_files/edit/:id/',
 		name: 'app:yaml_files:edit',
-		component: YamlFilesPage,
+		component: components.YamlFilesPage,
 		props: { store_path: ["YamlFilesPage"], page_action: "edit" }
 	},
 	
@@ -156,7 +142,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/nginx_files/',
 		name: 'app:nginx_files',
-		component: NginxFilesPage,
+		component: components.NginxFilesPage,
 		props: { store_path: ["NginxFilesPage"] },
 	},
 	
@@ -164,7 +150,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/routes/',
 		name: 'app:routes',
-		component: RoutesPage,
+		component: components.RoutesPage,
 		props: { store_path: ["RoutesPage"] },
 	},
 	
@@ -172,7 +158,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/services/',
 		name: 'app:services',
-		component: ServicesPage,
+		component: components.ServicesPage,
 		props: { store_path: ["ServicesPage"] },
 	},
 	
@@ -180,15 +166,23 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: '/spaces/',
 		name: 'app:spaces',
-		component: SpacesPage,
+		component: components.SpacesPage,
 		props: { store_path: ["SpacesPage"] },
+	},
+	
+	/* Groups */
+	{
+		path: '/settings/groups/',
+		name: 'app:groups',
+		component: components.GroupsPage,
+		props: { store_path: ["GroupsPage"] },
 	},
 	
 	/* Users */
 	{
-		path: '/users/',
+		path: '/settings/users/',
 		name: 'app:users',
-		component: UsersPage,
+		component: components.UsersPage,
 		props: { store_path: ["UsersPage"] },
 	},
 	
@@ -196,7 +190,7 @@ const routes: Array<RouteRecordRaw> =
 	{
 		path: "/:pathMatch(.*)*",
 		name: 'app:page_not_found',
-		component: NotFoundPage,
+		component: components.NotFoundPage,
 		props: { store_path: ["NotFoundPage"] },
 	}
 ]

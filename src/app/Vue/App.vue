@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -96,16 +96,11 @@
 <script lang="js">
 import { defineComponent } from 'vue';
 import { mixin } from "vue-helper";
-import { AppMenu } from "./AppMenu";
 
 
 export const App =
 {
 	mixins: [ mixin ],
-	components:
-	{
-		AppMenu,
-	},
 	data: function () {
 		return {
 			menu:
@@ -140,18 +135,10 @@ export const App =
 						{ "name": "app:domains", "title": "Domains" },
 						{ "name": "app:routes","title": "Routes" },
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
-						{ "name": "app:users", "title": "Users" },
+						{ "name": "app:users", "title": "Settings" },
 					]
-				},
+				}
 				
-				
-				{
-					"title": "Control",
-					"items":
-					[
-						{ "href": "/api/database/", "title": "Adminer" },
-					]
-				},
 			]
 		}
 	},

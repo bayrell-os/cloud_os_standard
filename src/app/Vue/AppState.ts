@@ -1,7 +1,7 @@
 /*!
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import { TemplateEditPageState } from '@/pages/Templates/TemplateEditPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
-import { UsersPageState } from '@/pages/Users/UsersPageState'
+import { UsersPageState } from '@/pages/Settings/Users/UsersPageState'
+import { GroupsPageState } from '@/pages/Settings/Groups/GroupsPageState'
 import { ServicesPageState } from '@/pages/Services/ServicesPageState'
 import { YamlFilesPageState } from '@/pages/YamlFiles/YamlFilesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
@@ -47,6 +48,7 @@ export class AppState
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();
+	GroupsPage: GroupsPageState = new GroupsPageState();
 	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();

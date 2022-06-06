@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,35 +17,37 @@
 -->
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action" />
+	<SettingsMenu />
 </template>
+
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
-import { UsersPageState } from './UsersPageState';
+import { mixin } from "vue-helper";
 
 
-export const UsersPage =
+export const SettingsPage =
 {
-	name: "UsersPage",
-	mixins: [mixin],
+	mixins: [ mixin ],
+	data: function()
+	{
+		let data = {
+		};
+		return data;
+	},
+	components:
+	{
+	},
 	methods:
 	{
 	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
+	mounted() {
+		this.setPageTitle("Settings page");
 	}
-}
+};
 
-componentExtend(UsersPage, Crud);
-export default defineComponent(UsersPage);
+export default defineComponent(SettingsPage);
 
 </script>
+

@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.

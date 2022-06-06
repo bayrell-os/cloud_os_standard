@@ -1,7 +1,7 @@
 /*!
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,12 +21,10 @@ import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/Cr
 
 
 
-export class User extends CrudItem
+export class Group extends CrudItem
 {
 	id: number;
-	login: string;
 	name: string;
-	banned: number;
 	is_deleted: number;
 	gmtime_created: string;
 	gmtime_updated: string;
@@ -40,9 +38,7 @@ export class User extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
-		this.login = "";
 		this.name = "";
-		this.banned = 0;
 		this.is_deleted = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
@@ -59,9 +55,7 @@ export class User extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
-		else if (key == "login") this.login = String(value);
 		else if (key == "name") this.name = String(value);
-		else if (key == "banned") this.banned = Number(value);
 		else if (key == "is_deleted") this.is_deleted = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
@@ -72,15 +66,15 @@ export class User extends CrudItem
 
 
 
-export class UsersPageState extends CrudState
+export class GroupsPageState extends CrudState
 {
 	
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): User
+	static createNewItem(): Group
 	{
-		return new User();
+		return new Group();
 	}
 	
 	
@@ -90,7 +84,7 @@ export class UsersPageState extends CrudState
 	 */
 	static getApiObjectName()
 	{
-		return "users";
+		return "users_groups";
 	}
 	
 	
@@ -106,31 +100,12 @@ export class UsersPageState extends CrudState
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Login field */
-		let login = new FieldInfo();
-		login.name = "login";
-		login.label = "Login";
-		login.component = "Input";
-		this.fields.push( deepClone(login) );
-		
 		/* Name field */
 		let name = new FieldInfo();
 		name.name = "name";
 		name.label = "Name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
-		
-		/* Banned field */
-		let banned = new FieldInfo();
-		banned.name = "banned";
-		banned.label = "Banned";
-		banned.component = "Select";
-		banned.options =
-		[
-			new SelectOption().assignValues({"id": "0", "value": "No"}),
-			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
-		];
-		this.fields.push( deepClone(banned) );
 		
 		/* Is deleted field */
 		let is_deleted = new FieldInfo();
@@ -157,20 +132,14 @@ export class UsersPageState extends CrudState
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form_save.fields.push( deepClone(login) );
 		this.form_save.fields.push( deepClone(name) );
-		this.form_save.fields.push( deepClone(banned) );
 		this.form_save.fields.push( deepClone(is_deleted) );
 		
 		/* Table fields */
-		login.component = "Label";
 		name.component = "Label";
-		banned.component = "SelectLabel";
 		is_deleted.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(login) );
 		this.fields_table.push( deepClone(name) );
-		this.fields_table.push( deepClone(banned) );
 		this.fields_table.push( deepClone(is_deleted) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
@@ -180,9 +149,9 @@ export class UsersPageState extends CrudState
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: User | null): string
+	static getItemName(item: Group | null): string
 	{
-		return (item) ? item.login : "";
+		return (item) ? item.name : "";
 	}
 	
 	
@@ -190,7 +159,7 @@ export class UsersPageState extends CrudState
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: User | null): string
+	static getItemId(item: Group | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -200,15 +169,15 @@ export class UsersPageState extends CrudState
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: User | null): string
+	static getMessage(message_type: string, item: Group | null): string
 	{
 		if (message_type == "list_title")
 		{
-			return "Users";
+			return "Groups";
 		}
 		else if (message_type == "item")
 		{
-			return "user";
+			return "group";
 		}
 		return super.getMessage(message_type, item);
 	}

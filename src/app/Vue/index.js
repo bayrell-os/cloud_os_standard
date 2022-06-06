@@ -22,29 +22,9 @@ import "./main.scss";
 import { createApp } from 'vue/dist/vue.esm-bundler.js'
 import { buildStore } from 'vue-helper'
 import App from './App.vue'
-import Router from './Router'
+import Router from './Router.js'
 import { AppState } from './AppState'
 import { initTestStore } from './StoreTest'
-
-/* Import components */
-import CrudResult from 'vue-helper/Crud/CrudResult.vue';
-import Dialog from 'vue-helper/Crud/Dialog.vue';
-import Form from 'vue-helper/Crud/Form.vue';
-import Button from 'vue-helper/Crud/Button.vue';
-import Input from 'vue-helper/Crud/Input.vue';
-import Label from 'vue-helper/Crud/Label.vue';
-import Pagination from 'vue-helper/Crud/Pagination.vue';
-import RowButtons from 'vue-helper/Crud/RowButtons.vue';
-import RowNumber from 'vue-helper/Crud/RowNumber.vue';
-import Select from 'vue-helper/Crud/Select.vue';
-import SelectLabel from 'vue-helper/Crud/SelectLabel.vue';
-import TextArea from 'vue-helper/Crud/TextArea.vue';
-import CodeMirror from 'vue-helper/Crud/CodeMirror.vue';
-import Tabs from 'vue-helper/Crud/Tabs.vue';
-import Tab from 'vue-helper/Crud/Tab.vue';
-
-/* App components */
-import ApplicationAdminButton from './pages/Applications/ApplicationAdminButton.vue';
 
 /* Create app state */
 let Store = buildStore(AppState);
@@ -55,25 +35,13 @@ var app = createApp(App);
 app.use(Store);
 app.use(Router);
 
-/* Register app components */
-app.component("ApplicationAdminButton", ApplicationAdminButton);
-
 /* Register components */
-app.component("Tabs", Tabs);
-app.component("Tab", Tab);
-app.component("Input", Input);
-app.component("Label", Label);
-app.component("Pagination", Pagination);
-app.component("RowButtons", RowButtons);
-app.component("RowNumber", RowNumber);
-app.component("Select", Select);
-app.component("SelectLabel", SelectLabel);
-app.component("TextArea", TextArea);
-app.component("CodeMirror", CodeMirror);
-app.component("Button", Button);
-app.component("Dialog", Dialog);
-app.component("Form", Form);
-app.component("CrudResult", CrudResult);
+import components from "./components.js";
+for (let component_name in components)
+{
+    let component = components[component_name];
+    app.component(component_name, component);
+}
 
 /* Register app */
 app.mount('#app');

@@ -20,9 +20,7 @@
 
 namespace App\Api;
 
-use App\Models\Domain;
-use App\Models\User;
-use FastRoute\RouteCollector;
+use App\Models\UserGroup;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -30,10 +28,10 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 
 
-class UsersCrud extends \TinyPHP\ApiCrudRoute
+class UsersGroupsCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = User::class;
-	var $api_name = "users";
+	var $class_name = UserGroup::class;
+	var $api_name = "users_groups";
 	
 	
 	/**

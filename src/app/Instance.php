@@ -3,7 +3,7 @@
 /*!
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020 - 2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@ class Instance extends \TinyPHP\App
 		$this->addEntity(\App\Api\TemplatesCrud::class);
 		$this->addEntity(\App\Api\TemplatesVersionsCrud::class);
 		$this->addEntity(\App\Api\UsersCrud::class);
+		$this->addEntity(\App\Api\UsersGroupsCrud::class);
 		$this->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Add routes */
