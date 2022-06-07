@@ -16,9 +16,57 @@
  *  limitations under the License.
 -->
 
+<style lang="scss">
+.groups_page__search_user{
+	max-width: 200px;
+	display: flex;
+}
+</style>
+
 <template>
 	<SettingsMenu>
-		<Crud v-bind:store_path="store_path" v-bind:page_action="page_action" />
+		<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+			
+			<template v-slot:dialog_form>
+				<Dialog v-bind:store_path="store_path.concat('dialog_form')"
+					width="800px" buttons="false"
+				>
+					<template v-slot:title>
+						{{ model.constructor.getMessage("form_title",
+							model.form_save.item_original
+						) }}
+					</template>
+					<template v-slot:content>
+						<Form v-bind:store_path="store_path.concat('form_save')"
+							@crudEvent="onCrudFormEvent($event, 'form_save')"
+						>
+							<template v-slot:rows_after>
+								<div class="crud_form__row"
+									v-if="model.form_save.item_original != null"
+								>
+									<div class="crud_form__row_label">Users</div>
+									<div class="crud_form__row_value">
+										<div class="groups_page__search_user">
+											<Input />
+											<Button type="success">Add</Button>
+										</div>
+										<div class="groups_page__users">
+										</div>
+									</div>
+								</div>
+							</template>
+							<template v-slot:buttons>
+								<Button type="primary"
+									@click="onSaveFormButtonSaveClick()">Save</Button>
+								<Button type=""
+									@click="onSaveFormButtonCancelClick()">Cancel</Button>
+							</template>
+						</Form>
+					</template>
+				</Dialog>
+			</template>
+			
+		</Crud>
 	</SettingsMenu>
 </template>
 
