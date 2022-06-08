@@ -16,7 +16,8 @@
  *  limitations under the License.
  */
 
-import { deepClone, notNull } from "vue-helper";
+import { AxiosResponse } from "axios";
+import { deepClone, isNull, notNull, responseOk } from "vue-helper";
 import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
@@ -68,6 +69,9 @@ export class Group extends CrudItem
 
 export class GroupsPageState extends CrudState
 {
+	users:Array<any> | null = null;
+	add_user_login:string = "";
+	
 	
 	/**
 	 * Returns new item
@@ -151,7 +155,7 @@ export class GroupsPageState extends CrudState
 	 */
 	static getItemName(item: Group | null): string
 	{
-		return (item) ? item.name : "";
+		return item ? item.name : "";
 	}
 	
 	
@@ -180,5 +184,66 @@ export class GroupsPageState extends CrudState
 			return "group";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	
+	/**
+	 * Add user to current group in form
+	 */
+	addUserToGroup(user_name:string): boolean
+	{
+		let user1 = this.users?.find( (user:any)=>{ return user.login == user_name; } );
+		let user2 = this.form_save.item.users_in_groups.find(
+			(user:any)=>{ return user.login == user_name; }
+		);
+		if (!isNull(user1) && isNull(user2))
+		{
+			this.form_save.item.users_in_groups.push({
+				"user_id": user1.id,
+				"group_id": this.form_save.item.id,
+				"login": user1.login,
+				"name": user1.name,
+			});
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Remove user from current group in form
+	 */
+	removeUserFromGroup(user_name:string): boolean
+	{
+		let index = this.form_save.item.users_in_groups.findIndex(
+			(user:any)=>{ return user.login == user_name; }
+		);
+		if (index >= 0)
+		{
+			this.form_save.item.users_in_groups.splice(index);
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * After api
+	 */
+	async afterApi(kind: string, response:AxiosResponse | null)
+	{
+		super.afterApi(kind, response);
+		
+		if (["listPageLoadData"].indexOf(kind) >= 0)
+		{
+			if (response && responseOk(response))
+			{
+				this.users = response.data.result.dictionary.users;
+			}
+		}
+		
 	}
 }

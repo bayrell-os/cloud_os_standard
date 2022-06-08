@@ -21,6 +21,14 @@
 	max-width: 200px;
 	display: flex;
 }
+.groups_page__user{
+	span{
+		margin-right: 2px;
+	}
+	button{
+		margin-left: 2px;
+	}
+}
 </style>
 
 <template>
@@ -47,10 +55,23 @@
 									<div class="crud_form__row_label">Users</div>
 									<div class="crud_form__row_value">
 										<div class="groups_page__search_user">
-											<Input />
-											<Button type="success">Add</Button>
+											<Input name="user_name"
+												:store_path="store_path.concat('add_user_login')"
+											/>
+											<Button type="success"
+												@click="onClickAddUser()"
+											>Add</Button>
 										</div>
 										<div class="groups_page__users">
+											<div class="groups_page__user"
+												v-for="user in model.form_save.item.users_in_groups"
+												:key="user.login"
+											>
+												<span>{{ user.login }}</span>
+												<Button type="danger small"
+													@click="onClickRemoveUser(user.login)"
+												>Delete</Button>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -83,8 +104,20 @@ export const GroupsPage =
 {
 	name: "GroupsPage",
 	mixins: [mixin],
+	data: () => {
+		return {
+		};
+	},
 	methods:
 	{
+		onClickAddUser()
+		{
+			this.model.addUserToGroup(this.model.add_user_login);
+		},
+		onClickRemoveUser(user_login)
+		{
+			this.model.removeUserFromGroup(user_login);
+		}
 	},
 	beforeRouteEnter(to, from, next)
 	{

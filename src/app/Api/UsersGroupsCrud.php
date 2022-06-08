@@ -91,12 +91,42 @@ class UsersGroupsCrud extends \TinyPHP\ApiCrudRoute
 			/* Users */
 			new ManyToMany([
 				"api_name" => "users_in_groups",
-				"actions" => [ "actionSearch" ],
+				"actions" => [ "actionSearch", "actionEdit" ],
 				"foreign_key" => "id",
 				"join_key" => "group_id",
+				"second_key" => "user_id",
+				
+				/* Add users in groups */
+				"addQuery" => function($rule, $action, $item)
+				{
+					app("db_query")
+						->insert()
+						->table('users_in_groups')
+						->values([
+							'group_id' => $item['group_id'],
+							'user_id' => $item['user_id'],
+							'gmtime_created' => gmdate("Y-m-d H:i:s", time()),
+							'gmtime_updated' => gmdate("Y-m-d H:i:s", time()),
+						])
+						->execute()
+					;
+				},
+				
+				/* Delete users in groups */
+				"deleteQuery" => function($rule, $action, $item)
+				{
+					app("db_query")
+						->delete()
+						->from('users_in_groups')
+						->where('group_id', '=', $item['group_id'])
+						->where('user_id', '=', $item['user_id'])
+						->execute()
+					;
+				},
+				
+				/* Find users in groups */
 				"buildSearchQuery" => function ($rule, $action, $ids)
 				{
-					/* Find users in groups */
 					$q = User::selectQuery()
 						// ->debug(true)
 						->fields(
