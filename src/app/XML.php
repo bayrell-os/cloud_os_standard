@@ -114,6 +114,28 @@ class XMLElement extends \SimpleXMLElement
 	
 	
 	/**
+	 * Remove all childs
+	 */
+	function removeChilds()
+	{
+		$childs = $this->children();
+		if (count($childs) == 0)
+		{
+			$item = dom_import_simplexml($this);
+			$item->nodeValue = "";
+		}
+		else
+		{
+			foreach ($childs as $child)
+			{
+				$this->removeChild($child);
+			}
+		}
+	}
+	
+	
+	
+	/**
 	 * Returns true if element is exists
 	 */
 	function exists()
@@ -203,9 +225,18 @@ class XML
 	 */
 	static function appendChildsXml($xml, $append)
 	{
-		foreach ($append->children() as $child)
+		$childs = $append->children();
+		if (count($childs) == 0)
 		{
-			static::appendXML($xml, $child);
+			$item = dom_import_simplexml($xml);
+			$item->nodeValue = $append->getValue();
+		}
+		else
+		{
+			foreach ($append->children() as $child)
+			{
+				static::appendXML($xml, $child);
+			}
 		}
 	}
 	
@@ -396,12 +427,14 @@ class XML
 		{
 			static::patchAdd($xml, $patch_item);
 		}
-		
 		else if ($type == "addAttribute")
 		{
 			static::patchAddAttribute($xml, $patch_item);
 		}
-		
+		else if ($type == "replace" || $type == "edit")
+		{
+			static::patchReplace($xml, $patch_item);
+		}
 		else if ($type == "remove")
 		{
 			static::patchRemove($xml, $patch_item);
@@ -462,6 +495,29 @@ class XML
 		foreach ($result as $item)
 		{
 			$item->remove();
+		}
+	}
+	
+	
+	
+	/**
+	 * Patch replace
+	 */
+	static function patchReplace($xml, $patch_item)
+	{
+		$path = (string)( $patch_item->path );
+		$value = $patch_item->value;
+		$result = $xml->xpath($path);
+		foreach ($result as $item)
+		{
+			$item_name = $item->getName();
+			$item->removeChilds();
+			
+			$new_value = $value->$item_name;
+			if ($new_value->exists())
+			{
+				static::appendChildsXml($item, $new_value);
+			}
 		}
 	}
 	
