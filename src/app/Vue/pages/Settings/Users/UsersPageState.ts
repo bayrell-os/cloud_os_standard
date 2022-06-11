@@ -120,6 +120,22 @@ export class UsersPageState extends CrudState
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
+		/* Password field */
+		let password1 = new FieldInfo();
+		password1.name = "password1";
+		password1.label = "Password";
+		password1.component = "Input";
+		password1.type = "password";
+		this.fields.push( deepClone(password1) );
+		
+		/* Password field */
+		let password2 = new FieldInfo();
+		password2.name = "password2";
+		password2.label = "Repeat password";
+		password2.component = "Input";
+		password2.type = "password";
+		this.fields.push( deepClone(password2) );
+		
 		/* Banned field */
 		let banned = new FieldInfo();
 		banned.name = "banned";
@@ -161,6 +177,8 @@ export class UsersPageState extends CrudState
 		this.form_save.fields.push( deepClone(name) );
 		this.form_save.fields.push( deepClone(banned) );
 		this.form_save.fields.push( deepClone(is_deleted) );
+		this.form_save.fields.push( deepClone(password1) );
+		this.form_save.fields.push( deepClone(password2) );
 		
 		/* Table fields */
 		login.component = "Label";

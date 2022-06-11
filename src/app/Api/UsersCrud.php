@@ -20,8 +20,10 @@
 
 namespace App\Api;
 
+use App\Docker;
 use App\Models\Domain;
 use App\Models\User;
+use App\Models\UserAuth;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,5 +63,53 @@ class UsersCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
 	}
-
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	function validate($action)
+	{
+		if ($action == "actionCreate" || $action == "actionEdit")
+		{
+			$password1 = isset($this->update_data["password1"]) ?
+				$this->update_data["password1"] : "";
+			$password2 = isset($this->update_data["password2"]) ?
+				$this->update_data["password2"] : "";
+			
+			if ($password1 != "" && $password1 != $password2)
+			{
+				throw new \Exception("Password mismatch");
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Process after
+	 */
+	function processAfter($action)
+	{
+		if ($action == "actionCreate" || $action == "actionEdit")
+		{
+			$user_id = $this->item->id;
+			$password1 = isset($this->update_data["password1"]) ?
+				$this->update_data["password1"] : "";
+			
+			if ($password1 != "")
+			{
+				$auth = UserAuth::findOrCreate([
+					"user_id" => $user_id,
+					"method" => "password",
+				]);
+				$auth->value = password_hash($password1, PASSWORD_BCRYPT);
+				$auth->save();
+				
+				Docker::update_htpasswd();
+			}
+		}
+	}
+	
 }

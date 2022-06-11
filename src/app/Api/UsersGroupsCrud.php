@@ -22,6 +22,7 @@ namespace App\Api;
 
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Models\UsersInGroups;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -101,7 +102,7 @@ class UsersGroupsCrud extends \TinyPHP\ApiCrudRoute
 				{
 					app("db_query")
 						->insert()
-						->table('users_in_groups')
+						->table( UsersInGroups::getTableName() )
 						->values([
 							'group_id' => $item['group_id'],
 							'user_id' => $item['user_id'],
@@ -117,7 +118,7 @@ class UsersGroupsCrud extends \TinyPHP\ApiCrudRoute
 				{
 					app("db_query")
 						->delete()
-						->from('users_in_groups')
+						->from( UsersInGroups::getTableName() )
 						->where('group_id', '=', $item['group_id'])
 						->where('user_id', '=', $item['user_id'])
 						->execute()

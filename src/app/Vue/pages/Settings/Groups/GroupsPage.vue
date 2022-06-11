@@ -62,17 +62,19 @@
 												@click="onClickAddUser()"
 											>Add</Button>
 										</div>
-										<div class="groups_page__users">
-											<div class="groups_page__user"
+										<table class="groups_page__users">
+											<tr class="groups_page__user"
 												v-for="user in model.form_save.item.users_in_groups"
 												:key="user.login"
 											>
-												<span>{{ user.login }}</span>
-												<Button type="danger small"
-													@click="onClickRemoveUser(user.login)"
-												>Delete</Button>
-											</div>
-										</div>
+												<td>{{ user.login }}</td>
+												<td>
+													<Button type="danger small"
+														@click="onClickRemoveUser(user.login)"
+													>Delete</Button>
+												</td>
+											</tr>
+										</table>
 									</div>
 								</div>
 							</template>

@@ -31,3 +31,6 @@ BEGIN
   delete from users_in_groups where group_id=OLD.id;
 END;;
 DELIMITER ;
+
+
+CREATE UNIQUE INDEX "users_in_groups_user_id_group_id" ON "users_in_groups" ("user_id", "group_id");

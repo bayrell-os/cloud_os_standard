@@ -22,11 +22,15 @@ namespace App;
 
 use TinyPHP\Utils;
 use App\Models\Application;
+use App\Models\DockerService;
+use App\Models\DockerYamlFile;
 use App\Models\Domain;
 use App\Models\NginxFile;
 use App\Models\Route;
-use App\Models\DockerService;
-use App\Models\DockerYamlFile;
+use App\Models\User;
+use App\Models\UserAuth;
+use App\Models\UserGroup;
+use App\Models\UsersInGroups;
 
 
 class Docker
@@ -627,6 +631,35 @@ class Docker
 		// static::setOption("update_admin_domain", 1);
 		
 		return $result;
+	}
+	
+	
+	
+	/**
+	 * Update htpasswd
+	 */
+	function update_htpasswd()
+	{
+		$items = User::selectQuery()
+			->fields("u.login", "auth.value")
+			->alias("u")
+			->innerJoin(
+				UserAuth::getTableName(),
+				"auth",
+				"auth.user_id=u.id"
+			)
+			->where("auth.method", "password")
+			->where("u.banned", 0)
+			->where("u.is_deleted", 0)
+			->all();
+		
+		$htpasswd = "";
+		foreach ($items as $item)
+		{
+			$htpasswd .= $item["login"] . ":" . $item["value"] . "\n";
+		}
+		
+		NginxFile::updateFile("/inc/htpasswd.inc", $htpasswd);
 	}
 	
 	
