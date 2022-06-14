@@ -15,6 +15,7 @@ services:
             TZ: "Asia/Almaty"
             WWW_UID: 1000
             WWW_GID: 1000
+            DOCKER_GID: 113
         restart: always
         networks:
             - cloud_network

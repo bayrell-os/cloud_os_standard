@@ -5,9 +5,10 @@ SCRIPT=$(readlink -f $0)
 SCRIPT_PATH=`dirname $SCRIPT`
 
 RETVAL=0
-VERSION=0.1.0
+VERSION=0.4.2
 TAG=`date '+%Y%m%d_%H%M%S'`
 
+# RS256
 JWT_KEY_LENGTH=2048
 ENV_CONFIG_PATH=$SCRIPT_PATH/example/env.conf
 
@@ -19,7 +20,7 @@ function read_env_config {
 		while IFS= read -r line; do
 			IFS="=" read -r left right <<< $line
 			CMD="$left=$right"
-			if [ ! -z $left ]; then
+			if [ ! -z "$left" ]; then
 				eval $CMD
 			fi
 		done < $ENV_CONFIG_PATH
@@ -43,10 +44,10 @@ function generate {
 	fi
 	
 	if [ -z "$SSH_PASSWORD" ]; then
-		SSH_PASSWORD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#%^&*_\-+~' | head -c 16`
+		SSH_PASSWORD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9!@%^*_\-+~' | head -c 16`
 		echo "SSH_PASSWORD=${SSH_PASSWORD}" >> $ENV_CONFIG_PATH
 	fi
-		
+	
 	if [ -z "$SSH_USER" ]; then
 		echo "Enter ssh username for Cloud OS:"
 		read SSH_USER
@@ -109,16 +110,28 @@ function output {
 	fi
 }
 
+function download {
+	docker pull bayrell/cloud_os_standard:$VERSION
+}
+
+function create_network {
+	docker network create --subnet 172.21.0.1/16 --driver=overlay \
+		--attachable cloud_network -o "com.docker.network.bridge.name"="cloud_network"
+}
+
+function compose {
+	docker-compose -f example/cloud_os.yaml -p "cloud_os" up -d
+}
+
 
 case "$1" in
 	
 	download)
-		docker pull bayrell/cloud_os_standard:0.4.0
+		download
 	;;
 	
 	create_network)
-		docker network create --subnet 172.21.0.1/16 --driver=overlay \
-			--attachable cloud_network -o "com.docker.network.bridge.name"="cloud_network"
+		create_network
 		
 		sleep 2
 		
@@ -131,7 +144,9 @@ case "$1" in
 	;;
 	
 	compose)
-		docker-compose -f example/cloud_os.yaml -p "cloud_os" up -d
+		generate
+		compose
+		output
 	;;
 	
 	output)
@@ -139,15 +154,15 @@ case "$1" in
 	;;
 	
 	setup)
-		$0 download
-		$0 create_network
-		$0 generate
-		$0 compose
-		$0 output
+		download
+		create_network
+		generate
+		compose
+		output
 	;;
 	
 	*)
-		echo "Usage: $SCRIPT_EXEC {setup|compose|output}"
+		echo "Usage: $SCRIPT_EXEC {setup|compose}"
 		RETVAL=1
 
 esac
