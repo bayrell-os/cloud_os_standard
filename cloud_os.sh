@@ -18,7 +18,7 @@ function read_env_config {
 	
 		while IFS= read -r line; do
 			IFS="=" read -r left right <<< $line
-			CMD="$left=\"$right\""
+			CMD="$left=$right"
 			if [ ! -z $left ]; then
 				eval $CMD
 			fi
@@ -56,10 +56,7 @@ function generate {
 	if [ -z "$JWT_PRIVATE_KEY" ]; then
 		
 		# Generate JWT key
-		#ssh-keygen -t rsa -b 4096 -m PEM -f $SCRIPT_PATH/example/jwt_private.key
 		openssl genrsa -out $SCRIPT_PATH/example/jwt_private.key $JWT_KEY_LENGTH
-		openssl rsa -in $SCRIPT_PATH/example/jwt_private.key -outform PEM \
-			-pubout -out $SCRIPT_PATH/example/jwt_public.key
 		
 		# Save JWT private key
 		JWT_PRIVATE_KEY=""
@@ -70,7 +67,18 @@ function generate {
 				JWT_PRIVATE_KEY="${JWT_PRIVATE_KEY}\n$line"
 			fi
 		done < $SCRIPT_PATH/example/jwt_private.key
-		echo "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" >> $ENV_CONFIG_PATH
+		echo "JWT_PRIVATE_KEY=\"$JWT_PRIVATE_KEY\"" >> $ENV_CONFIG_PATH
+		
+	fi
+	
+	if [ -z "$JWT_PUBLIC_KEY" ]; then
+		
+		if [ ! -f $SCRIPT_PATH/example/jwt_private.key ]; then
+			echo -e "$JWT_PRIVATE_KEY" > $SCRIPT_PATH/example/jwt_private.key
+		fi
+		
+		openssl rsa -in $SCRIPT_PATH/example/jwt_private.key -outform PEM \
+			-pubout -out $SCRIPT_PATH/example/jwt_public.key
 		
 		# Save JWT public key
 		JWT_PUBLIC_KEY=""
@@ -81,7 +89,7 @@ function generate {
 				JWT_PUBLIC_KEY="${JWT_PUBLIC_KEY}\n$line"
 			fi
 		done < $SCRIPT_PATH/example/jwt_public.key
-		echo "JWT_PUBLIC_KEY=$JWT_PUBLIC_KEY" >> $ENV_CONFIG_PATH
+		echo "JWT_PUBLIC_KEY=\"$JWT_PUBLIC_KEY\"" >> $ENV_CONFIG_PATH
 		
 	fi
 	

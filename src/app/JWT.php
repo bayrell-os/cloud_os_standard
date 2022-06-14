@@ -80,7 +80,10 @@ class JWT extends \TinyPHP\Crypt\JWT
 	 */
 	function getPrivateKey()
 	{
-		return json_decode( '"' . getenv("JWT_PRIVATE_KEY") . '"' );
+		$private_key = env("JWT_PRIVATE_KEY");
+		$res = json_decode( $private_key );
+		if ($res) return $res;
+		return $private_key;
 	}
 	
 	
@@ -90,7 +93,10 @@ class JWT extends \TinyPHP\Crypt\JWT
 	 */
 	function getPublicKey()
 	{
-		return json_decode( '"' . getenv("JWT_PUBLIC_KEY") . '"' );
+		$private_key = env("JWT_PUBLIC_KEY");
+		$res = json_decode( $private_key );
+		if ($res) return $res;
+		return $private_key;
 	}
 	
 	
