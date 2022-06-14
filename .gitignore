@@ -1,6 +1,9 @@
 /image
 /example/cloud.key
 /example/env.conf
+/example/env.conf.save
+/example/jwt_private.key
+/example/jwt_public.key
 /tmp
 
 # Backend

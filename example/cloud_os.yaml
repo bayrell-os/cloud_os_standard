@@ -16,13 +16,9 @@ services:
             - ./env.conf
         environment:
             TZ: "Asia/Almaty"
-            APP_DEBUG: 1
-            APP_URL: "http://cloud.docker0:8080/"
             WWW_UID: 1000
             WWW_GID: 1000
-            SSH_USER: "mikuro4ka"
-            SSH_PASSWORD: "Yf6ugfdCs2LWQUQ6"
-        restart: always
+        restart: unless-stopped
         networks:
             - cloud_network
         logging:
