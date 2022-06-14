@@ -24,6 +24,8 @@ use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Utils;
 use App\Models\NginxFile;
+use App\Models\User;
+use App\Models\UserAuth;
 
 
 class DefaultBus extends BusApiRoute
@@ -34,12 +36,20 @@ class DefaultBus extends BusApiRoute
 	 */
 	function routes(RouteContainer $route_container)
 	{
-		/* Compose */
+		/* Nginx changes */
 		$route_container->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/get_nginx_changes/",
 			"name" => "bus:get_nginx_changes",
 			"method" => [$this, "actionGetNginxChanges"],
+		]);
+		
+		/* Login */
+		$route_container->addRoute([
+			"methods" => [ "GET", "POST" ],
+			"url" => "/api/bus/login/",
+			"name" => "bus:login",
+			"method" => [$this, "actionLogin"],
 		]);
 	}
 	
@@ -51,8 +61,9 @@ class DefaultBus extends BusApiRoute
 	function actionGetNginxChanges()
 	{
 		$result = [];
-		$post = json_decode($this->container->request->getContent(), true);
-		$timestamp = Utils::attr($post, ["data", "timestamp"], 0);
+		
+		$data = $this->container->post("data");
+		$timestamp = (int)(isset($data["login"]) ? $data["login"] : 0);
 		
 		$files = NginxFile::selectQuery()
 			->where([
@@ -79,5 +90,59 @@ class DefaultBus extends BusApiRoute
 		$this->api_result->success( $files, "Ok" );
 	}
 	
+	
+	
+	/**
+	 * Login
+	 */
+	function actionLogin()
+	{
+		$data = $this->container->post("data");
+		$login = trim(isset($data["login"]) ? $data["login"] : "");
+		$password = trim(isset($data["password"]) ? $data["password"] : "");
+		
+		if ($login == "" || $password == "")
+		{
+			$this->api_result->error( $result, "Wrong login or password" );
+			return;
+		}
+		
+		/* Find user */
+		$user = User::selectQuery()
+			->where("login", $login)
+			->one()
+		;
+		if (!$user)
+		{
+			$this->api_result->error( $result, "Wrong login or password" );
+			return;
+		}
+		
+		/* Find auth */
+		$auth = UserAuth::selectQuery()
+			->where("user_id", $user->id)
+			->where("method", "password")
+			->one()
+		;
+		if (!$auth)
+		{
+			$this->api_result->error( $result, "Wrong login or password" );
+			return;
+		}
+		
+		/* Check password */
+		$password_hash = $auth->value;
+		if (!password_verify($password, $password_hash))
+		{
+			$this->api_result->error( $result, "Wrong login or password" );
+			return;
+		}
+		
+		$jwt = null;
+		$result = [
+			"jwt" => $jwt,
+		];
+		$this->api_result->success( $result, "OK" );
+	}
 	
 }

@@ -56,6 +56,7 @@ class Domain extends Model
 			"domain_name" => [],
 			"nginx_template" => [],
 			"space_id" => [],
+			"enable_auth" => [],
 			"gmtime_created" => [],
 			"gmtime_updated" => [],
 		];
@@ -94,8 +95,8 @@ class Domain extends Model
 			$nginx_template .= "server {\n";
 			$nginx_template .= "  listen 80;\n";
 			$nginx_template .= "  server_name %DOMAIN_NAME%;\n";
-			$nginx_template .= "  root /usr/share/nginx/default;\n";
-			$nginx_template .= "  index index.html;\n";
+			$nginx_template .= "  root /var/www/html;\n";
+			$nginx_template .= "  index index.php index.html;\n";
 			$nginx_template .= "  autoindex off;\n";
 			$nginx_template .= "  %ROUTES%\n";
 			$nginx_template .= "  %SSL%\n";

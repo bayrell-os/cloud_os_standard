@@ -157,4 +157,21 @@ class Module
 	}
 	
     
+	
+	/**
+	 * Run web App
+	 */
+	static function runWebApp()
+	{
+		/* Create app */
+		$app = create_app_instance();
+		
+		/* Add modules */
+		$app->addModule(static::class);
+		$app->addModule(\TinyORM\Module::class);
+		
+		/* Run app */
+		$app->init();
+		$app->runWebApp();
+	}
 }

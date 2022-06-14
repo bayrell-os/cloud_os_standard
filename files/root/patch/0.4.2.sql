@@ -34,3 +34,21 @@ DELIMITER ;
 
 
 CREATE UNIQUE INDEX "users_in_groups_user_id_group_id" ON "users_in_groups" ("user_id", "group_id");
+
+
+BEGIN;
+CREATE TABLE "adminer_domains" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "domain_name" text NOT NULL,
+  "nginx_template" text NOT NULL DEFAULT '',
+  "space_id" integer NULL,
+  "enable_auth" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_domains" ("id", "domain_name", "nginx_template", "space_id", "gmtime_created", "gmtime_updated") SELECT "id", "domain_name", "nginx_template", "space_id", "gmtime_created", "gmtime_updated" FROM "domains";
+DROP TABLE "domains";
+ALTER TABLE "adminer_domains" RENAME TO "domains";
+CREATE INDEX "domains_space_id" ON "domains" ("space_id");
+CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
+COMMIT;

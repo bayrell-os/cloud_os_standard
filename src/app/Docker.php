@@ -509,15 +509,20 @@ class Docker
 		
 		foreach ($domains as $domain)
 		{
+			$enable_auth = $domain["enable_auth"];
+			$domain_name = $domain["domain_name"];
+			
 			$routes = Route::selectQuery()
 				->where([
 					["enable", "=", 1],
 					["protocol", "=", "http"],
-					["domain_name", "=", $domain["domain_name"]],
+					["domain_name", "=", $domain_name],
 				])
 				->orderBy("route", "desc")
 				->all()
 			;
+			
+			$has_root_route = false;
 			
 			$nginx_routes = [];
 			foreach ($routes as $route)
@@ -535,7 +540,20 @@ class Docker
 				if ($domain_route_url == "") $domain_route_url = "/";
 				if ($domain_route_prefix == "/") $domain_route_prefix = "";
 				
+				if ($domain_route_url == "/")
+				{
+					$has_root_route = true;
+				}
+				
 				$nginx_route .= "location " . $domain_route_url . " {\n";
+					
+				/* Enable auth */
+				if ($enable_auth)
+				{
+					$nginx_route .= "    include inc/auth_basic.inc;\n";
+				}
+				
+				/* Proxy params */
 				$nginx_route .= "    proxy_pass http://" . $upstream_name .
 					$domain_route_prefix . ";\n";
 				$nginx_route .= "    include proxy_params;\n";
@@ -549,11 +567,8 @@ class Docker
 				}
 				
 				/* Add route prefix */
-				if ($domain_route_prefix != "")
-				{
-					$nginx_route .= "    proxy_set_header X-ROUTE-PREFIX \"" .
-						$domain_route_prefix . "\";\n";
-				}
+				$nginx_route .= "    proxy_set_header X-ROUTE-PREFIX \"" .
+					$domain_route_prefix . "\";\n";
 				
 				/* Add space id */
 				if ($domain["space_uid"] != "")
@@ -581,7 +596,36 @@ class Docker
 				$nginx_route .= "  }";
 				$nginx_routes[] = $nginx_route;
 			}
-			
+			/*
+			if (!$has_root_route)
+			{
+				$nginx_route = "";
+				$nginx_route .= "  location / {\n";
+				$nginx_route .= "    if (-f \$request_filename) {\n";
+				$nginx_route .= "      break;\n";
+				$nginx_route .= "    }\n";
+				$nginx_route .= "    rewrite ^/. /index.php last;\n";
+				$nginx_route .= "  }";
+				$nginx_routes[] = $nginx_route;
+				
+				$nginx_route = "";
+				$nginx_route .= "  location /index.php {\n";
+				$nginx_route .= "    include fastcgi_params;\n";
+				// Add space id 
+				if ($domain["space_uid"] != "")
+				{
+					$nginx_route .= "    fastcgi_param X-SPACE-UID \"" .
+						$domain["space_uid"] . "\";\n";
+				}
+				else
+				{
+					$nginx_route .= "    fastcgi_param X-SPACE-UID \"0\";\n";
+				}
+				$nginx_route .= "    break;\n";
+				$nginx_route .= "  }\n";
+				$nginx_routes[] = $nginx_route;
+			}
+			*/
 			/* Create nginx files */
 			$nginx_content = $domain["nginx_template"];
 			$nginx_content = str_replace("%DOMAIN_NAME%", $domain["domain_name"], $nginx_content);

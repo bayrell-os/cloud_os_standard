@@ -28,6 +28,7 @@ export class Domain extends CrudItem
 	domain_name: string;
 	nginx_template: string;
 	space_id: number | null;
+	enable_auth: number;
 	gmtime_created: string;
 	gmtime_updated: string;
 	
@@ -43,6 +44,7 @@ export class Domain extends CrudItem
 		this.domain_name = "";
 		this.nginx_template = "";
 		this.space_id = null;
+		this.enable_auth = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
 		
@@ -61,6 +63,7 @@ export class Domain extends CrudItem
 		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "nginx_template") this.nginx_template = String(value);
 		else if (key == "space_id") this.space_id = notNull(value) ? Number(value) : null;
+		else if (key == "enable_auth") this.enable_auth = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else return super.assignValue(key, value);
@@ -118,6 +121,18 @@ export class DomainsPageState extends CrudState
 		space_id.component = "Select";
 		this.fields.push( deepClone(space_id) );
 		
+		/* Space id field */
+		let enable_auth = new FieldInfo();
+		enable_auth.name = "enable_auth";
+		enable_auth.label = "Enable auth";
+		enable_auth.component = "Select";
+		enable_auth.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
+		this.fields.push( deepClone(enable_auth) );
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.name = "row_number";
@@ -133,13 +148,16 @@ export class DomainsPageState extends CrudState
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(space_id) );
+		this.form_save.fields.push( deepClone(enable_auth) );
 		
 		/* Table fields */
 		domain_name.component = "Label";
+		enable_auth.component = "SelectLabel";
 		space_id.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(space_id) );
+		this.fields_table.push( deepClone(enable_auth) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
