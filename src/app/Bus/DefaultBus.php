@@ -23,6 +23,7 @@ namespace App\Bus;
 use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Utils;
+use App\JWT;
 use App\Models\NginxFile;
 use App\Models\User;
 use App\Models\UserAuth;
@@ -63,7 +64,7 @@ class DefaultBus extends BusApiRoute
 		$result = [];
 		
 		$data = $this->container->post("data");
-		$timestamp = (int)(isset($data["login"]) ? $data["login"] : 0);
+		$timestamp = (int)(isset($data["timestamp"]) ? $data["timestamp"] : 0);
 		
 		$files = NginxFile::selectQuery()
 			->where([
@@ -138,9 +139,13 @@ class DefaultBus extends BusApiRoute
 			return;
 		}
 		
-		$jwt = null;
+		$jwt = new \App\JWT();
+		$jwt->login = $user->login;
+		$jwt->expires = time() + 7*24*60*60;
+		$jwt->buildJWT();
 		$result = [
-			"jwt" => $jwt,
+			"jwt" => $jwt->jwt,
+			"data" => $jwt->toArray(),
 		];
 		$this->api_result->success( $result, "OK" );
 	}

@@ -52,7 +52,7 @@ class BusApiRoute extends ApiRoute
 		
 		if ($sign != $sign2)
 		{
-			throw new \Exception("Sign error");
+			throw new \Exception("Bus sign error. Check CLOUD_OS_KEY environment");
 		}
 	}
 	

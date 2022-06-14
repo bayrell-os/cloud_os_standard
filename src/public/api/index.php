@@ -22,4 +22,4 @@ define( "BASE_PATH", dirname(dirname(__DIR__)) );
 require_once BASE_PATH . "/vendor/autoload.php";
 
 /* Run web app */
-\App\Module::runWebApp();
+\App\Module::createApp()->runWebApp();

@@ -156,12 +156,12 @@ class Module
 		// var_dump( $res->route_container->routes );
 	}
 	
-    
 	
+    
 	/**
-	 * Run web App
+	 * Create App
 	 */
-	static function runWebApp()
+	static function createApp()
 	{
 		/* Create app */
 		$app = create_app_instance();
@@ -170,8 +170,9 @@ class Module
 		$app->addModule(static::class);
 		$app->addModule(\TinyORM\Module::class);
 		
-		/* Run app */
+		/* Init */
 		$app->init();
-		$app->runWebApp();
+		return $app;
 	}
+	
 }

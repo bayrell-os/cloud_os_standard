@@ -8,7 +8,7 @@ RETVAL=0
 VERSION=0.1.0
 TAG=`date '+%Y%m%d_%H%M%S'`
 
-JWT_KEY_LENGTH=512
+JWT_KEY_LENGTH=2048
 ENV_CONFIG_PATH=$SCRIPT_PATH/example/env.conf
 
 
@@ -56,9 +56,10 @@ function generate {
 	if [ -z "$JWT_PRIVATE_KEY" ]; then
 		
 		# Generate JWT key
-		openssl genrsa -out $SCRIPT_PATH/example/jwt_private.key $JWT_KEY_LENGTH > /dev/null
+		#ssh-keygen -t rsa -b 4096 -m PEM -f $SCRIPT_PATH/example/jwt_private.key
+		openssl genrsa -out $SCRIPT_PATH/example/jwt_private.key $JWT_KEY_LENGTH
 		openssl rsa -in $SCRIPT_PATH/example/jwt_private.key -outform PEM \
-			-pubout -out $SCRIPT_PATH/example/jwt_public.key > /dev/null
+			-pubout -out $SCRIPT_PATH/example/jwt_public.key
 		
 		# Save JWT private key
 		JWT_PRIVATE_KEY=""
@@ -117,11 +118,6 @@ case "$1" in
 	;;
 	
 	generate)
-		generate
-	;;
-	
-	test)
-		#read_env_config
 		generate
 		output
 	;;
