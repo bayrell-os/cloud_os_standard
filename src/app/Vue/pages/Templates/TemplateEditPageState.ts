@@ -18,17 +18,38 @@
 
 import axios, { AxiosResponse } from "axios";
 import { deepClone, responseOk } from "vue-helper";
-import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Template } from "./TemplatesListPageState";
 import { TemplateVersion } from "./TemplatesViewPageState";
 
 
-export class TemplateEditPageState extends CrudState
+export class TemplateEditPageState extends CrudState<TemplateVersion>
 {
 	template_id: number;
 	template: Template | null;
     
-    
+	
+    /**
+	 * Returns class
+	 */
+	getClass(): typeof TemplateEditPageState
+	{
+		return this.constructor as typeof TemplateEditPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return TemplateVersion;
+	}
+	
+	
+	
 	/**
 	 * Init class
 	 */
@@ -36,16 +57,6 @@ export class TemplateEditPageState extends CrudState
 	{
 		/* Init class */
 		super.init(params);
-	}
-	
-	
-	
-	/**
-	 * Returns new item
-	 */
-	static createNewItem(): TemplateVersion
-	{
-		return new TemplateVersion();
 	}
 	
 	

@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
 		<template v-slot:component_crud_save_before>
 			<div class="template_view_page__table_before" v-if="model.template != null">
@@ -41,7 +41,7 @@
 			</div>
 		</template>
 		
-	</Crud>
+	</CrudList>
 </template>
 
 
@@ -49,7 +49,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 
 
@@ -60,7 +60,7 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 export const TemplateEditPage =
 {
 	name: "TemplateEditPage",
-	mixins: [mixin, Crud],
+	mixins: [mixin],
 	components:
 	{
 	},
@@ -84,17 +84,9 @@ export const TemplateEditPage =
 				});
 			}
 		},
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(TemplateEditPage, Crud);
+componentExtend(TemplateEditPage, CrudList);
 export default defineComponent(TemplateEditPage);
 
 </script>

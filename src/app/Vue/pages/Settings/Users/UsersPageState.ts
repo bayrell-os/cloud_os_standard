@@ -17,7 +17,8 @@
  */
 
 import { deepClone, notNull } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
@@ -72,15 +73,25 @@ export class User extends CrudItem
 
 
 
-export class UsersPageState extends CrudState
+export class UsersPageState extends CrudState<User>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): User
+	getClass(): typeof UsersPageState
 	{
-		return new User();
+		return this.constructor as typeof UsersPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return User;
 	}
 	
 	

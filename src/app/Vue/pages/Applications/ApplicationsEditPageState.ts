@@ -28,12 +28,12 @@ import { isNull } from "vue-helper";
 
 export class ApplicationsEditPageState extends ApplicationsPageState
 {
-	dialog_add_modificator: DialogState;
-	dialog_view_modificator: DialogState;
-	dialog_delete_modificator: DialogState;
-	dialog_save_app: DialogState;
-	dialog_compose_app: DialogState;
-	dialog_stop_app: DialogState;
+	dialog_add_modificator: DialogState<Application>;
+	dialog_view_modificator: DialogState<Application>;
+	dialog_delete_modificator: DialogState<Application>;
+	dialog_save_app: DialogState<Application>;
+	dialog_compose_app: DialogState<Application>;
+	dialog_stop_app: DialogState<Application>;
 	select_add_modificator_id: any;
 	compose_result: CrudResultState;
 	
@@ -64,6 +64,8 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	 */
 	getServiceName()
 	{
+		if (!this.form_save) return "";
+		if (!this.form_save.item) return "";
 		if (isNull(this.form_save.item)) return "";
 		return this.form_save.item.stack_name + "_" + this.form_save.item.name;
 	}
@@ -153,6 +155,8 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	{
 		super.afterApi(kind, response);
 		
+		if (!this.form_save.item) return;
+		
 		if (["editPageLoadData"].indexOf(kind) >= 0)
 		{
 			if (this.form_save.item.environments instanceof Array)
@@ -183,7 +187,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlItem(String(item_id)) + "modificator/add/";
+		let url = this.getApiUrl("item", {"id": item_id}) + "modificator/add/";
 		
 		try
 		{
@@ -216,7 +220,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlItem(String(item_id)) +
+		let url = this.getApiUrl("item", {"id": item_id}) +
 			"modificator/delete/" + modificator_id + "/";
 		
 		try
@@ -242,7 +246,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	static async apiCompose(item: Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlItem(String(item.id)) + "compose/";
+		let url = this.getApiUrl("item", {"item": item}) + "compose/";
 		
 		try
 		{
@@ -267,7 +271,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	static async apiStop(item_id: number): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlItem(String(item_id)) + "stop/";
+		let url = this.getApiUrl("item", {"id": item_id}) + "stop/";
 		
 		try
 		{

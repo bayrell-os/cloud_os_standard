@@ -17,7 +17,8 @@
  */
 
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 
 
@@ -49,15 +50,25 @@ export class Modificator extends CrudItem
 
 
 
-export class ModificatorsPageState extends CrudState
+export class ModificatorsPageState extends CrudState<Modificator>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Modificator
+	getClass(): typeof ModificatorsPageState
 	{
-		return new Modificator();
+		return this.constructor as typeof ModificatorsPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Modificator;
 	}
 	
 	

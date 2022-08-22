@@ -18,7 +18,8 @@
 
 import axios, { AxiosResponse } from "axios";
 import { deepClone } from "vue-helper";
-import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { DialogButton, DialogState } from "vue-helper/Crud/DialogState";
 import { FormState } from "vue-helper/Crud/FormState";
 
@@ -66,7 +67,7 @@ export class Template extends CrudItem
 
 
 
-export class TemplatesListPageState extends CrudState
+export class TemplatesListPageState extends CrudState<Template>
 {
 	
 	

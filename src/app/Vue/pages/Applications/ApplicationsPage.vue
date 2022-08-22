@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" />
+	<CrudList v-bind:store_path="store_path" />
 </template>
 
 
@@ -31,7 +31,7 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
 import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 
 
 /**
@@ -56,17 +56,9 @@ export const ApplicationsPage =
 				}
 			}
 		},
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(ApplicationsPage, Crud);
+componentExtend(ApplicationsPage, CrudList);
 export default defineComponent(ApplicationsPage);
 
 </script>

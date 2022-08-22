@@ -131,7 +131,7 @@ export const App =
 					"title": "Cloud OS",
 					"items":
 					[
-						{ "name": "app:spaces", "title": "Spaces" },
+						{ "name": "app:spaces:list", "title": "Spaces" },
 						{ "name": "app:domains", "title": "Domains" },
 						{ "name": "app:routes","title": "Routes" },
 						{ "name": "app:nginx_files", "title": "Nginx Files" },

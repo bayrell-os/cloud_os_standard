@@ -1,4 +1,6 @@
 /* Import components */
+import CrudList from 'vue-helper/Crud/CrudList.vue';
+import CrudSave from 'vue-helper/Crud/CrudSave.vue';
 import CrudResult from 'vue-helper/Crud/CrudResult.vue';
 import Dialog from 'vue-helper/Crud/Dialog.vue';
 import Form from 'vue-helper/Crud/Form.vue';
@@ -34,7 +36,7 @@ import GroupsPage from './pages/Settings/Groups/GroupsPage.vue';
 import UsersPage from './pages/Settings/Users/UsersPage.vue';
 import SettingsMenu from './pages/Settings/SettingsMenu.vue';
 import SettingsPage from './pages/Settings/SettingsPage.vue';
-import SpacesPage from './pages/Spaces/SpacesPage.vue';
+import SpaceListPage from './pages/Spaces/SpaceListPage.vue';
 import TemplateEditPage from './pages/Templates/TemplateEditPage.vue';
 import TemplatesListPage from './pages/Templates/TemplatesListPage.vue';
 import TemplatesViewPage from './pages/Templates/TemplatesViewPage.vue';
@@ -43,6 +45,8 @@ import YamlFilesPage from './pages/YamlFiles/YamlFilesPage.vue';
 export default {
     
     /* Import components */
+    "CrudList": CrudList,
+    "CrudSave": CrudSave,
     "CrudResult": CrudResult,
     "Dialog": Dialog,
     "Form": Form,
@@ -78,7 +82,7 @@ export default {
     "UsersPage": UsersPage,
     "SettingsMenu": SettingsMenu,
     "SettingsPage": SettingsPage,
-    "SpacesPage": SpacesPage,
+    "SpaceListPage": SpaceListPage,
     "TemplateEditPage": TemplateEditPage,
     "TemplatesListPage": TemplatesListPage,
     "TemplatesViewPage": TemplatesViewPage,

@@ -18,7 +18,7 @@
 
 <template>
 	<SettingsMenu>
-		<Crud v-bind:store_path="store_path" v-bind:page_action="page_action" />
+		<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action" />
 	</SettingsMenu>
 </template>
 
@@ -27,7 +27,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { UsersPageState } from './UsersPageState';
 
 
@@ -37,18 +37,10 @@ export const UsersPage =
 	mixins: [mixin],
 	methods:
 	{
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 
-componentExtend(UsersPage, Crud);
+componentExtend(UsersPage, CrudList);
 export default defineComponent(UsersPage);
 
 </script>

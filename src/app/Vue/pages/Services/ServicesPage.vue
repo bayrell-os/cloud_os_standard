@@ -61,7 +61,7 @@
 
 <template>
 	<div class="page_service">
-		<Crud v-bind:store_path="store_path">
+		<CrudList v-bind:store_path="store_path">
 			<template v-slot:top_buttons>
 				<Button type="primary" @click="onRefreshClick()">
 					Refresh
@@ -95,7 +95,7 @@
 					
 				</div>
 			</template>
-		</Crud>
+		</CrudList>
 		<Dialog v-bind:store_path="store_path.concat('dialog_stop')">
 			<template v-slot:title>
 				{{ model.constructor.getMessage("dialog_stop_title", model.dialog_stop.item) }}
@@ -115,7 +115,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate, notNull } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { CRUD_EVENTS, CrudEvent } from "vue-helper/Crud/CrudState";
 import { ServicesPageState } from './ServicesPageState';
 
@@ -162,18 +162,10 @@ export const ServicesPage =
 				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
 			}
 		}
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 
-componentExtend(ServicesPage, Crud);
+componentExtend(ServicesPage, CrudList);
 export default defineComponent(ServicesPage);
 
 </script>

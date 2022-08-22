@@ -52,6 +52,7 @@ export class AppState
 	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
-	SpacesPage: SpacesPageState = new SpacesPageState();
+	SpaceListPage: SpacesPageState = new SpacesPageState();
+	SpaceSavePage: SpacesPageState = new SpacesPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();
 }

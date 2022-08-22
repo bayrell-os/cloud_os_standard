@@ -18,7 +18,8 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { deepClone, notNull } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 export class Route extends CrudItem
@@ -85,15 +86,25 @@ export class Route extends CrudItem
 
 
 
-export class RoutesPageState extends CrudState
+export class RoutesPageState extends CrudState<Route>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Route
+	getClass(): typeof RoutesPageState
 	{
-		return new Route();
+		return this.constructor as typeof RoutesPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Route;
 	}
 	
 	

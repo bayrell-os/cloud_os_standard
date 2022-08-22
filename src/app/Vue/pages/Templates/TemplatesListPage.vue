@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
 		<template v-slot:top_buttons>
 			<div class="component_crud__top_button" >
 				
@@ -41,7 +41,7 @@
 				
 			</div>
 		</template>
-	</Crud>
+	</CrudList>
 </template>
 
 
@@ -49,7 +49,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 
 
@@ -60,23 +60,15 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 export const TemplatesListPage =
 {
 	name: "TemplatesListPage",
-	mixins: [mixin, Crud],
+	mixins: [mixin],
 	components:
 	{
 	},
 	methods:
 	{
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(TemplatesListPage, Crud);
+componentExtend(TemplatesListPage, CrudList);
 export default defineComponent(TemplatesListPage);
 
 </script>

@@ -17,7 +17,8 @@
  */
 
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
@@ -75,15 +76,25 @@ export class NginxFile extends CrudItem
 
 
 
-export class NginxFilesPageState extends CrudState
+export class NginxFilesPageState extends CrudState<NginxFile>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): NginxFile
+	getClass(): typeof NginxFilesPageState
 	{
-		return new NginxFile();
+		return this.constructor as typeof NginxFilesPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return NginxFile;
 	}
 	
 	

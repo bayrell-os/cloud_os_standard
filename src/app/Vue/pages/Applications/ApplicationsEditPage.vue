@@ -190,7 +190,7 @@ import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate, responseOk, notNull, isNull }
 	from "vue-helper";
 import { CrudEvent, CRUD_EVENTS } from "vue-helper/Crud/CrudState";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { ApplicationModificators } from "./ApplicationModificators.vue";
 import { ApplicationParams } from "./ApplicationParams.vue";
 import { ApplicationTotalPatches } from "./ApplicationTotalPatches.vue";
@@ -321,18 +321,10 @@ export const ApplicationsEditPage =
 				this.model.dialog_stop_app.hide();
 			}
 		},
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 };
 
-componentExtend(ApplicationsEditPage, Crud);
+componentExtend(ApplicationsEditPage, CrudList);
 export default defineComponent(ApplicationsEditPage);
 
 

@@ -17,14 +17,14 @@
 -->
 
 <template>
-	<Crud v-bind:store_path="store_path" />
+	<CrudList v-bind:store_path="store_path" />
 </template>
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { RoutesPageState } from './RoutesPageState';
 
 
@@ -34,18 +34,10 @@ export const RoutesPage =
 	mixins: [mixin],
 	methods:
 	{
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 
-componentExtend(RoutesPage, Crud);
+componentExtend(RoutesPage, CrudList);
 export default defineComponent(RoutesPage);
 
 </script>

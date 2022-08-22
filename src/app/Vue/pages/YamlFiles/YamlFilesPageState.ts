@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-import { DefineComponent } from 'vue';
 import { deepClone } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 import axios, { AxiosResponse } from 'axios';
 
@@ -83,9 +83,29 @@ export class YamlFile extends CrudItem
 
 
 
-export class YamlFilesPageState extends CrudState
+export class YamlFilesPageState extends CrudState<YamlFile>
 {
-	dialog_compose: DialogState;
+	dialog_compose: DialogState<YamlFile>;
+	
+	
+	/**
+	 * Returns class
+	 */
+	getClass(): typeof YamlFilesPageState
+	{
+		return this.constructor as typeof YamlFilesPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return YamlFile;
+	}
+	
 	
 	
 	/**
@@ -118,6 +138,26 @@ export class YamlFilesPageState extends CrudState
 	static getApiObjectName()
 	{
 		return "yaml_files";
+	}
+	
+	
+	
+	/**
+	 * Return api search url
+	 */
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
+	{
+		let api_name = this.getApiObjectName();
+		if (api_type == "compose")
+		{
+			if (params)
+			{
+				let item = params["item"] as YamlFile;
+				let id = encodeURIComponent(this.getItemId(item));
+				return "/api/" + api_name + "/crud/update/" + id + "/";
+			}
+		}
+		return super.getApiUrl(api_type, params);
 	}
 	
 	
@@ -250,7 +290,7 @@ export class YamlFilesPageState extends CrudState
 	/**
 	 * Compose
 	 */
-	async doCompose()
+	async processCompose()
 	{
 		let response:AxiosResponse | null = null;
 		let item:YamlFile = this.dialog_compose.item as YamlFile;
@@ -258,7 +298,7 @@ export class YamlFilesPageState extends CrudState
 		if (item != null)
 		{
 			this.dialog_compose.setWaitResponse();
-			response = await (this.constructor as any).apiCompose(item);
+			response = await this.getClass().processComposeApi(item);
 			this.dialog_compose.setAxiosResponse(response);
 		}
 	}
@@ -266,23 +306,12 @@ export class YamlFilesPageState extends CrudState
 	
 	
 	/**
-	 * Return api update url
-	 */
-	static getApiUrlCompose(item: YamlFile)
-	{
-		return "/api/" + this.getApiObjectName() + "/compose/" +
-			encodeURIComponent(this.getItemId(item)) + "/";
-	}
-	
-	
-	
-	/**
 	 * Compose active item
 	 */
-	static async apiCompose(item: YamlFile): Promise<AxiosResponse | null>
+	static async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrlCompose(item);
+		let url = this.getApiUrl("compose", item);
 		try
 		{
 			response = await axios.post(url, {"item": {"content": item.content}});

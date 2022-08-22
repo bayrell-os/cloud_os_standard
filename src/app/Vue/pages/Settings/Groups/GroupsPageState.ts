@@ -17,8 +17,10 @@
  */
 
 import { AxiosResponse } from "axios";
+import { FormState } from "modules/vue-helper/Crud/FormState";
 import { deepClone, isNull, notNull, responseOk } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
@@ -29,6 +31,7 @@ export class Group extends CrudItem
 	is_deleted: number;
 	gmtime_created: string;
 	gmtime_updated: string;
+	users_in_groups: Array<any>;
 	
 	
 	
@@ -43,6 +46,7 @@ export class Group extends CrudItem
 		this.is_deleted = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
+		this.users_in_groups = [];
 		
 		/* Init class */
 		super.init(params);
@@ -67,20 +71,29 @@ export class Group extends CrudItem
 
 
 
-export class GroupsPageState extends CrudState
+export class GroupsPageState extends CrudState<Group>
 {
 	users:Array<any> | null = null;
 	add_user_login:string = "";
 	
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Group
+	static getClass(): typeof Group
 	{
-		return new Group();
+		return this.constructor as typeof Group;
 	}
 	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Group;
+	}
 	
 	
 	/**
@@ -193,19 +206,22 @@ export class GroupsPageState extends CrudState
 	 */
 	addUserToGroup(user_name:string): boolean
 	{
-		let user1 = this.users?.find( (user:any)=>{ return user.login == user_name; } );
-		let user2 = this.form_save.item.users_in_groups.find(
-			(user:any)=>{ return user.login == user_name; }
-		);
-		if (!isNull(user1) && isNull(user2))
+		if (this.users && this.form_save.item)
 		{
-			this.form_save.item.users_in_groups.push({
-				"user_id": user1.id,
-				"group_id": this.form_save.item.id,
-				"login": user1.login,
-				"name": user1.name,
-			});
-			return true;
+			let user1 = this.users.find( (user:any)=>{ return user.login == user_name; } );
+			let user2 = this.form_save.item.users_in_groups.find(
+				(user:any)=>{ return user.login == user_name; }
+			);
+			if (!isNull(user1) && isNull(user2))
+			{
+				this.form_save.item.users_in_groups.push({
+					"user_id": user1.id,
+					"group_id": this.form_save.item.id,
+					"login": user1.login,
+					"name": user1.name,
+				});
+				return true;
+			}
 		}
 		return false;
 	}
@@ -217,14 +233,17 @@ export class GroupsPageState extends CrudState
 	 */
 	removeUserFromGroup(user_name:string): boolean
 	{
-		let index = this.form_save.item.users_in_groups.findIndex(
-			(user:any)=>{ return user.login == user_name; }
-		);
-		if (index >= 0)
+		if (this.form_save.item)
 		{
-			this.form_save.item.users_in_groups.splice(index);
-			return true;
-		}
+			let index = this.form_save.item.users_in_groups.findIndex(
+				(user:any)=>{ return user.login == user_name; }
+			);
+			if (index >= 0)
+			{
+				this.form_save.item.users_in_groups.splice(index);
+				return true;
+			}
+			}
 		return false;
 	}
 	

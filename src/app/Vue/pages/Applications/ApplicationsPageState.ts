@@ -18,7 +18,8 @@
 
 import { AxiosResponse } from "axios";
 import { deepClone, notNull, responseOk } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { Template } from "../Templates/TemplatesListPageState";
 import { TemplatesViewPageState } from "../Templates/TemplatesViewPageState";
 
@@ -26,6 +27,7 @@ import { TemplatesViewPageState } from "../Templates/TemplatesViewPageState";
 export class Application extends CrudItem
 {
 	id: number;
+	template_id: number;
 	name: string;
 	stack_name: string;
 	yaml: string;
@@ -34,7 +36,9 @@ export class Application extends CrudItem
 	custom_patch: string;
 	template: Template | null;
 	variables: Array<any>;
+	environments: Array<any>;
 	modificators: Array<number>;
+	volumes: Array<number>;
 	gmtime_created: string;
 	gmtime_updated: string;
 	
@@ -95,15 +99,25 @@ export class Application extends CrudItem
 
 
 
-export class ApplicationsPageState extends CrudState
+export class ApplicationsPageState extends CrudState<Application>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Application
+	getClass(): typeof ApplicationsPageState
 	{
-		return new Application();
+		return this.constructor as typeof ApplicationsPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Application;
 	}
 	
 	
@@ -350,31 +364,33 @@ export class ApplicationsPageState extends CrudState
 	 */
 	async reloadTemplatesVersions()
 	{
+		if (!this.form_save.item) return;
+		
 		let template_id: number = Number(this.form_save.item.template_id);
 		
-		if (template_id > 0)
+		if (template_id == 0) return;
+		
+		let response:AxiosResponse | null = await TemplatesViewPageState.processLoadListApi({
+			"template_id": template_id,
+		});
+		
+		if (response && responseOk(response) && notNull(response.data.result.items))
 		{
-			let response:AxiosResponse | null = await TemplatesViewPageState.apiLoadData({
-				"template_id": template_id,
+			let items: any = response.data.result.items.map
+			(
+				function (item: any)
+				{
+					return {
+						"id": item["id"],
+						"value": item["version"],
+					};
+				}
+			);
+			this.editField(["all"], "template_version_id", (field: FieldInfo) => {
+				field.options = deepClone(items);
 			});
-			
-			if (response && responseOk(response) && notNull(response.data.result.items))
-			{
-				let items: any = response.data.result.items.map
-				(
-					function (item: any)
-					{
-						return {
-							"id": item["id"],
-							"value": item["version"],
-						};
-					}
-				);
-				this.editField(["all"], "template_version_id", (field: FieldInfo) => {
-					field.options = deepClone(items);
-				});
-			}
 		}
+		
 	}
 	
 }

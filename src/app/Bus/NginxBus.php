@@ -29,7 +29,7 @@ use App\Models\User;
 use App\Models\UserAuth;
 
 
-class DefaultBus extends BusApiRoute
+class NginxBus extends BusApiRoute
 {
 	
 	/**
@@ -40,17 +40,17 @@ class DefaultBus extends BusApiRoute
 		/* Nginx changes */
 		$route_container->addRoute([
 			"methods" => [ "GET", "POST" ],
-			"url" => "/api/bus/get_nginx_changes/",
-			"name" => "bus:get_nginx_changes",
-			"method" => [$this, "actionGetNginxChanges"],
+			"url" => "/api/bus/nginx/changes/",
+			"name" => "bus:nginx:changes",
+			"method" => [$this, "actionNginxChanges"],
 		]);
 		
-		/* Login */
+		/* Nginx htpasswd */
 		$route_container->addRoute([
 			"methods" => [ "GET", "POST" ],
-			"url" => "/api/bus/login/",
-			"name" => "bus:login",
-			"method" => [$this, "actionLogin"],
+			"url" => "/api/bus/nginx/htpasswd/",
+			"name" => "bus:nginx:htpasswd",
+			"method" => [$this, "actionNginxHtpasswd"],
 		]);
 	}
 	
@@ -59,7 +59,7 @@ class DefaultBus extends BusApiRoute
 	/**
 	 * Returns nginx changes
 	 */
-	function actionGetNginxChanges()
+	function actionNginxChanges()
 	{
 		$result = [];
 		
@@ -94,60 +94,20 @@ class DefaultBus extends BusApiRoute
 	
 	
 	/**
-	 * Login
+	 * Returns htpasswd
 	 */
-	function actionLogin()
+	function actionNginxHtpasswd()
 	{
-		$data = $this->container->post("data");
-		$login = trim(isset($data["login"]) ? $data["login"] : "");
-		$password = trim(isset($data["password"]) ? $data["password"] : "");
-		
-		if ($login == "" || $password == "")
-		{
-			$this->api_result->error( $result, "Wrong login or password" );
-			return;
-		}
-		
-		/* Find user */
-		$user = User::selectQuery()
-			->where("login", $login)
+		$result = [];
+		$file = NginxFile::selectQuery()
+			->where("name", "/inc/htpasswd.inc")
 			->one()
 		;
-		if (!$user)
+		if ($file)
 		{
-			$this->api_result->error( $result, "Wrong login or password" );
-			return;
+			$result["content"] = $file->content;
 		}
-		
-		/* Find auth */
-		$auth = UserAuth::selectQuery()
-			->where("user_id", $user->id)
-			->where("method", "password")
-			->one()
-		;
-		if (!$auth)
-		{
-			$this->api_result->error( $result, "Wrong login or password" );
-			return;
-		}
-		
-		/* Check password */
-		$password_hash = $auth->value;
-		if (!password_verify($password, $password_hash))
-		{
-			$this->api_result->error( $result, "Wrong login or password" );
-			return;
-		}
-		
-		$jwt = new \App\JWT();
-		$jwt->login = $user->login;
-		$jwt->expires = time() + 7*24*60*60;
-		$jwt->buildJWT();
-		$result = [
-			"jwt" => $jwt->jwt,
-			"data" => $jwt->toArray(),
-		];
-		$this->api_result->success( $result, "OK" );
+		$this->api_result->success( $result, "Ok" );
 	}
 	
 }

@@ -18,7 +18,8 @@
 
 import { AxiosResponse } from "axios";
 import { deepClone, notNull, responseOk } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
@@ -73,15 +74,25 @@ export class Domain extends CrudItem
 
 
 
-export class DomainsPageState extends CrudState
+export class DomainsPageState extends CrudState<Domain>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Domain
+	getClass(): typeof DomainsPageState
 	{
-		return new Domain();
+		return this.constructor as typeof DomainsPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Domain;
 	}
 	
 	

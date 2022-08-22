@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action"></Crud>
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action"></CrudList>
 </template>
 
 
@@ -30,7 +30,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 
 
 /**
@@ -55,7 +55,7 @@ export const Modificators =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(Modificators, Crud);
+componentExtend(Modificators, CrudList);
 export default defineComponent(Modificators);
 
 </script>

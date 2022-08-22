@@ -19,7 +19,8 @@
 import axios, { AxiosResponse } from "axios";
 import { deepClone } from "vue-helper";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
-import { CrudButton, CrudItem, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudButton, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 
 
@@ -87,18 +88,28 @@ export class Service extends CrudItem
 
 
 
-export class ServicesPageState extends CrudState
+export class ServicesPageState extends CrudState<Service>
 {
-	dialog_stop: DialogState = new DialogState();
+	dialog_stop: DialogState<Service> = new DialogState();
 	refresh_state: CrudResultState = new CrudResultState();
 	
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Service
+	getClass(): typeof ServicesPageState
 	{
-		return new Service();
+		return this.constructor as typeof ServicesPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	getClassItem(): Function
+	{
+		return Service;
 	}
 	
 	
@@ -371,7 +382,7 @@ export class ServicesPageState extends CrudState
 	/**
 	 * Show stop form
 	 */
-	showStopForm(item:CrudState)
+	showStopForm(item:Service)
 	{
 		this.dialog_stop.clear();
 		this.dialog_stop.setItem(item);
@@ -391,7 +402,7 @@ export class ServicesPageState extends CrudState
 		if (!res) return;
 		
 		this.dialog_stop.setWaitResponse();
-		let response:AxiosResponse | null = await (this.constructor as any).apiStopForm(item);
+		let response:AxiosResponse | null = await this.getClass().apiStopForm(item);
 		this.dialog_stop.setAxiosResponse(response);
 		
 		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)

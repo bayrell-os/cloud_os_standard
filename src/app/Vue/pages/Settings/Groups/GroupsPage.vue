@@ -33,7 +33,7 @@
 
 <template>
 	<SettingsMenu>
-		<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+		<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
 			
 			<template v-slot:dialog_form>
 				<Dialog v-bind:store_path="store_path.concat('dialog_form')"
@@ -89,7 +89,7 @@
 				</Dialog>
 			</template>
 			
-		</Crud>
+		</CrudList>
 	</SettingsMenu>
 </template>
 
@@ -98,7 +98,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { GroupsPageState } from './GroupsPageState';
 
 
@@ -120,18 +120,10 @@ export const GroupsPage =
 		{
 			this.model.removeUserFromGroup(user_login);
 		}
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
 
-componentExtend(GroupsPage, Crud);
+componentExtend(GroupsPage, CrudList);
 export default defineComponent(GroupsPage);
 
 </script>

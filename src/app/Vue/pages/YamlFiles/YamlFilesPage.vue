@@ -22,7 +22,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
 		<template v-slot:component_crud_save>
 			<Form v-bind:store_path="store_path.concat('form_save')">
@@ -46,7 +46,7 @@
 			</Dialog>
 		</template>
 		
-	</Crud>
+	</CrudList>
 </template>
 
 
@@ -54,7 +54,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 
 
 /**
@@ -63,7 +63,7 @@ import { Crud } from "vue-helper/Crud/Crud.vue";
 export const ApplicationsFilesPage =
 {
 	name: "ApplicationsFilesPage",
-	mixins: [mixin, Crud],
+	mixins: [mixin],
 	components:
 	{
 	},
@@ -94,7 +94,7 @@ export const ApplicationsFilesPage =
 		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(ApplicationsFilesPage, Crud);
+componentExtend(ApplicationsFilesPage, CrudList);
 export default defineComponent(ApplicationsFilesPage);
 
 </script>

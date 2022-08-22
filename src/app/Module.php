@@ -126,7 +126,8 @@ class Module
 		$app->addEntity(\App\Routes\DatabaseRoute::class);
 		
 		/* Bus functions */
-		$app->addEntity(\App\Bus\DefaultBus::class);
+		$app->addEntity(\App\Bus\NginxBus::class);
+		$app->addEntity(\App\Bus\UsersBus::class);
 		
 		/* Console commands */
 		$app->addEntity(\App\Console\AdminNginxUpdate::class);

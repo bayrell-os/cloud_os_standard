@@ -32,7 +32,7 @@
 
 
 <template>
-	<Crud v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
 		<template v-slot:top_buttons>
 			<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
 		</template>
@@ -53,7 +53,7 @@
 				</div>
 			</div>
 		</template>
-	</Crud>
+	</CrudList>
 </template>
 
 
@@ -61,7 +61,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { Crud } from "vue-helper/Crud/Crud.vue";
+import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 
 
@@ -72,7 +72,7 @@ import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 export const TemplatesVersionsPage =
 {
 	name: "TemplatesVersionsPage",
-	mixins: [mixin, Crud],
+	mixins: [mixin],
 	components:
 	{
 	},
@@ -84,17 +84,9 @@ export const TemplatesVersionsPage =
 				name: "app:templates"
 			});
 		},
-	},
-	beforeRouteEnter(to, from, next)
-	{
-		onRouteUpdate("beforeRouteEnter", to, from, next);
-	},
-	beforeRouteUpdate(to, from, next)
-	{
-		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 }
-componentExtend(TemplatesVersionsPage, Crud);
+componentExtend(TemplatesVersionsPage, CrudList);
 export default defineComponent(TemplatesVersionsPage);
 
 </script>

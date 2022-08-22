@@ -17,7 +17,8 @@
  */
 
 import { deepClone, notNull } from "vue-helper";
-import { CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 
 
@@ -63,15 +64,25 @@ export class Space extends CrudItem
 
 
 
-export class SpacesPageState extends CrudState
+export class SpacesPageState extends CrudState<Space>
 {
 	
 	/**
-	 * Returns new item
+	 * Returns class
 	 */
-	static createNewItem(): Space
+	getClass(): typeof SpacesPageState
 	{
-		return new Space();
+		return this.constructor as typeof SpacesPageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	static getClassItem(): Function
+	{
+		return Space;
 	}
 	
 	
@@ -89,7 +100,7 @@ export class SpacesPageState extends CrudState
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();

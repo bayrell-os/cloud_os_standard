@@ -18,7 +18,8 @@
 
 import axios, { AxiosResponse } from "axios";
 import { deepClone, responseOk } from "vue-helper";
-import { CrudButton, CrudItem, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudItem } from "vue-helper/Crud/CrudItem";
+import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Template } from "./TemplatesListPageState";
 
 
@@ -68,10 +69,20 @@ export class TemplateVersion extends CrudItem
 
 
 
-export class TemplatesViewPageState extends CrudState
+export class TemplatesViewPageState extends CrudState<TemplateVersion>
 {
 	template: Template | null = null;
 	template_id: number;
+	
+	
+	/**
+	 * Returns class
+	 */
+	getClass(): typeof TemplatesViewPageState
+	{
+		return this.constructor as typeof TemplatesViewPageState;
+	}
+	
 	
 	
 	/**
@@ -220,10 +231,10 @@ export class TemplatesViewPageState extends CrudState
 	/**
 	 * Page data
 	 */
-	async pageLoadData(route: any)
+	async onRouteUpdate(route: any)
 	{
 		this.template_id = Number(route.to.params.template_id);
-		await super.pageLoadData(route);
+		await super.onRouteUpdate(route);
 	}
 	
 	
@@ -247,7 +258,7 @@ export class TemplatesViewPageState extends CrudState
 	{
 		super.afterApi(kind, response);
 		
-		if (kind == "listPageLoadData")
+		if (kind == "onLoadPageList")
 		{
 			if (response && responseOk(response))
 			{
