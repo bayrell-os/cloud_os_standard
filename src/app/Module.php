@@ -115,6 +115,10 @@ class Module
 		$app->addEntity(\App\Api\NginxFilesCrud::class);
 		$app->addEntity(\App\Api\ServicesCrud::class);
 		$app->addEntity(\App\Api\SpacesCrud::class);
+		// $app->addEntity(\App\Api\SpacesApplicationsCrud::class);
+		$app->addEntity(\App\Api\SpacesDomainsCrud::class);
+		// $app->addEntity(\App\Api\SpacesRolesCrud::class);
+		// $app->addEntity(\App\Api\SpacesUsersCrud::class);
 		$app->addEntity(\App\Api\TemplateApi::class);
 		$app->addEntity(\App\Api\TemplatesCrud::class);
 		$app->addEntity(\App\Api\TemplatesVersionsCrud::class);

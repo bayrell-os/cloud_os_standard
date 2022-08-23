@@ -208,16 +208,11 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 	
 	
 	/**
-	 * Search data
+	 * Process search data
 	 */
-	getSearchData(route: any)
+	processPostData(kind: string, data: any)
 	{
-		let page = route.to.query.page || 1;
-		return {
-			"space_id": this.space_id,
-			"filter": [],
-			"page": page,
-			"limit": 50,
-		};
+		data["space_id"] = this.space_id;
+		return data;
 	}
 }

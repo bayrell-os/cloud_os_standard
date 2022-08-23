@@ -10,7 +10,9 @@ CREATE TABLE "spaces_roles" (
 
 CREATE TABLE "spaces_domains" (
   "space_id" integer NOT NULL,
-  "domain_name" text NOT NULL
+  "domain_name" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
 );
 CREATE INDEX "spaces_domains_domain_name" ON "spaces_domains" ("domain_name");
 CREATE UNIQUE INDEX "spaces_domains_space_id_domain_name" ON "spaces_domains" ("space_id", "domain_name");

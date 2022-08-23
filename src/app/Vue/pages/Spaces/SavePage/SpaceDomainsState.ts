@@ -106,6 +106,7 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 		domain_name.name = "domain_name";
 		domain_name.label = "Domain name";
 		domain_name.component = "Input";
+		domain_name.primary = true;
 		this.fields.push( deepClone(domain_name) );
 		
 		/* Row number */
@@ -182,16 +183,11 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 	
 	
 	/**
-	 * Search data
+	 * Process search data
 	 */
-	getSearchData(route: any)
+	processPostData(kind: string, data: any)
 	{
-		let page = route.to.query.page || 1;
-		return {
-			"space_id": this.space_id,
-			"filter": [],
-			"page": page,
-			"limit": 50,
-		};
+		data["space_id"] = this.space_id;
+		return data;
 	}
 }

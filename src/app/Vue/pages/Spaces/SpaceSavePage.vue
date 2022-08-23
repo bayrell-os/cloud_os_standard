@@ -64,7 +64,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
+import { mixin, componentExtend, onRouteUpdate, setPageTitle } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { SpacesPageState } from './SpacesPageState';
 
@@ -74,7 +74,12 @@ export const SpaceSavePage =
 	mixins: [mixin],
 	methods:
 	{
-	}
+	},
+	mounted: function () {
+		let item = this.model.form_save.item;
+		let page_title = this.model.constructor.getMessage("edit_title", item);
+		setPageTitle(page_title);
+	},
 }
 
 componentExtend(SpaceSavePage, CrudList);
