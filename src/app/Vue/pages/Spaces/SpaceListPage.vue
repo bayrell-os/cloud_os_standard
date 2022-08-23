@@ -27,16 +27,16 @@ import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { SpacesPageState } from './SpacesPageState';
 
-export const SpacesPage =
+export const SpacesListPage =
 {
-	name: "SpacesPage",
+	name: "SpacesListPage",
 	mixins: [mixin],
 	methods:
 	{
 	}
 }
 
-componentExtend(SpacesPage, CrudList);
-export default defineComponent(SpacesPage);
+componentExtend(SpacesListPage, CrudList);
+export default defineComponent(SpacesListPage);
 
 </script>

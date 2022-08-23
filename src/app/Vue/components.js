@@ -37,6 +37,7 @@ import UsersPage from './pages/Settings/Users/UsersPage.vue';
 import SettingsMenu from './pages/Settings/SettingsMenu.vue';
 import SettingsPage from './pages/Settings/SettingsPage.vue';
 import SpaceListPage from './pages/Spaces/SpaceListPage.vue';
+import SpaceSavePage from './pages/Spaces/SpaceSavePage.vue';
 import TemplateEditPage from './pages/Templates/TemplateEditPage.vue';
 import TemplatesListPage from './pages/Templates/TemplatesListPage.vue';
 import TemplatesViewPage from './pages/Templates/TemplatesViewPage.vue';
@@ -83,6 +84,7 @@ export default {
     "SettingsMenu": SettingsMenu,
     "SettingsPage": SettingsPage,
     "SpaceListPage": SpaceListPage,
+    "SpaceSavePage": SpaceSavePage,
     "TemplateEditPage": TemplateEditPage,
     "TemplatesListPage": TemplatesListPage,
     "TemplatesViewPage": TemplatesViewPage,

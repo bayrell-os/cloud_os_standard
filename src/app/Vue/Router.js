@@ -170,12 +170,6 @@ const routes =
 		props: { store_path: ["SpaceListPage"], page_action: "list" },
 	},
 	{
-		path: '/spaces/add/',
-		name: 'app:spaces:add',
-		component: components.SpaceSavePage,
-		props: { store_path: ["SpaceSavePage"], page_action: "add" },
-	},
-	{
 		path: '/spaces/edit/:id/',
 		name: 'app:spaces:edit',
 		component: components.SpaceSavePage,

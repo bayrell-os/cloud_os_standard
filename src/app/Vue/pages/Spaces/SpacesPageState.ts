@@ -66,6 +66,19 @@ export class Space extends CrudItem
 
 export class SpacesPageState extends CrudState<Space>
 {
+	/**
+	 * Returns route names
+	 */
+	static getRouteNames(): Record<string, string>
+	{
+		return {
+			"list": "app:spaces:list",
+			"add": "",
+			"edit": "app:spaces:edit",
+		};
+	}
+	
+	
 	
 	/**
 	 * Returns class
