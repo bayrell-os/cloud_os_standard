@@ -252,14 +252,15 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * After api
+	 * After
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
-		super.afterApi(kind, response);
+		await super.after(kind, params);
 		
 		if (kind == "onLoadPageList")
 		{
+			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
 				this.template = (new Template()).assignValues(response.data.result.template);

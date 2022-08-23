@@ -149,11 +149,12 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 	
 	
 	/**
-	 * After api
+	 * After
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
-		super.afterApi(kind, response);
+		await super.after(kind, params);
+		let response = params["response"] as AxiosResponse;
 		
 		if (!this.form_save.item) return;
 		

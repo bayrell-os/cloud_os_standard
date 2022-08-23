@@ -34,19 +34,22 @@
 					<Tabs>
 						
 						<Tab name="Domains" selected="true">
-							Domains
+							<SpaceDomains v-bind:store_path="store_path.concat(['domains'])" />
 						</Tab>
 						
 						<Tab name="Applications">
-							Applications
+							<SpaceApplications
+								v-bind:store_path="store_path.concat(['applications'])" />
 						</Tab>
 						
 						<Tab name="Users">
-							Users
+							<SpaceUsers
+								v-bind:store_path="store_path.concat(['users'])" />
 						</Tab>
 						
 						<Tab name="Roles">
-							Roles
+							<SpaceRoles
+								v-bind:store_path="store_path.concat(['roles'])" />
 						</Tab>
 						
 					</Tabs>

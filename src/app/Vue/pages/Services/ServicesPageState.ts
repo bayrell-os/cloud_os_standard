@@ -340,7 +340,7 @@ export class ServicesPageState extends CrudState<Service>
 	 */
 	async doRefresh()
 	{
-		let res:boolean = await this.beforeApi("refresh");
+		let res:boolean = await this.before("onRefresh", {});
 		if (!res) return;
 		
 		/* Ajax request */
@@ -363,7 +363,7 @@ export class ServicesPageState extends CrudState<Service>
 			
 		}
 		
-		await this.afterApi("refresh", response);
+		await this.after("onRefresh", {"response": response});
 	}
 	
 	
@@ -398,7 +398,7 @@ export class ServicesPageState extends CrudState<Service>
 	{
 		let item:Service = this.dialog_stop.item as Service;
 		
-		let res:boolean = await this.beforeApi("onStopForm");
+		let res:boolean = await this.before("onStopForm", {});
 		if (!res) return;
 		
 		this.dialog_stop.setWaitResponse();
@@ -412,7 +412,7 @@ export class ServicesPageState extends CrudState<Service>
 			this.dialog_stop.hide();
 		}
 		
-		await this.afterApi("onStopForm", response);
+		await this.after("onStopForm", {"response": response});
 	}
 	
 	

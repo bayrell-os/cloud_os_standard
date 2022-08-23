@@ -204,14 +204,15 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * After api
+	 * After
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
-		super.afterApi(kind, response);
+		super.after(kind, params);
 		
 		if (kind == "editPageLoadData")
 		{
+			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
 				this.template = (new Template()).assignValues(response.data.result.template);

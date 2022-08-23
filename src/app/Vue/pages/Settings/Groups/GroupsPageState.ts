@@ -252,12 +252,13 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * After api
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
-		super.afterApi(kind, response);
+		await super.after(kind, params);
 		
 		if (["listPageLoadData"].indexOf(kind) >= 0)
 		{
+			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
 				this.users = response.data.result.dictionary.users;

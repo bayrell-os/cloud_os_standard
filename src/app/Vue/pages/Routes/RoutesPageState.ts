@@ -302,14 +302,15 @@ export class RoutesPageState extends CrudState<Route>
 	
 	
 	/**
-	 * After api
+	 * After
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
-		await super.afterApi(kind, response);
+		await super.after(kind, params);
 		
 		if (kind == "listPageLoadData")
 		{
+			let response = params["response"] as AxiosResponse;
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
 				/* Domains */

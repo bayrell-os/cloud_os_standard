@@ -19,21 +19,13 @@
 import { deepClone, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
-import { SpaceApplicationsState } from "./SavePage/SpaceApplicationsState";
-import { SpaceDomainsState } from "./SavePage/SpaceDomainsState";
-import { SpaceRolesState } from "./SavePage/SpaceRolesState";
-import { SpaceUsersState } from "./SavePage/SpaceUsersState";
 
 
-
-export class Space extends CrudItem
+export class SpaceRole extends CrudItem
 {
 	id: number;
+	space_id: number;
 	name: string;
-	gmtime_created: string;
-	gmtime_updated: string;
-	
-	
 	
 	/**
 	 * Init
@@ -42,9 +34,8 @@ export class Space extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
+		this.space_id = 0;
 		this.name = "";
-		this.gmtime_created = "";
-		this.gmtime_updated = "";
 		
 		/* Init class */
 		super.init(params);
@@ -58,9 +49,8 @@ export class Space extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
+		else if (key == "space_id") this.space_id = Number(value);
 		else if (key == "name") this.name = String(value);
-		else if (key == "gmtime_created") this.gmtime_created = String(value);
-		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else return super.assignValue(key, value);
 	}
 	
@@ -68,34 +58,17 @@ export class Space extends CrudItem
 
 
 
-export class SpacesPageState extends CrudState<Space>
+export class SpaceRolesState extends CrudState<SpaceRole>
 {
-	roles: SpaceRolesState;
-	users: SpaceUsersState;
-	domains: SpaceDomainsState;
-	applications: SpaceApplicationsState;
-	
-	
-	/**
-	 * Returns route names
-	 */
-	static getRouteNames(): Record<string, string>
-	{
-		return {
-			"list": "app:spaces:list",
-			"add": "",
-			"edit": "app:spaces:edit",
-		};
-	}
-	
+	space_id: number;
 	
 	
 	/**
 	 * Returns class
 	 */
-	getClass(): typeof SpacesPageState
+	getClass(): typeof SpaceRolesState
 	{
-		return this.constructor as typeof SpacesPageState;
+		return this.constructor as typeof SpaceRolesState;
 	}
 	
 	
@@ -105,7 +78,7 @@ export class SpacesPageState extends CrudState<Space>
 	 */
 	static getClassItem(): Function
 	{
-		return Space;
+		return SpaceRole;
 	}
 	
 	
@@ -115,7 +88,7 @@ export class SpacesPageState extends CrudState<Space>
 	 */
 	static getApiObjectName()
 	{
-		return "spaces";
+		return "spaces_roles";
 	}
 	
 	
@@ -125,30 +98,23 @@ export class SpacesPageState extends CrudState<Space>
 	 */
 	initCrud()
 	{
-		this.roles = new SpaceRolesState();
-		this.users = new SpaceUsersState();
-		this.domains = new SpaceDomainsState();
-		this.applications = new SpaceApplicationsState();
-		
 		/* ID field */
 		let id = new FieldInfo();
 		id.name = "id";
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
-		/* Name field */
+		/* Space ID field */
+		let space_id = new FieldInfo();
+		space_id.name = "space_id";
+		this.fields.push( deepClone(space_id) );
+		
+		/* Domain name field */
 		let name = new FieldInfo();
 		name.name = "name";
-		name.label = "Space name";
+		name.label = "Name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
-		
-		/* Name field */
-		let uid = new FieldInfo();
-		uid.name = "uid";
-		uid.label = "Space uid";
-		uid.component = "Input";
-		this.fields.push( deepClone(uid) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -164,14 +130,11 @@ export class SpacesPageState extends CrudState<Space>
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(name) );
-		this.form_save.fields.push( deepClone(uid) );
 		
 		/* Table fields */
 		name.component = "Label";
-		uid.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
-		this.fields_table.push( deepClone(uid) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -180,7 +143,7 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Space | null): string
+	static getItemName(item: SpaceRole | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -190,7 +153,7 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: Space | null): string
+	static getItemId(item: SpaceRole | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -200,15 +163,15 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Space | null): string
+	static getMessage(message_type: string, item: SpaceRole | null): string
 	{
 		if (message_type == "list_title")
 		{
-			return "Spaces";
+			return "Domains";
 		}
 		else if (message_type == "item")
 		{
-			return "space";
+			return "domain";
 		}
 		return super.getMessage(message_type, item);
 	}
@@ -216,32 +179,27 @@ export class SpacesPageState extends CrudState<Space>
 	
 	
 	/**
-	 * Route update
+	 * Before
 	 */
-	async onRouteUpdate(route: any)
+	async before(kind: string, params: Record<string, any>): Promise<boolean>
 	{
-		let id = route.to.params.id;
-		
-		this.roles.space_id = id;
-		this.users.space_id = id;
-		this.domains.space_id = id;
-		this.applications.space_id = id;
-		
-		await super.onRouteUpdate(route);
-		
-		if (this.page_action == "edit")
-		{
-			this.applications.page_action = "list";
-			await this.applications.onLoadPageList(route);
-			
-			this.domains.page_action = "list";
-			await this.domains.onLoadPageList(route);
-			
-			this.roles.page_action = "list";
-			await this.roles.onLoadPageList(route);
-			
-			this.users.page_action = "list";
-			await this.users.onLoadPageList(route);
-		}
+		await super.before(kind, params);
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Search data
+	 */
+	getSearchData(route: any)
+	{
+		let page = route.to.query.page || 1;
+		return {
+			"space_id": this.space_id,
+			"filter": [],
+			"page": page,
+			"limit": 50,
+		};
 	}
 }
