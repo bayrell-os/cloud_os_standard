@@ -6,6 +6,8 @@ CREATE TABLE "spaces_roles" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
+CREATE INDEX "spaces_roles_name" ON "spaces_roles" ("name");
+CREATE UNIQUE INDEX "spaces_roles_space_id_name" ON "spaces_roles" ("space_id", "name");
 
 
 CREATE TABLE "spaces_domains" (
@@ -19,8 +21,11 @@ CREATE UNIQUE INDEX "spaces_domains_space_id_domain_name" ON "spaces_domains" ("
 
 
 CREATE TABLE "spaces_users" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "space_id" integer NOT NULL,
-  "user_id" numeric NOT NULL
+  "user_id" numeric NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
 );
 CREATE INDEX "spaces_users_user_id" ON "spaces_users" ("user_id");
 CREATE UNIQUE INDEX "spaces_users_space_id_user_id" ON "spaces_users" ("space_id", "user_id");
@@ -38,7 +43,7 @@ DELIMITER ;;
 CREATE TRIGGER "users_delete" AFTER DELETE ON "users" FOR EACH ROW
 BEGIN
   delete from users_auth where user_id=OLD.id;
-  delete from spaces_users_roles where user_id=OLD.id;
+  delete from spaces_users where user_id=OLD.id;
 END;;
 DELIMITER ;
 

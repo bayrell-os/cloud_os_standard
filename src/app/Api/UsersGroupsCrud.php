@@ -93,8 +93,9 @@ class UsersGroupsCrud extends \TinyPHP\ApiCrudRoute
 			new ManyToMany([
 				"api_name" => "users_in_groups",
 				"actions" => [ "actionSearch", "actionEdit" ],
-				"foreign_key" => "id",
-				"join_key" => "group_id",
+				
+				"foreign_key" => "group_id",
+				"join_key" => "id",
 				"second_key" => "user_id",
 				
 				/* Add users in groups */

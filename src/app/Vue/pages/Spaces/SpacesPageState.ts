@@ -231,9 +231,10 @@ export class SpacesPageState extends CrudState<Space>
 		
 		if (this.page_action == "edit")
 		{
+			/*
 			this.applications.page_action = "list";
 			await this.applications.onLoadPageList(route);
-			
+			*/
 			this.domains.page_action = "list";
 			await this.domains.onLoadPageList(route);
 			

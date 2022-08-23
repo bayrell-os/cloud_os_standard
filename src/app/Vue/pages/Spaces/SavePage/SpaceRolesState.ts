@@ -167,11 +167,11 @@ export class SpaceRolesState extends CrudState<SpaceRole>
 	{
 		if (message_type == "list_title")
 		{
-			return "Domains";
+			return "Roles";
 		}
 		else if (message_type == "item")
 		{
-			return "domain";
+			return "role";
 		}
 		return super.getMessage(message_type, item);
 	}

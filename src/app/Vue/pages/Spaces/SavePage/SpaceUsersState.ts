@@ -23,8 +23,12 @@ import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 export class SpaceUser extends CrudItem
 {
+	id: number;
 	space_id: number;
 	user_id: number;
+	user_name: string;
+	user_login: string;
+	
 	
 	/**
 	 * Init
@@ -32,8 +36,11 @@ export class SpaceUser extends CrudItem
 	init(params:any)
 	{
 		/* Init variables */
+		this.id = 0;
 		this.space_id = 0;
 		this.user_id = 0;
+		this.user_name = "";
+		this.user_login = "";
 		
 		/* Init class */
 		super.init(params);
@@ -46,8 +53,11 @@ export class SpaceUser extends CrudItem
 	 */
 	assignValue(key:string, value:any)
 	{
-		if (key == "space_id") this.space_id = Number(value);
+		if (key == "id") this.id = Number(value);
+		else if (key == "space_id") this.space_id = Number(value);
 		else if (key == "user_id") this.user_id = Number(value);
+		else if (key == "user_login") this.user_login = String(value);
+		else if (key == "user_name") this.user_name = String(value);
 		else return super.assignValue(key, value);
 	}
 	
@@ -85,7 +95,7 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	 */
 	static getApiObjectName()
 	{
-		return "spaces_domains";
+		return "spaces_users";
 	}
 	
 	
@@ -96,21 +106,34 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	initCrud()
 	{
 		/* ID field */
+		let id = new FieldInfo();
+		id.name = "id";
+		id.primary = true;
+		this.fields.push( deepClone(id) );
+		
+		/* ID field */
 		let space_id = new FieldInfo();
 		space_id.name = "space_id";
-		space_id.primary = true;
 		this.fields.push( deepClone(space_id) );
 		
 		/* User id field */
 		let user_id = new FieldInfo();
 		user_id.name = "user_id";
-		user_id.primary = true;
 		this.fields.push( deepClone(user_id) );
 		
 		/* User name field */
 		let user_name = new FieldInfo();
 		user_name.name = "user_name";
+		user_name.label = "User name";
+		user_name.component = "Input";
 		this.fields.push( deepClone(user_name) );
+		
+		/* User login field */
+		let user_login = new FieldInfo();
+		user_login.name = "user_login";
+		user_login.label = "User login";
+		user_login.component = "Input";
+		this.fields.push( deepClone(user_login) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -125,12 +148,15 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		//this.form_save.fields.push( deepClone(domain_name) );
+		// this.form_save.fields.push( deepClone(user_name) );
+		this.form_save.fields.push( deepClone(user_login) );
 		
 		/* Table fields */
 		user_name.component = "Label";
+		user_login.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(user_name) );
+		this.fields_table.push( deepClone(user_login) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -141,7 +167,7 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	 */
 	static getItemName(item: SpaceUser | null): string
 	{
-		return (item) ? String(item.user_id) : "";
+		return (item) ? String(item.user_login) : "";
 	}
 	
 	
@@ -151,7 +177,7 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	 */
 	static getItemId(item: SpaceUser | null): string
 	{
-		return (item != null) ? String(item.user_id) : "";
+		return (item != null) ? String(item.id) : "";
 	}
 	
 	
