@@ -20,7 +20,8 @@
 
 namespace App\Api;
 
-use App\Models\SpaceApplication;
+use App\Models\Route;
+use App\Models\SpaceDomain;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -30,10 +31,10 @@ use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
 
-class SpacesApplicationsCrud extends \TinyPHP\ApiCrudRoute
+class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = SpaceApplication::class;
-	var $api_name = "spaces_applications";
+	var $class_name = Route::class;
+	var $api_name = "spaces_routes";
     
 	
 	/**
@@ -48,6 +49,9 @@ class SpacesApplicationsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
+					"enable",
+					"protocol",
+					"protocol_data",
 					"space_id",
 					"domain_name",
 					"route",
@@ -55,13 +59,14 @@ class SpacesApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"source_port",
 					"target_port",
 					"target_prefix",
+					"nginx_config",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly(["api_name"=>"id"]),
 			new ReadOnly(["api_name"=>"space_id"]),
-
+			new JsonField(["api_name"=>"protocol_data"]),
 		];
 	}
 	
@@ -91,6 +96,21 @@ class SpacesApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		
 		$space_id = $this->container->post("space_id");
 		$this->item->space_id = $space_id;
+		
+		$domain_name = $this->update_data["domain_name"];
+		
+		$domain = SpaceDomain::selectQuery()
+			->where([
+				"space_id" => $space_id,
+				"domain_name" => $domain_name,
+			])
+			->one()
+		;
+		
+		if (!$domain)
+		{
+			throw new \Exception("Domain '" . $domain_name . "' is not allowed for this space");
+		}
 	}
 	
 }

@@ -22,8 +22,8 @@ namespace App\Api;
 
 use App\Models\DockerService;
 use App\Models\Domain;
+use App\Models\Route;
 use App\Models\Space;
-use App\Models\SpaceApplication;
 use App\Models\SpaceDomain;
 use App\Models\SpaceRole;
 use App\Models\SpaceUser;
@@ -82,10 +82,10 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 				],
 			]),
 			
-			/* Load spaces applications */
+			/* Load spaces routes */
 			new Dictionary([
-				"api_name" => "spaces_applications",
-				"class_name" => SpaceApplication::class,
+				"api_name" => "spaces_routes",
+				"class_name" => Route::class,
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{
 					$space_id = $rule->route->item->id;
@@ -94,7 +94,12 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 						->orderBy("domain_name", "asc")
 					;
 					return $query;
-				}
+				},
+				"fromDatabase" => function ($rule, $action, $item)
+				{
+					$item["protocol_data"] = json_decode($item["protocol_data"], true);
+					return $item;
+				},
 			]),
 			
 			/* Load spaces domains */

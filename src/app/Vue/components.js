@@ -36,7 +36,7 @@ import GroupsPage from './pages/Settings/Groups/GroupsPage.vue';
 import UsersPage from './pages/Settings/Users/UsersPage.vue';
 import SettingsMenu from './pages/Settings/SettingsMenu.vue';
 import SettingsPage from './pages/Settings/SettingsPage.vue';
-import SpaceApplications from './pages/Spaces/SavePage/SpaceApplications.vue';
+import SpaceRoutes from './pages/Spaces/SavePage/SpaceRoutes.vue';
 import SpaceDomains from './pages/Spaces/SavePage/SpaceDomains.vue';
 import SpaceRoles from './pages/Spaces/SavePage/SpaceRoles.vue';
 import SpaceUsers from './pages/Spaces/SavePage/SpaceUsers.vue';
@@ -87,9 +87,9 @@ export default {
     "UsersPage": UsersPage,
     "SettingsMenu": SettingsMenu,
     "SettingsPage": SettingsPage,
-    "SpaceApplications": SpaceApplications,
     "SpaceDomains": SpaceDomains,
     "SpaceRoles": SpaceRoles,
+    "SpaceRoutes": SpaceRoutes,
     "SpaceUsers": SpaceUsers,
     "SpaceListPage": SpaceListPage,
     "SpaceSavePage": SpaceSavePage,

@@ -37,9 +37,9 @@
 							<SpaceDomains v-bind:store_path="store_path.concat(['domains'])" />
 						</Tab>
 						
-						<Tab name="Applications">
-							<SpaceApplications
-								v-bind:store_path="store_path.concat(['applications'])" />
+						<Tab name="Routes">
+							<SpaceRoutes
+								v-bind:store_path="store_path.concat(['routes'])" />
 						</Tab>
 						
 						<Tab name="Users">

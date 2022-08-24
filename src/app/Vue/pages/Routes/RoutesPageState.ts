@@ -47,7 +47,7 @@ export class Route extends CrudItem
 		this.id = 0;
 		this.enable = false;
 		this.protocol = "";
-		this.protocol_data;
+		this.protocol_data = {};
 		this.domain_name = "";
 		this.route = "";
 		this.docker_name = "";
@@ -71,6 +71,17 @@ export class Route extends CrudItem
 		if (key == "id") this.id = Number(value);
 		else if (key == "enable") this.enable = value == "1" || value == "true";
 		else if (key == "protocol") this.protocol = String(value);
+		else if (key == "protocol_data")
+		{
+			let res = {};
+			if (typeof value == "object")
+			{
+				res = {
+					"websocket": value.websocket || "0",
+				};
+			}
+			this.protocol_data = res;
+		}
 		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "route") this.route = String(value);
 		else if (key == "docker_name") this.docker_name = String(value);
@@ -122,7 +133,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -167,11 +178,11 @@ export class RoutesPageState extends CrudState<Route>
 		this.fields.push( deepClone(route) );
 		
 		/* Route prefix field */
-		let route_prefix = new FieldInfo();
-		route_prefix.name = "route_prefix";
-		route_prefix.label = "Route prefix";
-		route_prefix.component = "Input";
-		this.fields.push( deepClone(route_prefix) );
+		let target_prefix = new FieldInfo();
+		target_prefix.name = "target_prefix";
+		target_prefix.label = "Target prefix";
+		target_prefix.component = "Input";
+		this.fields.push( deepClone(target_prefix) );
 		
 		/* Target port field */
 		let target_port = new FieldInfo();
@@ -186,7 +197,6 @@ export class RoutesPageState extends CrudState<Route>
 		source_port.label = "Source port";
 		source_port.component = "Input";
 		this.fields.push( deepClone(source_port) );
-		
 		
 		/* Docker name field */
 		let docker_name = new FieldInfo();
@@ -237,27 +247,27 @@ export class RoutesPageState extends CrudState<Route>
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(source_port) );
 		this.form_save.fields.push( deepClone(target_port) );
-		this.form_save.fields.push( deepClone(route_prefix) );
+		this.form_save.fields.push( deepClone(target_prefix) );
 		this.form_save.fields.push( deepClone(nginx_config) );
 		
 		/* Table fields */
 		enable.component = "SelectLabel";
 		route.component = "Label";
-		protocol.component = "Label";
+		protocol.component = "SelectLabel";
 		docker_name.component = "SelectLabel";
 		domain_name.component = "SelectLabel";
 		source_port.component = "Label";
 		target_port.component = "Label";
-		route_prefix.component = "Label";
+		target_prefix.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(enable) );
 		this.fields_table.push( deepClone(protocol) );
-		this.fields_table.push( deepClone(docker_name) );
-		this.fields_table.push( deepClone(route) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(source_port) );
+		this.fields_table.push( deepClone(route) );
+		this.fields_table.push( deepClone(docker_name) );
 		this.fields_table.push( deepClone(target_port) );
-		this.fields_table.push( deepClone(route_prefix) );
+		this.fields_table.push( deepClone(target_prefix) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -308,83 +318,38 @@ export class RoutesPageState extends CrudState<Route>
 	{
 		await super.after(kind, params);
 		
-		if (kind == "listPageLoadData")
+		if (kind == "onLoadPageList")
 		{
-			let response = params["response"] as AxiosResponse;
-			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				/* Domains */
-				if (notNull(response.data.result.dictionary.domains) &&
-					response.data.result.dictionary.domains instanceof Array
-				)
+			let response:AxiosResponse = params["response"] as AxiosResponse;
+			
+			this.setOptionsFromDictionary(
+				response,
+				["all"],
+				"domain_name",
+				"domains",
+				function (domain: any)
 				{
-					let domains: any = response.data.result.dictionary.domains.map(
-						function (domain: any)
-						{
-							return {
-								"id": domain["domain_name"],
-								"value": domain["domain_name"],
-							};
-						}
-					);
-					
-					/* Fields table */
-					for (let i=0; i<this.fields_table.length; i++)
-					{
-						let field: FieldInfo = this.fields_table[i];
-						if (field.name == "domain_name")
-						{
-							field.options = deepClone(domains);
-						}
-					}
-					
-					/* Form save */
-					for (let i=0; i<this.form_save.fields.length; i++)
-					{
-						let field: FieldInfo = this.form_save.fields[i];
-						if (field.name == "domain_name")
-						{
-							field.options = deepClone(domains);
-						}
-					}
+					return {
+						"id": domain["domain_name"],
+						"value": domain["domain_name"],
+					};
 				}
-				
-				/* Services */
-				if (notNull(response.data.result.dictionary.services) &&
-					response.data.result.dictionary.services instanceof Array
-				)
+			);
+			
+			this.setOptionsFromDictionary(
+				response,
+				["all"],
+				"docker_name",
+				"services",
+				function (domain: any)
 				{
-					let services: any = response.data.result.dictionary.services.map(
-						function (domain: any)
-						{
-							return {
-								"id": domain["docker_name"],
-								"value": domain["docker_name"],
-							};
-						}
-					);
-					
-					/* Fields table */
-					for (let i=0; i<this.fields_table.length; i++)
-					{
-						let field: FieldInfo = this.fields_table[i];
-						if (field.name == "docker_name")
-						{
-							field.options = deepClone(services);
-						}
-					}
-					
-					/* Form save */
-					for (let i=0; i<this.form_save.fields.length; i++)
-					{
-						let field: FieldInfo = this.form_save.fields[i];
-						if (field.name == "docker_name")
-						{
-							field.options = deepClone(services);
-						}
-					}
+					return {
+						"id": domain["docker_name"],
+						"value": domain["docker_name"],
+					};
 				}
-			}
+			);
+			
 		}
 		
 	}

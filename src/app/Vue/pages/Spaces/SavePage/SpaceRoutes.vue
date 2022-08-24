@@ -36,9 +36,9 @@ import { CrudList } from "vue-helper/Crud/CrudList.vue";
 /**
  * Status page
  */
-export const SpaceApplications =
+export const SpaceRoutes =
 {
-	name: "SpaceApplications",
+	name: "SpaceRoutes",
 	mixins: [mixin],
 	components:
 	{
@@ -47,7 +47,7 @@ export const SpaceApplications =
 	{
 	}
 }
-componentExtend(SpaceApplications, CrudList);
-export default defineComponent(SpaceApplications);
+componentExtend(SpaceRoutes, CrudList);
+export default defineComponent(SpaceRoutes);
 
 </script>

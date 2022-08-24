@@ -69,21 +69,30 @@ DELIMITER ;
 DELIMITER ;;
 CREATE TRIGGER "domains_delete" AFTER DELETE ON "domains" FOR EACH ROW
 BEGIN
-delete from spaces_domains where domain_id=OLD.id;
+delete from spaces_domains where domain_name=OLD.id;
 END;;
 DELIMITER ;
 
 
-
-CREATE TABLE "spaces_applications" (
+CREATE TABLE "adminer_routes" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "space_id" integer NOT NULL,
+  "space_id" integer NULL,
+  "enable" integer NOT NULL DEFAULT '0',
+  "protocol" text NOT NULL,
+  "protocol_data" text NOT NULL DEFAULT '',
   "domain_name" text NOT NULL,
-  "route" text NOT NULL,
+  "route" text NOT NULL DEFAULT '/',
   "docker_name" text NOT NULL,
-  "source_port" text NOT NULL DEFAULT '80',
-  "target_port" text NOT NULL DEFAULT '80',
+  "source_port" integer NOT NULL DEFAULT '80',
+  "target_port" integer NOT NULL DEFAULT '80',
   "target_prefix" text NOT NULL DEFAULT '/',
+  "layer_uid" text NOT NULL DEFAULT '',
+  "nginx_config" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
+INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "domain_name", "route", "docker_name", "source_port", "target_port", "target_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated") SELECT "id", "enable", "protocol", "protocol_data", "domain_name", "route", "docker_name", "source_port", "target_port", "route_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated" FROM "routes";
+DROP TABLE "routes";
+ALTER TABLE "adminer_routes" RENAME TO "routes";
+CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
+CREATE INDEX "routes_space_id" ON "routes" ("space_id");

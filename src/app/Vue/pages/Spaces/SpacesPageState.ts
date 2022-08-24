@@ -21,7 +21,7 @@ import { deepClone, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Domain } from "../Domains/DomainsPageState";
-import { SpaceApplicationsState } from "./SavePage/SpaceApplicationsState";
+import { SpaceRoutesState } from "./SavePage/SpaceRoutesState";
 import { SpaceDomainsState } from "./SavePage/SpaceDomainsState";
 import { SpaceRolesState } from "./SavePage/SpaceRolesState";
 import { SpaceUsersState } from "./SavePage/SpaceUsersState";
@@ -75,7 +75,7 @@ export class SpacesPageState extends CrudState<Space>
 	roles: SpaceRolesState;
 	users: SpaceUsersState;
 	domains: SpaceDomainsState;
-	applications: SpaceApplicationsState;
+	routes: SpaceRoutesState;
 	
 	
 	/**
@@ -130,7 +130,7 @@ export class SpacesPageState extends CrudState<Space>
 		this.roles = new SpaceRolesState();
 		this.users = new SpaceUsersState();
 		this.domains = new SpaceDomainsState();
-		this.applications = new SpaceApplicationsState();
+		this.routes = new SpaceRoutesState();
 		
 		/* ID field */
 		let id = new FieldInfo();
@@ -227,7 +227,7 @@ export class SpacesPageState extends CrudState<Space>
 		this.roles.space_id = id;
 		this.users.space_id = id;
 		this.domains.space_id = id;
-		this.applications.space_id = id;
+		this.routes.space_id = id;
 		
 		await super.onRouteUpdate(route);
 	}
@@ -250,7 +250,7 @@ export class SpacesPageState extends CrudState<Space>
 				}
 			};
 			
-			this.applications.setOptionsFromDictionary(
+			this.routes.setOptionsFromDictionary(
 				response,
 				["all"],
 				"domain_name",
@@ -266,9 +266,9 @@ export class SpacesPageState extends CrudState<Space>
 				domain_callback
 			);
 			
-			this.applications.page_action = "list";
-			this.applications.setItems(
-				response.data.result.dictionary["spaces_applications"]
+			this.routes.page_action = "list";
+			this.routes.setItems(
+				response.data.result.dictionary["spaces_routes"]
 			);
 			
 			this.domains.page_action = "list";
