@@ -23,6 +23,7 @@ import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 
 export class SpaceApplication extends CrudItem
 {
+	id: number;
 	space_id: number;
 	route: string;
 	domain_name: string;
@@ -34,6 +35,7 @@ export class SpaceApplication extends CrudItem
 	init(params:any)
 	{
 		/* Init variables */
+		this.id = 0;
 		this.space_id = 0;
 		this.route = "";
 		this.domain_name = "";
@@ -50,7 +52,8 @@ export class SpaceApplication extends CrudItem
 	 */
 	assignValue(key:string, value:any)
 	{
-		if (key == "id") this.space_id = Number(value);
+		if (key == "id") this.id = Number(value);
+		if (key == "space_id") this.space_id = Number(value);
 		else if (key == "route") this.route = String(value);
 		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "docker_name") this.docker_name = String(value);
@@ -91,7 +94,7 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 	 */
 	static getApiObjectName()
 	{
-		return "spaces_routes";
+		return "spaces_applications";
 	}
 	
 	
@@ -102,10 +105,22 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 	initCrud()
 	{
 		/* ID field */
+		let id = new FieldInfo();
+		id.name = "id";
+		id.primary = true;
+		this.fields.push( deepClone(id) );
+		
+		/* ID field */
 		let space_id = new FieldInfo();
 		space_id.name = "space_id";
-		space_id.primary = true;
 		this.fields.push( deepClone(space_id) );
+		
+		/* Domain name field */
+		let domain_name = new FieldInfo();
+		domain_name.name = "domain_name";
+		domain_name.label = "Domain name";
+		domain_name.component = "Select";
+		this.fields.push( deepClone(domain_name) );
 		
         /* Route field */
 		let route = new FieldInfo();
@@ -114,13 +129,6 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 		route.component = "Input";
 		this.fields.push( deepClone(route) );
         
-		/* Domain name field */
-		let domain_name = new FieldInfo();
-		domain_name.name = "domain_name";
-		domain_name.label = "Domain name";
-		domain_name.component = "Input";
-		this.fields.push( deepClone(domain_name) );
-		
         /* Docker name field */
 		let docker_name = new FieldInfo();
 		docker_name.name = "docker_name";
@@ -128,6 +136,27 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 		docker_name.component = "Input";
 		this.fields.push( deepClone(docker_name) );
         
+		/* Source port field */
+		let source_port = new FieldInfo();
+		source_port.name = "source_port";
+		source_port.label = "Source port";
+		source_port.component = "Input";
+		this.fields.push( deepClone(source_port) );
+		
+		/* Target port field */
+		let target_port = new FieldInfo();
+		target_port.name = "target_port";
+		target_port.label = "Target port";
+		target_port.component = "Input";
+		this.fields.push( deepClone(target_port) );
+		
+		/* Target prefix field */
+		let target_prefix = new FieldInfo();
+		target_prefix.name = "target_prefix";
+		target_prefix.label = "Target prefix";
+		target_prefix.component = "Input";
+		this.fields.push( deepClone(target_prefix) );
+		
 		/* Row number */
 		let row_number = new FieldInfo();
 		row_number.name = "row_number";
@@ -142,17 +171,26 @@ export class SpaceApplicationsState extends CrudState<SpaceApplication>
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
+		this.form_save.fields.push( deepClone(source_port) );
 		this.form_save.fields.push( deepClone(route) );
 		this.form_save.fields.push( deepClone(docker_name) );
+		this.form_save.fields.push( deepClone(target_port) );
+		this.form_save.fields.push( deepClone(target_prefix) );
 		
 		/* Table fields */
 		route.component = "Label";
-		domain_name.component = "Label";
+		source_port.component = "Label";
+		domain_name.component = "SelectLabel";
 		docker_name.component = "Label";
+		target_port.component = "Label";
+		target_prefix.component = "Label";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(route) );
 		this.fields_table.push( deepClone(domain_name) );
+		this.fields_table.push( deepClone(source_port) );
+		this.fields_table.push( deepClone(route) );
 		this.fields_table.push( deepClone(docker_name) );
+		this.fields_table.push( deepClone(target_port) );
+		this.fields_table.push( deepClone(target_prefix) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

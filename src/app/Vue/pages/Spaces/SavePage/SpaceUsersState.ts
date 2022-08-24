@@ -146,7 +146,15 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
-		
+		/*
+		row_buttons.component_params.buttons = [
+			{
+				"type": "danger",
+				"action": "delete",
+				"label": "Delete",
+			}
+		];
+		*/
 		/* Form fields */
 		// this.form_save.fields.push( deepClone(user_name) );
 		this.form_save.fields.push( deepClone(user_login) );

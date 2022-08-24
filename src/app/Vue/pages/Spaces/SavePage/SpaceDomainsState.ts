@@ -105,7 +105,7 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 		let domain_name = new FieldInfo();
 		domain_name.name = "domain_name";
 		domain_name.label = "Domain name";
-		domain_name.component = "Input";
+		domain_name.component = "Select";
 		domain_name.primary = true;
 		this.fields.push( deepClone(domain_name) );
 		
@@ -125,7 +125,7 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 		this.form_save.fields.push( deepClone(domain_name) );
 		
 		/* Table fields */
-		domain_name.component = "Label";
+		domain_name.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(row_buttons) );

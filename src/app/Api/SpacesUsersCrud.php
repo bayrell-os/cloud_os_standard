@@ -114,21 +114,24 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 		$space_id = $this->container->post("space_id");
 		$this->item->space_id = $space_id;
 		
-		/* Find user_id */
-		$user_login = isset($this->update_data["user_login"]) ?
-			$this->update_data["user_login"] : []
-		;
-		
-		$user = User::selectQuery()
-			->where("login", $user_login)
-			->one()
-		;
-		if (!$user)
+		if ($action == "actionCreate")
 		{
-			throw new ItemNotFoundException("User");
+			/* Find user_id */
+			$user_login = isset($this->update_data["user_login"]) ?
+				$this->update_data["user_login"] : []
+			;
+			
+			$user = User::selectQuery()
+				->where("login", $user_login)
+				->one()
+			;
+			if (!$user)
+			{
+				throw new ItemNotFoundException("User");
+			}
+			
+			$this->item->user_id = $user->id;
 		}
-		
-		$this->item->user_id = $user->id;
 	}
 	
 }

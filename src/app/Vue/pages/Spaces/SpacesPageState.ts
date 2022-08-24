@@ -16,9 +16,11 @@
  *  limitations under the License.
  */
 
+import { AxiosResponse } from "axios";
 import { deepClone, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { Domain } from "../Domains/DomainsPageState";
 import { SpaceApplicationsState } from "./SavePage/SpaceApplicationsState";
 import { SpaceDomainsState } from "./SavePage/SpaceDomainsState";
 import { SpaceRolesState } from "./SavePage/SpaceRolesState";
@@ -228,21 +230,61 @@ export class SpacesPageState extends CrudState<Space>
 		this.applications.space_id = id;
 		
 		await super.onRouteUpdate(route);
-		
-		if (this.page_action == "edit")
+	}
+	
+	
+	
+	/**
+	 * After route
+	 **/
+	async after(kind: string, params: Record<string, any>)
+	{
+		if (kind == "onLoadPageSave" && this.form_save.isEdit())
 		{
-			/*
+			let response:AxiosResponse = params["response"];
+			
+			let domain_callback = (domain:Domain) => {
+				return {
+					"id": domain.domain_name,
+					"value": domain.domain_name,
+				}
+			};
+			
+			this.applications.setOptionsFromDictionary(
+				response,
+				["all"],
+				"domain_name",
+				"domains",
+				domain_callback
+			);
+			
+			this.domains.setOptionsFromDictionary(
+				response,
+				["all"],
+				"domain_name",
+				"domains",
+				domain_callback
+			);
+			
 			this.applications.page_action = "list";
-			await this.applications.onLoadPageList(route);
-			*/
+			this.applications.setItems(
+				response.data.result.dictionary["spaces_applications"]
+			);
+			
 			this.domains.page_action = "list";
-			await this.domains.onLoadPageList(route);
+			this.domains.setItems(
+				response.data.result.dictionary["spaces_domains"]
+			);
 			
 			this.roles.page_action = "list";
-			await this.roles.onLoadPageList(route);
+			this.roles.setItems(
+				response.data.result.dictionary["spaces_roles"]
+			);
 			
 			this.users.page_action = "list";
-			await this.users.onLoadPageList(route);
+			this.users.setItems(
+				response.data.result.dictionary["spaces_users"]
+			);
 		}
 	}
 }

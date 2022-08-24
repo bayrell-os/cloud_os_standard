@@ -16,8 +16,8 @@ CREATE TABLE "spaces_domains" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
-CREATE INDEX "spaces_domains_domain_name" ON "spaces_domains" ("domain_name");
-CREATE UNIQUE INDEX "spaces_domains_space_id_domain_name" ON "spaces_domains" ("space_id", "domain_name");
+CREATE UNIQUE INDEX "spaces_domains_domain_name" ON "spaces_domains" ("domain_name");
+CREATE INDEX "spaces_domains_space_id" ON "spaces_domains" ("space_id");
 
 
 CREATE TABLE "spaces_users" (
@@ -66,7 +66,24 @@ END;;
 DELIMITER ;
 
 
-CREATE UNIQUE INDEX "spaces_users_roles_uq" ON "spaces_users_roles_roles" ("user_id", "group_id");
+DELIMITER ;;
+CREATE TRIGGER "domains_delete" AFTER DELETE ON "domains" FOR EACH ROW
+BEGIN
+delete from spaces_domains where domain_id=OLD.id;
+END;;
+DELIMITER ;
 
 
-ALTER TABLE "users_in_groups" RENAME TO "spaces_users_roles";
+
+CREATE TABLE "spaces_applications" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "space_id" integer NOT NULL,
+  "domain_name" text NOT NULL,
+  "route" text NOT NULL,
+  "docker_name" text NOT NULL,
+  "source_port" text NOT NULL DEFAULT '80',
+  "target_port" text NOT NULL DEFAULT '80',
+  "target_prefix" text NOT NULL DEFAULT '/',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
