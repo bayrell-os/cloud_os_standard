@@ -19,6 +19,7 @@
 import { deepClone, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { SpacesPageState } from "../SpacesPageState";
 
 
 export class SpaceDomain extends CrudItem
@@ -58,6 +59,7 @@ export class SpaceDomain extends CrudItem
 export class SpaceDomainsState extends CrudState<SpaceDomain>
 {
 	space_id: number;
+	parent_state: SpacesPageState;
 	
 	
 	/**

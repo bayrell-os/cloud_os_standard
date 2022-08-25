@@ -21,11 +21,15 @@
 namespace App\Api;
 
 use App\Models\SpaceRole;
+use App\Models\SpaceUser;
+use App\Models\SpaceUserRole;
+use App\Models\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\Dictionary;
+use TinyPHP\Rules\ForeignKey;
 use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
 
@@ -50,13 +54,82 @@ class SpacesRolesCrud extends \TinyPHP\ApiCrudRoute
 					"id",
 					"space_id",
 					"name",
+					"users_roles",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly(["api_name"=>"id"]),
 			new ReadOnly(["api_name"=>"space_id"]),
-
+			new ReadOnly(["api_name"=>"users_roles"]),
+			
+			new ForeignKey([
+				"api_name" => "users_roles",
+				"class_name" => SpaceUserRole::class,
+				
+				"foreign_key" => "id",
+				"join_key" => "role_id",
+				
+				"buildSearchQuery" => function ($rule, $action, $foreign_ids, $q)
+				{
+					$q
+						->addField("users.name as user_name")
+						->addField("users.login as user_login")
+						->leftJoin(
+							User::getTableName(),
+							"users",
+							"t.user_id == users.id"
+						)
+					;
+					return $q;
+				},
+				
+				"convert" => function ($rule, $action, $item, $data, $index)
+				{
+					if ($action == "actionCreate" || $action == "actionUpdate")
+					{
+						$users_roles = $rule->route->update_data["users_roles"];
+						
+						$users_roles = array_map(
+							function ($item) use ($rule)
+							{
+								$role_id = $rule->route->item->id;
+								return [
+									"user_id" => $item["user_id"],
+									"user_name" => $item["user_name"],
+									"user_login" => $item["user_login"],
+									"role_id" => $role_id,
+									"is_deleted" => 0,
+								];
+							},
+							$users_roles
+						);
+						
+						/* Sync */
+						SpaceUserRole::sync
+						(
+							$users_roles,
+							[
+								"buildSearchQuery" => function($q) use ($rule)
+								{
+									$q->where("role_id", $rule->route->item->id);
+									//$q->debug(true);
+									return $q;
+								},
+							],
+						);
+						
+						$item["users_roles"] = $users_roles;
+					}
+					else
+					{
+						$item["users_roles"] = $data;
+					}
+					
+					return $item;
+				},
+				
+			]),
 		];
 	}
 	

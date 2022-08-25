@@ -16,9 +16,11 @@
  *  limitations under the License.
  */
 
-import { deepClone, notNull } from "vue-helper";
+import { deepClone, isNull, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { SpacesPageState } from "../SpacesPageState";
+import { SpaceUser } from "./SpaceUsersState";
 
 
 export class SpaceRole extends CrudItem
@@ -26,6 +28,7 @@ export class SpaceRole extends CrudItem
 	id: number;
 	space_id: number;
 	name: string;
+	users_roles: Array<any>;
 	
 	/**
 	 * Init
@@ -36,6 +39,7 @@ export class SpaceRole extends CrudItem
 		this.id = 0;
 		this.space_id = 0;
 		this.name = "";
+		this.users_roles = [];
 		
 		/* Init class */
 		super.init(params);
@@ -61,6 +65,8 @@ export class SpaceRole extends CrudItem
 export class SpaceRolesState extends CrudState<SpaceRole>
 {
 	space_id: number;
+	add_user_login:string = "";
+	parent_state: SpacesPageState;
 	
 	
 	/**
@@ -179,12 +185,71 @@ export class SpaceRolesState extends CrudState<SpaceRole>
 	
 	
 	/**
+	 * Add user to current role in form
+	 */
+	addUserToRole(user_login:string): boolean
+	{
+		let users = this.parent_state.users.items;
+		if (users && this.form_save.item)
+		{
+			let user1 = users.find( (user:SpaceUser)=>{ return user.user_login == user_login; } );
+			let user2 = this.form_save.item.users_roles.find(
+				(user:SpaceUser)=>{ return user.user_login == user_login; }
+			);
+			if (user1 && !isNull(user1) && isNull(user2))
+			{
+				this.form_save.item.users_roles.push({
+					user_id: user1.user_id,
+					user_login: user1.user_login,
+					user_name: user1.user_name,
+					role_id: this.form_save.item.id,
+				});
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Remove user from current role in form
+	 */
+	removeUserFromRole(user_login:string): boolean
+	{
+		if (this.form_save.item)
+		{
+			let index = this.form_save.item.users_roles.findIndex(
+				(user:any)=>{ return user.user_login == user_login; }
+			);
+			if (index >= 0)
+			{
+				this.form_save.item.users_roles.splice(index, 1);
+				return true;
+			}
+			}
+		return false;
+	}
+	
+	
+	
+	/**
 	 * Before
 	 */
 	async before(kind: string, params: Record<string, any>): Promise<boolean>
 	{
 		await super.before(kind, params);
 		return true;
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async after(kind: string, params: Record<string, any>)
+	{
+		await super.after(kind, params);
 	}
 	
 	

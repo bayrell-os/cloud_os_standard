@@ -16,9 +16,11 @@
  *  limitations under the License.
  */
 
-import { deepClone, notNull } from "vue-helper";
+import { deepClone, isNull, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { SpacesPageState } from "../SpacesPageState";
+import { SpaceRole } from "./SpaceRolesState";
 
 
 export class SpaceUser extends CrudItem
@@ -28,6 +30,7 @@ export class SpaceUser extends CrudItem
 	user_id: number;
 	user_name: string;
 	user_login: string;
+	users_roles: Array<any>;
 	
 	
 	/**
@@ -41,6 +44,7 @@ export class SpaceUser extends CrudItem
 		this.user_id = 0;
 		this.user_name = "";
 		this.user_login = "";
+		this.users_roles = [];
 		
 		/* Init class */
 		super.init(params);
@@ -68,6 +72,8 @@ export class SpaceUser extends CrudItem
 export class SpaceUsersState extends CrudState<SpaceUser>
 {
 	space_id: number;
+	add_role_name: string = "";
+	parent_state: SpacesPageState;
 	
 	
 	/**
@@ -204,6 +210,56 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 			return "user";
 		}
 		return super.getMessage(message_type, item);
+	}
+	
+	
+	
+	/**
+	 * Add user to current group in form
+	 */
+	addRoleToUser(role_name:string): boolean
+	{
+		let roles = this.parent_state.roles.items;
+		if (roles && this.form_save.item)
+		{
+			let role1 = roles.find( (role:SpaceRole)=>{ return role.name == role_name; } );
+			let role2 = this.form_save.item.users_roles.find(
+				(role:SpaceRole)=>{ return role.name == role_name; }
+			);
+			if (role1 && !isNull(role1) && isNull(role2))
+			{
+				this.form_save.item.users_roles.push({
+					user_id: this.form_save.item.id,
+					user_login: this.form_save.item.user_login,
+					user_name: this.form_save.item.user_name,
+					role_name: role1.name,
+					role_id: role1.id,
+				});
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Remove user from current group in form
+	 */
+	removeRoleFromUser(role_name:string): boolean
+	{
+		if (this.form_save.item)
+		{
+			let index = this.form_save.item.users_roles.findIndex(
+				(role:any)=>{ return role.role_name == role_name; }
+			);
+			if (index >= 0)
+			{
+				this.form_save.item.users_roles.splice(index, 1);
+				return true;
+			}
+			}
+		return false;
 	}
 	
 	

@@ -132,6 +132,12 @@ export class SpacesPageState extends CrudState<Space>
 		this.domains = new SpaceDomainsState();
 		this.routes = new SpaceRoutesState();
 		
+		/* Set parent state */
+		this.roles.parent_state = this;
+		this.users.parent_state = this;
+		this.domains.parent_state = this;
+		this.routes.parent_state = this;
+		
 		/* ID field */
 		let id = new FieldInfo();
 		id.name = "id";

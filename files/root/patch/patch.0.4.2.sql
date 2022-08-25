@@ -1,3 +1,54 @@
+DROP TRIGGER "applications_delete"
+DROP TRIGGER "modificators_delete"
+DROP TRIGGER "templates_delete"
+DROP TRIGGER "users_delete"
+
+
+PRAGMA foreign_keys = ON;
+PRAGMA foreign_keys = OFF;
+
+
+-- Add foreign key to users_auth
+
+BEGIN;
+CREATE TABLE "adminer_users_auth" (
+  "user_id" integer NOT NULL,
+  "method" text NOT NULL,
+  "test" text NOT NULL DEFAULT '',
+  "value" text NOT NULL,
+  FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO "adminer_users_auth" ("user_id", "method", "test", "value") SELECT "user_id", "method", "test", "value" FROM "users_auth";
+DROP TABLE "users_auth";
+ALTER TABLE "adminer_users_auth" RENAME TO "users_auth";
+CREATE UNIQUE INDEX "users_auth_user_id_method" ON "users_auth" ("user_id", "method");
+COMMIT;
+
+
+
+-- Add foreign key to templates_versions
+
+BEGIN;
+CREATE TABLE "adminer_templates_versions" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "template_id" integer NOT NULL,
+  "version" text NOT NULL,
+  "content" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  FOREIGN KEY ("template_id") REFERENCES "templates" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO "adminer_templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") SELECT "id", "template_id", "version", "content", "gmtime_created", "gmtime_updated" FROM "templates_versions";
+DROP TABLE "templates_versions";
+ALTER TABLE "adminer_templates_versions" RENAME TO "templates_versions";
+CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
+CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
+COMMIT;
+
+
+-- Add spaces tables
+
+
 CREATE TABLE "spaces_roles" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "space_id" integer NOT NULL,
@@ -39,40 +90,8 @@ CREATE TABLE "spaces_users_roles" (
   "gmtime_updated" numeric NOT NULL
 );
 
-DELIMITER ;;
-CREATE TRIGGER "users_delete" AFTER DELETE ON "users" FOR EACH ROW
-BEGIN
-  delete from users_auth where user_id=OLD.id;
-  delete from spaces_users where user_id=OLD.id;
-END;;
-DELIMITER ;
 
-
-DELIMITER ;;
-CREATE TRIGGER "spaces_delete" AFTER DELETE ON "spaces" FOR EACH ROW
-BEGIN
-delete from spaces_users where space_id=OLD.id;
-delete from spaces_roles where space_id=OLD.id;
-delete from spaces_domains where space_id=OLD.id;
-END;;
-DELIMITER ;
-
-
-DELIMITER ;;
-CREATE TRIGGER "spaces_roles_delete" AFTER DELETE ON "spaces_roles" FOR EACH ROW
-BEGIN
-delete from "spaces_users_roles" where role_id=OLD.id;
-END;;
-DELIMITER ;
-
-
-DELIMITER ;;
-CREATE TRIGGER "domains_delete" AFTER DELETE ON "domains" FOR EACH ROW
-BEGIN
-delete from spaces_domains where domain_name=OLD.id;
-END;;
-DELIMITER ;
-
+-- Add space_id to adminer_routes
 
 CREATE TABLE "adminer_routes" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,

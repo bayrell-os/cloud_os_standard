@@ -20,7 +20,9 @@
 
 namespace App\Api;
 
+use App\Models\SpaceRole;
 use App\Models\SpaceUser;
+use App\Models\SpaceUserRole;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,6 +57,7 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 					"user_id",
 					"user_name",
 					"user_login",
+					"users_roles",
 					"name",
 					"gmtime_created",
 					"gmtime_updated",
@@ -65,6 +68,7 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly(["api_name"=>"user_id"]),
 			new ReadOnly(["api_name"=>"user_name"]),
 			new ReadOnly(["api_name"=>"user_login"]),
+			new ReadOnly(["api_name"=>"users_roles"]),
 			
 			new ForeignKey([
 				"api_name" => "users",
@@ -73,7 +77,7 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 				"foreign_key" => "user_id",
 				"join_key" => "id",
 				
-				"convert" => function ($action, $item, $data, $index)
+				"convert" => function ($rule, $action, $item, $data, $index)
 				{
 					if (isset($data[0]))
 					{
@@ -82,6 +86,74 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 					}
 					return $item;
 				},
+			]),
+			
+			new ForeignKey([
+				"api_name" => "users_roles",
+				"class_name" => SpaceUserRole::class,
+				
+				"foreign_key" => "id",
+				"join_key" => "role_id",
+				
+				"buildSearchQuery" => function ($rule, $action, $foreign_ids, $q)
+				{
+					$q
+						->addField("roles.name as role_name")
+						->leftJoin(
+							SpaceRole::getTableName(),
+							"roles",
+							"t.role_id == roles.id"
+						)
+					;
+					return $q;
+				},
+				
+				"convert" => function ($rule, $action, $item, $data, $index)
+				{
+					if ($action == "actionCreate" || $action == "actionUpdate")
+					{
+						$users_roles = $rule->route->update_data["users_roles"];
+						
+						$users_roles = array_map(
+							function ($item) use ($rule)
+							{
+								$user_id = $rule->route->item->user_id;
+								return [
+									"user_id" => $user_id,
+									"user_name" => $item["user_name"],
+									"user_login" => $item["user_login"],
+									"role_name" => $item["role_name"],
+									"role_id" => $item["role_id"],
+									"is_deleted" => 0,
+								];
+							},
+							$users_roles
+						);
+						
+						/* Sync */
+						SpaceUserRole::sync
+						(
+							$users_roles,
+							[
+								"buildSearchQuery" => function($q) use ($rule)
+								{
+									$q->where("user_id", $rule->route->item->user_id);
+									//$q->debug(true);
+									return $q;
+								},
+							],
+						);
+						
+						$item["users_roles"] = $users_roles;
+					}
+					else
+					{
+						$item["users_roles"] = $data;
+					}
+					
+					return $item;
+				},
+				
 			]),
 			
 		];

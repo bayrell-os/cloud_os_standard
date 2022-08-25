@@ -17,15 +17,14 @@
  */
 
 import { Route, RoutesPageState } from "@/pages/Routes/RoutesPageState";
-import { deepClone, notNull } from "vue-helper";
-import { CrudItem } from "vue-helper/Crud/CrudItem";
-import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { SpacesPageState } from "../SpacesPageState";
 
 
 
 export class SpaceRoutesState extends RoutesPageState
 {
 	space_id: number;
+	parent_state: SpacesPageState;
 	
 	
 	/**
