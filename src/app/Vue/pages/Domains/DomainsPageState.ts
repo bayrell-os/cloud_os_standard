@@ -156,6 +156,7 @@ export class DomainsPageState extends CrudState<Domain>
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
+		this.form_save.fields.push( deepClone(ssl_id) );
 		
 		/* Table fields */
 		domain_name.component = "Label";
@@ -227,6 +228,24 @@ export class DomainsPageState extends CrudState<Domain>
 					["all"],
 					"space_id",
 					"spaces",
+					function (item: any)
+					{
+						return new SelectOption()
+							.assignValues({
+								"id": item["id"],
+								"value": item["name"],
+							})
+						;
+					}
+				);
+				
+				/* Read templates */
+				this.setOptionsFromDictionary
+				(
+					response,
+					["all"],
+					"ssl_id",
+					"ssl_group",
 					function (item: any)
 					{
 						return new SelectOption()

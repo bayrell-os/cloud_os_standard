@@ -114,6 +114,14 @@ const routes =
 		props: { store_path: ["DomainsPage"] },
 	},
 	
+	/* Domains */
+	{
+		path: '/domains/ssl/',
+		name: 'app:domains:ssl',
+		component: components.DomainsSSLGroupPage,
+		props: { store_path: ["DomainsSSLGroupPage"] },
+	},
+	
 	/* Yaml Files */
 	{
 		path: '/yaml_files/',

@@ -110,6 +110,7 @@ class Module
 		/* Add api crud */
 		$app->addEntity(\App\Api\ApplicationsCrud::class);
 		$app->addEntity(\App\Api\DomainsCrud::class);
+		$app->addEntity(\App\Api\DomainsSSLGroupCrud::class);
 		$app->addEntity(\App\Api\ModificatorsCrud::class);
 		$app->addEntity(\App\Api\RoutesCrud::class);
 		$app->addEntity(\App\Api\NginxFilesCrud::class);

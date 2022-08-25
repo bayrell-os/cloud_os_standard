@@ -112,13 +112,15 @@ export const AppMenu =
 						return true;
 					}
 				}
-				if
+				/*if
 				(
 					current_route_name.substr(0, route_name.length) == route_name
 				)
 				{
 					return true;
-				}
+				}*/
+				
+				if (current_route_name == route_name) return true;
 				
 				if (!isNull(route.names))
 				{

@@ -20,9 +20,8 @@
 
 namespace App\Api;
 
-use App\Models\Domain;
-use App\Models\DomainSSLGroup;
 use App\Models\Space;
+use App\Models\DomainSSLGroup;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +32,10 @@ use TinyPHP\Rules\Nullable;
 use TinyPHP\Rules\ReadOnly;
 
 
-class DomainsCrud extends \TinyPHP\ApiCrudRoute
+class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 {
-	var $class_name = Domain::class;
-	var $api_name = "domains";
+	var $class_name = DomainSSLGroup::class;
+	var $api_name = "domains_ssl_groups";
 	
 	
 	/**
@@ -51,53 +50,14 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 				"fields" =>
 				[
 					"id",
-					"domain_name",
-					"nginx_template",
-					"space_id",
-					"ssl_id",
+					"name",
+					"pub_key",
+					"private_key",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
-			new Nullable([ "api_name" => "ssl_id" ]),
 			new ReadOnly([ "api_name" => "id" ]),
-			new ReadOnly([ "api_name" => "domain_name", "can_create" => true ]),
-			new ReadOnly([ "api_name" => "space_id" ]),
-			new ReadOnly([ "api_name" => "gmtime_created" ]),
-			new ReadOnly([ "api_name" => "gmtime_updated" ]),
-			
-			new Dictionary([
-				"api_name" => "spaces",
-				"class_name" => Space::class,
-				"buildSearchQuery" => function ($route, $action, $query){
-					$query
-						->orderBy("name", "asc")
-					;
-					return $query;
-				},
-				"fields" =>
-				[
-					"id",
-					"name",
-				],
-			]),
-			
-			new Dictionary([
-				"api_name" => "ssl_group",
-				"class_name" => DomainSSLGroup::class,
-				"buildSearchQuery" => function ($route, $action, $query){
-					$query
-						->orderBy("name", "asc")
-					;
-					return $query;
-				},
-				"fields" =>
-				[
-					"id",
-					"name",
-				],
-			]),
-			
 		];
 	}
 

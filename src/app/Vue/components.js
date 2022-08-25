@@ -26,6 +26,7 @@ import ApplicationsEditPage from './pages/Applications/ApplicationsEditPage.vue'
 import ApplicationsPage from './pages/Applications/ApplicationsPage.vue';
 import ApplicationTotalPatches from './pages/Applications/ApplicationTotalPatches.vue';
 import DomainsPage from './pages/Domains/DomainsPage.vue';
+import DomainsSSLGroupPage from './pages/DomainsSSLGroup/DomainsSSLGroupPage.vue';
 import MainPage from './pages/Main/MainPage.vue';
 import ModificatorsPage from './pages/Modificators/ModificatorsPage.vue';
 import NginxFilesPage from './pages/NginxFiles/NginxFilesPage.vue';
@@ -77,6 +78,7 @@ export default {
     "ApplicationsPage": ApplicationsPage,
     "ApplicationTotalPatches": ApplicationTotalPatches,
     "DomainsPage": DomainsPage,
+    "DomainsSSLGroupPage": DomainsSSLGroupPage,
     "MainPage": MainPage,
     "ModificatorsPage": ModificatorsPage,
     "NginxFilesPage": NginxFilesPage,

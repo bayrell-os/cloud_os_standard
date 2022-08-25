@@ -24,6 +24,7 @@ import { TemplatesListPageState } from '@/pages/Templates/TemplatesListPageState
 import { TemplatesViewPageState } from '@/pages/Templates/TemplatesViewPageState'
 import { TemplateEditPageState } from '@/pages/Templates/TemplateEditPageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
+import { DomainsSSLGroupPageState } from '@/pages/DomainsSSLGroup/DomainsSSLGroupPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
 import { UsersPageState } from '@/pages/Settings/Users/UsersPageState'
@@ -46,6 +47,7 @@ export class AppState
 	TemplatesViewPage: TemplatesViewPageState = new TemplatesViewPageState();
 	TemplateEditPage: TemplateEditPageState = new TemplateEditPageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
+	DomainsSSLGroupPage: DomainsSSLGroupPageState = new DomainsSSLGroupPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();
 	GroupsPage: GroupsPageState = new GroupsPageState();

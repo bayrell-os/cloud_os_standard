@@ -23,14 +23,14 @@ namespace App\Models;
 use TinyORM\Model;
 
 
-class Domain extends Model
+class DomainSSLGroup extends Model
 {
 	/**
 	 * Return table name
 	 */
 	static function getTableName()
 	{
-		return "domains";
+		return "domains_ssl_groups";
 	}
 	
 	
@@ -53,11 +53,9 @@ class Domain extends Model
 		return
 		[
 			"id" => [],
-			"domain_name" => [],
-			"nginx_template" => [],
-			"space_id" => [],
-			"ssl_id" => [],
-			"enable_auth" => [],
+			"name" => [],
+			"public_key" => [],
+			"private_key" => [],
 			"gmtime_created" => [],
 			"gmtime_updated" => [],
 		];
@@ -90,20 +88,6 @@ class Domain extends Model
 	 */
 	public function save($connection_name = "default")
 	{
-		if ($this->nginx_template == "")
-		{
-			$nginx_template = "";
-			$nginx_template .= "server {\n";
-			$nginx_template .= "  listen 80;\n";
-			$nginx_template .= "  server_name %DOMAIN_NAME%;\n";
-			$nginx_template .= "  root /var/www/html;\n";
-			$nginx_template .= "  index index.php index.html;\n";
-			$nginx_template .= "  autoindex off;\n";
-			$nginx_template .= "  %ROUTES%\n";
-			$nginx_template .= "  %SSL%\n";
-			$nginx_template .= "}";
-			$this->nginx_template = $nginx_template;
-		}
 		return parent::save($connection_name);
 	}
 	
