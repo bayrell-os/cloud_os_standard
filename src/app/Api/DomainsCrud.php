@@ -53,15 +53,19 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 					"domain_name",
 					"nginx_template",
 					"space_id",
-					"enable_auth",
+					"ssl_id",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "domain_name", "can_create" => true ]),
+			new ReadOnly([ "api_name" => "space_id" ]),
+			new ReadOnly([ "api_name" => "ssl_id" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 			new Nullable([ "api_name" => "space_id" ]),
+			new Nullable([ "api_name" => "ssl_id" ]),
 			
 			new Dictionary([
 				"api_name" => "spaces",

@@ -20,7 +20,7 @@
 
 namespace App\Api;
 
-use App\Models\SpaceDomain;
+use App\Models\Domain;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -28,62 +28,90 @@ use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\Dictionary;
 use TinyPHP\Rules\JsonField;
 use TinyPHP\Rules\ReadOnly;
+use TinyPHP\Exception\ItemNotFoundException;
 
 
 class SpacesDomainsCrud extends \TinyPHP\ApiCrudRoute
-{
-	var $class_name = SpaceDomain::class;
+{   
+	var $class_name = Domain::class;
 	var $api_name = "spaces_domains";
-    
+	
+	function actionSearch(){}
+	function actionGetById(){}
+	
 	
 	/**
-	 * Get rules
+	 * Do create
 	 */
-	function getRules()
+	function actionCreate()
 	{
-		return
-		[
-			new AllowFields
-			([
-				"fields" =>
-				[
-					"space_id",
-					"domain_name",
-					"gmtime_created",
-					"gmtime_updated",
-				]
-			]),
-			new ReadOnly(["api_name"=>"space_id"]),
-
-		];
+		$this->initUpdateData("actionCreate");
+		
+		$domain_name = isset($this->update_data["domain_name"])
+			? $this->update_data["domain_name"] : ""
+		;
+		$domain = Domain::selectQuery()
+			->where("domain_name", $domain_name)
+			->where("space_id", null)
+			->one()
+		;
+		
+		if (!$domain)
+		{
+			throw new ItemNotFoundException("Domain");
+		}
+		
+		$space_id = $this->container->post("space_id");
+		
+		$domain->space_id = $space_id;
+		$domain->save();
+		
+		$domain = $domain->toArray(["space_id", "domain_name"]);
+		
+		$this->api_result->result["new_data"] = $domain;
+		$this->api_result->success( $result, "Ok" );
 	}
 	
 	
 	
 	/**
-	 * Build search Query
+	 * Do update
 	 */
-	function buildSearchQuery($action, $query)
+	function actionUpdate()
 	{
-		$query = parent::buildSearchQuery($action, $query);
-		
-		$space_id = $this->container->post("space_id");
-		$query->where("t.space_id", $space_id);
-		
-		return $query;
+		throw new \Exception("Update is not allowed");
 	}
 	
 	
 	
 	/**
-	 * Process before
+	 * Do delete
 	 */
-	function processBefore($action)
+	function actionDelete()
 	{
-		parent::processBefore($action);
+		$pk = $this->container->post("pk");
 		
-		$space_id = $this->container->post("space_id");
-		$this->item->space_id = $space_id;
+		$space_id = isset($pk["space_id"]) ? $pk["space_id"] : null;
+		$domain_name = isset($pk["domain_name"]) ? $pk["domain_name"] : null;
+		
+		$domain = Domain::selectQuery()
+			->where("domain_name", $domain_name)
+			->where("space_id", $space_id)
+			->one()
+		;
+		
+		if (!$domain)
+		{
+			throw new ItemNotFoundException("Domain");
+		}
+		
+		$domain->space_id = null;
+		$domain->save();
+		
+		$domain = $domain->toArray(["space_id", "domain_name"]);
+		
+		$this->api_result->result["old_data"] = $domain;
+		$this->api_result->success( $result, "Ok" );
 	}
 	
 }

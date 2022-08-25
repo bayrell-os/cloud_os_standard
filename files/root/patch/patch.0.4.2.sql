@@ -46,6 +46,41 @@ CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versi
 COMMIT;
 
 
+-- Add table domains_ssl_groups
+
+CREATE TABLE "domains_ssl_groups" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" text NOT NULL,
+  "pub_key" text NOT NULL,
+  "private_key" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+
+
+-- Add space_id, ssl_id to domains
+
+BEGIN;
+CREATE TABLE "adminer_domains" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "space_id" integer NULL,
+  "ssl_id" integer NULL,
+  "domain_name" text NOT NULL,
+  "nginx_template" text NOT NULL DEFAULT '',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  FOREIGN KEY ("space_id") REFERENCES "spaces" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("ssl_id") REFERENCES "domains_ssl_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+);
+INSERT INTO "adminer_domains" ("id", "domain_name", "nginx_template", "gmtime_created", "gmtime_updated") SELECT "id", "domain_name", "nginx_template", "gmtime_created", "gmtime_updated" FROM "domains";
+DROP TABLE "domains";
+ALTER TABLE "adminer_domains" RENAME TO "domains";
+CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
+COMMIT;
+
+
+
 -- Add spaces tables
 
 
@@ -60,15 +95,6 @@ CREATE TABLE "spaces_roles" (
 CREATE INDEX "spaces_roles_name" ON "spaces_roles" ("name");
 CREATE UNIQUE INDEX "spaces_roles_space_id_name" ON "spaces_roles" ("space_id", "name");
 
-
-CREATE TABLE "spaces_domains" (
-  "space_id" integer NOT NULL,
-  "domain_name" text NOT NULL,
-  "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL
-);
-CREATE UNIQUE INDEX "spaces_domains_domain_name" ON "spaces_domains" ("domain_name");
-CREATE INDEX "spaces_domains_space_id" ON "spaces_domains" ("space_id");
 
 
 CREATE TABLE "spaces_users" (

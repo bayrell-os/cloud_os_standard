@@ -70,12 +70,16 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "domains",
 				"class_name" => Domain::class,
-				"buildSearchQuery" => function ($route, $action, $query){
+				"actions" => ["actionGetById"],
+				
+				"buildSearchQuery" => function ($route, $action, $query)
+				{
 					$query
 						->orderBy("domain_name", "asc")
 					;
 					return $query;
 				},
+				
 				"fields" =>
 				[
 					"id",
@@ -87,6 +91,8 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "spaces_routes",
 				"class_name" => Route::class,
+				"actions" => ["actionGetById"],
+				
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{
 					$space_id = $rule->route->item->id;
@@ -96,6 +102,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 					;
 					return $query;
 				},
+				
 				"fromDatabase" => function ($rule, $action, $item)
 				{
 					$item["protocol_data"] = json_decode($item["protocol_data"], true);
@@ -106,7 +113,9 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 			/* Load spaces domains */
 			new Dictionary([
 				"api_name" => "spaces_domains",
-				"class_name" => SpaceDomain::class,
+				"class_name" => Domain::class,
+				"actions" => ["actionGetById"],
+				
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{
 					$space_id = $rule->route->item->id;
@@ -122,6 +131,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "spaces_roles",
 				"class_name" => SpaceRole::class,
+				"actions" => ["actionGetById"],
 				
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{
@@ -184,6 +194,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "spaces_users",
 				"class_name" => SpaceUser::class,
+				"actions" => ["actionGetById"],
 				
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{

@@ -29,6 +29,7 @@ export class Domain extends CrudItem
 	domain_name: string;
 	nginx_template: string;
 	space_id: number | null;
+	ssl_id: number | null;
 	enable_auth: number;
 	gmtime_created: string;
 	gmtime_updated: string;
@@ -45,6 +46,7 @@ export class Domain extends CrudItem
 		this.domain_name = "";
 		this.nginx_template = "";
 		this.space_id = null;
+		this.ssl_id = null;
 		this.enable_auth = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
@@ -64,6 +66,7 @@ export class Domain extends CrudItem
 		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "nginx_template") this.nginx_template = String(value);
 		else if (key == "space_id") this.space_id = notNull(value) ? Number(value) : null;
+		else if (key == "ssl_id") this.ssl_id = notNull(value) ? Number(value) : null;
 		else if (key == "enable_auth") this.enable_auth = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
@@ -90,7 +93,7 @@ export class DomainsPageState extends CrudState<Domain>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Domain;
 	}
@@ -110,7 +113,7 @@ export class DomainsPageState extends CrudState<Domain>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -132,17 +135,12 @@ export class DomainsPageState extends CrudState<Domain>
 		space_id.component = "Select";
 		this.fields.push( deepClone(space_id) );
 		
-		/* Space id field */
-		let enable_auth = new FieldInfo();
-		enable_auth.name = "enable_auth";
-		enable_auth.label = "Enable auth";
-		enable_auth.component = "Select";
-		enable_auth.options =
-		[
-			new SelectOption().assignValues({"id": "0", "value": "No"}),
-			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
-		];
-		this.fields.push( deepClone(enable_auth) );
+		/* SSL id field */
+		let ssl_id = new FieldInfo();
+		ssl_id.name = "ssl_id";
+		ssl_id.label = "SSL";
+		ssl_id.component = "Select";
+		this.fields.push( deepClone(ssl_id) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -158,17 +156,15 @@ export class DomainsPageState extends CrudState<Domain>
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
-		this.form_save.fields.push( deepClone(space_id) );
-		this.form_save.fields.push( deepClone(enable_auth) );
 		
 		/* Table fields */
 		domain_name.component = "Label";
-		enable_auth.component = "SelectLabel";
+		ssl_id.component = "SelectLabel";
 		space_id.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(space_id) );
-		this.fields_table.push( deepClone(enable_auth) );
+		this.fields_table.push( deepClone(ssl_id) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -219,7 +215,7 @@ export class DomainsPageState extends CrudState<Domain>
 	{
 		await super.after(kind, params);
 		
-		if (["listPageLoadData"].indexOf(kind) >= 0)
+		if (["onLoadPageList"].indexOf(kind) >= 0)
 		{
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
