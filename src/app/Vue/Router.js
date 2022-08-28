@@ -66,13 +66,13 @@ const routes =
 	{
 		path: '/modificators/add/',
 		name: 'app:modificators:add',
-		component: components.ModificatorsPage,
+		component: components.ModificatorSavePage,
 		props: { store_path: ["ModificatorsPage"], page_action: "add" },
 	},
 	{
 		path: '/modificators/edit/:id/',
 		name: 'app:modificators:edit',
-		component: components.ModificatorsPage,
+		component: components.ModificatorSavePage,
 		props: { store_path: ["ModificatorsPage"], page_action: "edit" },
 	},
 	

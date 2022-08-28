@@ -66,7 +66,7 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Modificator;
 	}
@@ -100,7 +100,7 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();

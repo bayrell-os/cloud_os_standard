@@ -22,7 +22,7 @@
 
 
 <template>
-	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action"></CrudList>
+	<CrudSave v-bind:store_path="store_path" v-bind:page_action="page_action"></CrudSave>
 </template>
 
 
@@ -30,7 +30,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { CrudList } from "vue-helper/Crud/CrudList.vue";
+import { CrudSave } from "vue-helper/Crud/CrudSave.vue";
 
 
 /**
@@ -47,11 +47,12 @@ export const Modificators =
 	{
 	},
 	mounted: function () {
-		let page_title = this.model.constructor.getMessage("list_title", null);
+		let item = this.model.form_save.item;
+		let page_title = this.model.constructor.getMessage("save_title", item);
 		this.setPageTitle(page_title);
 	},
 }
-componentExtend(Modificators, CrudList);
+componentExtend(Modificators, CrudSave);
 export default defineComponent(Modificators);
 
 </script>

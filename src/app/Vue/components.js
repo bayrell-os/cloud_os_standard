@@ -29,6 +29,7 @@ import DomainsPage from './pages/Domains/DomainsPage.vue';
 import DomainsSSLGroupPage from './pages/DomainsSSLGroup/DomainsSSLGroupPage.vue';
 import MainPage from './pages/Main/MainPage.vue';
 import ModificatorsPage from './pages/Modificators/ModificatorsPage.vue';
+import ModificatorSavePage from './pages/Modificators/ModificatorSavePage.vue';
 import NginxFilesPage from './pages/NginxFiles/NginxFilesPage.vue';
 import NotFoundPage from './pages/NotFound/NotFoundPage.vue';
 import RoutesPage from './pages/Routes/RoutesPage.vue';
@@ -83,6 +84,7 @@ export default {
     "DomainsSSLGroupPage": DomainsSSLGroupPage,
     "MainPage": MainPage,
     "ModificatorsPage": ModificatorsPage,
+    "ModificatorSavePage": ModificatorSavePage,
     "NginxFilesPage": NginxFilesPage,
     "NotFoundPage": NotFoundPage,
     "RoutesPage": RoutesPage,

@@ -162,7 +162,11 @@ export const ServicesPage =
 				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
 			}
 		}
-	}
+	},
+	mounted: function () {
+		let page_title = this.model.constructor.getMessage("list_title", null);
+		this.setPageTitle(page_title);
+	},
 }
 
 componentExtend(ServicesPage, CrudList);

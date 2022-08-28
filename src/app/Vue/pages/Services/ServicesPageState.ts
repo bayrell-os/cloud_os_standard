@@ -107,7 +107,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Service;
 	}
@@ -155,7 +155,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let service_id = new FieldInfo();
@@ -350,7 +350,11 @@ export class ServicesPageState extends CrudState<Service>
 		
 		/* Set result */
 		this.items = new Array();
-		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		if (
+			response &&
+			typeof(response.data) == "object" &&
+			response.data.error.code == 1
+		)
 		{
 			this.addItems(response.data.result.items);
 			
@@ -405,7 +409,11 @@ export class ServicesPageState extends CrudState<Service>
 		let response:AxiosResponse | null = await this.getClass().apiStopForm(item);
 		this.dialog_stop.setAxiosResponse(response);
 		
-		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
+		if (
+			item && response &&
+			typeof(response.data) == "object" &&
+			response.data.error.code == 1
+		)
 		{
 			this.deleteItem(item);
 			/*model.updateItem(item, response.data.result.item);*/
