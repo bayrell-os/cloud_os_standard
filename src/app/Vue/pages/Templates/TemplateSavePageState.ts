@@ -18,69 +18,33 @@
 
 import axios, { AxiosResponse } from "axios";
 import { deepClone, responseOk } from "vue-helper";
-import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Template } from "./TemplatesListPageState";
+import { TemplateVersion } from "./TemplatesVersionsPageState";
 
 
-export class TemplateVersion extends CrudItem
+export class TemplateSavePageState extends CrudState<TemplateVersion>
 {
-	id: number;
 	template_id: number;
-	version: string;
-	content: string;
-	gmtime_created: string;
-	gmtime_updated: string;
+	template: Template | null;
+    
 	
-	
-	/**
-	 * Init
-	 */
-	init(params:any)
-	{
-		/* Init variables */
-		this.id = 0;
-		this.template_id = 0;
-		this.version = "";
-		this.content = "";
-		this.gmtime_created = "";
-		this.gmtime_updated = "";
-		
-		/* Init class */
-		super.init(params);
-	}
-	
-	
-	/**
-	 * Assign value
-	 */
-	assignValue(key:string, value:any)
-	{
-		if (key == "id") this.id = Number(value);
-		else if (key == "template_id") this.template_id = Number(value);
-		else if (key == "version") this.version = String(value);
-		else if (key == "content") this.content = String(value);
-		else if (key == "gmtime_created") this.gmtime_created = String(value);
-		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
-		else super.assignValue(key, value);
-	}
-	
-}
-
-
-
-export class TemplatesViewPageState extends CrudState<TemplateVersion>
-{
-	template: Template | null = null;
-	template_id: number;
-	
-	
-	/**
+    /**
 	 * Returns class
 	 */
-	getClass(): typeof TemplatesViewPageState
+	getClass(): typeof TemplateSavePageState
 	{
-		return this.constructor as typeof TemplatesViewPageState;
+		return this.constructor as typeof TemplateSavePageState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	static getClassItem(): Function
+	{
+		return TemplateVersion;
 	}
 	
 	
@@ -90,17 +54,8 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	 */
 	init(params:any)
 	{
+		/* Init class */
 		super.init(params);
-	}
-	
-	
-	
-	/**
-	 * Returns new item
-	 */
-	static createNewItem(): TemplateVersion
-	{
-		return new TemplateVersion();
 	}
 	
 	
@@ -121,7 +76,6 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "app:templates_versions",
 		};
 	}
 	
@@ -130,7 +84,7 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -193,19 +147,13 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: TemplateVersion | null): string
+	getItemName(item: TemplateVersion | null): string
 	{
-		return (item) ? item.version : "";
-	}
-	
-	
-	
-	/**
-	 * Returns item id
-	 */
-	static getItemId(item: TemplateVersion | null): string
-	{
-		return (item != null) ? String(item.id) : "";
+		if (item && this.template)
+		{
+			return this.template.name + " " + item.version;
+		}
+		return "";
 	}
 	
 	
@@ -213,15 +161,15 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: any | null): string
+	getMessage(message_type: string, item: any | null): string
 	{
-		if (message_type == "list_title")
+		if (message_type == "item")
 		{
-			return "Template versions";
+			return "template";
 		}
-		else if (message_type == "item")
+		else if (message_type == "add_title")
 		{
-			return "template version";
+			return "Import template";
 		}
 		return super.getMessage(message_type, item);
 	}
@@ -229,24 +177,21 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Page data
+	 * Return api create url
 	 */
-	async onRouteUpdate(route: any)
+	static getApiUrlCreate()
 	{
-		this.template_id = Number(route.to.params.template_id);
-		await super.onRouteUpdate(route);
+		return "/api/template/import/";
 	}
 	
 	
 	
 	/**
-	 * Search filter
+	 * Return api update url
 	 */
-	getSearchData(route: any)
+	static getApiUrlUpdate(item: TemplateVersion)
 	{
-		let res: any = super.getSearchData(route);
-		res["template_id"] = this.template_id;
-		return res;
+		return "/api/template/edit/" + item.id + "/";
 	}
 	
 	
@@ -256,10 +201,12 @@ export class TemplatesViewPageState extends CrudState<TemplateVersion>
 	 */
 	async after(kind: string, params: Record<string, any>)
 	{
-		await super.after(kind, params);
+		super.after(kind, params);
 		
-		if (kind == "onLoadPageList")
+		if (kind == "onLoadPageSave")
 		{
+			this.template = null;
+			
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{

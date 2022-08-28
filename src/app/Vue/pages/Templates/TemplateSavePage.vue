@@ -22,7 +22,7 @@
 
 
 <template>
-	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudSave v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
 		<template v-slot:component_crud_save_before>
 			<div class="template_view_page__table_before" v-if="model.template != null">
@@ -41,7 +41,7 @@
 			</div>
 		</template>
 		
-	</CrudList>
+	</CrudSave>
 </template>
 
 
@@ -49,7 +49,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, deepClone, onRouteUpdate } from "vue-helper";
-import { CrudList } from "vue-helper/Crud/CrudList.vue";
+import { CrudSave } from "vue-helper/Crud/CrudSave.vue";
 import { CRUD_EVENTS } from "vue-helper/Crud/CrudState";
 
 
@@ -84,9 +84,14 @@ export const TemplateEditPage =
 				});
 			}
 		},
-	}
+	},
+	mounted: function () {
+		let item = this.model.form_save.item_original;
+		let page_title = this.model.getMessage("save_title", item);
+		this.setPageTitle(page_title);
+	},
 }
-componentExtend(TemplateEditPage, CrudList);
+componentExtend(TemplateEditPage, CrudSave);
 export default defineComponent(TemplateEditPage);
 
 </script>

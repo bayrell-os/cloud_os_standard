@@ -178,7 +178,7 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: NginxFile | null): string
+	getItemName(item: NginxFile | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -186,19 +186,9 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: NginxFile | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: NginxFile | null): string
+	getMessage(message_type: string, item: NginxFile | null): string
 	{
 		if (message_type == "list_title")
 		{

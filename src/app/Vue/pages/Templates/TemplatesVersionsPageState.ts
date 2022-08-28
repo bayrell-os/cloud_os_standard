@@ -21,31 +21,66 @@ import { deepClone, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Template } from "./TemplatesListPageState";
-import { TemplateVersion } from "./TemplatesViewPageState";
 
 
-export class TemplateEditPageState extends CrudState<TemplateVersion>
+export class TemplateVersion extends CrudItem
 {
+	id: number;
 	template_id: number;
-	template: Template | null;
-    
-	
-    /**
-	 * Returns class
-	 */
-	getClass(): typeof TemplateEditPageState
-	{
-		return this.constructor as typeof TemplateEditPageState;
-	}
-	
+	version: string;
+	content: string;
+	gmtime_created: string;
+	gmtime_updated: string;
 	
 	
 	/**
-	 * Returns class item
+	 * Init
 	 */
-	getClassItem(): Function
+	init(params:any)
 	{
-		return TemplateVersion;
+		/* Init variables */
+		this.id = 0;
+		this.template_id = 0;
+		this.version = "";
+		this.content = "";
+		this.gmtime_created = "";
+		this.gmtime_updated = "";
+		
+		/* Init class */
+		super.init(params);
+	}
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "id") this.id = Number(value);
+		else if (key == "template_id") this.template_id = Number(value);
+		else if (key == "version") this.version = String(value);
+		else if (key == "content") this.content = String(value);
+		else if (key == "gmtime_created") this.gmtime_created = String(value);
+		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
+		else super.assignValue(key, value);
+	}
+	
+}
+
+
+
+export class TemplatesVersionsPageState extends CrudState<TemplateVersion>
+{
+	template: Template | null = null;
+	template_id: number;
+	
+	
+	/**
+	 * Returns class
+	 */
+	getClass(): typeof TemplatesVersionsPageState
+	{
+		return this.constructor as typeof TemplatesVersionsPageState;
 	}
 	
 	
@@ -55,8 +90,17 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	 */
 	init(params:any)
 	{
-		/* Init class */
 		super.init(params);
+	}
+	
+	
+	
+	/**
+	 * Returns new item
+	 */
+	static createNewItem(): TemplateVersion
+	{
+		return new TemplateVersion();
 	}
 	
 	
@@ -77,6 +121,7 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	static getRouteNames(): Record<string, string>
 	{
 		return {
+			"list": "app:templates_versions",
 		};
 	}
 	
@@ -85,7 +130,7 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -124,7 +169,12 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 				"type": "default",
 				"label": "Edit",
 				"action": "edit",
-				"route": "app:templates:edit"
+				"route": "app:templates:edit",
+				"params": (res: any, component: any, button: any) => {
+					return {
+						"id": component.crud_item.id,
+					};
+				},
 			}),
 			new CrudButton().assignValues({
 				"type": "danger",
@@ -148,7 +198,7 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: TemplateVersion | null): string
+	getItemName(item: TemplateVersion | null): string
 	{
 		return (item) ? item.version : "";
 	}
@@ -156,27 +206,17 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: TemplateVersion | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: any | null): string
+	getMessage(message_type: string, item: any | null): string
 	{
-		if (message_type == "item")
+		if (message_type == "list_title")
+		{
+			return "Template versions";
+		}
+		else if (message_type == "item")
 		{
 			return "template version";
-		}
-		else if (message_type == "add_title")
-		{
-			return "Import template";
 		}
 		return super.getMessage(message_type, item);
 	}
@@ -184,21 +224,24 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Return api create url
+	 * Page data
 	 */
-	static getApiUrlCreate()
+	async onRouteUpdate(route: any)
 	{
-		return "/api/template/import/";
+		this.template_id = Number(route.to.params.template_id);
+		await super.onRouteUpdate(route);
 	}
 	
 	
 	
 	/**
-	 * Return api update url
+	 * Search filter
 	 */
-	static getApiUrlUpdate(item: TemplateVersion)
+	getSearchData(route: any)
 	{
-		return "/api/template/edit/" + encodeURIComponent(this.getItemId(item)) + "/";
+		let res: any = super.getSearchData(route);
+		res["template_id"] = this.template_id;
+		return res;
 	}
 	
 	
@@ -208,9 +251,9 @@ export class TemplateEditPageState extends CrudState<TemplateVersion>
 	 */
 	async after(kind: string, params: Record<string, any>)
 	{
-		super.after(kind, params);
+		await super.after(kind, params);
 		
-		if (kind == "editPageLoadData")
+		if (kind == "onLoadPageList")
 		{
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))

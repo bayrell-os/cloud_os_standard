@@ -21,7 +21,6 @@ import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { Template } from "../Templates/TemplatesListPageState";
-import { TemplatesViewPageState } from "../Templates/TemplatesViewPageState";
 
 
 export class Application extends CrudItem
@@ -266,7 +265,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Application | null): string
+	getItemName(item: Application | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -274,19 +273,9 @@ export class ApplicationsPageState extends CrudState<Application>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Application | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Application | null): string
+	getMessage(message_type: string, item: Application | null): string
 	{
 		if (message_type == "list_title")
 		{
@@ -371,7 +360,7 @@ export class ApplicationsPageState extends CrudState<Application>
 		let template_id: number = Number(this.form_save.item.template_id);
 		
 		if (template_id == 0) return;
-		
+		/*
 		let response:AxiosResponse | null = await TemplatesViewPageState.processLoadListApi({
 			"template_id": template_id,
 		});
@@ -392,7 +381,7 @@ export class ApplicationsPageState extends CrudState<Application>
 				field.options = deepClone(items);
 			});
 		}
-		
+		*/
 	}
 	
 }

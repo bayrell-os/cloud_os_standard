@@ -188,7 +188,7 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Space | null): string
+	getItemName(item: Space | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -196,19 +196,9 @@ export class SpacesPageState extends CrudState<Space>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Space | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Space | null): string
+	getMessage(message_type: string, item: Space | null): string
 	{
 		if (message_type == "list_title")
 		{

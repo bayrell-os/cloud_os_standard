@@ -27,7 +27,7 @@
 		<template v-slot:crud_after>
 			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
 				<template v-slot:text>
-					Compose file {{ model.constructor.getItemName(model.dialog_compose.item) }}?
+					Compose file {{ model.getItemName(model.dialog_compose.item) }}?
 				</template>
 				<template v-slot:buttons>
 					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
@@ -76,7 +76,7 @@ export const YamlFilesPage =
 		}
 	},
 	mounted: function () {
-		let page_title = this.model.constructor.getMessage("list_title", null);
+		let page_title = this.model.getMessage("list_title", null);
 		setPageTitle(page_title);
 	},
 }

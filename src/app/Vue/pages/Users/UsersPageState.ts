@@ -209,7 +209,7 @@ export class UsersPageState extends CrudState<User>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: User | null): string
+	getItemName(item: User | null): string
 	{
 		return (item) ? item.login : "";
 	}
@@ -217,19 +217,9 @@ export class UsersPageState extends CrudState<User>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: User | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: User | null): string
+	getMessage(message_type: string, item: User | null): string
 	{
 		if (message_type == "list_title")
 		{

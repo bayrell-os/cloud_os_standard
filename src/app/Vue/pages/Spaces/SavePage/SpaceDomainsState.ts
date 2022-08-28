@@ -122,6 +122,13 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
+		row_buttons.component_params.buttons = [
+			{
+				"action": "delete",
+				"type": "danger",
+				"label": "Delete",
+			}
+		];
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
@@ -138,7 +145,7 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: SpaceDomain | null): string
+	getItemName(item: SpaceDomain | null): string
 	{
 		return (item) ? item.domain_name : "";
 	}
@@ -146,19 +153,9 @@ export class SpaceDomainsState extends CrudState<SpaceDomain>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: SpaceDomain | null): string
-	{
-		return (item != null) ? String(item.domain_name) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: SpaceDomain | null): string
+	getMessage(message_type: string, item: SpaceDomain | null): string
 	{
 		if (message_type == "list_title")
 		{

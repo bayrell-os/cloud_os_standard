@@ -179,7 +179,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: YamlFile | null): string
+	getItemName(item: YamlFile | null): string
 	{
 		return (item) ? item.file_name : "";
 	}
@@ -189,7 +189,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: YamlFile | null): string
+	getMessage(message_type: string, item: YamlFile | null): string
 	{
 		if (message_type == "list_title")
 		{

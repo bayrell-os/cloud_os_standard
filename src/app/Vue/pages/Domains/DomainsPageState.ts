@@ -174,7 +174,7 @@ export class DomainsPageState extends CrudState<Domain>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Domain | null): string
+	getItemName(item: Domain | null): string
 	{
 		return (item) ? item.domain_name : "";
 	}
@@ -182,19 +182,9 @@ export class DomainsPageState extends CrudState<Domain>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Domain | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Domain | null): string
+	getMessage(message_type: string, item: Domain | null): string
 	{
 		if (message_type == "list_title")
 		{

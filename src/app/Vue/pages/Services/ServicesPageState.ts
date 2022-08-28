@@ -255,7 +255,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Service | null): string
+	getItemName(item: Service | null): string
 	{
 		return (item) ? item.service_name : "";
 	}
@@ -263,19 +263,9 @@ export class ServicesPageState extends CrudState<Service>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Service | null): string
-	{
-		return (item != null) ? String(item.service_id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Service | null): string
+	getMessage(message_type: string, item: Service | null): string
 	{
 		if (message_type == "list_title")
 		{
@@ -378,7 +368,7 @@ export class ServicesPageState extends CrudState<Service>
 	static getApiUrlStop(item: Service)
 	{
 		return "/api/" + this.getApiObjectName() + "/stop/" +
-			encodeURIComponent(this.getItemId(item)) + "/";
+			item.docker_name + "/";
 	}
 	
 	

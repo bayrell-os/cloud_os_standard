@@ -38,7 +38,7 @@
 		</template>
 		
 		<template v-slot:table_before>
-			<div class="template_view_page__table_before">
+			<div class="template_view_page__table_before" v-if="model.template != null">
 				<div class="template_view_page__table_before_row">
 					<label>Template:</label>
 					<div class="template_view_page__table_before_value">
@@ -84,7 +84,11 @@ export const TemplatesVersionsPage =
 				name: "app:templates"
 			});
 		},
-	}
+	},
+	mounted: function () {
+		let page_title = this.model.getMessage("list_title", null);
+		this.setPageTitle(page_title);
+	},
 }
 componentExtend(TemplatesVersionsPage, CrudList);
 export default defineComponent(TemplatesVersionsPage);

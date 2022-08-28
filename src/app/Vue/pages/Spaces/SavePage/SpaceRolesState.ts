@@ -149,7 +149,7 @@ export class SpaceRolesState extends CrudState<SpaceRole>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: SpaceRole | null): string
+	getItemName(item: SpaceRole | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -157,19 +157,9 @@ export class SpaceRolesState extends CrudState<SpaceRole>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: SpaceRole | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: SpaceRole | null): string
+	getMessage(message_type: string, item: SpaceRole | null): string
 	{
 		if (message_type == "list_title")
 		{

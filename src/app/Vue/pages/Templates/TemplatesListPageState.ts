@@ -119,7 +119,7 @@ export class TemplatesListPageState extends CrudState<Template>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -160,7 +160,7 @@ export class TemplatesListPageState extends CrudState<Template>
 				"route": "app:templates:view",
 				"params": (res: any, component: any, button: any) => {
 					return {
-						"template_id": (this.constructor as any).getItemId(component.crud_item),
+						"template_id": component.crud_item.id,
 					};
 				},
 			}),
@@ -188,7 +188,7 @@ export class TemplatesListPageState extends CrudState<Template>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Template | null): string
+	getItemName(item: Template | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -196,19 +196,9 @@ export class TemplatesListPageState extends CrudState<Template>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Template | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: any | null): string
+	getMessage(message_type: string, item: any | null): string
 	{
 		if (message_type == "list_title")
 		{

@@ -140,7 +140,7 @@ export class StacksPageState extends CrudState<Stack>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Stack | null): string
+	getItemName(item: Stack | null): string
 	{
 		return (item) ? item.stack_name : "";
 	}
@@ -148,19 +148,9 @@ export class StacksPageState extends CrudState<Stack>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Stack | null): string
-	{
-		return (item != null) ? String(item.stack_name) : "";
-	}
-	
-	 
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Stack | null): string
+	getMessage(message_type: string, item: Stack | null): string
 	{
 		if (message_type == "list_title")
 		{

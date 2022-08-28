@@ -164,7 +164,7 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: DomainSSLGroup | null): string
+	getItemName(item: DomainSSLGroup | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -172,19 +172,9 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: DomainSSLGroup | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: DomainSSLGroup | null): string
+	getMessage(message_type: string, item: DomainSSLGroup | null): string
 	{
 		if (message_type == "list_title")
 		{

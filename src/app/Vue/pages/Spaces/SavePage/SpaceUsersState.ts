@@ -179,7 +179,7 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: SpaceUser | null): string
+	getItemName(item: SpaceUser | null): string
 	{
 		return (item) ? String(item.user_login) : "";
 	}
@@ -187,19 +187,9 @@ export class SpaceUsersState extends CrudState<SpaceUser>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: SpaceUser | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: SpaceUser | null): string
+	getMessage(message_type: string, item: SpaceUser | null): string
 	{
 		if (message_type == "list_title")
 		{

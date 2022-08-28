@@ -178,7 +178,7 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Modificator | null): string
+	getItemName(item: Modificator | null): string
 	{
 		return (item) ? item.name : "";
 	}
@@ -186,19 +186,9 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	
 	
 	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Modificator | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	
-	
-	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Modificator | null): string
+	getMessage(message_type: string, item: Modificator | null): string
 	{
 		if (message_type == "list_title")
 		{

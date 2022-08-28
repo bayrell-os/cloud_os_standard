@@ -36,7 +36,7 @@ export const NginxFilesPage =
 	{
 	},
 	mounted: function () {
-		let page_title = this.model.constructor.getMessage("list_title", null);
+		let page_title = this.model.getMessage("list_title", null);
 		setPageTitle(page_title);
 	},
 }

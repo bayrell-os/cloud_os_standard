@@ -113,7 +113,13 @@ export const App =
 					"items":
 					[
 						{ "name": "app:applications", "title": "Applications" },
-						{ "name": "app:templates", "title": "Templates" },
+						{ "name": "app:templates", "title": "Templates",
+							"names": [
+								"app:templates:import",
+								"app:templates:view",
+								"app:templates:edit",
+							],
+						},
 						{ "name": "app:modificators", "title": "Modificators" },
 					]
 				},

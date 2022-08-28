@@ -98,10 +98,10 @@
 		</CrudList>
 		<Dialog v-bind:store_path="store_path.concat('dialog_stop')">
 			<template v-slot:title>
-				{{ model.constructor.getMessage("dialog_stop_title", model.dialog_stop.item) }}
+				{{ model.getMessage("dialog_stop_title", model.dialog_stop.item) }}
 			</template>
 			<template v-slot:text>
-				{{ model.constructor.getMessage("dialog_stop_text", model.dialog_stop.item) }}
+				{{ model.getMessage("dialog_stop_text", model.dialog_stop.item) }}
 			</template>
 			<template v-slot:buttons>
 				<Button type="danger" @click="onDialogFormButtonClick('stop_yes')">Yes</Button>
@@ -164,7 +164,7 @@ export const ServicesPage =
 		}
 	},
 	mounted: function () {
-		let page_title = this.model.constructor.getMessage("list_title", null);
+		let page_title = this.model.getMessage("list_title", null);
 		this.setPageTitle(page_title);
 	},
 }

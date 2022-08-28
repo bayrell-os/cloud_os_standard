@@ -90,20 +90,20 @@ const routes =
 	{
 		path: '/templates/view/:template_id/',
 		name: 'app:templates:view',
-		component: components.TemplatesViewPage,
-		props: { store_path: ["TemplatesViewPage"], page_action: "list" },
+		component: components.TemplatesVersionsPage,
+		props: { store_path: ["TemplatesVersionsPage"], page_action: "list" },
 	},
 	{
 		path: '/templates/import/',
 		name: 'app:templates:import',
-		component: components.TemplateEditPage,
-		props: { store_path: ["TemplateEditPage"], page_action: "add" },
+		component: components.TemplateSavePage,
+		props: { store_path: ["TemplateSavePage"], page_action: "add" },
 	},
 	{
 		path: '/templates/edit/:id/',
 		name: 'app:templates:edit',
-		component: components.TemplateEditPage,
-		props: { store_path: ["TemplateEditPage"], page_action: "edit" },
+		component: components.TemplateSavePage,
+		props: { store_path: ["TemplateSavePage"], page_action: "edit" },
 	},
 	
 	/* Domains */

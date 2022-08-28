@@ -32,7 +32,6 @@ export class Route extends CrudItem
 	route: string;
 	docker_name: string;
 	target_port: number;
-	route_prefix: string;
 	layer_uid: string;
 	gmtime_created: string;
 	gmtime_updated: string;
@@ -52,7 +51,6 @@ export class Route extends CrudItem
 		this.route = "";
 		this.docker_name = "";
 		this.target_port = 0;
-		this.route_prefix = "";
 		this.layer_uid = "";
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
@@ -85,7 +83,6 @@ export class Route extends CrudItem
 		else if (key == "domain_name") this.domain_name = String(value);
 		else if (key == "route") this.route = String(value);
 		else if (key == "docker_name") this.docker_name = String(value);
-		else if (key == "route_prefix") this.route_prefix = String(value);
 		else if (key == "layer_uid") this.layer_uid = String(value);
 		else if (key == "target_port") this.target_port = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
@@ -276,27 +273,17 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Route | null): string
+	getItemName(item: Route | null): string
 	{
-		return (item) ? item.domain_name : "";
+		return (item) ? item.domain_name + item.route : "";
 	}
 	
 	
-	
-	/**
-	 * Returns item id
-	 */
-	static getItemId(item: Route | null): string
-	{
-		return (item != null) ? String(item.id) : "";
-	}
-	
-	 
 	
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Route | null): string
+	getMessage(message_type: string, item: Route | null): string
 	{
 		if (message_type == "list_title")
 		{

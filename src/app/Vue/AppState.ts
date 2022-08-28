@@ -21,8 +21,8 @@ import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageStat
 import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
 import { ModificatorsPageState } from '@/pages/Modificators/ModificatorsPageState'
 import { TemplatesListPageState } from '@/pages/Templates/TemplatesListPageState'
-import { TemplatesViewPageState } from '@/pages/Templates/TemplatesViewPageState'
-import { TemplateEditPageState } from '@/pages/Templates/TemplateEditPageState'
+import { TemplatesVersionsPageState } from '@/pages/Templates/TemplatesVersionsPageState'
+import { TemplateSavePageState } from '@/pages/Templates/TemplateSavePageState'
 import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { DomainsSSLGroupPageState } from '@/pages/DomainsSSLGroup/DomainsSSLGroupPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
@@ -44,8 +44,8 @@ export class AppState
 	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
 	ModificatorsPage: ModificatorsPageState = new ModificatorsPageState();
 	TemplatesListPage: TemplatesListPageState = new TemplatesListPageState();
-	TemplatesViewPage: TemplatesViewPageState = new TemplatesViewPageState();
-	TemplateEditPage: TemplateEditPageState = new TemplateEditPageState();
+	TemplatesVersionsPage: TemplatesVersionsPageState = new TemplatesVersionsPageState();
+	TemplateSavePage: TemplateSavePageState = new TemplateSavePageState();
 	DomainsPage: DomainsPageState = new DomainsPageState();
 	DomainsSSLGroupPage: DomainsSSLGroupPageState = new DomainsSSLGroupPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();

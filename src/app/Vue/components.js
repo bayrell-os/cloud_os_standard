@@ -43,9 +43,9 @@ import SpaceUsers from './pages/Spaces/SavePage/SpaceUsers.vue';
 import SpaceListPage from './pages/Spaces/SpaceListPage.vue';
 import SpaceSavePage from './pages/Spaces/SpaceSavePage.vue';
 import StacksPage from './pages/Stacks/StacksPage.vue';
-import TemplateEditPage from './pages/Templates/TemplateEditPage.vue';
+import TemplateSavePage from './pages/Templates/TemplateSavePage.vue';
 import TemplatesListPage from './pages/Templates/TemplatesListPage.vue';
-import TemplatesViewPage from './pages/Templates/TemplatesViewPage.vue';
+import TemplatesVersionsPage from './pages/Templates/TemplatesVersionsPage.vue';
 import UsersPage from './pages/Users/UsersPage.vue';
 import YamlFileSavePage from './pages/YamlFiles/YamlFileSavePage.vue';
 import YamlFilesPage from './pages/YamlFiles/YamlFilesPage.vue';
@@ -98,9 +98,9 @@ export default {
     "SpaceListPage": SpaceListPage,
     "SpaceSavePage": SpaceSavePage,
     "StacksPage": StacksPage,
-    "TemplateEditPage": TemplateEditPage,
+    "TemplateSavePage": TemplateSavePage,
     "TemplatesListPage": TemplatesListPage,
-    "TemplatesViewPage": TemplatesViewPage,
+    "TemplatesVersionsPage": TemplatesVersionsPage,
     "UsersPage": UsersPage,
     "YamlFileSavePage": YamlFileSavePage,
     "YamlFilesPage": YamlFilesPage,

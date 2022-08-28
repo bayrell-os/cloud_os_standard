@@ -17,7 +17,12 @@
 -->
 
 <style lang="scss">
-
+.space_users_page__search_user{
+	display: flex;
+	input{
+		width: 150px;
+	}
+}
 </style>
 
 
@@ -28,7 +33,7 @@
 				width="800px" buttons="false"
 			>
 				<template v-slot:title>
-					{{ model.constructor.getMessage("form_title",
+					{{ model.getMessage("form_title",
 						model.form_save.item_original
 					) }}
 				</template>
@@ -42,7 +47,7 @@
 							>
 								<div class="crud_form__row_label">Roles</div>
 								<div class="crud_form__row_value">
-									<div class="groups_page__search_user">
+									<div class="space_users_page__search_user">
 										<Input name="user_name"
 											:store_path="store_path.concat('add_role_name')"
 										/>
