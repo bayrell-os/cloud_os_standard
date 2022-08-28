@@ -83,4 +83,17 @@ class SpaceRole extends Model
 		return true;
 	}
 	
+	
+	
+	/**
+	 * Save the model to the database.
+	 */
+	public function save($connection_name = 'default')
+	{
+		if ($this->name > "" && $this->name[0] != "@")
+		{
+			$this->name = "@" . $this->name;
+		}
+		return parent::save($connection_name);
+	}
 }

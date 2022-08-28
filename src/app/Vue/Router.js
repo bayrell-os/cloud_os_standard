@@ -122,6 +122,14 @@ const routes =
 		props: { store_path: ["DomainsSSLGroupPage"] },
 	},
 	
+	/* Stacks */
+	{
+		path: '/stacks/ssl/',
+		name: 'app:stacks',
+		component: components.StacksPage,
+		props: { store_path: ["StacksPage"] },
+	},
+	
 	/* Yaml Files */
 	{
 		path: '/yaml_files/',
@@ -142,7 +150,7 @@ const routes =
 	{
 		path: '/yaml_files/edit/:id/',
 		name: 'app:yaml_files:edit',
-		component: components.YamlFilesPage,
+		component: components.YamlFileSavePage,
 		props: { store_path: ["YamlFilesPage"], page_action: "edit" }
 	},
 	
@@ -184,20 +192,20 @@ const routes =
 		props: { store_path: ["SpaceSavePage"], page_action: "edit" },
 	},
 	
-	/* Groups */
-	{
-		path: '/settings/groups/',
-		name: 'app:groups',
-		component: components.GroupsPage,
-		props: { store_path: ["GroupsPage"] },
-	},
-	
 	/* Users */
 	{
-		path: '/settings/users/',
+		path: '/users/',
 		name: 'app:users',
 		component: components.UsersPage,
 		props: { store_path: ["UsersPage"] },
+	},
+	
+	/* Settings */
+	{
+		path: '/settings/',
+		name: 'app:settings',
+		component: components.SettingsPage,
+		props: { store_path: ["SettingsPage"] },
 	},
 	
 	/* Page not found */

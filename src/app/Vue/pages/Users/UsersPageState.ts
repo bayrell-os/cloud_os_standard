@@ -16,22 +16,21 @@
  *  limitations under the License.
  */
 
-import { AxiosResponse } from "axios";
-import { FormState } from "modules/vue-helper/Crud/FormState";
-import { deepClone, isNull, notNull, responseOk } from "vue-helper";
+import { deepClone, notNull } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
-export class Group extends CrudItem
+export class User extends CrudItem
 {
 	id: number;
+	login: string;
 	name: string;
+	banned: number;
 	is_deleted: number;
 	gmtime_created: string;
 	gmtime_updated: string;
-	users_in_groups: Array<any>;
 	
 	
 	
@@ -42,11 +41,12 @@ export class Group extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
+		this.login = "";
 		this.name = "";
+		this.banned = 0;
 		this.is_deleted = 0;
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
-		this.users_in_groups = [];
 		
 		/* Init class */
 		super.init(params);
@@ -60,7 +60,9 @@ export class Group extends CrudItem
 	assignValue(key:string, value:any)
 	{
 		if (key == "id") this.id = Number(value);
+		else if (key == "login") this.login = String(value);
 		else if (key == "name") this.name = String(value);
+		else if (key == "banned") this.banned = Number(value);
 		else if (key == "is_deleted") this.is_deleted = Number(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
@@ -71,18 +73,15 @@ export class Group extends CrudItem
 
 
 
-export class GroupsPageState extends CrudState<Group>
+export class UsersPageState extends CrudState<User>
 {
-	users:Array<any> | null = null;
-	add_user_login:string = "";
-	
 	
 	/**
 	 * Returns class
 	 */
-	static getClass(): typeof Group
+	getClass(): typeof UsersPageState
 	{
-		return this.constructor as typeof Group;
+		return this.constructor as typeof UsersPageState;
 	}
 	
 	
@@ -90,10 +89,11 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
-		return Group;
+		return User;
 	}
+	
 	
 	
 	/**
@@ -101,7 +101,7 @@ export class GroupsPageState extends CrudState<Group>
 	 */
 	static getApiObjectName()
 	{
-		return "users_groups";
+		return "users";
 	}
 	
 	
@@ -109,7 +109,7 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -117,12 +117,47 @@ export class GroupsPageState extends CrudState<Group>
 		id.primary = true;
 		this.fields.push( deepClone(id) );
 		
+		/* Login field */
+		let login = new FieldInfo();
+		login.name = "login";
+		login.label = "Login";
+		login.component = "Input";
+		this.fields.push( deepClone(login) );
+		
 		/* Name field */
 		let name = new FieldInfo();
 		name.name = "name";
 		name.label = "Name";
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
+		
+		/* Password field */
+		let password1 = new FieldInfo();
+		password1.name = "password1";
+		password1.label = "Password";
+		password1.component = "Input";
+		password1.type = "password";
+		this.fields.push( deepClone(password1) );
+		
+		/* Password field */
+		let password2 = new FieldInfo();
+		password2.name = "password2";
+		password2.label = "Repeat password";
+		password2.component = "Input";
+		password2.type = "password";
+		this.fields.push( deepClone(password2) );
+		
+		/* Banned field */
+		let banned = new FieldInfo();
+		banned.name = "banned";
+		banned.label = "Banned";
+		banned.component = "Select";
+		banned.options =
+		[
+			new SelectOption().assignValues({"id": "0", "value": "No"}),
+			new SelectOption().assignValues({"id": "1", "value": "Yes"}),
+		];
+		this.fields.push( deepClone(banned) );
 		
 		/* Is deleted field */
 		let is_deleted = new FieldInfo();
@@ -149,14 +184,22 @@ export class GroupsPageState extends CrudState<Group>
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
+		this.form_save.fields.push( deepClone(login) );
 		this.form_save.fields.push( deepClone(name) );
+		this.form_save.fields.push( deepClone(banned) );
 		this.form_save.fields.push( deepClone(is_deleted) );
+		this.form_save.fields.push( deepClone(password1) );
+		this.form_save.fields.push( deepClone(password2) );
 		
 		/* Table fields */
+		login.component = "Label";
 		name.component = "Label";
+		banned.component = "SelectLabel";
 		is_deleted.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
+		this.fields_table.push( deepClone(login) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(banned) );
 		this.fields_table.push( deepClone(is_deleted) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
@@ -166,9 +209,9 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: Group | null): string
+	static getItemName(item: User | null): string
 	{
-		return item ? item.name : "";
+		return (item) ? item.login : "";
 	}
 	
 	
@@ -176,7 +219,7 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: Group | null): string
+	static getItemId(item: User | null): string
 	{
 		return (item != null) ? String(item.id) : "";
 	}
@@ -186,84 +229,16 @@ export class GroupsPageState extends CrudState<Group>
 	/**
 	 * Returns delete message
 	 */
-	static getMessage(message_type: string, item: Group | null): string
+	static getMessage(message_type: string, item: User | null): string
 	{
 		if (message_type == "list_title")
 		{
-			return "Groups";
+			return "Users";
 		}
 		else if (message_type == "item")
 		{
-			return "group";
+			return "user";
 		}
 		return super.getMessage(message_type, item);
-	}
-	
-	
-	
-	/**
-	 * Add user to current group in form
-	 */
-	addUserToGroup(user_name:string): boolean
-	{
-		if (this.users && this.form_save.item)
-		{
-			let user1 = this.users.find( (user:any)=>{ return user.login == user_name; } );
-			let user2 = this.form_save.item.users_in_groups.find(
-				(user:any)=>{ return user.login == user_name; }
-			);
-			if (!isNull(user1) && isNull(user2))
-			{
-				this.form_save.item.users_in_groups.push({
-					"user_id": user1.id,
-					"group_id": this.form_save.item.id,
-					"login": user1.login,
-					"name": user1.name,
-				});
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
-	
-	/**
-	 * Remove user from current group in form
-	 */
-	removeUserFromGroup(user_name:string): boolean
-	{
-		if (this.form_save.item)
-		{
-			let index = this.form_save.item.users_in_groups.findIndex(
-				(user:any)=>{ return user.login == user_name; }
-			);
-			if (index >= 0)
-			{
-				this.form_save.item.users_in_groups.splice(index);
-				return true;
-			}
-			}
-		return false;
-	}
-	
-	
-	
-	/**
-	 * After api
-	 */
-	async after(kind: string, params: Record<string, any>)
-	{
-		await super.after(kind, params);
-		
-		if (["listPageLoadData"].indexOf(kind) >= 0)
-		{
-			let response = params["response"] as AxiosResponse;
-			if (response && responseOk(response))
-			{
-				this.users = response.data.result.dictionary.users;
-			}
-		}
-		
 	}
 }

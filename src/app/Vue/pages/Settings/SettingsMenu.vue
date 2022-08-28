@@ -20,31 +20,6 @@
 	
 	<div class="components_tabs">
 		<div class="components_tabs__top">
-			
-			<!-- Users -->
-			<router-link :to="{ name: 'app:users' }" custom
-				v-slot="{ href, navigate, route }"
-			>
-				<a :href="href" @click="navigate"
-					class="nolink components_tabs__tab"
-					v-bind:class="{ active: isActive(route) }"
-				>
-					Users
-				</a>
-			</router-link>
-			
-			<!-- Groups -->
-			<router-link :to="{ name: 'app:groups' }" custom
-				v-slot="{ href, navigate, route }"
-			>
-				<a :href="href" @click="navigate"
-					class="nolink components_tabs__tab"
-					v-bind:class="{ active: isActive(route) }"
-				>
-					Groups
-				</a>
-			</router-link>
-			
 			<!-- Database -->
 			<a class="components_tabs__tab nolink"
 				href="/api/database/">

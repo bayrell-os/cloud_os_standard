@@ -23,7 +23,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
+import { mixin, componentExtend, onRouteUpdate, setPageTitle } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
 import { NginxFilesPageState } from './NginxFilesPageState';
 
@@ -34,7 +34,11 @@ export const NginxFilesPage =
 	mixins: [mixin],
 	methods:
 	{
-	}
+	},
+	mounted: function () {
+		let page_title = this.model.constructor.getMessage("list_title", null);
+		setPageTitle(page_title);
+	},
 }
 
 componentExtend(NginxFilesPage, CrudList);

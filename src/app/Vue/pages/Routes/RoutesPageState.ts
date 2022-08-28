@@ -73,12 +73,12 @@ export class Route extends CrudItem
 		else if (key == "protocol") this.protocol = String(value);
 		else if (key == "protocol_data")
 		{
-			let res = {};
-			if (typeof value == "object")
+			let res = {
+				"websocket": "0",
+			};
+			if (typeof value == "object" && value != null)
 			{
-				res = {
-					"websocket": value.websocket || "0",
-				};
+				res["websocket"] = value.websocket || "0";
 			}
 			this.protocol_data = res;
 		}
@@ -113,7 +113,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Route;
 	}

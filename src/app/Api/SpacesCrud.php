@@ -186,7 +186,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 						},
 						$roles
 					);
-						
+					
 					return $roles;
 				},
 			]),

@@ -33,8 +33,6 @@ import NginxFilesPage from './pages/NginxFiles/NginxFilesPage.vue';
 import NotFoundPage from './pages/NotFound/NotFoundPage.vue';
 import RoutesPage from './pages/Routes/RoutesPage.vue';
 import ServicesPage from './pages/Services/ServicesPage.vue';
-import GroupsPage from './pages/Settings/Groups/GroupsPage.vue';
-import UsersPage from './pages/Settings/Users/UsersPage.vue';
 import SettingsMenu from './pages/Settings/SettingsMenu.vue';
 import SettingsPage from './pages/Settings/SettingsPage.vue';
 import SpaceRoutes from './pages/Spaces/SavePage/SpaceRoutes.vue';
@@ -43,10 +41,14 @@ import SpaceRoles from './pages/Spaces/SavePage/SpaceRoles.vue';
 import SpaceUsers from './pages/Spaces/SavePage/SpaceUsers.vue';
 import SpaceListPage from './pages/Spaces/SpaceListPage.vue';
 import SpaceSavePage from './pages/Spaces/SpaceSavePage.vue';
+import StacksPage from './pages/Stacks/StacksPage.vue';
 import TemplateEditPage from './pages/Templates/TemplateEditPage.vue';
 import TemplatesListPage from './pages/Templates/TemplatesListPage.vue';
 import TemplatesViewPage from './pages/Templates/TemplatesViewPage.vue';
+import UsersPage from './pages/Users/UsersPage.vue';
+import YamlFileSavePage from './pages/YamlFiles/YamlFileSavePage.vue';
 import YamlFilesPage from './pages/YamlFiles/YamlFilesPage.vue';
+
 
 export default {
     
@@ -85,8 +87,6 @@ export default {
     "NotFoundPage": NotFoundPage,
     "RoutesPage": RoutesPage,
     "ServicesPage": ServicesPage,
-    "GroupsPage": GroupsPage,
-    "UsersPage": UsersPage,
     "SettingsMenu": SettingsMenu,
     "SettingsPage": SettingsPage,
     "SpaceDomains": SpaceDomains,
@@ -95,9 +95,11 @@ export default {
     "SpaceUsers": SpaceUsers,
     "SpaceListPage": SpaceListPage,
     "SpaceSavePage": SpaceSavePage,
+    "StacksPage": StacksPage,
     "TemplateEditPage": TemplateEditPage,
     "TemplatesListPage": TemplatesListPage,
     "TemplatesViewPage": TemplatesViewPage,
     "UsersPage": UsersPage,
+    "YamlFileSavePage": YamlFileSavePage,
     "YamlFilesPage": YamlFilesPage,
 };

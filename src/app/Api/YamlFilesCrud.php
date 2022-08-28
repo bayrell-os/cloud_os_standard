@@ -22,12 +22,14 @@ namespace App\Api;
 
 use App\Docker;
 use App\Models\DockerYamlFile;
+use App\Models\Stack;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Rules\AllowFields;
+use TinyPHP\Rules\Dictionary;
 use TinyPHP\Rules\ReadOnly;
 use TinyPHP\Utils;
 
@@ -81,6 +83,21 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "id" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
+			
+			new Dictionary([
+				"api_name" => "stacks",
+				"class_name" => Stack::class,
+				"buildSearchQuery" => function ($route, $action, $query){
+					$query
+						->orderBy("stack_name", "asc")
+					;
+					return $query;
+				},
+				"fields" =>
+				[
+					"stack_name",
+				],
+			]),
 		];
 	}
 
@@ -89,9 +106,10 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function findQuery($query)
+	public function buildSearchQuery($action, $query)
 	{
 		return $query
+			->orderBy("stack_name", "asc")
 			->orderBy("file_name", "asc")
 		;
 	}

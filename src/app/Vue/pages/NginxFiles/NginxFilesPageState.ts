@@ -92,7 +92,7 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return NginxFile;
 	}
@@ -112,7 +112,7 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();

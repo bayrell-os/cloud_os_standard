@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*!
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020 - 2022 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,33 +16,66 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
--->
+ */
 
-<template>
-	<SettingsMenu>
-		<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action" />
-	</SettingsMenu>
-</template>
+namespace App\Models;
+
+use TinyORM\Model;
 
 
-<script lang="js">
-
-import { defineComponent } from 'vue';
-import { mixin, componentExtend, onRouteUpdate } from "vue-helper";
-import { CrudList } from "vue-helper/Crud/CrudList.vue";
-import { UsersPageState } from './UsersPageState';
-
-
-export const UsersPage =
+class Stack extends Model
 {
-	name: "UsersPage",
-	mixins: [mixin],
-	methods:
+	/**
+	 * Return table name
+	 */
+	static function getTableName()
 	{
+		return "stacks";
 	}
+	
+	
+	
+	/**
+	 * Return list of primary keys
+	 */
+	static function pk()
+	{
+		return ["stack_name"];
+	}
+	
+	
+	
+	/**
+	 * Returns tables fields
+	 */
+	static function fields()
+	{
+		return
+		[
+			"stack_name" => [],
+			"gmtime_created" => [],
+			"gmtime_updated" => [],
+		];
+	}
+	
+	
+	
+	/**
+	 * Return if auto increment
+	 */
+	static function isAutoIncrement()
+	{
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Returns true if need to update timestamp
+	 */
+	static function updateTimestamp()
+	{
+		return true;
+	}
+	
 }
-
-componentExtend(UsersPage, CrudList);
-export default defineComponent(UsersPage);
-
-</script>

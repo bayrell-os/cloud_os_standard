@@ -27,12 +27,12 @@ import { DomainsPageState } from '@/pages/Domains/DomainsPageState'
 import { DomainsSSLGroupPageState } from '@/pages/DomainsSSLGroup/DomainsSSLGroupPageState'
 import { NginxFilesPageState } from '@/pages/NginxFiles/NginxFilesPageState'
 import { RoutesPageState } from '@/pages/Routes/RoutesPageState'
-import { UsersPageState } from '@/pages/Settings/Users/UsersPageState'
-import { GroupsPageState } from '@/pages/Settings/Groups/GroupsPageState'
 import { ServicesPageState } from '@/pages/Services/ServicesPageState'
+import { UsersPageState } from '@/pages/Users/UsersPageState'
 import { YamlFilesPageState } from '@/pages/YamlFiles/YamlFilesPageState'
 import { NotFoundPageState } from '@/pages/NotFound/NotFoundPageState'
 import { SpacesPageState } from './pages/Spaces/SpacesPageState'
+import { StacksPageState } from './pages/Stacks/StacksPageState'
 
 
 export class AppState
@@ -50,11 +50,11 @@ export class AppState
 	DomainsSSLGroupPage: DomainsSSLGroupPageState = new DomainsSSLGroupPageState();
 	NginxFilesPage: NginxFilesPageState = new NginxFilesPageState();
 	RoutesPage: RoutesPageState = new RoutesPageState();
-	GroupsPage: GroupsPageState = new GroupsPageState();
 	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
 	SpaceListPage: SpacesPageState = new SpacesPageState();
 	SpaceSavePage: SpacesPageState = new SpacesPageState();
+	StacksPage: StacksPageState = new StacksPageState();
 	NotFound: NotFoundPageState = new NotFoundPageState();
 }

@@ -192,3 +192,55 @@ DROP TABLE "routes";
 ALTER TABLE "adminer_routes" RENAME TO "routes";
 CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
 CREATE INDEX "routes_space_id" ON "routes" ("space_id");
+
+
+-- Add stack_name to adminer_stacks
+
+BEGIN;
+CREATE TABLE "adminer_stacks" (
+  "stack_name" text NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  PRIMARY KEY ("stack_name")
+);
+INSERT INTO "adminer_stacks" ("stack_name", "gmtime_created", "gmtime_updated") SELECT "stack_name", "gmtime_created", "gmtime_updated" FROM "stacks";
+DROP TABLE "stacks";
+ALTER TABLE "adminer_stacks" RENAME TO "stacks";
+COMMIT;
+
+
+INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated")
+VALUES 
+  ('admin', datetime('now'), datetime('now')),
+  ('app', datetime('now'), datetime('now')),
+  ('cloud_os', datetime('now'), datetime('now')),
+  ('database', datetime('now'), datetime('now')),
+  ('dev', datetime('now'), datetime('now')),
+  ('prod', datetime('now'), datetime('now')),
+  ('test', datetime('now'), datetime('now')),
+;
+
+
+
+-- Add foreign key stack_name to adminer_docker_yaml_files
+
+BEGIN;
+CREATE TABLE "adminer_docker_yaml_files" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "file_name" text NOT NULL,
+  "stack_name" text NOT NULL DEFAULT 'app',
+  "content" text NOT NULL DEFAULT '',
+  "timestamp" integer NOT NULL DEFAULT '0',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  FOREIGN KEY ("stack_name") REFERENCES "stacks" ("stack_name") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "adminer_docker_yaml_files" ("id", "file_name", "stack_name", "content", "timestamp", "is_deleted", "gmtime_created", "gmtime_updated") SELECT "id", "file_name", "stack_name", "content", "timestamp", "is_deleted", "gmtime_created", "gmtime_updated" FROM "docker_yaml_files";
+DROP TABLE "docker_yaml_files";
+ALTER TABLE "adminer_docker_yaml_files" RENAME TO "docker_yaml_files";
+CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
+CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
+CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
+COMMIT;
+

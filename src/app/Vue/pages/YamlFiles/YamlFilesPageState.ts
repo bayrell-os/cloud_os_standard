@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-import { deepClone } from "vue-helper";
+import { deepClone, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
-import { CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
+import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 import axios, { AxiosResponse } from 'axios';
 
@@ -101,9 +101,19 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return YamlFile;
+	}
+	
+	
+	
+	/**
+	 * Returns api object name
+	 */
+	static getApiObjectName()
+	{
+		return "yaml_files";
 	}
 	
 	
@@ -118,26 +128,6 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		
 		/* Init class */
 		super.init(params);
-	}
-	
-	
-	
-	/**
-	 * Returns new item
-	 */
-	static createNewItem(): YamlFile
-	{
-		return new YamlFile();
-	}
-	
-	
-	
-	/**
-	 * Returns api object name
-	 */
-	static getApiObjectName()
-	{
-		return "yaml_files";
 	}
 	
 	
@@ -217,7 +207,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -236,7 +226,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		let stack_name = new FieldInfo();
 		stack_name.name = "stack_name";
 		stack_name.label = "Stack name";
-		stack_name.component = "Input";
+		stack_name.component = "Select";
 		this.fields.push( deepClone(stack_name) );
 		
 		/* Content field */
@@ -266,7 +256,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		
 		/* Table fields */
 		file_name.component = "Label";
-		stack_name.component = "Label";
+		stack_name.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(file_name) );
 		this.fields_table.push( deepClone(stack_name) );
@@ -324,5 +314,41 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 			}
 		}
 		return response;
+	}
+	
+	
+	
+	/**
+	 * After
+	 */
+	async after(kind: string, params: Record<string, any>)
+	{
+		await super.after(kind, params);
+		
+		if (["onLoadPageList", "onLoadPageSave"].indexOf(kind) >= 0)
+		{
+			let response = params["response"] as AxiosResponse;
+			if (response && responseOk(response))
+			{
+				/* Read templates */
+				this.setOptionsFromDictionary
+				(
+					response,
+					["all"],
+					"stack_name",
+					"stacks",
+					function (item: any)
+					{
+						return new SelectOption()
+							.assignValues({
+								"id": item["stack_name"],
+								"value": item["stack_name"],
+							})
+						;
+					}
+				);
+			}
+		}
+		
 	}
 }

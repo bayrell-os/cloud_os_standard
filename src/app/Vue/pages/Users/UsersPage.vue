@@ -17,20 +17,21 @@
 -->
 
 <template>
-	<CrudList v-bind:store_path="store_path" />
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action" />
 </template>
+
 
 <script lang="js">
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate, setPageTitle } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
-import { RoutesPageState } from './RoutesPageState';
+import { UsersPageState } from './UsersPageState';
 
 
-export const RoutesPage =
+export const UsersPage =
 {
-	name: "RoutesPage",
+	name: "UsersPage",
 	mixins: [mixin],
 	methods:
 	{
@@ -41,7 +42,7 @@ export const RoutesPage =
 	},
 }
 
-componentExtend(RoutesPage, CrudList);
-export default defineComponent(RoutesPage);
+componentExtend(UsersPage, CrudList);
+export default defineComponent(UsersPage);
 
 </script>

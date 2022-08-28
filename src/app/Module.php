@@ -120,6 +120,7 @@ class Module
 		$app->addEntity(\App\Api\SpacesRolesCrud::class);
 		$app->addEntity(\App\Api\SpacesRoutesCrud::class);
 		$app->addEntity(\App\Api\SpacesUsersCrud::class);
+		$app->addEntity(\App\Api\StackCrud::class);
 		$app->addEntity(\App\Api\TemplateApi::class);
 		$app->addEntity(\App\Api\TemplatesCrud::class);
 		$app->addEntity(\App\Api\TemplatesVersionsCrud::class);

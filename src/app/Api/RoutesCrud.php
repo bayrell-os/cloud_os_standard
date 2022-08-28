@@ -58,7 +58,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 					"docker_name",
 					"source_port",
 					"target_port",
-					"route_prefix",
+					"target_prefix",
 					"layer_uid",
 					"nginx_config",
 					"gmtime_created",

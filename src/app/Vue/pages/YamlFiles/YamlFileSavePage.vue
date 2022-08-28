@@ -22,21 +22,18 @@
 
 
 <template>
-	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
+	<CrudSave v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
-		<template v-slot:crud_after>
-			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
-				<template v-slot:text>
-					Compose file {{ model.constructor.getItemName(model.dialog_compose.item) }}?
-				</template>
+		<template v-slot:component_crud_save>
+			<Form v-bind:store_path="store_path.concat('form_save')">
 				<template v-slot:buttons>
-					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
-					<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
+					<Button type="success" @click="onSaveFormButtonComposeClick()">Compose</Button>
+					<Button type="primary" @click="onSaveFormButtonSaveClick()">Save</Button>
 				</template>
-			</Dialog>
+			</Form>
 		</template>
 		
-	</CrudList>
+	</CrudSave>
 </template>
 
 
@@ -50,9 +47,9 @@ import { CrudList } from "vue-helper/Crud/CrudList.vue";
 /**
  * Status page
  */
-export const YamlFilesPage =
+export const YamlFileSavePage =
 {
-	name: "YamlFilesPage",
+	name: "YamlFileSavePage",
 	mixins: [mixin],
 	components:
 	{
@@ -76,11 +73,12 @@ export const YamlFilesPage =
 		}
 	},
 	mounted: function () {
-		let page_title = this.model.constructor.getMessage("list_title", null);
+		let item = this.model.form_save.item;
+		let page_title = this.model.constructor.getMessage("save_title", item);
 		setPageTitle(page_title);
 	},
 }
-componentExtend(YamlFilesPage, CrudList);
-export default defineComponent(YamlFilesPage);
+componentExtend(YamlFileSavePage, CrudList);
+export default defineComponent(YamlFileSavePage);
 
 </script>

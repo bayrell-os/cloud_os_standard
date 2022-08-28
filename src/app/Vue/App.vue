@@ -122,8 +122,14 @@ export const App =
 					"title": "Docker Swarm",
 					"items":
 					[
+						{ "name": "app:stacks", "title": "Stacks" },
 						{ "name": "app:services", "title": "Services" },
-						{ "name": "app:yaml_files", "title": "Yaml Files" },
+						{ "name": "app:yaml_files", "title": "Yaml Files",
+							"names": [
+								"app:yaml_files:add",
+								"app:yaml_files:edit",
+							],
+						},
 					]
 				},
 				
@@ -131,15 +137,17 @@ export const App =
 					"title": "Cloud OS",
 					"items":
 					[
-						{ "name": "app:spaces:list", "title": "Spaces" },
+						{ "name": "app:spaces:list", "title": "Spaces",
+							"names": [
+								"app:spaces:edit",
+							],
+						},
 						{ "name": "app:domains", "title": "Domains" },
 						{ "name": "app:domains:ssl", "title": "Domains SSL" },
 						{ "name": "app:routes","title": "Routes" },
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
-						{ "name": "app:users", "title": "Settings", "names":[
-							"app:users",
-							"app:groups",
-						] },
+						{ "name": "app:users", "title": "Users"},
+						{ "name": "app:settings", "title": "Settings"},
 					]
 				}
 				

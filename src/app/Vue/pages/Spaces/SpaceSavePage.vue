@@ -77,7 +77,7 @@ export const SpaceSavePage =
 	},
 	mounted: function () {
 		let item = this.model.form_save.item;
-		let page_title = this.model.constructor.getMessage("edit_title", item);
+		let page_title = this.model.constructor.getMessage("save_title", item);
 		setPageTitle(page_title);
 	},
 }

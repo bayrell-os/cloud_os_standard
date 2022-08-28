@@ -25,12 +25,12 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate, setPageTitle } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
-import { RoutesPageState } from './RoutesPageState';
+import { StacksPageState } from './StacksPageState';
 
 
-export const RoutesPage =
+export const StacksPage =
 {
-	name: "RoutesPage",
+	name: "StacksPage",
 	mixins: [mixin],
 	methods:
 	{
@@ -41,7 +41,7 @@ export const RoutesPage =
 	},
 }
 
-componentExtend(RoutesPage, CrudList);
-export default defineComponent(RoutesPage);
+componentExtend(StacksPage, CrudList);
+export default defineComponent(StacksPage);
 
 </script>
