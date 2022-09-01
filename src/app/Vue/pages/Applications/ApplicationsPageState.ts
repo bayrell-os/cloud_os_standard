@@ -114,7 +114,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Application;
 	}
@@ -147,7 +147,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		/* ID field */
 		let id = new FieldInfo();
@@ -158,12 +158,12 @@ export class ApplicationsPageState extends CrudState<Application>
 		/* Status */
 		let status = new FieldInfo();
 		status.name = "status";
-		status.label = "status";
-		status.component = "SelectLabel";
+		status.label = "Status";
+		status.component = "Select";
 		status.options = [
-			new SelectOption().assignValues({ "id": 0, "value": "STOPPED" }),
-			new SelectOption().assignValues({ "id": 1, "value": "LAUNCHED" }),
-			new SelectOption().assignValues({ "id": 2, "value": "STARTS UP" }),
+			new SelectOption().assignValues({ "id": 1, "value": "Started" }),
+			new SelectOption().assignValues({ "id": 0, "value": "Stopped" }),
+			// new SelectOption().assignValues({ "id": 2, "value": "STARTS UP" }),
 		];
 		this.fields.push( deepClone(status) );
 		
@@ -254,6 +254,7 @@ export class ApplicationsPageState extends CrudState<Application>
 		status.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(service_name) );
+		this.fields_table.push( deepClone(status) );
 		this.fields_table.push( deepClone(template_name) );
 		this.fields_table.push( deepClone(template_version) );
 		this.fields_table.push( deepClone(admin_button) );
@@ -297,7 +298,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	{
 		await super.after(kind, params);
 		
-		if (["listPageLoadData", "editPageLoadData"].indexOf(kind) >= 0)
+		if (["onLoadPageList", "onLoadPageSave"].indexOf(kind) >= 0)
 		{
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
@@ -322,7 +323,7 @@ export class ApplicationsPageState extends CrudState<Application>
 			}
 		}
 		
-		if (["editPageLoadData"].indexOf(kind) >= 0)
+		if (["onLoadPageSave"].indexOf(kind) >= 0)
 		{
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))

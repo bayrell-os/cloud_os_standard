@@ -17,14 +17,13 @@
  */
 
 import { Store } from "vuex";
-import { AppState } from "./AppState";
-import * as dayjs from 'dayjs'
+import { StoreApp } from "./StoreApp";
 
 
 /**
  * Create test store
  */
-export function initTestStore (store: Store<AppState>)
+export function initTestStore (store: Store<StoreApp>)
 {
     let item;
     

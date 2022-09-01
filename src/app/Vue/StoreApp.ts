@@ -18,7 +18,7 @@
 
 import { MainPageState } from '@/pages/Main/MainPageState'
 import { ApplicationsPageState } from '@/pages/Applications/ApplicationsPageState'
-import { ApplicationsEditPageState } from '@/pages/Applications/ApplicationsEditPageState'
+import { ApplicationSavePageState } from '@/pages/Applications/ApplicationSavePageState'
 import { ModificatorsPageState } from '@/pages/Modificators/ModificatorsPageState'
 import { TemplatesListPageState } from '@/pages/Templates/TemplatesListPageState'
 import { TemplatesVersionsPageState } from '@/pages/Templates/TemplatesVersionsPageState'
@@ -35,13 +35,13 @@ import { SpacesPageState } from './pages/Spaces/SpacesPageState'
 import { StacksPageState } from './pages/Stacks/StacksPageState'
 
 
-export class AppState
+export class StoreApp
 {
 	title: string = "";
 	app_version: string = "0.4.1";
 	MainPage: MainPageState = new MainPageState();
-	ApplicationsPage: ApplicationsPageState = new ApplicationsPageState();
-	ApplicationsEditPage: ApplicationsEditPageState = new ApplicationsEditPageState();
+	ApplicationSavePage: ApplicationSavePageState = new ApplicationSavePageState();
+	ApplicationsListPage: ApplicationsPageState = new ApplicationsPageState();
 	ModificatorsPage: ModificatorsPageState = new ModificatorsPageState();
 	TemplatesListPage: TemplatesListPageState = new TemplatesListPageState();
 	TemplatesVersionsPage: TemplatesVersionsPageState = new TemplatesVersionsPageState();

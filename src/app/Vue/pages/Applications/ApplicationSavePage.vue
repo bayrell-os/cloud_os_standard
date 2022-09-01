@@ -253,7 +253,7 @@ export const ApplicationsEditPage =
 			
 			/* Save form */
 			this.model.dialog_save_app.setWaitResponse();
-			await this.model.doSaveForm();
+			await this.model.processSaveForm();
 			
 			/* Set result message */
 			this.model.dialog_save_app.message = this.model.form_save.message;
@@ -321,7 +321,12 @@ export const ApplicationsEditPage =
 				this.model.dialog_stop_app.hide();
 			}
 		},
-	}
+	},
+	mounted: function () {
+		let item = this.model.form_save.item_original;
+		let page_title = this.model.getMessage("save_title", item);
+		this.setPageTitle(page_title);
+	},
 };
 
 componentExtend(ApplicationsEditPage, CrudList);

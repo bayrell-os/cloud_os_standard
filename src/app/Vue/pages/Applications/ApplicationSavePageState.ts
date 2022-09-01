@@ -18,15 +18,15 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { ModificatorsPageState, Modificator } from "../Modificators/ModificatorsPageState";
-import { ApplicationsPageState, Application } from "../Applications/ApplicationsPageState";
+import { ApplicationsPageState, Application } from "./ApplicationsPageState";
 import { CrudResultState } from "vue-helper/Crud/CrudResultState";
 import { DialogState } from "vue-helper/Crud/DialogState";
 import { CrudState } from "vue-helper/Crud/CrudState";
-import { isNull } from "vue-helper";
+import { deepClone, isNull } from "vue-helper";
 
 
 
-export class ApplicationsEditPageState extends ApplicationsPageState
+export class ApplicationSavePageState extends ApplicationsPageState
 {
 	dialog_add_modificator: DialogState<Application>;
 	dialog_view_modificator: DialogState<Application>;
@@ -55,6 +55,30 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 		
 		/* Init class */
 		super.init(params);
+	}
+	
+	
+	
+	/**
+	 * Crud init
+	 */
+	initCrud()
+	{
+		super.initCrud();
+		
+		let name = this.getFieldByName("name");
+		let status = this.getFieldByName("status");
+		let stack_name = this.getFieldByName("stack_name");
+		let template_id = this.getFieldByName("template_id");
+		let template_version_id = this.getFieldByName("template_version_id");
+		
+		/* Form fields */
+		this.form_save.fields = [];
+		this.form_save.fields.push( deepClone(name) );
+		this.form_save.fields.push( deepClone(status) );
+		this.form_save.fields.push( deepClone(stack_name) );
+		this.form_save.fields.push( deepClone(template_id) );
+		this.form_save.fields.push( deepClone(template_version_id) );
 	}
 	
 	
@@ -158,7 +182,7 @@ export class ApplicationsEditPageState extends ApplicationsPageState
 		
 		if (!this.form_save.item) return;
 		
-		if (["editPageLoadData"].indexOf(kind) >= 0)
+		if (["onLoadPageSave"].indexOf(kind) >= 0)
 		{
 			if (this.form_save.item.environments instanceof Array)
 			{

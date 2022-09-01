@@ -22,8 +22,8 @@ import AppMenu from './AppMenu.vue';
 import ApplicationAdminButton from './pages/Applications/ApplicationAdminButton.vue';
 import ApplicationModificators from './pages/Applications/ApplicationModificators.vue';
 import ApplicationParams from './pages/Applications/ApplicationParams.vue';
-import ApplicationsEditPage from './pages/Applications/ApplicationsEditPage.vue';
-import ApplicationsPage from './pages/Applications/ApplicationsPage.vue';
+import ApplicationSavePage from './pages/Applications/ApplicationSavePage.vue';
+import ApplicationsListPage from './pages/Applications/ApplicationsListPage.vue';
 import ApplicationTotalPatches from './pages/Applications/ApplicationTotalPatches.vue';
 import DomainsPage from './pages/Domains/DomainsPage.vue';
 import DomainsSSLGroupPage from './pages/DomainsSSLGroup/DomainsSSLGroupPage.vue';
@@ -77,8 +77,8 @@ export default {
     "ApplicationAdminButton": ApplicationAdminButton,
     "ApplicationModificators": ApplicationModificators,
     "ApplicationParams": ApplicationParams,
-    "ApplicationsEditPage": ApplicationsEditPage,
-    "ApplicationsPage": ApplicationsPage,
+    "ApplicationSavePage": ApplicationSavePage,
+    "ApplicationsListPage": ApplicationsListPage,
     "ApplicationTotalPatches": ApplicationTotalPatches,
     "DomainsPage": DomainsPage,
     "DomainsSSLGroupPage": DomainsSSLGroupPage,

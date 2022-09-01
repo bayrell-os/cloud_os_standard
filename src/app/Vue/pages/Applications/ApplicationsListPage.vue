@@ -37,9 +37,9 @@ import { CrudList } from "vue-helper/Crud/CrudList.vue";
 /**
  * Status page
  */
-export const ApplicationsPage =
+export const ApplicationsListPage =
 {
-	name: "ApplicationsPage",
+	name: "ApplicationsListPage",
 	mixins: [mixin],
 	components:
 	{
@@ -56,9 +56,13 @@ export const ApplicationsPage =
 				}
 			}
 		},
-	}
+	},
+	mounted: function () {
+		let page_title = this.model.getMessage("list_title", null);
+		this.setPageTitle(page_title);
+	},
 }
-componentExtend(ApplicationsPage, CrudList);
-export default defineComponent(ApplicationsPage);
+componentExtend(ApplicationsListPage, CrudList);
+export default defineComponent(ApplicationsListPage);
 
 </script>

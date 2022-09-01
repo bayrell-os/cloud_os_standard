@@ -17,7 +17,7 @@
  */
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import components from "./components.js";
+import components from "./components";
 
 const routes =
 [
@@ -40,16 +40,16 @@ const routes =
 	{
 		path: '/applications/',
 		name: 'app:applications',
-		component: components.ApplicationsPage,
-		props: { store_path: ["ApplicationsPage"] },
+		component: components.ApplicationsListPage,
+		props: { store_path: ["ApplicationsListPage"] },
 	},
 	
 	/* Run app */
 	{
 		path: '/applications/edit/:id/',
 		name: 'app:applications:edit',
-		component: components.ApplicationsEditPage,
-		props: { store_path: ["ApplicationsEditPage"], page_action: "edit" },
+		component: components.ApplicationSavePage,
+		props: { store_path: ["ApplicationSavePage"], page_action: "edit" },
 	},
 	
 	/* Modificators */

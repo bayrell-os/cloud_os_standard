@@ -22,21 +22,21 @@ import "./main.scss";
 import { createApp } from 'vue/dist/vue.esm-bundler.js'
 import { buildStore } from 'vue-helper'
 import App from './App.vue'
-import Router from './Router.js'
-import { AppState } from './AppState'
+import Router from './Router'
+import { StoreApp } from './StoreApp'
 import { initTestStore } from './StoreTest'
 
 /* Create app state */
-let Store = buildStore(AppState);
+let storeApp = buildStore(StoreApp);
 
 var app = createApp(App);
 
 /* Register modules */
-app.use(Store);
+app.use(storeApp);
 app.use(Router);
 
 /* Register components */
-import components from "./components.js";
+import components from "./components";
 for (let component_name in components)
 {
     let component = components[component_name];
@@ -47,7 +47,7 @@ for (let component_name in components)
 app.mount('#app');
 
 window["appInstance"] = app;
-window["storeInstance"] = Store;
+window["storeInstance"] = storeApp;
 
 /* Create test store */
-initTestStore(Store)
+initTestStore(storeApp)
