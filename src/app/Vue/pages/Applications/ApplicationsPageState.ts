@@ -21,6 +21,7 @@ import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 import { Template } from "../Templates/TemplatesListPageState";
+import { TemplatesVersionsPageState } from "../Templates/TemplatesVersionsPageState";
 
 
 export class Application extends CrudItem
@@ -114,7 +115,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Application;
 	}
@@ -124,7 +125,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "applications";
 	}
@@ -171,7 +172,7 @@ export class ApplicationsPageState extends CrudState<Application>
 		let stack_name = new FieldInfo();
 		stack_name.name = "stack_name";
 		stack_name.label = "Stack name";
-		stack_name.component = "Input";
+		stack_name.component = "Select";
 		this.fields.push( deepClone(stack_name) );
 		
 		/* Name field */
@@ -303,6 +304,24 @@ export class ApplicationsPageState extends CrudState<Application>
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
+				/* Read stacks */
+				this.setOptionsFromDictionary
+				(
+					response,
+					["all"],
+					"stack_name",
+					"stacks",
+					function (item: any)
+					{
+						return new SelectOption()
+							.assignValues({
+								"id": item["stack_name"],
+								"value": item["stack_name"],
+							})
+						;
+					}
+				);
+				
 				/* Read templates */
 				this.setOptionsFromDictionary
 				(
@@ -361,16 +380,18 @@ export class ApplicationsPageState extends CrudState<Application>
 		let template_id: number = Number(this.form_save.item.template_id);
 		
 		if (template_id == 0) return;
-		/*
-		let response:AxiosResponse | null = await TemplatesViewPageState.processLoadListApi({
-			"template_id": template_id,
-		});
 		
-		if (response && responseOk(response) && notNull(response.data.result.items))
+		if (notNull(this.dictionary.templates_versions))
 		{
-			let items: any = response.data.result.items.map
-			(
-				function (item: any)
+			let templates_versions = this.dictionary.templates_versions
+				.filter(
+					(item: any)=>{
+						return item.template_id == template_id
+					}
+				)
+			;
+			templates_versions = templates_versions.map(
+				(item: any) =>
 				{
 					return {
 						"id": item["id"],
@@ -379,10 +400,10 @@ export class ApplicationsPageState extends CrudState<Application>
 				}
 			);
 			this.editField(["all"], "template_version_id", (field: FieldInfo) => {
-				field.options = deepClone(items);
+				field.options = deepClone(templates_versions);
 			});
 		}
-		*/
+		
 	}
 	
 }

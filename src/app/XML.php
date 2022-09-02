@@ -321,11 +321,13 @@ class XML
 					$name = (string)$variable->name;
 					$label = (string)$variable->label;
 					$type = (string)$variable->type;
+					$default = (string)$variable->default;
 					$res[] =
 					[
 						"name" => $name,
 						"label" => $label,
 						"type" => $type,
+						"default" => $default,
 					];
 				}
 			}
@@ -451,34 +453,34 @@ class XML
 		$path = (string)( $patch_item->path );
 		$value = $patch_item->value;
 		$notExists = (string)( $patch_item->notExists );
+		$notExistsRes = null;
 		$position = (string)( $patch_item->attributes()->position );
 		$result = $xml->xpath($path);
 		
 		/* Get not exists */
 		if ($notExists != "")
 		{
-			$notExists = $xml->xpath($notExists);
+			$notExistsRes = $xml->xpath($notExists);
 		}
 		
-		/* Skip */
-		$skip = false;
-		if (gettype($notExists) == "array")
+		/* Skip if exists */
+		if ($notExistsRes && gettype($notExistsRes) == "array")
 		{
-			if (count($notExists) > 0) $skip = true;
-		}
-		
-		if (!$skip)
-		{
-			foreach ($result as $item)
+			if (count($notExistsRes) > 0)
 			{
-				if ($position == "first")
-				{
-					static::prependChildsXml($item, $value);
-				}
-				else
-				{
-					static::appendChildsXml($item, $value);
-				}
+				return;
+			}
+		}
+		
+		foreach ($result as $item)
+		{
+			if ($position == "first")
+			{
+				static::prependChildsXml($item, $value);
+			}
+			else
+			{
+				static::appendChildsXml($item, $value);
 			}
 		}
 	}

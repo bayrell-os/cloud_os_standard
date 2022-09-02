@@ -30,7 +30,9 @@ export class Route extends CrudItem
 	protocol_data: any;
 	domain_name: string;
 	route: string;
+	target_prefix: string;
 	docker_name: string;
+	source_port: number;
 	target_port: number;
 	layer_uid: string;
 	gmtime_created: string;
@@ -44,13 +46,15 @@ export class Route extends CrudItem
 	{
 		/* Init variables */
 		this.id = 0;
-		this.enable = false;
-		this.protocol = "";
-		this.protocol_data = {};
+		this.enable = true;
+		this.protocol = "http";
+		this.protocol_data = {"websocket": "0"};
 		this.domain_name = "";
-		this.route = "";
+		this.route = "/";
+		this.target_prefix = "/";
 		this.docker_name = "";
-		this.target_port = 0;
+		this.source_port = 80;
+		this.target_port = 80;
 		this.layer_uid = "";
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
@@ -84,7 +88,9 @@ export class Route extends CrudItem
 		else if (key == "route") this.route = String(value);
 		else if (key == "docker_name") this.docker_name = String(value);
 		else if (key == "layer_uid") this.layer_uid = String(value);
+		else if (key == "source_port") this.source_port = Number(value);
 		else if (key == "target_port") this.target_port = Number(value);
+		else if (key == "target_prefix") this.target_prefix = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else super.assignValue(key, value);
@@ -110,7 +116,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Route;
 	}
@@ -120,7 +126,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "routes";
 	}

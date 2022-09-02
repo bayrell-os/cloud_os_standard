@@ -24,6 +24,7 @@ use App\Docker;
 use App\XML;
 use App\Models\Application;
 use App\Models\Modificator;
+use App\Models\Stack;
 use App\Models\Template;
 use App\Models\TemplateVersion;
 use Symfony\Component\HttpFoundation\Request;
@@ -134,6 +135,24 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 			
 			
+			/* Stacks */
+			new Dictionary([
+				"api_name" => "stacks",
+				"class_name" => Stack::class,
+				"buildSearchQuery" => function ($rule, $action, $query)
+				{
+					$query
+						->orderBy("stack_name", "asc")
+					;
+					return $query;
+				},
+				"fields" =>
+				[
+					"stack_name",
+				],
+			]),
+			
+			
 			/* Templates */
 			new Dictionary([
 				"api_name" => "templates",
@@ -158,19 +177,30 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			new Dictionary([
 				"api_name" => "templates_versions",
 				"class_name" => TemplateVersion::class,
-				"actions" => [ "actionGetById" ],
+				"actions" => [ "actionSearch", "actionGetById" ],
 				"buildSearchQuery" => function ($rule, $action, $query)
 				{
-					$template_id = $rule->route->item->template_id;
-					$query
-						->where("template_id", $template_id)
-						->orderBy("version", "asc")
-					;
+					if ($action == "actionSearch")
+					{
+						$template_id = $rule->route->item->template_id;
+						$query
+							->orderBy("version", "asc")
+						;
+					}
+					if ($action == "actionGetById")
+					{
+						$template_id = $rule->route->item->template_id;
+						$query
+							->where("template_id", $template_id)
+							->orderBy("version", "asc")
+						;
+					}
 					return $query;
 				},
 				"fields" =>
 				[
 					"id",
+					"template_id",
 					"version",
 				],
 			]),
@@ -198,7 +228,6 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					"priority",
 				],
 			]),
-			
 			
 			
 			/* Modificators */
@@ -312,7 +341,6 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		
 		if ($action == "actionCreate")
 		{
-			
 			/* Add defaults modificators from template XML */
 			$modificators = $this->template_xml->modificators;
 			if ($modificators->getName() == "modificators")

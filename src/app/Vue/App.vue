@@ -112,7 +112,12 @@ export const App =
 					"title": "Applications",
 					"items":
 					[
-						{ "name": "app:applications", "title": "Applications" },
+						{ "name": "app:applications", "title": "Applications",
+							"names": [
+								"app:applications",
+								"app:applications:edit",
+							],
+						},
 						{ "name": "app:templates", "title": "Templates",
 							"names": [
 								"app:templates:import",

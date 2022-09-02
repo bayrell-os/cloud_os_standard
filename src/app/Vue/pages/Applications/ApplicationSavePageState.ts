@@ -212,7 +212,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item") + "modificator/add/";
+		let url = this.getClass().getApiUrl("item") + "modificator/add/";
 		
 		/* Get post data */
 		let post_data = {
@@ -254,7 +254,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item") +
+		let url = this.getClass().getApiUrl("item") +
 			"modificator/delete/";
 		
 		/* Get post data */
@@ -289,7 +289,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	async apiCompose(item: Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item", {"item": item}) + "compose/";
+		let url = this.getClass().getApiUrl("item", {"item": item}) + "compose/";
 		
 		try
 		{
@@ -314,7 +314,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	async apiStop(item_id: number): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item", {"id": item_id}) + "stop/";
+		let url = this.getClass().getApiUrl("item", {"id": item_id}) + "stop/";
 		
 		try
 		{

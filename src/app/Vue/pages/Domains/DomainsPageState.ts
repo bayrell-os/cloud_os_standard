@@ -93,7 +93,7 @@ export class DomainsPageState extends CrudState<Domain>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Domain;
 	}
@@ -103,7 +103,7 @@ export class DomainsPageState extends CrudState<Domain>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "domains";
 	}

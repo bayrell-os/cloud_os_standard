@@ -107,7 +107,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Service;
 	}
@@ -117,7 +117,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "services";
 	}
@@ -294,8 +294,8 @@ export class ServicesPageState extends CrudState<Service>
 	getApiUrlSearch(refresh: boolean = false)
 	{
 		if (refresh)
-			return "/api/" + this.getApiObjectName() + "/crud/search/?refresh=1";
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
+			return "/api/" + this.getClass().getApiObjectName() + "/crud/search/?refresh=1";
+		return "/api/" + this.getClass().getApiObjectName() + "/crud/search/";
 	}
 	
 	
@@ -367,7 +367,7 @@ export class ServicesPageState extends CrudState<Service>
 	 */
 	getApiUrlStop(item: Service)
 	{
-		return "/api/" + this.getApiObjectName() + "/stop/" +
+		return "/api/" + this.getClass().getApiObjectName() + "/stop/" +
 			item.docker_name + "/";
 	}
 	

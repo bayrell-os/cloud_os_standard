@@ -86,21 +86,11 @@ export class TemplatesVersionsPageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Init class
+	 * Returns class item
 	 */
-	init(params:any)
+	static getClassItem(): typeof TemplateVersion
 	{
-		super.init(params);
-	}
-	
-	
-	
-	/**
-	 * Returns new item
-	 */
-	static createNewItem(): TemplateVersion
-	{
-		return new TemplateVersion();
+		return TemplateVersion;
 	}
 	
 	
@@ -108,9 +98,19 @@ export class TemplatesVersionsPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "templates_versions";
+	}
+	
+	
+	
+	/**
+	 * Init class
+	 */
+	init(params:any)
+	{
+		super.init(params);
 	}
 	
 	

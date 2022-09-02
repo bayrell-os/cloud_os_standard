@@ -101,7 +101,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return YamlFile;
 	}
@@ -111,7 +111,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "yaml_files";
 	}
@@ -119,23 +119,9 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	
 	
 	/**
-	 * Init
-	 */
-	init(params:any)
-	{
-		/* Init variables */
-		this.dialog_compose = new DialogState();
-		
-		/* Init class */
-		super.init(params);
-	}
-	
-	
-	
-	/**
 	 * Return api search url
 	 */
-	getApiUrl(api_type: string, params: Record<string, any> | null = null)
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
 		let api_name = this.getApiObjectName();
 		if (api_type == "compose")
@@ -172,6 +158,20 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 			"add": "app:yaml_files:add",
 			"edit": "app:yaml_files:edit",
 		};
+	}
+	
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.dialog_compose = new DialogState();
+		
+		/* Init class */
+		super.init(params);
 	}
 	
 	
@@ -288,7 +288,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		if (item != null)
 		{
 			this.dialog_compose.setWaitResponse();
-			response = await this.processComposeApi(item);
+			response = await this.getClass().processComposeApi(item);
 			this.dialog_compose.setAxiosResponse(response);
 		}
 	}
@@ -298,14 +298,13 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Compose active item
 	 */
-	async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
+	static async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrl("compose", item);
 		let post_data = {"item": {"content": item.content}};
 		try
 		{
-			post_data = await this.processPostData("processComposeApi", post_data);
 			response = await axios.post(url, post_data);
 		}
 		catch (e)

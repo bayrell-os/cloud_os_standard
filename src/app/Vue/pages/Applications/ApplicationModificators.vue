@@ -61,6 +61,7 @@
 									'variables',
 									variable.name
 								])"
+								v-bind:default_value="variable.default"
 							/>
 						</div>
 					</div>
@@ -194,9 +195,12 @@ export const ApplicationModificators =
 		{
 			if (isNull(this.model.form_save.item)) return [];
 			if (isNull(this.model.form_save.item.variables_defs)) return [];
-			return this.model.form_save.item.variables_defs.slice().sort((a,b)=>{
-				return a.name > b.name ? 1 : -1;
-			});
+			return this.model.form_save.item.variables_defs
+				.slice()
+				.sort((a,b)=>{
+					return a.name > b.name ? 1 : -1;
+				})
+			;
 		},
 		
 		/* Add modificator */

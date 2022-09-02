@@ -50,6 +50,16 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 	
 	
 	/**
+	 * Returns api object name
+	 */
+	static getApiObjectName()
+	{
+		return "templates_versions";
+	}
+	
+	
+	
+	/**
 	 * Init class
 	 */
 	init(params:any)
@@ -61,19 +71,9 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Returns api object name
-	 */
-	static getApiObjectName()
-	{
-		return "templates_versions";
-	}
-	
-	
-	
-	/**
 	 * Returns route names
 	 */
-	static getRouteNames(): Record<string, string>
+	getRouteNames(): Record<string, string>
 	{
 		return {
 		};

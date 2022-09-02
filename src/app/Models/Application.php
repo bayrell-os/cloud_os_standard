@@ -417,10 +417,10 @@ class Application extends Model
 		$this->content = XML::toXml($template_xml);
 		$this->content_xml = null;
 		
-		/* Generate variables */
+		/* Update variables */
 		$this->updateVariables($template_xml);
 		
-		/* Generate yaml content */
+		/* Update yaml content */
 		$this->updateYamlContent($template_xml);
 		
 		/* Save item */
@@ -448,18 +448,28 @@ class Application extends Model
 				strtolower($this->stack_name . "_" . $this->name)
 			);
 			
-			/* Get variables values */
-			$template_variables = array_map
-			(
-				function ($item)
+			/* Setup variables values */
+			foreach ($template_variables as &$item)
+			{
+				$name = isset($item["name"]) ? $item["name"] : "";
+				$item["value"] = "";
+				
+				if (isset($this->variables[$name]))
 				{
-					$name = isset($item["name"]) ? $item["name"] : "";
-					$value = isset($this->variables[$name]) ? $this->variables[$name] : "";
-					$item["value"] = $value;
-					return $item;
-				},
-				$template_variables
-			);
+					$item["value"] = $this->variables[$name];
+				}
+			}
+			
+			/* Setup variables to default values */
+			foreach ($template_variables as &$item)
+			{
+				$name = isset($item["name"]) ? $item["name"] : "";
+				
+				if (isset($item["default"]) && $item["value"] == "")
+				{
+					$this->set("variables", $name, $item["default"]);
+				}
+			}
 			
 			/* Update variables defs */
 			$variables_defs = $template_variables;

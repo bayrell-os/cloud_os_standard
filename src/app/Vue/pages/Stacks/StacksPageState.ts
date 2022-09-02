@@ -76,7 +76,7 @@ export class StacksPageState extends CrudState<Stack>
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): Function
+	static getClassItem(): Function
 	{
 		return Stack;
 	}
@@ -86,7 +86,7 @@ export class StacksPageState extends CrudState<Stack>
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "stacks";
 	}
