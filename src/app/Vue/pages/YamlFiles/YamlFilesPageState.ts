@@ -101,7 +101,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return YamlFile;
 	}
@@ -111,7 +111,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "yaml_files";
 	}
@@ -135,7 +135,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Return api search url
 	 */
-	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
+	getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
 		let api_name = this.getApiObjectName();
 		if (api_type == "compose")
@@ -288,7 +288,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		if (item != null)
 		{
 			this.dialog_compose.setWaitResponse();
-			response = await this.getClass().processComposeApi(item);
+			response = await this.processComposeApi(item);
 			this.dialog_compose.setAxiosResponse(response);
 		}
 	}
@@ -298,13 +298,15 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Compose active item
 	 */
-	static async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
+	async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrl("compose", item);
+		let post_data = {"item": {"content": item.content}};
 		try
 		{
-			response = await axios.post(url, {"item": {"content": item.content}});
+			post_data = await this.processPostData("processComposeApi", post_data);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{

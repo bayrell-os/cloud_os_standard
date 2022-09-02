@@ -92,7 +92,7 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return NginxFile;
 	}
@@ -102,7 +102,7 @@ export class NginxFilesPageState extends CrudState<NginxFile>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "nginx_files";
 	}

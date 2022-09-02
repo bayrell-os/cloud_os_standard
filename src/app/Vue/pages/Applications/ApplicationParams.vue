@@ -17,6 +17,11 @@
 -->
 
 <style lang="scss">
+.applications_run_page__param_dialog{
+	.component_dialog__title{
+		overflow-wrap: anywhere;
+	}
+}
 </style>
 
 
@@ -32,10 +37,11 @@
 	
 	<table>
 		<tr class="component_crud__header">
-			<th></th>
+			<th style="width: 25px; min-width: 25px;"></th>
 			<th>{{ getLabelKey() }}</th>
 			<th>{{ getLabelValue() }}</th>
-			<th></th>
+			<th style="width: 50px; min-width: 50px;"></th>
+			<th style="width: 120px; min-width: 120px;"></th>
 		</tr>
 		<tr class="component_crud__row"
 			v-for="data, index in items"
@@ -44,6 +50,7 @@
 			<td>{{ index + 1 }}</td>
 			<td>{{ data.key }}</td>
 			<td>{{ data.value }}</td>
+			<td>{{ data.enable == 1 ? "On" : "Off" }}</td>
 			<td>
 				<div class="component_row_buttons">
 					<Button type="default" small="true" @click="onEditClick(index)">
@@ -57,7 +64,7 @@
 		</tr>
 	</table>
 	
-	<Dialog v-bind:store="dialog_save">
+	<Dialog v-bind:store="dialog_save" v-bind:style="'applications_run_page__param_dialog'">
 		<template v-slot:content>
 			<Form v-bind:store="form_save" />
 		</template>
@@ -69,7 +76,7 @@
 		</template>
 	</Dialog>
 	
-	<Dialog v-bind:store="dialog_delete">
+	<Dialog v-bind:store="dialog_delete" v-bind:style="'applications_run_page__param_dialog'">
 		<template v-slot:buttons>
 			<Button type="danger"
 				@click="onDialogDeleteButtonClick('yes')">Yes</Button>
@@ -108,6 +115,16 @@ export const ApplicationParams =
 			dialog_delete: new DialogState(),
 		};
 		
+		let field_enable = new FieldInfo();
+		field_enable.name = "enable";
+		field_enable.label = "Enable";
+		field_enable.component = "Select";
+		field_enable.default_value = 1;
+		field_enable.options = [
+			{ "id": 0, "value": "Off" },
+			{ "id": 1, "value": "On" },
+		];
+		
 		let field_key = new FieldInfo();
 		field_key.name = "key";
 		field_key.label = "Key";
@@ -126,6 +143,7 @@ export const ApplicationParams =
 		
 		data.form_save.fields.push( deepClone(field_key) );
 		data.form_save.fields.push( deepClone(field_value) );
+		data.form_save.fields.push( deepClone(field_enable) );
 		
 		return data;
 	},

@@ -107,7 +107,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return Service;
 	}
@@ -117,7 +117,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "services";
 	}
@@ -291,7 +291,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Return api search url
 	 */
-	static getApiUrlSearch(refresh: boolean = false)
+	getApiUrlSearch(refresh: boolean = false)
 	{
 		if (refresh)
 			return "/api/" + this.getApiObjectName() + "/crud/search/?refresh=1";
@@ -303,7 +303,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Load data api
 	 */
-	static async apiLoadData(refresh: boolean = false): Promise<AxiosResponse | null>
+	async apiLoadData(refresh: boolean = false): Promise<AxiosResponse | null>
 	{
 		let url = this.getApiUrlSearch(refresh);
 		let response:AxiosResponse | null = null;
@@ -365,7 +365,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Return api stop url
 	 */
-	static getApiUrlStop(item: Service)
+	getApiUrlStop(item: Service)
 	{
 		return "/api/" + this.getApiObjectName() + "/stop/" +
 			item.docker_name + "/";
@@ -396,7 +396,7 @@ export class ServicesPageState extends CrudState<Service>
 		if (!res) return;
 		
 		this.dialog_stop.setWaitResponse();
-		let response:AxiosResponse | null = await this.getClass().apiStopForm(item);
+		let response:AxiosResponse | null = await this.apiStopForm(item);
 		this.dialog_stop.setAxiosResponse(response);
 		
 		if (
@@ -418,7 +418,7 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Stop form api
 	 */
-	static async apiStopForm(item:Service): Promise<AxiosResponse | null>
+	async apiStopForm(item:Service): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		

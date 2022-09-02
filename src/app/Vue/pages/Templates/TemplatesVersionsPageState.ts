@@ -108,7 +108,7 @@ export class TemplatesVersionsPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "templates_versions";
 	}
@@ -118,7 +118,7 @@ export class TemplatesVersionsPageState extends CrudState<TemplateVersion>
 	/**
 	 * Returns route names
 	 */
-	static getRouteNames(): Record<string, string>
+	getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:templates_versions",

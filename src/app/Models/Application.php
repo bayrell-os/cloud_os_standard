@@ -174,8 +174,11 @@ class Application extends Model
 		{
 			foreach ($environments as $env)
 			{
-				$env_name = $env["key"];
-				$env_value = $env["value"];
+				$env_name = isset($env["key"]) ? $env["key"] : "";
+				$env_value = isset($env["value"]) ? $env["value"] : "";
+				$env_enable = isset($env["enable"]) ? $env["enable"] : false;
+				
+				if (!$env_name || !$env_enable) continue;
 				
 				$patch_xml[] = '    <operation type="remove">';
 				$patch_xml[] = '      <path>/template/yaml/services/_var_app_name_/environment/'.
@@ -217,8 +220,11 @@ class Application extends Model
 		{
 			foreach ($volumes as $env)
 			{
-				$env_name = $env["key"];
-				$env_value = $env["value"];
+				$env_name = isset($env["key"]) ? $env["key"] : "";
+				$env_value = isset($env["value"]) ? $env["value"] : "";
+				$env_enable = isset($env["enable"]) ? $env["enable"] : false;
+				
+				if (!$env_name || !$env_enable) continue;
 				
 				/* Add volume to service */
 				$patch_xml[] = '    <operation type="add">';

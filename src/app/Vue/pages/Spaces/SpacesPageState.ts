@@ -105,7 +105,7 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return Space;
 	}
@@ -115,7 +115,7 @@ export class SpacesPageState extends CrudState<Space>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "spaces";
 	}

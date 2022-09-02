@@ -89,7 +89,7 @@ export class UsersPageState extends CrudState<User>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return User;
 	}
@@ -99,7 +99,7 @@ export class UsersPageState extends CrudState<User>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "users";
 	}

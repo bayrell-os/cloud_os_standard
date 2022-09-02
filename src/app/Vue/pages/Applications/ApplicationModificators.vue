@@ -216,8 +216,8 @@ export const ApplicationModificators =
 				{
 					this.model.dialog_add_modificator.setWaitResponse();
 					
-					let response = await this.model.constructor
-						.apiAddModificator(this.model.form_save.item.id, modificator.id)
+					let response = await this.model
+						.processAddModificator(this.model.form_save.item.id, modificator.id)
 					;
 					this.model.dialog_add_modificator.setAxiosResponse(response);
 					
@@ -257,8 +257,8 @@ export const ApplicationModificators =
 				{
 					this.model.dialog_delete_modificator.setWaitResponse();
 					
-					let response = await this.model.constructor
-						.apiDeleteModificator(this.model.form_save.item.id, modificator.id)
+					let response = await this.model
+						.processDeleteModificator(this.model.form_save.item.id, modificator.id)
 					;
 					this.model.dialog_delete_modificator.setAxiosResponse(response);
 					

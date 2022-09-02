@@ -74,8 +74,8 @@ export class ApplicationSavePageState extends ApplicationsPageState
 		
 		/* Form fields */
 		this.form_save.fields = [];
-		this.form_save.fields.push( deepClone(name) );
 		this.form_save.fields.push( deepClone(status) );
+		this.form_save.fields.push( deepClone(name) );
 		this.form_save.fields.push( deepClone(stack_name) );
 		this.form_save.fields.push( deepClone(template_id) );
 		this.form_save.fields.push( deepClone(template_version_id) );
@@ -205,21 +205,30 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Add modificator
 	 */
-	static async apiAddModificator
+	async processAddModificator
 	(
-		item_id: number,
+		app_id: number,
 		modificator_id: number
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item", {"id": item_id}) + "modificator/add/";
+		let url = this.getApiUrl("item") + "modificator/add/";
+		
+		/* Get post data */
+		let post_data = {
+			"pk": {
+				"id": app_id,
+			},
+			"modificator_id": modificator_id,
+		};
 		
 		try
 		{
+			post_data = await this.processPostData("processAddModificator", post_data);
 			response = await axios.post
 			(
 				url,
-				{ "modificator_id": modificator_id }
+				post_data
 			);
 		}
 		catch (e)
@@ -238,19 +247,28 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Delete modificator
 	 */
-	static async apiDeleteModificator
+	async processDeleteModificator
 	(
-		item_id: number,
+		app_id: number,
 		modificator_id: number
 	): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("item", {"id": item_id}) +
-			"modificator/delete/" + modificator_id + "/";
+		let url = this.getApiUrl("item") +
+			"modificator/delete/";
 		
+		/* Get post data */
+		let post_data = {
+			"pk": {
+				"id": app_id,
+			},
+			"modificator_id": modificator_id,
+		};
+			
 		try
 		{
-			response = await axios.delete(url);
+			post_data = await this.processPostData("processDeleteModificator", post_data);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{
@@ -268,7 +286,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Compose application
 	 */
-	static async apiCompose(item: Application): Promise<AxiosResponse | null>
+	async apiCompose(item: Application): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrl("item", {"item": item}) + "compose/";
@@ -293,7 +311,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Stop application
 	 */
-	static async apiStop(item_id: number): Promise<AxiosResponse | null>
+	async apiStop(item_id: number): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrl("item", {"id": item_id}) + "stop/";

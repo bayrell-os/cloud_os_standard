@@ -66,7 +66,7 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return Modificator;
 	}
@@ -76,7 +76,7 @@ export class ModificatorsPageState extends CrudState<Modificator>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "modificators";
 	}

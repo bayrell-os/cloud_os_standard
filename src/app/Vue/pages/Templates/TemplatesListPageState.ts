@@ -85,7 +85,7 @@ export class TemplatesListPageState extends CrudState<Template>
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): Template
+	createNewItem(): Template
 	{
 		return new Template();
 	}
@@ -95,7 +95,7 @@ export class TemplatesListPageState extends CrudState<Template>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "templates";
 	}
@@ -105,7 +105,7 @@ export class TemplatesListPageState extends CrudState<Template>
 	/**
 	 * Returns route names
 	 */
-	static getRouteNames(): Record<string, string>
+	getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:templates",

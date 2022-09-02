@@ -114,7 +114,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return Application;
 	}
@@ -124,7 +124,7 @@ export class ApplicationsPageState extends CrudState<Application>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "applications";
 	}

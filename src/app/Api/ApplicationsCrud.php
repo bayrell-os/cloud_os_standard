@@ -53,28 +53,28 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		
 		$route_container->addRoute([
 			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/crud/item/{id}/modificator/add/",
+			"url" => "/api/" . $this->api_name . "/crud/item/modificator/add/",
 			"name" => "api:" . $this->api_name . ":modificator:add",
 			"method" => [$this, "actionModificatorAdd"],
 		]);
 		
 		$route_container->addRoute([
-			"methods" => [ "DELETE" ],
-			"url" => "/api/" . $this->api_name . "/crud/item/{id}/modificator/delete/{mod_id}/",
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/crud/item/modificator/delete/",
 			"name" => "api:" . $this->api_name . ":modificator:delete",
 			"method" => [$this, "actionModificatorDelete"],
 		]);
 		
 		$route_container->addRoute([
 			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/crud/item/{id}/compose/",
+			"url" => "/api/" . $this->api_name . "/crud/item/compose/",
 			"name" => "api:" . $this->api_name . ":compose",
 			"method" => [$this, "actionCompose"],
 		]);
 		
 		$route_container->addRoute([
 			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/crud/item/{id}/stop/",
+			"url" => "/api/" . $this->api_name . "/crud/item/stop/",
 			"name" => "api:" . $this->api_name . ":stop",
 			"method" => [$this, "actionStop"],
 		]);
@@ -338,7 +338,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		}
 		
 		/* Update yaml */
-		if (in_array($action, ["actionCreate", "actionEdit"]))
+		if (in_array($action, ["actionCreate", "actionUpdate"]))
 		{
 			$this->item->generateYamlContent();
 			$this->new_data = $this->item->toArray();
@@ -407,7 +407,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 		$this->findItem();
 		
 		/* Get modificator id */
-		$modificator_id = $this->container->arg("mod_id");
+		$modificator_id = $this->container->post("modificator_id");
 		
 		/* Delete modificator */
 		$this->item->deleteModificator($modificator_id);

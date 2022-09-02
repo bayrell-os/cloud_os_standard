@@ -86,7 +86,7 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return DomainSSLGroup;
 	}
@@ -96,7 +96,7 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "domains_ssl_groups";
 	}

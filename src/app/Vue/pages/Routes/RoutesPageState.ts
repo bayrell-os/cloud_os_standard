@@ -110,7 +110,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns class item
 	 */
-	static getClassItem(): Function
+	getClassItem(): Function
 	{
 		return Route;
 	}
@@ -120,7 +120,7 @@ export class RoutesPageState extends CrudState<Route>
 	/**
 	 * Returns api object name
 	 */
-	static getApiObjectName()
+	getApiObjectName()
 	{
 		return "routes";
 	}

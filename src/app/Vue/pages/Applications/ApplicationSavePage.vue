@@ -56,7 +56,17 @@
 		display: flex;
 	}
 	&__param{
+		/*max-width: 50%;*/
 		padding-right: 10px;
+		table{
+			max-width: 100%;
+			th{
+				min-width: 100px;
+			}
+			td{
+				overflow-wrap: anywhere;
+			}
+		}
 	}
 }
 </style>
@@ -281,7 +291,7 @@ export const ApplicationsEditPage =
 				this.model.dialog_compose_app.setWaitResponse();
 				
 				let response = await this.model.constructor
-					.apiCompose(this.model.form_save.item)
+					.processCompose(this.model.form_save.item)
 				;
 				this.model.dialog_compose_app.setAxiosResponse(response);
 				
@@ -312,7 +322,7 @@ export const ApplicationsEditPage =
 				this.model.dialog_stop_app.setWaitResponse();
 				
 				let response = await this.model.constructor
-					.apiStop(this.model.form_save.item.id)
+					.processStop(this.model.form_save.item.id)
 				;
 				this.model.dialog_stop_app.setAxiosResponse(response);
 			}
