@@ -99,7 +99,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 					$query
 						->where("t.space_id", $space_id)
 						->orderBy("domain_name", "asc")
-						->orderBy("route", "asc")
+						->orderBy("route_prefix", "asc")
 					;
 					return $query;
 				},

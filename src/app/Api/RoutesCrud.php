@@ -54,7 +54,7 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 					"protocol",
 					"protocol_data",
 					"domain_name",
-					"route",
+					"route_prefix",
 					"docker_name",
 					"source_port",
 					"target_port",

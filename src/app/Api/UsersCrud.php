@@ -106,8 +106,6 @@ class UsersCrud extends \TinyPHP\ApiCrudRoute
 				]);
 				$auth->value = password_hash($password1, PASSWORD_BCRYPT);
 				$auth->save();
-				
-				Docker::update_htpasswd();
 			}
 		}
 	}

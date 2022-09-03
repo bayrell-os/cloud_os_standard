@@ -54,7 +54,7 @@ class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 					"protocol_data",
 					"space_id",
 					"domain_name",
-					"route",
+					"route_prefix",
 					"docker_name",
 					"source_port",
 					"target_port",

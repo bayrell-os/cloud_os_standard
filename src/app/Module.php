@@ -136,7 +136,7 @@ class Module
 		$app->addEntity(\App\Bus\UsersBus::class);
 		
 		/* Console commands */
-		$app->addEntity(\App\Console\AdminNginxUpdate::class);
+		$app->addEntity(\App\Console\AdminUpdate::class);
 		$app->addEntity(\App\Console\DockerNginxUpdate::class);
 		$app->addEntity(\App\Console\DockerServicesUpdate::class);
 		// $app->addEntity(\App\Console\Test::class);

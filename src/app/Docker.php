@@ -340,10 +340,12 @@ class Docker
 	
 	
 	/**
-	 * Update admin upstreams
+	 * Update admin page
 	 */
-	static function updateAdminDomain($network_name)
+	static function updateAdminUpstreams()
 	{
+		$network_name = "cloud_network";
+		
 		$services = DockerService::selectQuery()
 			->where([
 				'enable' => 1,
@@ -441,7 +443,7 @@ class Docker
 				["enable", "=", 1],
 				["protocol", "=", "http"],
 			])
-			->orderBy("route", "desc")
+			->orderBy("route_prefix", "desc")
 			->all()
 		;
 		
@@ -518,7 +520,7 @@ class Docker
 					["protocol", "=", "http"],
 					["domain_name", "=", $domain_name],
 				])
-				->orderBy("route", "desc")
+				->orderBy("route_prefix", "desc")
 				->all()
 			;
 			
@@ -535,17 +537,17 @@ class Docker
 				$has_websocket = isset($protocol_data["websocket"]) ?
 					$protocol_data["websocket"] : false;
 					
-				$domain_route_url = $route["route"];
 				$domain_route_prefix = $route["route_prefix"];
-				if ($domain_route_url == "") $domain_route_url = "/";
-				if ($domain_route_prefix == "/") $domain_route_prefix = "";
+				$domain_target_prefix = $route["target_prefix"];
+				if ($domain_route_prefix == "") $domain_route_prefix = "/";
+				if ($domain_target_prefix == "/") $domain_target_prefix = "";
 				
-				if ($domain_route_url == "/")
+				if ($domain_route_prefix == "/")
 				{
 					$has_root_route = true;
 				}
 				
-				$nginx_route .= "location " . $domain_route_url . " {\n";
+				$nginx_route .= "location " . $domain_route_prefix . " {\n";
 					
 				/* Enable auth */
 				if ($enable_auth)
@@ -555,7 +557,7 @@ class Docker
 				
 				/* Proxy params */
 				$nginx_route .= "    proxy_pass http://" . $upstream_name .
-					$domain_route_prefix . ";\n";
+					$domain_target_prefix . ";\n";
 				$nginx_route .= "    include proxy_params;\n";
 				
 				/* Add websocket settings */
@@ -567,8 +569,8 @@ class Docker
 				}
 				
 				/* Add route prefix */
-				$nginx_route .= "    proxy_set_header X-ROUTE-PREFIX \"" .
-					$domain_route_prefix . "\";\n";
+				$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"" .
+					$domain_target_prefix . "\";\n";
 				
 				/* Add space id */
 				if ($domain["space_uid"] != "")
@@ -596,36 +598,7 @@ class Docker
 				$nginx_route .= "  }";
 				$nginx_routes[] = $nginx_route;
 			}
-			/*
-			if (!$has_root_route)
-			{
-				$nginx_route = "";
-				$nginx_route .= "  location / {\n";
-				$nginx_route .= "    if (-f \$request_filename) {\n";
-				$nginx_route .= "      break;\n";
-				$nginx_route .= "    }\n";
-				$nginx_route .= "    rewrite ^/. /index.php last;\n";
-				$nginx_route .= "  }";
-				$nginx_routes[] = $nginx_route;
-				
-				$nginx_route = "";
-				$nginx_route .= "  location /index.php {\n";
-				$nginx_route .= "    include fastcgi_params;\n";
-				// Add space id 
-				if ($domain["space_uid"] != "")
-				{
-					$nginx_route .= "    fastcgi_param X-SPACE-UID \"" .
-						$domain["space_uid"] . "\";\n";
-				}
-				else
-				{
-					$nginx_route .= "    fastcgi_param X-SPACE-UID \"0\";\n";
-				}
-				$nginx_route .= "    break;\n";
-				$nginx_route .= "  }\n";
-				$nginx_routes[] = $nginx_route;
-			}
-			*/
+			
 			/* Create nginx files */
 			$nginx_content = $domain["nginx_template"];
 			$nginx_content = str_replace("%DOMAIN_NAME%", $domain["domain_name"], $nginx_content);

@@ -29,9 +29,9 @@ use Illuminate\Database\Capsule\Manager as DB;
 use TinyPHP\Utils;
 
 
-class AdminNginxUpdate extends Command
+class AdminUpdate extends Command
 {
-	protected static $defaultName = 'cloud_os:nginx:update';
+	protected static $defaultName = 'admin:update';
 
 	protected function configure(): void
 	{
@@ -47,7 +47,7 @@ class AdminNginxUpdate extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$res = Docker::updateAdminDomain("cloud_network");
+		$res = Docker::updateAdminUpstreams();
 		if ($res)
 		{
 			$output->writeln("Reload nginx");

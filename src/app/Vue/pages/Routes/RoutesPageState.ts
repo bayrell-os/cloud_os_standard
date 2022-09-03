@@ -29,7 +29,7 @@ export class Route extends CrudItem
 	protocol: string;
 	protocol_data: any;
 	domain_name: string;
-	route: string;
+	route_prefix: string;
 	target_prefix: string;
 	docker_name: string;
 	source_port: number;
@@ -50,7 +50,7 @@ export class Route extends CrudItem
 		this.protocol = "http";
 		this.protocol_data = {"websocket": "0"};
 		this.domain_name = "";
-		this.route = "/";
+		this.route_prefix = "/";
 		this.target_prefix = "/";
 		this.docker_name = "";
 		this.source_port = 80;
@@ -85,7 +85,7 @@ export class Route extends CrudItem
 			this.protocol_data = res;
 		}
 		else if (key == "domain_name") this.domain_name = String(value);
-		else if (key == "route") this.route = String(value);
+		else if (key == "route_prefix") this.route_prefix = String(value);
 		else if (key == "docker_name") this.docker_name = String(value);
 		else if (key == "layer_uid") this.layer_uid = String(value);
 		else if (key == "source_port") this.source_port = Number(value);
@@ -174,11 +174,11 @@ export class RoutesPageState extends CrudState<Route>
 		this.fields.push( deepClone(domain_name) );
 		
 		/* Route field */
-		let route = new FieldInfo();
-		route.name = "route";
-		route.label = "Route";
-		route.component = "Input";
-		this.fields.push( deepClone(route) );
+		let route_prefix = new FieldInfo();
+		route_prefix.name = "route_prefix";
+		route_prefix.label = "Route";
+		route_prefix.component = "Input";
+		this.fields.push( deepClone(route_prefix) );
 		
 		/* Route prefix field */
 		let target_prefix = new FieldInfo();
@@ -205,7 +205,7 @@ export class RoutesPageState extends CrudState<Route>
 		let docker_name = new FieldInfo();
 		docker_name.name = "docker_name";
 		docker_name.label = "Docker name";
-		docker_name.component = "Select";
+		docker_name.component = "Input";
 		docker_name.options = [];
 		this.fields.push( deepClone(docker_name) );
 		
@@ -245,17 +245,17 @@ export class RoutesPageState extends CrudState<Route>
 		this.form_save.fields.push( deepClone(enable) );
 		this.form_save.fields.push( deepClone(protocol) );
 		this.form_save.fields.push( deepClone(web_socket) );
-		this.form_save.fields.push( deepClone(docker_name) );
-		this.form_save.fields.push( deepClone(route) );
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(source_port) );
+		this.form_save.fields.push( deepClone(route_prefix) );
+		this.form_save.fields.push( deepClone(docker_name) );
 		this.form_save.fields.push( deepClone(target_port) );
 		this.form_save.fields.push( deepClone(target_prefix) );
 		this.form_save.fields.push( deepClone(nginx_config) );
 		
 		/* Table fields */
 		enable.component = "SelectLabel";
-		route.component = "Label";
+		route_prefix.component = "Label";
 		protocol.component = "SelectLabel";
 		docker_name.component = "SelectLabel";
 		domain_name.component = "SelectLabel";
@@ -267,7 +267,7 @@ export class RoutesPageState extends CrudState<Route>
 		this.fields_table.push( deepClone(protocol) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(source_port) );
-		this.fields_table.push( deepClone(route) );
+		this.fields_table.push( deepClone(route_prefix) );
 		this.fields_table.push( deepClone(docker_name) );
 		this.fields_table.push( deepClone(target_port) );
 		this.fields_table.push( deepClone(target_prefix) );
@@ -281,7 +281,7 @@ export class RoutesPageState extends CrudState<Route>
 	 */
 	getItemName(item: Route | null): string
 	{
-		return (item) ? item.domain_name + item.route : "";
+		return (item) ? item.domain_name + item.route_prefix : "";
 	}
 	
 	
@@ -328,7 +328,7 @@ export class RoutesPageState extends CrudState<Route>
 					};
 				}
 			);
-			
+			/*
 			this.setOptionsFromDictionary(
 				response,
 				["all"],
@@ -342,7 +342,7 @@ export class RoutesPageState extends CrudState<Route>
 					};
 				}
 			);
-			
+			*/
 		}
 		
 	}

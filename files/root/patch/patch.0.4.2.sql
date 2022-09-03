@@ -177,7 +177,7 @@ CREATE TABLE "adminer_routes" (
   "protocol" text NOT NULL,
   "protocol_data" text NOT NULL DEFAULT '',
   "domain_name" text NOT NULL,
-  "route" text NOT NULL DEFAULT '/',
+  "route_prefix" text NOT NULL DEFAULT '/',
   "docker_name" text NOT NULL,
   "source_port" integer NOT NULL DEFAULT '80',
   "target_port" integer NOT NULL DEFAULT '80',
@@ -187,7 +187,7 @@ CREATE TABLE "adminer_routes" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
-INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "domain_name", "route", "docker_name", "source_port", "target_port", "target_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated") SELECT "id", "enable", "protocol", "protocol_data", "domain_name", "route", "docker_name", "source_port", "target_port", "route_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated" FROM "routes";
+INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "domain_name", "route_prefix", "docker_name", "source_port", "target_port", "target_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated") SELECT "id", "enable", "protocol", "protocol_data", "domain_name", "route_prefix", "docker_name", "source_port", "target_port", "target_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated" FROM "routes";
 DROP TABLE "routes";
 ALTER TABLE "adminer_routes" RENAME TO "routes";
 CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
