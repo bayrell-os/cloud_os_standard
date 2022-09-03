@@ -57,6 +57,18 @@
 		padding-bottom: 5px;
 	}
 }
+.page_service{
+	.component_crud__table{
+		display: flex;
+		align-items: flex-start;
+		table{
+			width: 60%;
+		}
+		.page_service__table_after{
+			width: 40%;
+		}
+	}
+}
 </style>
 
 <template>
@@ -129,7 +141,7 @@ export const ServicesPage =
 		notNull,
 		onRowClick: function(item, index, $event)
 		{
-			Crud.methods.onRowClick.apply(this, [item, index, $event]);
+			CrudList.methods.onRowClick.apply(this, [item, index, $event]);
 			this.model.setActiveItem(item);
 		},
 		onRefreshClick: function()
@@ -151,7 +163,7 @@ export const ServicesPage =
 		{
 			if (action == "stop_yes")
 			{
-				this.model.doStopForm();
+				this.model.poccessStop();
 			}
 			else if (action == "stop_no")
 			{

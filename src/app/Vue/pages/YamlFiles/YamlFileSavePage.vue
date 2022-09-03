@@ -33,6 +33,18 @@
 			</Form>
 		</template>
 		
+		<template v-slot:crud_after>
+			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
+				<template v-slot:text>
+					Compose file {{ model.getItemName(model.dialog_compose.item) }}?
+				</template>
+				<template v-slot:buttons>
+					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
+					<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
+				</template>
+			</Dialog>
+		</template>
+		
 	</CrudSave>
 </template>
 
@@ -64,7 +76,7 @@ export const YamlFileSavePage =
 		{
 			if (button_name == "yes")
 			{
-				this.model.doCompose();
+				this.model.processCompose();
 			}
 			else
 			{

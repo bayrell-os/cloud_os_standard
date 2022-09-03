@@ -22,21 +22,7 @@
 
 
 <template>
-	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action">
-		
-		<template v-slot:crud_after>
-			<Dialog v-bind:store_path="store_path.concat('dialog_compose')">
-				<template v-slot:text>
-					Compose file {{ model.getItemName(model.dialog_compose.item) }}?
-				</template>
-				<template v-slot:buttons>
-					<Button type="danger" @click="onDialogComposeButtonClick('yes')">Yes</Button>
-					<Button type="" @click="onDialogComposeButtonClick('no')">No</Button>
-				</template>
-			</Dialog>
-		</template>
-		
-	</CrudList>
+	<CrudList v-bind:store_path="store_path" v-bind:page_action="page_action"></CrudList>
 </template>
 
 
@@ -59,21 +45,6 @@ export const YamlFilesPage =
 	},
 	methods:
 	{
-		onSaveFormButtonComposeClick: function()
-		{
-			this.model.showCompose(this.model.form_save.item);
-		},
-		onDialogComposeButtonClick: function(button_name)
-		{
-			if (button_name == "yes")
-			{
-				this.model.doCompose();
-			}
-			else
-			{
-				this.model.dialog_compose.hide();
-			}
-		}
 	},
 	mounted: function () {
 		let page_title = this.model.getMessage("list_title", null);

@@ -21,6 +21,7 @@
 namespace App\Api;
 
 use App\Models\Domain;
+use App\Models\Space;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -47,21 +48,40 @@ class SpacesDomainsCrud extends \TinyPHP\ApiCrudRoute
 	{
 		$this->initUpdateData("actionCreate");
 		
+		$space_id = $this->container->post("space_id");
 		$domain_name = isset($this->update_data["domain_name"])
 			? $this->update_data["domain_name"] : ""
 		;
+		
+		/* Find domain */
 		$domain = Domain::selectQuery()
 			->where("domain_name", $domain_name)
-			->where("space_id", null)
 			->one()
 		;
-		
 		if (!$domain)
 		{
 			throw new ItemNotFoundException("Domain");
 		}
 		
-		$space_id = $this->container->post("space_id");
+		$domain = Domain::selectQuery()
+			->where("domain_name", $domain_name)
+			->where("space_id", null)
+			->one()
+		;
+		if (!$domain)
+		{
+			throw new \Exception("Domain exists, but already used");
+		}
+		
+		/* Find space */
+		$space = Space::selectQuery()
+			->where("id", $space_id)
+			->one()
+		;
+		if (!$space)
+		{
+			throw new ItemNotFoundException("Space");
+		}
 		
 		$domain->space_id = $space_id;
 		$domain->save();

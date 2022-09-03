@@ -133,7 +133,6 @@ export const App =
 					"title": "Docker Swarm",
 					"items":
 					[
-						{ "name": "app:stacks", "title": "Stacks" },
 						{ "name": "app:services", "title": "Services" },
 						{ "name": "app:yaml_files", "title": "Yaml Files",
 							"names": [
@@ -141,6 +140,7 @@ export const App =
 								"app:yaml_files:edit",
 							],
 						},
+						{ "name": "app:stacks", "title": "Stacks" },
 					]
 				},
 				

@@ -282,24 +282,14 @@ export const ApplicationsEditPage =
 				this.model.getServiceName() + " ?"
 			;
 			this.model.dialog_compose_app.show();
+			this.model.dialog_compose_app.clear();
 		},
 		
 		onDialogComposeAppButtonClick: async function(button_text)
 		{
 			if (button_text == "yes")
 			{
-				this.model.dialog_compose_app.setWaitResponse();
-				
-				let response = await this.model.constructor
-					.processCompose(this.model.form_save.item)
-				;
-				this.model.dialog_compose_app.setAxiosResponse(response);
-				
-				if (response && responseOk(response))
-				{
-					/* Hide dialog */
-					// this.model.dialog_compose_app.hide();
-				}
+				await this.model.processCompose();
 			}
 			else if (button_text == "close")
 			{
@@ -312,19 +302,14 @@ export const ApplicationsEditPage =
 		{
 			this.model.dialog_stop_app.title = "Stop app " + this.model.getServiceName() + " ?";
 			this.model.dialog_stop_app.show();
-			// this.model.doStopForm(this);
+			this.model.dialog_stop_app.clear();
 		},
 		
 		onDialogStopAppButtonClick: async function(button_text)
 		{
 			if (button_text == "yes")
 			{
-				this.model.dialog_stop_app.setWaitResponse();
-				
-				let response = await this.model.constructor
-					.processStop(this.model.form_save.item.id)
-				;
-				this.model.dialog_stop_app.setAxiosResponse(response);
+				await this.model.processStop();
 			}
 			else if (button_text == "close")
 			{

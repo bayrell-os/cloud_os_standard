@@ -228,7 +228,11 @@ export class ServicesPageState extends CrudState<Service>
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
 		row_buttons.component_params["buttons"] = [
-			new CrudButton().assignValues({ "type": "danger", "label": "Stop", "action": "stop" })
+			new CrudButton().assignValues({
+				"type": "danger",
+				"label": "Stop",
+				"action": "stop"
+			})
 		];
 		
 		/* Form save fields */
@@ -291,21 +295,32 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Return api search url
 	 */
-	getApiUrlSearch(refresh: boolean = false)
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
-		if (refresh)
-			return "/api/" + this.getClass().getApiObjectName() + "/crud/search/?refresh=1";
-		return "/api/" + this.getClass().getApiObjectName() + "/crud/search/";
+		let api_name = this.getApiObjectName();
+		let refresh = (params ? params["refresh"] : false) || false;
+		
+		if (api_type == "search")
+		{
+			if (refresh) return "/api/" + api_name + "/crud/search/?refresh=1";
+			return "/api/" + api_name + "/crud/search/";
+		}
+		else if (api_type == "stop")
+		{
+			return "/api/" + api_name + "/stop/";
+		}
+		
+		return super.getApiUrl(api_type, params);
 	}
 	
 	
 	
 	/**
-	 * Load data api
+	 * Process load data api
 	 */
-	async apiLoadData(refresh: boolean = false): Promise<AxiosResponse | null>
+	static async processLoadDataApi(refresh: boolean = false): Promise<AxiosResponse | null>
 	{
-		let url = this.getApiUrlSearch(refresh);
+		let url = this.getApiUrl("search", {refresh});
 		let response:AxiosResponse | null = null;
 		
 		try
@@ -330,12 +345,14 @@ export class ServicesPageState extends CrudState<Service>
 	 */
 	async doRefresh()
 	{
-		let res:boolean = await this.before("onRefresh", {});
+		let res:boolean = await this.before("doRefresh", {});
 		if (!res) return;
 		
 		/* Ajax request */
 		this.refresh_state.setWaitResponse();
-		let response:AxiosResponse | null = await (this.constructor as any).apiLoadData(true);
+		let response:AxiosResponse | null = await this.getClass()
+			.processLoadDataApi(true)
+		;
 		this.refresh_state.setAxiosResponse(response);
 		
 		/* Set result */
@@ -354,21 +371,9 @@ export class ServicesPageState extends CrudState<Service>
 			{
 				this.setActiveItem( this.items[index] );
 			}
-			
 		}
 		
-		await this.after("onRefresh", {"response": response});
-	}
-	
-	
-	
-	/**
-	 * Return api stop url
-	 */
-	getApiUrlStop(item: Service)
-	{
-		return "/api/" + this.getClass().getApiObjectName() + "/stop/" +
-			item.docker_name + "/";
+		await this.after("doRefresh", {"response": response});
 	}
 	
 	
@@ -388,15 +393,24 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Stop form
 	 */
-	async doStopForm()
+	async poccessStop()
 	{
 		let item:Service = this.dialog_stop.item as Service;
 		
-		let res:boolean = await this.before("onStopForm", {});
+		let res:boolean = await this.before("poccessStop", {});
 		if (!res) return;
 		
+		/* Get post data */
+		let post_data = {
+			"pk": {
+				"service_id": item.service_id,
+			},
+		};
+		post_data = await this.processPostData("poccessStop", post_data);
+		
+		/* Send api */
 		this.dialog_stop.setWaitResponse();
-		let response:AxiosResponse | null = await this.apiStopForm(item);
+		let response:AxiosResponse | null = await this.getClass().poccessStopApi(post_data);
 		this.dialog_stop.setAxiosResponse(response);
 		
 		if (
@@ -406,11 +420,10 @@ export class ServicesPageState extends CrudState<Service>
 		)
 		{
 			this.deleteItem(item);
-			/*model.updateItem(item, response.data.result.item);*/
 			this.dialog_stop.hide();
 		}
 		
-		await this.after("onStopForm", {"response": response});
+		await this.after("poccessStop", {"response": response});
 	}
 	
 	
@@ -418,24 +431,20 @@ export class ServicesPageState extends CrudState<Service>
 	/**
 	 * Stop form api
 	 */
-	async apiStopForm(item:Service): Promise<AxiosResponse | null>
+	static async poccessStopApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
+		let url = this.getApiUrl("stop");
 		
-		if (item)
+		try
 		{
-			let url = this.getApiUrlStop(item);
-			
-			try
+			response = await axios.post(url, post_data);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
 			{
-				response = await axios.post(url);
-			}
-			catch (e)
-			{
-				if (axios.isAxiosError(e))
-				{
-					response = e["response"] as AxiosResponse;
-				}
+				response = e["response"] as AxiosResponse;
 			}
 		}
 		

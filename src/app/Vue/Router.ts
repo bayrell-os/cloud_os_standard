@@ -151,7 +151,7 @@ const routes =
 		path: '/yaml_files/edit/:id/',
 		name: 'app:yaml_files:edit',
 		component: components.YamlFileSavePage,
-		props: { store_path: ["YamlFilesPage"], page_action: "edit" }
+		props: { store_path: ["YamlFileSavePage"], page_action: "edit" }
 	},
 	
 	/* Nginx files */

@@ -459,7 +459,15 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	public function actionCompose()
 	{
 		/* Find app */
-		$this->actionEdit();
+		$this->actionUpdate();
+		
+		/* Set app as started*/
+		$this->item->status = 1;
+		$this->item->save();
+		
+		/* Build response */
+		$this->new_data = $this->item->toArray();
+		$this->buildResponse("actionUpdate");
 		
 		/* Get yaml file */
 		$yaml = $this->item->getYamlFile();
@@ -481,16 +489,29 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Stop
 	 */
-	public function actionStop(RenderContainer $container)
+	public function actionStop()
 	{
 		/* Find app */
 		$this->findItem();
 		
+		/* Set app as stoped */
+		$this->item->status = 0;
+		$this->item->save();
+		
+		/* Build response */
+		$this->new_data = $this->item->toArray();
+		$this->buildResponse("actionUpdate");
+		
 		$service_name = $this->item->stack_name . "_" . $this->item->name;
-		$this->api_result->success("Ok");
+		$this->api_result->success(null, "Ok");
 		
 		/* Stop service */
 		$result = Docker::removeService($service_name);
-		$this->api_result->error_str = $result;
+		$result = @json_decode($result, true);
+		if ($result)
+		{
+			$message = isset($result["message"]) ? $result["message"] : "";
+			$this->api_result->error(null, $message);
+		}
 	}
 }

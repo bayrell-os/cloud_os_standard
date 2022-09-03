@@ -50,7 +50,7 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 		/* Compose */
 		$route_container->addRoute([
 			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/compose/{id}/",
+			"url" => "/api/" . $this->api_name . "/compose/",
 			"name" => "api:" . $this->api_name . ":compose",
 			"method" => [$this, "actionCompose"],
 		]);
@@ -122,7 +122,7 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 	function actionCompose()
 	{
 		/* Save */
-		$this->actionEdit();
+		$this->actionUpdate();
 		
 		/* Compose */
 		if ($this->item)

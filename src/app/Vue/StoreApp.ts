@@ -52,6 +52,7 @@ export class StoreApp
 	RoutesPage: RoutesPageState = new RoutesPageState();
 	UsersPage: UsersPageState = new UsersPageState();
 	YamlFilesPage: YamlFilesPageState = new YamlFilesPageState();
+	YamlFileSavePage: YamlFilesPageState = new YamlFilesPageState();
 	ServicesPage: ServicesPageState = new ServicesPageState();
 	SpaceListPage: SpacesPageState = new SpacesPageState();
 	SpaceSavePage: SpacesPageState = new SpacesPageState();

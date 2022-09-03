@@ -251,7 +251,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	(
 		app_id: number,
 		modificator_id: number
-	): Promise<AxiosResponse | null>
+	)
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getClass().getApiUrl("item") +
@@ -264,7 +264,7 @@ export class ApplicationSavePageState extends ApplicationsPageState
 			},
 			"modificator_id": modificator_id,
 		};
-			
+		
 		try
 		{
 			post_data = await this.processPostData("processDeleteModificator", post_data);
@@ -277,8 +277,6 @@ export class ApplicationSavePageState extends ApplicationsPageState
 				response = e["response"] as AxiosResponse;
 			}
 		}
-		
-		return response;
 	}
 	
 	
@@ -286,14 +284,28 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Compose application
 	 */
-	async apiCompose(item: Application): Promise<AxiosResponse | null>
+	async processCompose()
 	{
+		let item = this.form_save.item;
+		if (!item) return;
+		
+		let res:boolean = await this.before("processCompose", { item });
+		if (!res) return;
+		
 		let response:AxiosResponse | null = null;
-		let url = this.getClass().getApiUrl("item", {"item": item}) + "compose/";
+		let post_data = {
+			"pk": item ? this.getPrimaryKeyFromItem(item) : null,
+			"item": item,
+		};
+		let url = this.getClass().getApiUrl("item") + "compose/";
+		
+		/* Set wait response */
+		this.dialog_compose_app.setWaitResponse();
 		
 		try
 		{
-			response = await axios.post(url, {"item": item});
+			post_data = await this.processPostData("processCompose", post_data);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{
@@ -303,7 +315,15 @@ export class ApplicationSavePageState extends ApplicationsPageState
 			}
 		}
 		
-		return response;
+		/* Set response */
+		this.dialog_compose_app.setAxiosResponse(response);
+		if (response && this.dialog_compose_app.error_code == 1)
+		{
+			this.form_save.setItem(response.data.result.new_data);
+			this.updateItem(item, response.data.result.new_data);
+		}
+		
+		await this.after("poccessStop", { response, item });
 	}
 	
 	
@@ -311,14 +331,24 @@ export class ApplicationSavePageState extends ApplicationsPageState
 	/**
 	 * Stop application
 	 */
-	async apiStop(item_id: number): Promise<AxiosResponse | null>
+	async processStop()
 	{
+		let item = this.form_save.item;
+		if (!item) return;
+		
 		let response:AxiosResponse | null = null;
-		let url = this.getClass().getApiUrl("item", {"id": item_id}) + "stop/";
+		let post_data = {
+			"pk": { "id": item.id },
+		};
+		let url = this.getClass().getApiUrl("item") + "stop/";
+		
+		/* Set wait response */
+		this.dialog_compose_app.setWaitResponse();
 		
 		try
 		{
-			response = await axios.post(url);
+			post_data = await this.processPostData("processCompose", post_data);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{
@@ -328,7 +358,12 @@ export class ApplicationSavePageState extends ApplicationsPageState
 			}
 		}
 		
-		return response;
+		this.dialog_stop_app.setAxiosResponse(response);
+		if (response && this.dialog_stop_app.error_code == 1)
+		{
+			this.form_save.setItem(response.data.result.new_data);
+			this.updateItem(item, response.data.result.new_data);
+		}
 	}
 	
 }

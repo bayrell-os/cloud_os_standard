@@ -162,9 +162,8 @@ export class ApplicationsPageState extends CrudState<Application>
 		status.label = "Status";
 		status.component = "Select";
 		status.options = [
-			new SelectOption().assignValues({ "id": 1, "value": "Started" }),
-			new SelectOption().assignValues({ "id": 0, "value": "Stopped" }),
-			// new SelectOption().assignValues({ "id": 2, "value": "STARTS UP" }),
+			new SelectOption().assignValues({ "id": 1, "value": "RUN" }),
+			new SelectOption().assignValues({ "id": 0, "value": "STOP" }),
 		];
 		this.fields.push( deepClone(status) );
 		

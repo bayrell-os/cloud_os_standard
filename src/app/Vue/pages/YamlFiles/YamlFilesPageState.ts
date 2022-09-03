@@ -126,12 +126,7 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		let api_name = this.getApiObjectName();
 		if (api_type == "compose")
 		{
-			if (params)
-			{
-				let item = params["item"] as YamlFile;
-				let id = encodeURIComponent(this.getItemId(item));
-				return "/api/" + api_name + "/crud/update/" + id + "/";
-			}
+			return "/api/" + api_name + "/compose/";
 		}
 		return super.getApiUrl(api_type, params);
 	}
@@ -250,16 +245,16 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		row_buttons.component = "RowButtons";
 		
 		/* Form fields */
-		this.form_save.fields.push( deepClone(file_name) );
 		this.form_save.fields.push( deepClone(stack_name) );
+		this.form_save.fields.push( deepClone(file_name) );
 		this.form_save.fields.push( deepClone(content) );
 		
 		/* Table fields */
 		file_name.component = "Label";
 		stack_name.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
-		this.fields_table.push( deepClone(file_name) );
 		this.fields_table.push( deepClone(stack_name) );
+		this.fields_table.push( deepClone(file_name) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -287,8 +282,14 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 		
 		if (item != null)
 		{
+			let post_data = {
+				"pk": this.getPrimaryKeyFromItem(item),
+				"item": item,
+			};
+			post_data = await this.processPostData("processCompose", post_data);
+			
 			this.dialog_compose.setWaitResponse();
-			response = await this.getClass().processComposeApi(item);
+			response = await this.getClass().processComposeApi(post_data);
 			this.dialog_compose.setAxiosResponse(response);
 		}
 	}
@@ -298,11 +299,10 @@ export class YamlFilesPageState extends CrudState<YamlFile>
 	/**
 	 * Compose active item
 	 */
-	static async processComposeApi(item: YamlFile): Promise<AxiosResponse | null>
+	static async processComposeApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
-		let url = this.getApiUrl("compose", item);
-		let post_data = {"item": {"content": item.content}};
+		let url = this.getApiUrl("compose", { post_data });
 		try
 		{
 			response = await axios.post(url, post_data);

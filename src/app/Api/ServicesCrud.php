@@ -50,7 +50,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 		/* Stop service */
 		$route_container->addRoute([
 			"methods" => [ "POST" ],
-			"url" => "/api/" . $this->api_name . "/stop/{id}/",
+			"url" => "/api/" . $this->api_name . "/stop/",
 			"name" => "api:" . $this->api_name . ":stop",
 			"method" => [$this, "actionStop"],
 		]);
