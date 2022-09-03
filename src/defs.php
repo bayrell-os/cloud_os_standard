@@ -32,6 +32,7 @@ return
 	"connectToDatabase" => DI\factory([\App\Instance::class, 'connectToDatabase']),
 	"render" => DI\create(\TinyPHP\Twig::class),
 	"db" => DI\create(\Illuminate\Database\Capsule\Manager::class),
+	"bus_key" => "CLOUD_OS_KEY",
 	
 	\FastRoute\RouteParser::class => DI\create(\FastRoute\RouteParser\Std::class),
 	\FastRoute\DataGenerator::class => DI\create(\FastRoute\DataGenerator\GroupCountBased::class),

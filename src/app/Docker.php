@@ -570,7 +570,7 @@ class Docker
 				
 				/* Add route prefix */
 				$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"" .
-					$domain_target_prefix . "\";\n";
+					$domain_route_prefix . "\";\n";
 				
 				/* Add space id */
 				if ($domain["space_uid"] != "")

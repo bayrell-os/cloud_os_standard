@@ -20,6 +20,7 @@
 
 namespace App\Bus;
 
+use TinyPHP\BusApiRoute;
 use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Utils;

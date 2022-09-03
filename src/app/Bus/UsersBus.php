@@ -20,11 +20,14 @@
 
 namespace App\Bus;
 
+use TinyPHP\BusApiRoute;
 use TinyPHP\RenderContainer;
 use TinyPHP\RouteContainer;
 use TinyPHP\Utils;
 use App\JWT;
 use App\Models\NginxFile;
+use App\Models\Space;
+use App\Models\SpaceUser;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UsersInGroups;
@@ -82,6 +85,7 @@ class UsersBus extends BusApiRoute
 		$data = $this->container->post("data");
 		$login = trim(isset($data["login"]) ? $data["login"] : "");
 		$password = trim(isset($data["password"]) ? $data["password"] : "");
+		$space_uid = trim(isset($data["space_uid"]) ? $data["space_uid"] : "");
 		
 		if ($login == "" || $password == "")
 		{
@@ -89,9 +93,32 @@ class UsersBus extends BusApiRoute
 			return;
 		}
 		
+		if ($space_uid == "")
+		{
+			$this->api_result->error( $result, "Space uid is null" );
+			return;
+		}
+		
+		/* Find space */
+		$space = Space::selectQuery()
+			->where("uid", $space_uid)
+			->one()
+		;
+		if (!$space)
+		{
+			$this->api_result->error( $result, "Space not found" );
+			return;
+		}
+		
 		/* Find user */
 		$user = User::selectQuery()
-			->where("login", $login)
+			->innerJoin(
+				SpaceUser::getTableName(),
+				"spaces_users",
+				"spaces_users.user_id=t.id"
+			)
+			->where("spaces_users.space_id", $space->id)
+			->where("t.login", $login)
 			->one()
 		;
 		if (!$user)
@@ -159,9 +186,9 @@ class UsersBus extends BusApiRoute
 	{
 		$result = [];
 		
-		$result["users"] = User::selectQuery()->all(true);
-		$result["groups"] = UserGroup::selectQuery()->all(true);
-		$result["users_in_groups"] = UsersInGroups::selectQuery()->all(true);
+		//$result["users"] = User::selectQuery()->all(true);
+		//$result["groups"] = UserGroup::selectQuery()->all(true);
+		//$result["users_in_groups"] = UsersInGroups::selectQuery()->all(true);
 		
 		$this->api_result->success( $result, "Ok" );
 	}
@@ -178,7 +205,7 @@ class UsersBus extends BusApiRoute
 		$gmdate = gmdate("Y-m-d H:i:s", $timestamp);
 		
 		$result = [];
-		
+		/*
 		$result["users"] = User::selectQuery()
 			->where("gmtime_updated", ">=", $gmdate)
 			->all(true)
@@ -191,7 +218,7 @@ class UsersBus extends BusApiRoute
 			->where("gmtime_updated", ">=", $gmdate)
 			->all(true)
 		;
-		
+		*/
 		$this->api_result->success( $result, "Ok" );
 	}
 }

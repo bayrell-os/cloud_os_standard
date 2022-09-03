@@ -125,6 +125,11 @@ CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
 COMMIT;
 
 
+-- Add spaces_uid uniquie index
+
+CREATE UNIQUE INDEX "spaces_uid" ON "spaces" ("uid");
+
+
 -- Add spaces spaces_roles
 
 
