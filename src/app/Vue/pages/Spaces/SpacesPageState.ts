@@ -262,6 +262,20 @@ export class SpacesPageState extends CrudState<Space>
 				domain_callback
 			);
 			
+			this.routes.setOptionsFromDictionary(
+				response,
+				["all"],
+				"docker_name",
+				"services",
+				function (domain: any)
+				{
+					return {
+						"id": domain["docker_name"],
+						"value": domain["docker_name"],
+					};
+				}
+			);
+			
 			this.routes.page_action = "list";
 			this.routes.setItems(
 				response.data.result.dictionary["spaces_routes"]

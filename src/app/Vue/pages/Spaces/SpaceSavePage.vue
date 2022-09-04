@@ -19,7 +19,7 @@
 <style lang="scss">
 .space_save_page{
 	&__tabs{
-		padding-top: 20px;
+		padding-top: 0px;
 	}
 }
 </style>
@@ -28,7 +28,7 @@
 <template>
 	<div class="space_save_page">
 		<CrudSave v-bind:store_path="store_path">
-			<template v-slot:component_crud_save_rows_after>
+			<template v-slot:component_crud_save_after>
 				
 				<div class="space_save_page__tabs">
 					<Tabs>

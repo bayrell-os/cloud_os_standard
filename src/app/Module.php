@@ -62,7 +62,7 @@ class Module
 		$defs = $res->defs;
 		
 		/* Setup bus key */
-		$defs["bus_key"] = "CLOUD_OS_KEY";
+		$defs["settings"]["bus_env_key"] = "CLOUD_OS_KEY";
 		
 		/* Setup default db connection */
 		$defs["db_connection"] = \DI\create(\TinyORM\SQLiteConnection::class);
@@ -136,6 +136,7 @@ class Module
 		
 		/* Bus functions */
 		$app->addEntity(\App\Bus\NginxBus::class);
+		$app->addEntity(\App\Bus\SpaceBus::class);
 		$app->addEntity(\App\Bus\UsersBus::class);
 		
 		/* Console commands */

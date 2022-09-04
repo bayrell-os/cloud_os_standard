@@ -87,6 +87,26 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 				],
 			]),
 			
+			/* Load services */
+			new Dictionary([
+				"api_name" => "services",
+				"class_name" => DockerService::class,
+				"actions" => ["actionGetById"],
+				
+				"buildSearchQuery" => function ($route, $action, $query){
+					$query
+						->where("is_deleted", "=", "0")
+						->orderBy("docker_name", "asc")
+					;
+					return $query;
+				},
+				"fields" =>
+				[
+					"service_id",
+					"docker_name",
+				],
+			]),
+			
 			/* Load spaces routes */
 			new Dictionary([
 				"api_name" => "spaces_routes",
@@ -97,9 +117,14 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 				{
 					$space_id = $rule->route->item->id;
 					$query
-						->where("t.space_id", $space_id)
-						->orderBy("domain_name", "asc")
-						->orderBy("route_prefix", "asc")
+						->innerJoin(
+							Domain::getTableName(),
+							"domains",
+							"t.domain_name == domains.domain_name"
+						)
+						->where("domains.space_id", $space_id)
+						->orderBy("t.domain_name", "asc")
+						->orderBy("t.route_prefix", "asc")
 					;
 					return $query;
 				},
@@ -158,7 +183,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 					/* Find all roles users with same roles id */
 					$users_roles_all = SpaceUserRole::selectQuery()
 						->where("role_id", $ids)
-						->leftJoin(
+						->innerJoin(
 							User::getTableName(),
 							"users",
 							"t.user_id == users.id"
@@ -206,7 +231,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 							"user.login as user_login",
 							"user.name as user_name",
 						])
-						->leftJoin(
+						->innerJoin(
 							User::getTableName(),
 							"user",
 							"t.user_id=user.id"
@@ -234,7 +259,7 @@ class SpacesCrud extends \TinyPHP\ApiCrudRoute
 					$users_roles_all = SpaceUserRole::selectQuery()
 						->where("t.user_id", $ids)
 						->where("roles.space_id", $space_id)
-						->leftJoin(
+						->innerJoin(
 							SpaceRole::getTableName(),
 							"roles",
 							"t.role_id == roles.id"

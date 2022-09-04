@@ -20,8 +20,8 @@
 
 namespace App\Api;
 
+use App\Models\Domain;
 use App\Models\Route;
-use App\Models\SpaceDomain;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
@@ -52,7 +52,6 @@ class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 					"enable",
 					"protocol",
 					"protocol_data",
-					"space_id",
 					"domain_name",
 					"route_prefix",
 					"docker_name",
@@ -65,7 +64,6 @@ class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 				]
 			]),
 			new ReadOnly(["api_name"=>"id"]),
-			new ReadOnly(["api_name"=>"space_id"]),
 			new JsonField(["api_name"=>"protocol_data"]),
 		];
 	}
@@ -79,8 +77,8 @@ class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 	{
 		$query = parent::buildSearchQuery($action, $query);
 		
-		$space_id = $this->container->post("space_id");
-		$query->where("t.space_id", $space_id);
+		//$space_id = $this->container->post("space_id");
+		//$query->where("t.space_id", $space_id);
 		
 		return $query;
 	}
@@ -95,11 +93,9 @@ class SpacesRoutesCrud extends \TinyPHP\ApiCrudRoute
 		parent::processBefore($action);
 		
 		$space_id = $this->container->post("space_id");
-		$this->item->space_id = $space_id;
-		
 		$domain_name = $this->update_data["domain_name"];
 		
-		$domain = SpaceDomain::selectQuery()
+		$domain = Domain::selectQuery()
 			->where([
 				"space_id" => $space_id,
 				"domain_name" => $domain_name,

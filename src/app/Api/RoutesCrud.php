@@ -102,5 +102,18 @@ class RoutesCrud extends \TinyPHP\ApiCrudRoute
 			]),
 		];
 	}
-
+	
+	
+	
+	/**
+	 * Find query
+	 */
+	public function buildSearchQuery($action, $query)
+	{
+		return $query
+			->orderBy("t.domain_name", "asc")
+			->orderBy("t.route_prefix", "asc")
+		;
+	}
+	
 }

@@ -99,7 +99,7 @@ class SpacesUsersCrud extends \TinyPHP\ApiCrudRoute
 				{
 					$q
 						->addField("roles.name as role_name")
-						->leftJoin(
+						->innerJoin(
 							SpaceRole::getTableName(),
 							"roles",
 							"t.role_id == roles.id"

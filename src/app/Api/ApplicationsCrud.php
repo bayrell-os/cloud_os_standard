@@ -278,7 +278,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 			->addField("tpl.name as template_name")
 			->addField("tv.content as template_content")
 			->leftJoin(TemplateVersion::getTableName(), "tv", "tv.id = t.template_version_id")
-			->innerJoin(Template::getTableName(), "tpl", "tpl.id = tv.template_id")
+			->leftJoin(Template::getTableName(), "tpl", "tpl.id = tv.template_id")
 			->orderBy("t.stack_name", "asc")
 			->orderBy("t.name", "asc")
 		;

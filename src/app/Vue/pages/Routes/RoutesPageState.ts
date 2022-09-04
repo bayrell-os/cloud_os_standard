@@ -194,6 +194,20 @@ export class RoutesPageState extends CrudState<Route>
 		target_port.component = "Input";
 		this.fields.push( deepClone(target_port) );
 		
+		/* Source field */
+		let source = new FieldInfo();
+		source.name = "source";
+		source.label = "Source";
+		source.component = "Label";
+		this.fields.push( deepClone(source) );
+		
+		/* Dest field */
+		let dest = new FieldInfo();
+		dest.name = "dest";
+		dest.label = "Dest";
+		dest.component = "Label";
+		this.fields.push( deepClone(dest) );
+		
 		/* Source port field */
 		let source_port = new FieldInfo();
 		source_port.name = "source_port";
@@ -205,7 +219,7 @@ export class RoutesPageState extends CrudState<Route>
 		let docker_name = new FieldInfo();
 		docker_name.name = "docker_name";
 		docker_name.label = "Docker name";
-		docker_name.component = "Input";
+		docker_name.component = "Select";
 		docker_name.options = [];
 		this.fields.push( deepClone(docker_name) );
 		
@@ -265,13 +279,37 @@ export class RoutesPageState extends CrudState<Route>
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(enable) );
 		this.fields_table.push( deepClone(protocol) );
-		this.fields_table.push( deepClone(domain_name) );
-		this.fields_table.push( deepClone(source_port) );
-		this.fields_table.push( deepClone(route_prefix) );
-		this.fields_table.push( deepClone(docker_name) );
-		this.fields_table.push( deepClone(target_port) );
-		this.fields_table.push( deepClone(target_prefix) );
+		this.fields_table.push( deepClone(source) );
+		this.fields_table.push( deepClone(dest) );
 		this.fields_table.push( deepClone(row_buttons) );
+	}
+	
+	
+	
+	/**
+	 * Returns form value
+	 */
+	getItemValue(index: number, name: string): any
+	{
+		if (this.items[index] == undefined) return "";
+		let item: Route = this.items[index];
+		
+		if (name == "source")
+		{
+			return item.domain_name +
+				((item.source_port != 80) ? ":" + String(item.source_port) : "") +
+				((item.route_prefix != "/") ? item.route_prefix : "")
+			;
+		}
+		if (name == "dest")
+		{
+			return item.docker_name +
+				((item.target_port != 80) ? ":" + String(item.target_port) : "") +
+				((item.target_prefix != "/") ? item.target_prefix : "")
+			;
+		}
+		
+		return super.getItemValue(index, name);
 	}
 	
 	
@@ -328,7 +366,7 @@ export class RoutesPageState extends CrudState<Route>
 					};
 				}
 			);
-			/*
+			
 			this.setOptionsFromDictionary(
 				response,
 				["all"],
@@ -342,7 +380,6 @@ export class RoutesPageState extends CrudState<Route>
 					};
 				}
 			);
-			*/
 		}
 		
 	}

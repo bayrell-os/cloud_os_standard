@@ -47,12 +47,12 @@ class NginxBus extends BusApiRoute
 		]);
 		
 		/* Nginx htpasswd */
-		$route_container->addRoute([
+		/*$route_container->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/nginx/htpasswd/",
 			"name" => "bus:nginx:htpasswd",
 			"method" => [$this, "actionNginxHtpasswd"],
-		]);
+		]);*/
 	}
 	
 	
