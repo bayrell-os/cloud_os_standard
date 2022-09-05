@@ -12,7 +12,7 @@ fi
 
 if [ ! -z $SSH_USER ] && [ ! -z $SSH_PASSWORD ]; then
 	
-	sed -i "s|AllowUsers *|AllowUsers $SSH_USER|g" /data/ssh/sshd_config
+	sed -i "s|AllowUsers .*|AllowUsers $SSH_USER|g" /data/ssh/sshd_config
 	
 	echo "Create user $SSH_USER"
 	if [ ! -z $WWW_UID ] && [ ! -z $WWW_GID ]; then
