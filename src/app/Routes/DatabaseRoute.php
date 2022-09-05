@@ -22,7 +22,7 @@ namespace App\Routes;
 
 use TinyPHP\RenderContainer;
 use TinyPHP\Route;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 
 
 class DatabaseRoute extends Route
@@ -31,15 +31,15 @@ class DatabaseRoute extends Route
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
-		$route_container->addRoute([
+		$routes->addRoute([
 			"url" => "/api/database/",
 			"name" => "site:database",
 			"method" => [$this, "actionDatabase"],
 		]);
 		
-		$route_container->addRoute([
+		$routes->addRoute([
 			"url" => "/api/database/adminer/",
 			"name" => "site:database:adminer",
 			"method" => [$this, "actionAdminer"],

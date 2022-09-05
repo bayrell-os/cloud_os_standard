@@ -22,7 +22,7 @@ namespace App\Api;
 
 use TinyPHP\ApiRoute;
 use TinyPHP\RenderContainer;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use App\Models\Modificator;
 
 
@@ -32,9 +32,9 @@ class Test extends ApiRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
-		$route_container->addRoute([
+		$routes->addRoute([
 			"url" => "/api/test/",
 			"name" => "site:test",
 			"method" => [$this, "actionTest"],

@@ -539,6 +539,8 @@ class Docker
 					
 				$domain_route_prefix = $route["route_prefix"];
 				$domain_target_prefix = $route["target_prefix"];
+				$domain_route_prefix = preg_replace("/\/+$/", "", $domain_route_prefix);
+				$domain_target_prefix = preg_replace("/\/+$/", "", $domain_target_prefix);
 				if ($domain_route_prefix == "") $domain_route_prefix = "/";
 				if ($domain_target_prefix == "/") $domain_target_prefix = "";
 				
@@ -581,6 +583,14 @@ class Docker
 				else
 				{
 					$nginx_route .= "    proxy_set_header X-SPACE-UID \"0\";\n";
+				}
+				
+				/* Add rewrite */
+				if ($domain_route_prefix != "/")
+				{
+					$nginx_route .= "    rewrite " . $domain_route_prefix .
+						"/(.*) " . "/$1 break;\n"
+					;
 				}
 				
 				/* Add nginx_config */

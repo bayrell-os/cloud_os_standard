@@ -22,7 +22,7 @@ namespace App\Bus;
 
 use TinyPHP\BusApiRoute;
 use TinyPHP\RenderContainer;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use TinyPHP\Utils;
 use App\JWT;
 use App\Models\NginxFile;
@@ -40,10 +40,10 @@ class UsersBus extends BusApiRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
 		/* Login */
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/login/",
 			"name" => "bus:login",
@@ -51,27 +51,11 @@ class UsersBus extends BusApiRoute
 		]);
 		
 		/* Logout */
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/logout/",
 			"name" => "bus:logout",
 			"method" => [$this, "actionLogout"],
-		]);
-        
-        /* Users dump */
-		$route_container->addRoute([
-			"methods" => [ "GET", "POST" ],
-			"url" => "/api/bus/users/dump/",
-			"name" => "bus:users:dump",
-			"method" => [$this, "actionUsersDump"],
-		]);
-        
-        /* Users changes */
-		$route_container->addRoute([
-			"methods" => [ "GET", "POST" ],
-			"url" => "/api/bus/users/changes/",
-			"name" => "bus:users:changes",
-			"method" => [$this, "actionUsersChanges"],
 		]);
 	}
 	
@@ -89,13 +73,13 @@ class UsersBus extends BusApiRoute
 		
 		if ($login == "" || $password == "")
 		{
-			$this->api_result->error( $result, "Wrong login or password" );
+			$this->api_result->error( $result, "Wrong login or password", ERROR_NO_AUTH );
 			return;
 		}
 		
 		if ($space_uid == "")
 		{
-			$this->api_result->error( $result, "Space uid is null" );
+			$this->api_result->error( $result, "Space uid is null", ERROR_NO_AUTH );
 			return;
 		}
 		
@@ -106,7 +90,7 @@ class UsersBus extends BusApiRoute
 		;
 		if (!$space)
 		{
-			$this->api_result->error( $result, "Space not found" );
+			$this->api_result->error( $result, "Space not found", ERROR_NO_AUTH );
 			return;
 		}
 		
@@ -123,7 +107,7 @@ class UsersBus extends BusApiRoute
 		;
 		if (!$user)
 		{
-			$this->api_result->error( $result, "Wrong login or password" );
+			$this->api_result->error( $result, "Wrong login or password", ERROR_NO_AUTH );
 			return;
 		}
 		
@@ -135,7 +119,7 @@ class UsersBus extends BusApiRoute
 		;
 		if (!$auth)
 		{
-			$this->api_result->error( $result, "Wrong login or password" );
+			$this->api_result->error( $result, "Wrong login or password", ERROR_NO_AUTH );
 			return;
 		}
 		
@@ -143,16 +127,18 @@ class UsersBus extends BusApiRoute
 		$password_hash = $auth->value;
 		if (!password_verify($password, $password_hash))
 		{
-			$this->api_result->error( $result, "Wrong login or password" );
+			$this->api_result->error( $result, "Wrong login or password", ERROR_NO_AUTH );
 			return;
 		}
 		
-		$jwt = new \App\JWT();
-		$jwt->login = $user->login;
-		$jwt->expires = time() + 7*24*60*60;
+		$jwt = make(\TinyPHP\Crypt\JWT::class);
+		$jwt = $jwt::newInstance([
+			"login" => $user->login,
+			"expires" => time() + 7*24*60*60,
+		]);
 		$jwt->buildJWT();
 		$result = [
-			"jwt" => $jwt->jwt,
+			"jwt" => $jwt->getJWT(),
 			"data" => $jwt->toArray(),
 		];
 		$this->api_result->success( $result, "OK" );
@@ -166,9 +152,10 @@ class UsersBus extends BusApiRoute
 	function actionLogout()
 	{
 		$data = $this->container->post("data");
-		$jwt = trim(isset($data["jwt"]) ? $data["jwt"] : "");
+		$jwt_string = trim(isset($data["jwt"]) ? $data["jwt"] : "");
 		
-		$jwt = \App\JWT::create($jwt);
+		$jwt = make(\TinyPHP\Crypt\JWT::class);
+		$jwt = $jwt::create($jwt_string);
 		if (!$jwt)
 		{
 			$this->api_result->error( null, "JWT is not valid" );

@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\Exception\MethodNotAllowedException;
 use TinyPHP\RenderContainer;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\ReadOnly;
 use TinyPHP\Utils;
@@ -47,9 +47,9 @@ class TemplatesVersionsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
-		parent::routes($route_container);
+		parent::routes($routes);
 	}
 	
 	

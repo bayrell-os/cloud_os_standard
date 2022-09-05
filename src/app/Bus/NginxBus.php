@@ -22,7 +22,7 @@ namespace App\Bus;
 
 use TinyPHP\BusApiRoute;
 use TinyPHP\RenderContainer;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use TinyPHP\Utils;
 use App\JWT;
 use App\Models\NginxFile;
@@ -36,10 +36,10 @@ class NginxBus extends BusApiRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
 		/* Nginx changes */
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/nginx/changes/",
 			"name" => "bus:nginx:changes",
@@ -47,7 +47,7 @@ class NginxBus extends BusApiRoute
 		]);
 		
 		/* Nginx htpasswd */
-		/*$route_container->addRoute([
+		/*$routes->addRoute([
 			"methods" => [ "GET", "POST" ],
 			"url" => "/api/bus/nginx/htpasswd/",
 			"name" => "bus:nginx:htpasswd",

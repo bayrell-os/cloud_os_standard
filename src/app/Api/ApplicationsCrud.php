@@ -30,7 +30,7 @@ use App\Models\TemplateVersion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use TinyPHP\Utils;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\Dictionary;
@@ -48,32 +48,32 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
-		parent::routes($route_container);
+		parent::routes($routes);
 		
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "POST" ],
 			"url" => "/api/" . $this->api_name . "/crud/item/modificator/add/",
 			"name" => "api:" . $this->api_name . ":modificator:add",
 			"method" => [$this, "actionModificatorAdd"],
 		]);
 		
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "POST" ],
 			"url" => "/api/" . $this->api_name . "/crud/item/modificator/delete/",
 			"name" => "api:" . $this->api_name . ":modificator:delete",
 			"method" => [$this, "actionModificatorDelete"],
 		]);
 		
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "POST" ],
 			"url" => "/api/" . $this->api_name . "/crud/item/compose/",
 			"name" => "api:" . $this->api_name . ":compose",
 			"method" => [$this, "actionCompose"],
 		]);
 		
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "POST" ],
 			"url" => "/api/" . $this->api_name . "/crud/item/stop/",
 			"name" => "api:" . $this->api_name . ":stop",

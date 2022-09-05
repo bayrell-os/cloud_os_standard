@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
 use TinyPHP\RenderContainer;
-use TinyPHP\RouteContainer;
+use TinyPHP\RouteList;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\Dictionary;
 use TinyPHP\Rules\ReadOnly;
@@ -43,12 +43,12 @@ class YamlFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Declare routes
 	 */
-	function routes(RouteContainer $route_container)
+	function routes(RouteList $routes)
 	{
-		parent::routes($route_container);
+		parent::routes($routes);
 		
 		/* Compose */
-		$route_container->addRoute([
+		$routes->addRoute([
 			"methods" => [ "POST" ],
 			"url" => "/api/" . $this->api_name . "/compose/",
 			"name" => "api:" . $this->api_name . ":compose",
