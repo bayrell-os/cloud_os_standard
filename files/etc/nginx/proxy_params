@@ -12,6 +12,3 @@ proxy_set_header  X-Real-IP          $remote_addr;
 proxy_set_header  X-Forwarded-For    $the_http_x_forwarded_for;
 proxy_set_header  X-Forwarded-Proto  $the_http_x_forwarded_proto;
 proxy_next_upstream error timeout http_500 http_502 http_504;
-
-auth_basic "Auth";
-auth_basic_user_file inc/htpasswd.inc;
