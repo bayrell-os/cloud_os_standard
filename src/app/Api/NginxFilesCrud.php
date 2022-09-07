@@ -56,6 +56,7 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "is_deleted" ]),
 			new ReadOnly([ "api_name" => "gmtime_created" ]),
 			new ReadOnly([ "api_name" => "gmtime_updated" ]),
 		];
@@ -66,7 +67,7 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Find query
 	 */
-	public function buildSearchQuery($action, $query)
+	public function buildDefaultQuery($action, $query)
 	{
 		return $query
 			->where("is_deleted", "0")
@@ -77,25 +78,33 @@ class NginxFilesCrud extends \TinyPHP\ApiCrudRoute
 	
 	
 	/**
+	 * Do create
+	 */
+	function doCreateItem()
+	{
+		$update_data = $this->toDatabase("actionCreate", $this->update_data);
+		
+		$class_name = $this->class_name;
+		$this->item = $class_name::findOrCreate([
+			"name" => $update_data["name"],
+		]);
+		
+		$this->item->enable = 1;
+		$this->item->is_deleted = 0;
+	}
+	
+	
+	
+	/**
 	 * Do action delete
 	 */
-	function doActionDelete()
+	function doDelete()
 	{
-		/* Find item */
-		$this->findItem();
-		
-		/* Delete from database */
 		if ($this->item)
 		{
 			$this->item->is_deleted = true;
 			$this->item->save();
 		}
-		
-		/* From database */
-		$this->new_data = $this->fromDatabase($this->item);
-		
-		/* Set result */
-		$this->api_result->success(["item"=>$this->new_data], "Ok");
 	}
 	
 }

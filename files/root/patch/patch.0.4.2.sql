@@ -223,3 +223,6 @@ CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_fil
 CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
 COMMIT;
 
+
+-- Add index to nginx_files
+CREATE UNIQUE INDEX "nginx_files_name" ON "nginx_files" ("name");

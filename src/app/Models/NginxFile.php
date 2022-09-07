@@ -101,8 +101,8 @@ class NginxFile extends Model
 		if (!$item) $item = new NginxFile();
 		if ($item->name != $file_name) $item->name = $file_name;
 		if ($item->content != $content) $item->content = $content;
-		if ($item->enable != true) $item->enable = true;
-		if ($item->is_deleted != false) $item->is_deleted = false;
+		if ($item->enable != 1) $item->enable = 1;
+		if ($item->is_deleted != 0) $item->is_deleted = 0;
 		
 		/* Save service */
 		if ($item->isDirty())

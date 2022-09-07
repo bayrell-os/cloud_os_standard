@@ -442,6 +442,11 @@ class Application extends Model
 		{
 			$template_variables = XML::getVariables($template_xml);
 			
+			/* Filter variables */
+			$template_variables = array_filter($template_variables, function ($item){
+				return $item["name"] != "_var_app_name_";
+			});
+			
 			/* Add service_name */
 			$this->set("variables", "_var_app_name_", strtolower($this->name));
 			$this->set("variables", "_var_service_name_",
@@ -472,7 +477,7 @@ class Application extends Model
 			}
 			
 			/* Update variables defs */
-			$variables_defs = $template_variables;
+			$variables_defs = array_values($template_variables);
 			$variables_defs[] = [
 				"name" => "_var_service_name_",
 				"value" => strtolower($this->stack_name . "_" . $this->name),
