@@ -5,25 +5,21 @@ SCRIPT_PATH=`dirname $SCRIPT`
 BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
-VERSION=0.4.1
+VERSION=0.4.2
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in
 	
 	test)
-		mkdir -p test
+		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-$TAG --file Dockerfile
-		docker image save bayrell/cloud_os_standard:$VERSION-$TAG \
-			> test/cloud_os_standard_$VERSION.tar
 		cd ..
 	;;
 	
 	test-arm64v8)
-		mkdir -p test
+		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
 			--file Dockerfile --build-arg ARCH=-arm64v8
-		docker image save bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
-			> test/cloud_os_standard_${VERSION}_arm64v8.tar
 		cd ..
 	;;
 	
@@ -56,7 +52,14 @@ case "$1" in
 		docker manifest push --purge bayrell/cloud_os_standard:$VERSION
 	;;
 	
+	project)
+		pushd src
+		npm run build
+		popd
+	;;
+	
 	all)
+		$0 project
 		$0 amd64
 		$0 arm64v8
 		$0 arm32v7
@@ -64,7 +67,7 @@ case "$1" in
 	;;
 	
 	*)
-		echo "Usage: $0 {amd64|arm64v8|arm32v7|manifest|all|test|test-arm64v8}"
+		echo "Usage: $0 {project|amd64|arm64v8|arm32v7|manifest|all|test|test-arm64v8}"
 		RETVAL=1
 
 esac

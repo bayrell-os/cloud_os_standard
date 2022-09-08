@@ -1,6 +1,6 @@
 {
 	"name": "cloud_os_standard",
-	"version": "0.4.0",
+	"version": "0.4.2",
 	"description": "Cloud OS",
 	"scripts": {
 		"build": "webpack --progress --mode production",

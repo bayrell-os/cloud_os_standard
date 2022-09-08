@@ -104,7 +104,7 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	{
 		parent::validate($action);
 		
-		if ($action == "actionCreate" || $action == "actionEdit")
+		if ($action == "actionCreate" || $action == "actionUpdate")
 		{
 			$content = $this->update_data["content"];
 			
@@ -113,9 +113,12 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 			{
 				throw new \Exception("XML error: " . implode(". ", $errors));
 			}
+			if ($xml->getName() != "modificator")
+			{
+				throw new \Exception("XML must be modificator");
+			}
 			
 			$this->xml = $xml;
-			
 			$this->xml_uid = (string)$xml->uid;
 			$this->xml_name = (string)$xml->name;
 			$this->xml_version = (string)$xml->version;
@@ -141,11 +144,11 @@ class ModificatorsCrud extends \TinyPHP\ApiCrudRoute
 	/**
 	 * Process item
 	 */
-	function processItem($action)
+	function processBefore($action)
 	{
-		parent::processItem($action);
+		parent::processBefore($action);
 		
-		if ($action == "actionCreate" || $action == "actionEdit")
+		if ($action == "actionCreate" || $action == "actionUpdate")
 		{
 			$uid = (string)$this->xml->uid;
 			$name = (string)$this->xml->name;

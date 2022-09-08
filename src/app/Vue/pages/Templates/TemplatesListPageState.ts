@@ -83,11 +83,11 @@ export class TemplatesListPageState extends CrudState<Template>
 	
 	
 	/**
-	 * Returns new item
+	 * Returns class item
 	 */
-	static createNewItem(): Template
+	static getClassItem(): Function
 	{
-		return new Template();
+		return Template;
 	}
 	
 	

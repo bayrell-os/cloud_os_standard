@@ -63,13 +63,6 @@ class TemplateApi extends \TinyPHP\ApiRoute
 			"name" => "api:template:import",
 			"method" => [$this, "actionImport"],
 		]);
-		
-        $routes->addRoute([
-			"methods" => [ "POST" ],
-			"url" => "/api/template/edit/{id}/",
-			"name" => "api:template:edit",
-			"method" => [$this, "actionImport"],
-		]);
         
 	}
     
@@ -137,6 +130,10 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		{
 			throw new \Exception("XML error: " . implode(". ", $errors));
 		}
+		if ($xml->getName() != "template")
+		{
+			throw new \Exception("XML must be template");
+		}
 		
 		$this->xml = $xml;
 		$this->xml_uid = (string)$xml->uid;
@@ -158,9 +155,10 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		}
 		
 		/* Get existing template if edit */
-		if ($this->container->route_info["name"] == "api:template:edit")
+		$pk_post = $this->container->post("pk");
+		if ($pk_post)
 		{
-			$template_id = $this->container->arg("id");
+			$template_id = isset($pk_post["id"]) ? $pk_post["id"] : "";
 			$this->template_version = TemplateVersion::selectQuery()
 				->where([
 					["id", "=", $template_id],

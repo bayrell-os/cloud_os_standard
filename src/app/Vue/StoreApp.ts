@@ -38,7 +38,7 @@ import { StacksPageState } from './pages/Stacks/StacksPageState'
 export class StoreApp
 {
 	title: string = "";
-	app_version: string = "0.4.1";
+	app_version: string = "0.4.2";
 	MainPage: MainPageState = new MainPageState();
 	ApplicationSavePage: ApplicationSavePageState = new ApplicationSavePageState();
 	ApplicationsListPage: ApplicationsPageState = new ApplicationsPageState();

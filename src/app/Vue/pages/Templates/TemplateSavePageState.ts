@@ -64,7 +64,6 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 	 */
 	init(params:any)
 	{
-		/* Init class */
 		super.init(params);
 	}
 	
@@ -177,21 +176,20 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 	
 	
 	/**
-	 * Return api create url
+	 * Return api search url
 	 */
-	static getApiUrlCreate()
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
-		return "/api/template/import/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	static getApiUrlUpdate(item: TemplateVersion)
-	{
-		return "/api/template/edit/" + item.id + "/";
+		let api_name = this.getApiObjectName();
+		if (api_type == "create")
+		{
+			return "/api/template/import/";
+		}
+		else if (api_type == "update")
+		{
+			return "/api/template/import/";
+		}
+		return super.getApiUrl(api_type, params);
 	}
 	
 	
