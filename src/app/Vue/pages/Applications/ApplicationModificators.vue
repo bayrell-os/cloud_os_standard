@@ -46,7 +46,7 @@
 				<div v-for="variable in getVariablesDefs()"
 					:key="variable.name"
 				>
-					<div v-if="variable.name != '_var_service_name_'"
+					<div v-if="variable.name != '_var_service_name_' && variable.name != '_var_app_name_'"
 						class="applications_run_page__variable"
 					>
 						<div class="applications_run_page__variable_label">

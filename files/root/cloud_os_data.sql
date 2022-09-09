@@ -372,7 +372,6 @@ INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gm
 					<protocol>tcp</protocol>
 					<mode>host</mode>
 				</ports>
-				<env_file>./env.conf</env_file>
 			</_var_app_name_>
 		</services>
 		<volumes>
