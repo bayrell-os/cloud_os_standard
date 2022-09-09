@@ -95,6 +95,7 @@ function generate {
 		echo "JWT_PUBLIC_KEY=$JWT_PUBLIC_KEY" >> $ENV_CONFIG_PATH
 		
 		yes | rm -f $SCRIPT_PATH/example/jwt_public.key
+		yes | rm -f $SCRIPT_PATH/example/jwt_private.key
 	fi
 	
 }
