@@ -1,11 +1,6 @@
-DROP TRIGGER "applications_delete"
-DROP TRIGGER "modificators_delete"
-DROP TRIGGER "templates_delete"
-DROP TRIGGER "users_delete"
-
-
-PRAGMA foreign_keys = ON;
-PRAGMA foreign_keys = OFF;
+DROP TRIGGER "applications_delete";
+DROP TRIGGER "modificators_delete";
+DROP TRIGGER "templates_delete";
 
 
 -- Add foreign key to app_modificators
@@ -22,35 +17,6 @@ DROP TABLE "app_modificators";
 ALTER TABLE "adminer_app_modificators" RENAME TO "app_modificators";
 CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
 CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
-COMMIT;
-
-
--- Add foreign key to applications
-
-BEGIN;
-CREATE TABLE "adminer_applications" (
-  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "stack_name" text NOT NULL,
-  "name" text NOT NULL,
-  "template_version_id" integer NULL,
-  "status" integer NOT NULL DEFAULT '0',
-  "content" text NOT NULL DEFAULT '',
-  "modificators" text NOT NULL DEFAULT '',
-  "custom_patch" text NOT NULL DEFAULT '',
-  "yaml" text NOT NULL DEFAULT '',
-  "yaml_file_id" integer NULL,
-  "variables" text NOT NULL DEFAULT '',
-  "environments" text NOT NULL DEFAULT '',
-  "volumes" text NOT NULL DEFAULT '',
-  "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("template_version_id") REFERENCES "templates_versions" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-INSERT INTO "adminer_applications" ("id", "stack_name", "name", "template_version_id", "status", "content", "modificators", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated") SELECT "id", "stack_name", "name", "template_version_id", "status", "content", "modificators", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated" FROM "applications";
-DROP TABLE "applications";
-ALTER TABLE "adminer_applications" RENAME TO "applications";
-CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
-CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
 COMMIT;
 
 
@@ -84,10 +50,42 @@ CREATE TABLE "adminer_templates_versions" (
   FOREIGN KEY ("template_id") REFERENCES "templates" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 INSERT INTO "adminer_templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") SELECT "id", "template_id", "version", "content", "gmtime_created", "gmtime_updated" FROM "templates_versions";
-DROP TABLE "templates_versions";
+ALTER TABLE "templates_versions" RENAME TO "templates_versions_old";
 ALTER TABLE "adminer_templates_versions" RENAME TO "templates_versions";
-CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
-CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
+COMMIT;
+
+
+-- Delete old table
+
+DROP TABLE "templates_versions_old";
+
+
+-- Add foreign key to applications
+
+BEGIN;
+CREATE TABLE "adminer_applications" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "stack_name" text NOT NULL,
+  "name" text NOT NULL,
+  "template_version_id" integer NULL,
+  "status" integer NOT NULL DEFAULT '0',
+  "content" text NOT NULL DEFAULT '',
+  "modificators" text NOT NULL DEFAULT '',
+  "custom_patch" text NOT NULL DEFAULT '',
+  "yaml" text NOT NULL DEFAULT '',
+  "yaml_file_id" integer NULL,
+  "variables" text NOT NULL DEFAULT '',
+  "environments" text NOT NULL DEFAULT '',
+  "volumes" text NOT NULL DEFAULT '',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL,
+  FOREIGN KEY ("template_version_id") REFERENCES "templates_versions" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "adminer_applications" ("id", "stack_name", "name", "template_version_id", "status", "content", "modificators", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated") SELECT "id", "stack_name", "name", "template_version_id", "status", "content", "modificators", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated" FROM "applications";
+DROP TABLE "applications";
+ALTER TABLE "adminer_applications" RENAME TO "applications";
+CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
+CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
 COMMIT;
 
 
@@ -116,7 +114,7 @@ CREATE TABLE "adminer_domains" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL,
   FOREIGN KEY ("space_id") REFERENCES "spaces" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("ssl_id") REFERENCES "domains_ssl_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("ssl_id") REFERENCES "domains_ssl_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 INSERT INTO "adminer_domains" ("id", "domain_name", "nginx_template", "gmtime_created", "gmtime_updated") SELECT "id", "domain_name", "nginx_template", "gmtime_created", "gmtime_updated" FROM "domains";
 DROP TABLE "domains";
@@ -164,13 +162,14 @@ CREATE UNIQUE INDEX "spaces_users_space_id_user_id" ON "spaces_users" ("space_id
 
 CREATE TABLE "spaces_users_roles" (
   "user_id" integer NOT NULL,
-  "group_id" integer NOT NULL,
+  "role_id" integer NOT NULL,
   "is_deleted" integer NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL,
-   FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY ("role_id") REFERENCES "spaces_roles" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE UNIQUE INDEX "spaces_users_roles_user_id_role_id" ON "spaces_users_roles" ("user_id", "role_id");
 
 
 -- Add stack_name to adminer_stacks
@@ -196,9 +195,12 @@ VALUES
   ('database', datetime('now'), datetime('now')),
   ('dev', datetime('now'), datetime('now')),
   ('prod', datetime('now'), datetime('now')),
-  ('test', datetime('now'), datetime('now')),
+  ('test', datetime('now'), datetime('now'))
 ;
 
+
+-- Add index to nginx_files
+CREATE UNIQUE INDEX "nginx_files_name" ON "nginx_files" ("name");
 
 
 -- Add foreign key stack_name to adminer_docker_yaml_files
@@ -224,5 +226,47 @@ CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name"
 COMMIT;
 
 
--- Add index to nginx_files
-CREATE UNIQUE INDEX "nginx_files_name" ON "nginx_files" ("name");
+-- Add primary key to options
+
+BEGIN;
+CREATE TABLE "adminer_options" (
+  "key" text NOT NULL,
+  "value" text NOT NULL,
+  PRIMARY KEY ("key")
+);
+INSERT INTO "adminer_options" ("key", "value") SELECT "key", "value" FROM "options";
+DROP TABLE "options";
+ALTER TABLE "adminer_options" RENAME TO "options";
+COMMIT;
+
+
+-- Route and Target prefix in routes
+
+BEGIN;
+CREATE TABLE "adminer_routes" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "enable" integer NOT NULL DEFAULT '0',
+  "protocol" text NOT NULL,
+  "protocol_data" text NOT NULL DEFAULT '',
+  "domain_name" text NOT NULL,
+  "route_prefix" text NOT NULL DEFAULT '/',
+  "docker_name" text NOT NULL,
+  "source_port" integer NOT NULL DEFAULT '80',
+  "target_port" integer NOT NULL DEFAULT '80',
+  "target_prefix" text NOT NULL DEFAULT '/',
+  "layer_uid" text NOT NULL DEFAULT '',
+  "nginx_config" text NOT NULL DEFAULT '',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "domain_name", "route_prefix", "docker_name", "source_port", "target_port", "target_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated") SELECT "id", "enable", "protocol", "protocol_data", "domain_name", "route", "docker_name", "source_port", "target_port", "route_prefix", "layer_uid", "nginx_config", "gmtime_created", "gmtime_updated" FROM "routes";
+DROP TABLE "routes";
+ALTER TABLE "adminer_routes" RENAME TO "routes";
+CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
+COMMIT;
+
+
+-- Add index to templates_versions
+
+CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
+CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
