@@ -343,10 +343,12 @@ export class ApplicationsPageState extends CrudState<Application>
 		
 		if (["onLoadPageSave"].indexOf(kind) >= 0)
 		{
+			this.reloadTemplatesVersions();
+			/*
 			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
-				/* Read templates */
+				
 				this.setOptionsFromDictionary
 				(
 					response,
@@ -363,7 +365,7 @@ export class ApplicationsPageState extends CrudState<Application>
 						;
 					}
 				);
-			}			
+			}*/
 		}
 	}
 	

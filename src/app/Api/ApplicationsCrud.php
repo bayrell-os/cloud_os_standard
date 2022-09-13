@@ -191,7 +191,7 @@ class ApplicationsCrud extends \TinyPHP\ApiCrudRoute
 					{
 						$template_id = $rule->route->item->template_id;
 						$query
-							->where("template_id", $template_id)
+							//->where("template_id", $template_id)
 							->orderBy("version", "asc")
 						;
 					}
