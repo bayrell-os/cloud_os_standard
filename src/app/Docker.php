@@ -25,6 +25,7 @@ use App\Models\Application;
 use App\Models\DockerService;
 use App\Models\DockerYamlFile;
 use App\Models\Domain;
+use App\Models\DomainSSLGroup;
 use App\Models\NginxFile;
 use App\Models\Route;
 use App\Models\User;
@@ -447,10 +448,34 @@ class Docker
 			->all()
 		;
 		
+		$get_upstream = function (
+			$service,
+			$target_port,
+			$network_name
+		)
+		{
+			$docker_name = $service["docker_name"];
+			$ip_arr = $service->getIpAddresses($network_name);
+			$upstream_name = $target_port . "." . $docker_name . "."
+				. $network_name . ".example";
+			
+			if (count($ip_arr) > 0)
+			{
+				$upstream_s = "upstream " . $upstream_name . " {\n";
+				foreach ($ip_arr as $ip)
+				{
+					$upstream_s .= "  server " . $ip . ":" . $target_port . ";\n";
+				}
+				$upstream_s .= "}\n";
+			}
+			
+			return [$upstream_name, $upstream_s];
+		};
+		
 		$upstreams = [];
+		$upstream_names = [];
 		foreach ($services as $service)
 		{
-			$ip_arr = $service->getIpAddresses($network_name);
 			$docker_name = $service["docker_name"];
 			$service_routes = array_filter
 			(
@@ -461,24 +486,64 @@ class Docker
 				}
 			);
 			
-			$upstream_s = "";
-			$upstream_names = [];
 			foreach ($service_routes as $route)
 			{
-				$upstream_name = $route["target_port"] . "." . $docker_name . "." . $network_name . ".example";
-				if (!in_array($upstream_name, $upstream_names) && count($ip_arr) > 0)
+				list($upstream_name, $upstream_str) = $get_upstream(
+					$service,
+					$route["target_port"],
+					$network_name
+				);
+				if (!in_array($upstream_name, $upstream_names))
 				{
-					$upstream_s .= "upstream " . $upstream_name . " {\n";
-					foreach ($ip_arr as $ip)
-					{
-						$upstream_s .= "  server " . $ip . ":" . $route["target_port"] . ";\n";
-					}
-					$upstream_s .= "}\n";
+					$upstreams[] = $upstream_str;
 					$upstream_names[] = $upstream_name;
 				}
 			}
-			
-			$upstreams[] = $upstream_s;
+		}
+		
+		
+		/* Get ssl containers */
+		$container_names = (new \TinyORM\Query())
+			->raw(
+				"select DISTINCT container_name from domains_ssl_groups where container_name != ''",
+				[]
+			)
+			->all()
+		;
+		
+		$container_names = array_map(
+			function($item){
+				return $item["container_name"];
+			},
+			$container_names
+		);
+		
+		
+		/* Add ssl containers to upstreams */
+		foreach ($container_names as $container_name)
+		{
+			$service = DockerService::selectQuery()
+				->where([
+					["docker_name", "=", $container_name],
+					["enable", "=", "1"],
+					["is_deleted", "=", "0"],
+				])
+				->orderBy("docker_name", "asc")
+				->one()
+			;
+			if ($service)
+			{
+				list($upstream_name, $res) = $get_upstream(
+					$service,
+					"80",
+					$network_name
+				);
+				if (!in_array($upstream_name, $upstream_names))
+				{
+					$upstreams[] = $res;
+					$upstream_names[] = $upstream_name;
+				}
+			}
 		}
 		
 		/* Clear empty upstreams */
@@ -513,6 +578,7 @@ class Docker
 		{
 			$enable_auth = $domain["enable_auth"];
 			$domain_name = $domain["domain_name"];
+			$ssl_id = $domain["ssl_id"];
 			
 			$routes = Route::selectQuery()
 				->where([
@@ -609,11 +675,66 @@ class Docker
 				$nginx_routes[] = $nginx_route;
 			}
 			
+			$ssl_str = "";
+			
+			/* Check ssl */
+			if ($ssl_id)
+			{
+				$public_key = NginxFile::selectQuery()
+					->where("name", "/ssl/" . $ssl_id . "/public.key")
+					->where("enable", "1")
+					->where("is_deleted", "0")
+					->one()
+				;
+				$private_key = NginxFile::selectQuery()
+					->where("name", "/ssl/" . $ssl_id . "/public.key")
+					->where("enable", "1")
+					->where("is_deleted", "0")
+					->one()
+				;
+				
+				if ($public_key && $private_key)
+				{
+					$ssl_str .= "listen 443 ssl;\n";
+					$ssl_str .= "  ssl_certificate /data/nginx/ssl/" . $ssl_id . "/public.key;\n";
+					$ssl_str .= "  ssl_certificate_key /data/nginx/ssl/" . $ssl_id . "/private.key;\n";
+					
+					$dhparam_key = NginxFile::selectQuery()
+						->where("name", "/ssl/dhparam.key")
+						->where("enable", "1")
+						->where("is_deleted", "0")
+						->one()
+					;
+					
+					if ($dhparam_key)
+					{
+						$ssl_str .= "  ssl_dhparam /data/nginx/ssl/dhparam.key;\n";
+					}
+					
+					$ssl_str .= "  include /etc/nginx/inc/ssl.inc;\n";
+				}
+			}
+			
+			/* Add .well-known */
+			if ($ssl_id)
+			{
+				$ssl = DomainSSLGroup::getByID($ssl_id);
+				if ($ssl && $ssl->container_name != "")
+				{
+					$nginx_route = "location /.well-known/ {\n";
+					$nginx_route .= "    proxy_pass http://80." . $ssl->container_name .
+						".cloud_network.example;\n";
+					$nginx_route .= "    include proxy_params;\n";
+					$nginx_route .= "  }";
+					array_unshift($nginx_routes, $nginx_route);
+				}
+			}
+			
 			/* Create nginx files */
 			$nginx_content = $domain["nginx_template"];
 			$nginx_content = str_replace("%DOMAIN_NAME%", $domain["domain_name"], $nginx_content);
 			$nginx_content = str_replace("%ROUTES%", implode("\n", $nginx_routes), $nginx_content);
-			$nginx_content = str_replace("%SSL%", "", $nginx_content);
+			$nginx_content = str_replace("%SSL%", $ssl_str, $nginx_content);
 			
 			/* Update file */
 			$file_name = "/domains/" . $domain["domain_name"] . ".conf";

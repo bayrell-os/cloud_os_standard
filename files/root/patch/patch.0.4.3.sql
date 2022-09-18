@@ -157,12 +157,13 @@ CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("
 COMMIT;
 
 
--- Add cert_info
+-- Add cert_info, container_name
 
 BEGIN;
 CREATE TABLE "adminer_domains_ssl_groups" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL,
+  "container_name" text NOT NULL DEFAULT '',
   "cert_info" text NOT NULL DEFAULT '',
   "public_key" text NOT NULL DEFAULT '',
   "private_key" text NOT NULL DEFAULT '',
@@ -174,3 +175,4 @@ DROP TABLE "domains_ssl_groups";
 ALTER TABLE "adminer_domains_ssl_groups" RENAME TO "domains_ssl_groups";
 COMMIT;
 
+ 

@@ -26,6 +26,7 @@ use TinyPHP\RouteList;
 use TinyPHP\Utils;
 use App\Models\Domain;
 use App\Models\DomainSSLGroup;
+use App\Models\NginxFile;
 
 
 class SSLBus extends BusApiRoute
@@ -47,6 +48,12 @@ class SSLBus extends BusApiRoute
 			"url" => "/api/bus/ssl/update_group/",
 			"name" => "bus:ssl:update_group",
 			"method" => [$this, "actionUpdateGroup"],
+		]);
+		$routes->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/bus/ssl/get_changes/",
+			"name" => "bus:ssl:get_changes",
+			"method" => [$this, "actionGetChanges"],
 		]);
 	}
 	
@@ -76,6 +83,7 @@ class SSLBus extends BusApiRoute
 		$result["group"] = [
 			"id" => $ssl->id,
 			"name" => $ssl->name,
+			"container_name" => $ssl->container_name,
 			"cert_info" => @json_decode($ssl->cert_info),
 			"public_key" => $ssl->public_key,
 			"private_key" => $ssl->private_key,
@@ -128,9 +136,45 @@ class SSLBus extends BusApiRoute
 			$ssl->public_key = $public_key;
 			$ssl->private_key = $private_key;
 			$ssl->save();
+			
+			/* Save keys */
+			$ssl_id = $ssl->id;
+			NginxFile::updateFile("/ssl/" . $ssl_id. "/public.key", $public_key);
+			NginxFile::updateFile("/ssl/" . $ssl_id. "/private.key", $private_key);
 		}
 		
 		$this->api_result->success( $result, "Ok" );
+	}
+	
+	
+	
+	/**
+	 * Returns changes
+	 */
+	function actionGetChanges()
+	{
+		$result = [];
+		
+		$data = $this->container->post("data");
+		$timestamp = (int)(isset($data["timestamp"]) ? $data["timestamp"] : 0);
+		
+		$groups = DomainSSLGroup::selectQuery()
+			->where([
+				["gmtime_updated", ">=", gmdate("Y-m-d H:i:s", $timestamp)]
+			])
+			->all(1)
+		;
+		
+		$groups = array_map(
+			function($group)
+			{
+				$group["cert_info"] = @json_decode($group["cert_info"]);
+				return $group;
+			},
+			$groups
+		);
+		
+		$this->api_result->success( $groups, "Ok" );
 	}
 	
 }
