@@ -16,6 +16,7 @@
  *  limitations under the License.
  */
 
+import { AxiosResponse } from "axios";
 import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
@@ -28,6 +29,7 @@ export class DomainSSLGroup extends CrudItem
 	name: string;
 	public_key: string;
 	private_key: string;
+	container_name: string;
 	gmtime_created: string;
 	gmtime_updated: string;
 	
@@ -43,6 +45,7 @@ export class DomainSSLGroup extends CrudItem
 		this.name = "";
 		this.public_key = "";
 		this.private_key = "";
+		this.container_name = "";
 		this.gmtime_created = "";
 		this.gmtime_updated = "";
 		
@@ -61,6 +64,7 @@ export class DomainSSLGroup extends CrudItem
 		else if (key == "name") this.name = String(value);
 		else if (key == "public_key") this.public_key = String(value);
 		else if (key == "private_key") this.private_key = String(value);
+		else if (key == "container_name") this.container_name = String(value);
 		else if (key == "gmtime_created") this.gmtime_created = String(value);
 		else if (key == "gmtime_updated") this.gmtime_updated = String(value);
 		else return super.assignValue(key, value);
@@ -121,6 +125,14 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
+		/* Container name field */
+		let container_name = new FieldInfo();
+		container_name.name = "container_name";
+		container_name.label = "SSL container name";
+		container_name.component = "Select";
+		container_name.options = [];
+		this.fields.push( deepClone(container_name) );
+		
 		/* Public key field */
 		let public_key = new FieldInfo();
 		public_key.name = "public_key";
@@ -149,13 +161,16 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(name) );
-		this.form_save.fields.push( deepClone(public_key) );
-		this.form_save.fields.push( deepClone(private_key) );
+		this.form_save.fields.push( deepClone(container_name) );
+		//this.form_save.fields.push( deepClone(public_key) );
+		//this.form_save.fields.push( deepClone(private_key) );
 		
 		/* Table fields */
 		name.component = "Label";
+		container_name.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
+		this.fields_table.push( deepClone(container_name) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	
@@ -195,5 +210,24 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	async after(kind: string, params: Record<string, any>)
 	{
 		await super.after(kind, params);
+		
+		if (kind == "onLoadPageList")
+		{
+			let response:AxiosResponse = params["response"] as AxiosResponse;
+			
+			this.setOptionsFromDictionary(
+				response,
+				["all"],
+				"container_name",
+				"services",
+				function (domain: any)
+				{
+					return {
+						"id": domain["docker_name"],
+						"value": domain["docker_name"],
+					};
+				}
+			);
+		}
 	}
 }

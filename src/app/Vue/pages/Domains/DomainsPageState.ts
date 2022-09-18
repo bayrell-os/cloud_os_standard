@@ -138,9 +138,20 @@ export class DomainsPageState extends CrudState<Domain>
 		/* SSL id field */
 		let ssl_id = new FieldInfo();
 		ssl_id.name = "ssl_id";
-		ssl_id.label = "SSL";
+		ssl_id.label = "SSL Group";
 		ssl_id.component = "Select";
 		this.fields.push( deepClone(ssl_id) );
+		
+		/* HTTPS Redirect */
+		let https_redirect = new FieldInfo();
+		https_redirect.name = "https_redirect";
+		https_redirect.label = "HTTPS Redirect";
+		https_redirect.component = "Select";
+		https_redirect.options = [
+			new SelectOption({ "id": "0", "value": "No" }),
+			new SelectOption({ "id": "1", "value": "Yes" }),
+		];
+		this.fields.push( deepClone(https_redirect) );
 		
 		/* Row number */
 		let row_number = new FieldInfo();
@@ -157,15 +168,18 @@ export class DomainsPageState extends CrudState<Domain>
 		/* Form fields */
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(ssl_id) );
+		this.form_save.fields.push( deepClone(https_redirect) );
 		
 		/* Table fields */
 		domain_name.component = "Label";
 		ssl_id.component = "SelectLabel";
+		https_redirect.component = "SelectLabel";
 		space_id.component = "SelectLabel";
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(domain_name) );
 		this.fields_table.push( deepClone(space_id) );
 		this.fields_table.push( deepClone(ssl_id) );
+		this.fields_table.push( deepClone(https_redirect) );
 		this.fields_table.push( deepClone(row_buttons) );
 	}
 	

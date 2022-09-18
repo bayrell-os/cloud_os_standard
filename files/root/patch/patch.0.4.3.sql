@@ -191,4 +191,23 @@ DROP TABLE "domains_ssl_groups";
 ALTER TABLE "adminer_domains_ssl_groups" RENAME TO "domains_ssl_groups";
 COMMIT;
 
- 
+
+-- Add https_redirect to domains
+
+BEGIN;
+CREATE TABLE "adminer_domains" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "space_id" integer NULL,
+  "ssl_id" integer NULL,
+  "https_redirect" integer NULL DEFAULT '0',
+  "domain_name" text NOT NULL,
+  "nginx_template" text NOT NULL DEFAULT '',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_domains" ("id", "space_id", "ssl_id", "domain_name", "nginx_template", "is_deleted", "gmtime_created", "gmtime_updated") SELECT "id", "space_id", "ssl_id", "domain_name", "nginx_template", "is_deleted", "gmtime_created", "gmtime_updated" FROM "domains";
+DROP TABLE "domains";
+ALTER TABLE "adminer_domains" RENAME TO "domains";
+CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
+COMMIT;

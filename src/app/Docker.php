@@ -615,7 +615,7 @@ class Docker
 					$has_root_route = true;
 				}
 				
-				$nginx_route .= "location " . $domain_route_prefix . " {\n";
+				$nginx_route .= "  location " . $domain_route_prefix . " {\n";
 					
 				/* Enable auth */
 				if ($enable_auth)
@@ -671,11 +671,12 @@ class Docker
 					$nginx_route .= $nginx_config . "\n";
 				}
 				
-				$nginx_route .= "  }";
+				$nginx_route .= "  }\n";
 				$nginx_routes[] = $nginx_route;
 			}
 			
 			$ssl_str = "";
+			$ssl_enable = false;
 			
 			/* Check ssl */
 			if ($ssl_id)
@@ -695,7 +696,9 @@ class Docker
 				
 				if ($public_key && $private_key)
 				{
-					$ssl_str .= "listen 443 ssl;\n";
+					$ssl_enable = true;
+					
+					$ssl_str .= "  listen 443 ssl;\n";
 					$ssl_str .= "  ssl_certificate /data/nginx/ssl/grp" .
 						$ssl_id . "/public.key;\n";
 					$ssl_str .= "  ssl_certificate_key /data/nginx/ssl/grp" .
@@ -723,19 +726,29 @@ class Docker
 				$ssl = DomainSSLGroup::getByID($ssl_id);
 				if ($ssl && $ssl->container_name != "")
 				{
-					$nginx_route = "location /.well-known/ {\n";
+					$nginx_route = "  location /.well-known/ {\n";
 					$nginx_route .= "    proxy_pass http://80." . $ssl->container_name .
 						".cloud_network.example;\n";
 					$nginx_route .= "    include proxy_params;\n";
-					$nginx_route .= "  }";
+					$nginx_route .= "  }\n";
 					array_unshift($nginx_routes, $nginx_route);
 				}
 			}
 			
+			/* Add https redirect */
+			if ($ssl_enable && $domain["https_redirect"] == "1")
+			{
+				$nginx_route = "  include /etc/nginx/inc/https_redirect.inc;\n";
+				array_unshift($nginx_routes, $nginx_route);
+			}
+			
+			/* Convert nginx routes to string */
+			$nginx_routes = "\n" . implode("\n", $nginx_routes);
+			
 			/* Create nginx files */
 			$nginx_content = $domain["nginx_template"];
 			$nginx_content = str_replace("%DOMAIN_NAME%", $domain["domain_name"], $nginx_content);
-			$nginx_content = str_replace("%ROUTES%", implode("\n", $nginx_routes), $nginx_content);
+			$nginx_content = str_replace("%ROUTES%", $nginx_routes, $nginx_content);
 			$nginx_content = str_replace("%SSL%", $ssl_str, $nginx_content);
 			
 			/* Update file */

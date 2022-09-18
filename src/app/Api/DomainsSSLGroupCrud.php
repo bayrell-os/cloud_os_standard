@@ -21,6 +21,7 @@
 namespace App\Api;
 
 use App\Models\Space;
+use App\Models\DockerService;
 use App\Models\DomainSSLGroup;
 use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,13 +52,30 @@ class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 				[
 					"id",
 					"name",
-					"pub_key",
-					"private_key",
+					"cert_info",
+					"container_name",
 					"gmtime_created",
 					"gmtime_updated",
 				]
 			]),
 			new ReadOnly([ "api_name" => "id" ]),
+			new ReadOnly([ "api_name" => "cert_info" ]),
+			new Dictionary([
+				"api_name" => "services",
+				"class_name" => DockerService::class,
+				"buildSearchQuery" => function ($route, $action, $query){
+					$query
+						->where("is_deleted", "=", "0")
+						->orderBy("docker_name", "asc")
+					;
+					return $query;
+				},
+				"fields" =>
+				[
+					"service_id",
+					"docker_name",
+				],
+			]),
 		];
 	}
 

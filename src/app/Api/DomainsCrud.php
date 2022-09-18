@@ -55,6 +55,7 @@ class DomainsCrud extends \TinyPHP\ApiCrudRoute
 					"nginx_template",
 					"space_id",
 					"ssl_id",
+					"https_redirect",
 					"gmtime_created",
 					"gmtime_updated",
 				]
