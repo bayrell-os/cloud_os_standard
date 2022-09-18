@@ -139,8 +139,8 @@ class SSLBus extends BusApiRoute
 			
 			/* Save keys */
 			$ssl_id = $ssl->id;
-			NginxFile::updateFile("/ssl/" . $ssl_id. "/public.key", $public_key);
-			NginxFile::updateFile("/ssl/" . $ssl_id. "/private.key", $private_key);
+			NginxFile::updateFile("/ssl/grp" . $ssl_id. "/public.key", $public_key);
+			NginxFile::updateFile("/ssl/grp" . $ssl_id. "/private.key", $private_key);
 		}
 		
 		$this->api_result->success( $result, "Ok" );

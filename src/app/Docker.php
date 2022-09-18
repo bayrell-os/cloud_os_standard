@@ -681,13 +681,13 @@ class Docker
 			if ($ssl_id)
 			{
 				$public_key = NginxFile::selectQuery()
-					->where("name", "/ssl/" . $ssl_id . "/public.key")
+					->where("name", "/ssl/grp" . $ssl_id . "/public.key")
 					->where("enable", "1")
 					->where("is_deleted", "0")
 					->one()
 				;
 				$private_key = NginxFile::selectQuery()
-					->where("name", "/ssl/" . $ssl_id . "/public.key")
+					->where("name", "/ssl/grp" . $ssl_id . "/public.key")
 					->where("enable", "1")
 					->where("is_deleted", "0")
 					->one()
@@ -696,8 +696,10 @@ class Docker
 				if ($public_key && $private_key)
 				{
 					$ssl_str .= "listen 443 ssl;\n";
-					$ssl_str .= "  ssl_certificate /data/nginx/ssl/" . $ssl_id . "/public.key;\n";
-					$ssl_str .= "  ssl_certificate_key /data/nginx/ssl/" . $ssl_id . "/private.key;\n";
+					$ssl_str .= "  ssl_certificate /data/nginx/ssl/grp" .
+						$ssl_id . "/public.key;\n";
+					$ssl_str .= "  ssl_certificate_key /data/nginx/ssl/grp" .
+						$ssl_id . "/private.key;\n";
 					
 					$dhparam_key = NginxFile::selectQuery()
 						->where("name", "/ssl/dhparam.key")

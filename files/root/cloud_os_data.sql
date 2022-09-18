@@ -73,7 +73,7 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 			<path>/template/yaml/services/_var_app_name_</path>
 			<notExists>/template/yaml/services/_var_app_name_/dns</notExists>
 			<value>
-				<dns type="array">172.30.0.1</dns>
+				<dns type="array">172.18.0.1</dns>
 			</value>
 		</operation>
 		

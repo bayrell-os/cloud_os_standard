@@ -157,6 +157,22 @@ CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("
 COMMIT;
 
 
+-- Remove foreign key from users_auth
+
+BEGIN;
+CREATE TABLE "adminer_users_auth" (
+  "user_id" integer NOT NULL,
+  "method" text NOT NULL,
+  "test" text NOT NULL DEFAULT '',
+  "value" text NOT NULL
+);
+INSERT INTO "adminer_users_auth" ("user_id", "method", "test", "value") SELECT "user_id", "method", "test", "value" FROM "users_auth";
+DROP TABLE "users_auth";
+ALTER TABLE "adminer_users_auth" RENAME TO "users_auth";
+CREATE UNIQUE INDEX "users_auth_user_id_method" ON "users_auth" ("user_id", "method");
+COMMIT;
+
+
 -- Add cert_info, container_name
 
 BEGIN;

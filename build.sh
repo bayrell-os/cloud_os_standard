@@ -5,18 +5,21 @@ SCRIPT_PATH=`dirname $SCRIPT`
 BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
-VERSION=0.4.2
+IMAGE="bayrell/cloud_os_standard"
+VERSION=0.4.3
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in
 	
 	test)
+		echo "Build $IMAGE:$VERSION-$TAG"
 		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-$TAG --file Dockerfile
 		cd ..
 	;;
 	
 	test-arm64v8)
+		echo "Build $IMAGE:$VERSION-arm64v8-$TAG"
 		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
 			--file Dockerfile --build-arg ARCH=-arm64v8
