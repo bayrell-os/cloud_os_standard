@@ -54,6 +54,7 @@ class DomainSSLGroup extends Model
 		[
 			"id" => [],
 			"name" => [],
+			"cert_info" => [],
 			"public_key" => [],
 			"private_key" => [],
 			"gmtime_created" => [],

@@ -137,6 +137,7 @@ class Module
 		/* Bus functions */
 		$app->addEntity(\App\Bus\NginxBus::class);
 		$app->addEntity(\App\Bus\SpaceBus::class);
+		$app->addEntity(\App\Bus\SSLBus::class);
 		
 		/* Console commands */
 		$app->addEntity(\App\Console\AdminUpdate::class);
