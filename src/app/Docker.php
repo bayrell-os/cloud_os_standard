@@ -637,12 +637,21 @@ class Docker
 				}
 				
 				/* Add route prefix */
-				$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"" .
-					$domain_route_prefix . "\";\n";
+				if ($has_rewrite)
+				{
+					$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"" .
+						$domain_route_prefix . "\";\n";
+				}
+				else
+				{
+					$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"\";\n";
+				}
 				
 				/* Add target prefix */
+				/*
 				$nginx_route .= "    proxy_set_header X-FORWARDED-TARGET \"" .
 					$domain_target_prefix . "\";\n";
+				*/
 				
 				/* Add space id */
 				if ($domain["space_uid"] != "")
