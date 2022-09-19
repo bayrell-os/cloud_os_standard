@@ -602,6 +602,8 @@ class Docker
 				$protocol_data = json_decode($route["protocol_data"], true);
 				$has_websocket = isset($protocol_data["websocket"]) ?
 					$protocol_data["websocket"] : false;
+				$has_rewrite = isset($protocol_data["nginx_rewrite"]) ?
+					$protocol_data["nginx_rewrite"] : true;
 					
 				$domain_route_prefix = $route["route_prefix"];
 				$domain_target_prefix = $route["target_prefix"];
@@ -652,7 +654,7 @@ class Docker
 				}
 				
 				/* Add rewrite */
-				if ($domain_route_prefix != "/")
+				if ($domain_route_prefix != "/" && $has_rewrite)
 				{
 					$nginx_route .= "    rewrite " . $domain_route_prefix .
 						"/(.*) " . "/$1 break;\n"

@@ -48,7 +48,7 @@ export class Route extends CrudItem
 		this.id = 0;
 		this.enable = true;
 		this.protocol = "http";
-		this.protocol_data = {"websocket": "0"};
+		this.protocol_data = {"websocket": "0", "nginx_rewrite": "1"};
 		this.domain_name = "";
 		this.route_prefix = "/";
 		this.target_prefix = "/";
@@ -75,12 +75,11 @@ export class Route extends CrudItem
 		else if (key == "protocol") this.protocol = String(value);
 		else if (key == "protocol_data")
 		{
-			let res = {
-				"websocket": "0",
-			};
+			let res = this.protocol_data;
 			if (typeof value == "object" && value != null)
 			{
 				res["websocket"] = value.websocket || "0";
+				res["nginx_rewrite"] = value.nginx_rewrite || "1";
 			}
 			this.protocol_data = res;
 		}
@@ -164,6 +163,17 @@ export class RoutesPageState extends CrudState<Route>
 			new SelectOption().assignValues({ "id": 1, "value": "Yes" }),
 		];
 		this.fields.push( deepClone(web_socket) );
+		
+		/* Nginx rewrite field */
+		let nginx_rewrite = new FieldInfo();
+		nginx_rewrite.name = "protocol_data.nginx_rewrite";
+		nginx_rewrite.label = "Nginx rewrite";
+		nginx_rewrite.component = "Select";
+		nginx_rewrite.options = [
+			new SelectOption().assignValues({ "id": 0, "value": "No" }),
+			new SelectOption().assignValues({ "id": 1, "value": "Yes" }),
+		];
+		this.fields.push( deepClone(nginx_rewrite) );
 		
 		/* Domain name field */
 		let domain_name = new FieldInfo();
@@ -259,6 +269,7 @@ export class RoutesPageState extends CrudState<Route>
 		this.form_save.fields.push( deepClone(enable) );
 		this.form_save.fields.push( deepClone(protocol) );
 		this.form_save.fields.push( deepClone(web_socket) );
+		this.form_save.fields.push( deepClone(nginx_rewrite) );
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(source_port) );
 		this.form_save.fields.push( deepClone(route_prefix) );

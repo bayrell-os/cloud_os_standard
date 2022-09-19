@@ -3,7 +3,7 @@ version: "3.3"
 services:
     
     standard_node1:
-        image: bayrell/cloud_os_standard:0.4.1-20220906_232944
+        image: bayrell/cloud_os_standard:0.4.3-20220918_180125
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_node1_data:/data"
