@@ -609,15 +609,13 @@ class Docker
 				$domain_target_prefix = $route["target_prefix"];
 				$domain_route_prefix = preg_replace("/\/+$/", "", $domain_route_prefix);
 				$domain_target_prefix = preg_replace("/\/+$/", "", $domain_target_prefix);
-				if ($domain_route_prefix == "") $domain_route_prefix = "/";
-				if ($domain_target_prefix == "/") $domain_target_prefix = "";
 				
-				if ($domain_route_prefix == "/")
+				if ($domain_route_prefix == "")
 				{
 					$has_root_route = true;
 				}
 				
-				$nginx_route .= "  location " . $domain_route_prefix . " {\n";
+				$nginx_route .= "  location " . $domain_route_prefix . "/ {\n";
 					
 				/* Enable auth */
 				if ($enable_auth)
@@ -627,7 +625,7 @@ class Docker
 				
 				/* Proxy params */
 				$nginx_route .= "    proxy_pass http://" . $upstream_name .
-					$domain_target_prefix . ";\n";
+					$domain_target_prefix . "/;\n";
 				$nginx_route .= "    include proxy_params;\n";
 				
 				/* Add websocket settings */
@@ -642,6 +640,10 @@ class Docker
 				$nginx_route .= "    proxy_set_header X-FORWARDED-PREFIX \"" .
 					$domain_route_prefix . "\";\n";
 				
+				/* Add target prefix */
+				$nginx_route .= "    proxy_set_header X-FORWARDED-TARGET \"" .
+					$domain_target_prefix . "\";\n";
+				
 				/* Add space id */
 				if ($domain["space_uid"] != "")
 				{
@@ -654,7 +656,7 @@ class Docker
 				}
 				
 				/* Add rewrite */
-				if ($domain_route_prefix != "/" && $has_rewrite)
+				if ($domain_route_prefix != "" && $has_rewrite)
 				{
 					$nginx_route .= "    rewrite " . $domain_route_prefix .
 						"/(.*) " . "/$1 break;\n"
@@ -730,7 +732,7 @@ class Docker
 				{
 					$nginx_route = "  location /.well-known/ {\n";
 					$nginx_route .= "    proxy_pass http://80." . $ssl->container_name .
-						".cloud_network.example;\n";
+						".cloud_network.example/;\n";
 					$nginx_route .= "    include proxy_params;\n";
 					$nginx_route .= "  }\n";
 					array_unshift($nginx_routes, $nginx_route);
