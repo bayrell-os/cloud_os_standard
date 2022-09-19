@@ -150,7 +150,7 @@ class SpaceBus extends BusApiRoute
 		$jwt = make(\TinyPHP\Crypt\JWT::class);
 		$jwt = $jwt::newInstance([
 			"login" => $user->login,
-			"expires" => time() + 7*24*60*60,
+			"expires" => time() + 24*60*60,
 		]);
 		$jwt->buildJWT();
 		$result = [
