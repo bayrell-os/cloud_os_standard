@@ -71,7 +71,7 @@ class UsersCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function validate($action)
 	{
-		if ($action == "actionCreate" || $action == "actionEdit")
+		if ($action == "actionCreate" || $action == "actionUpdate")
 		{
 			$password1 = isset($this->update_data["password1"]) ?
 				$this->update_data["password1"] : "";
@@ -92,7 +92,7 @@ class UsersCrud extends \TinyPHP\ApiCrudRoute
 	 */
 	function processAfter($action)
 	{
-		if ($action == "actionCreate" || $action == "actionEdit")
+		if ($action == "actionCreate" || $action == "actionUpdate")
 		{
 			$user_id = $this->item->id;
 			$password1 = isset($this->update_data["password1"]) ?
