@@ -12,6 +12,7 @@ ADD src /srv
 ADD files /src/files
 
 RUN cd ~; \
+	ln -s /data/root/.docker /root/.docker; \
 	cp /etc/passwd /etc/passwd.orig; \
 	cp -rf /src/files/etc/* /etc/; \
 	cp -rf /src/files/root/* /root/; \
