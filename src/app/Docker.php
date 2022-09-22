@@ -739,9 +739,10 @@ class Docker
 				$ssl = DomainSSLGroup::getByID($ssl_id);
 				if ($ssl && $ssl->container_name != "")
 				{
+					/* Without last slash, needs by Let's encrypt */
 					$nginx_route = "  location /.well-known/ {\n";
 					$nginx_route .= "    proxy_pass http://80." . $ssl->container_name .
-						".cloud_network.example/;\n";
+						".cloud_network.example;\n";
 					$nginx_route .= "    include proxy_params;\n";
 					$nginx_route .= "  }\n";
 					array_unshift($nginx_routes, $nginx_route);
