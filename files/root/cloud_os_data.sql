@@ -8,8 +8,8 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 <modificator>
 	<uid>org.bayrell.modificator.cloud_os</uid>
 	<name>Cloud OS</name>
-	<date>2022-05-18T17:15:00+06:00</date>
-	<version>1.3</version>
+	<date>2022-08-09T17:15:00+06:00</date>
+	<version>1.5</version>
 	<priority>-1000</priority>
 	<operations>
     
@@ -22,24 +22,24 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/hostname</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/hostname</notExists>
 			<value>
 				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/environment</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/environment</notExists>
 			<value>
 				<environment></environment>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/logging</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/logging</notExists>
 			<value>
 				<logging>
 					<driver>journald</driver>
@@ -48,21 +48,28 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 			
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/deploy</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/deploy</notExists>
 			<value>
 				<deploy>
 					<replicas type="int">1</replicas>
 					<endpoint_mode>dnsrr</endpoint_mode>
+					<rollback_config>
+						<parallelism type="int">1</parallelism>
+						<failure_action>continue</failure_action>
+						<order>start-first</order>
+						<delay>40s</delay>
+					</rollback_config>
 					<update_config>
 						<parallelism type="int">1</parallelism>
 						<failure_action>rollback</failure_action>
 						<order>start-first</order>
-						<delay>5s</delay>
+						<delay>40s</delay>
 					</update_config>
 					<restart_policy>
 						<condition>on-failure</condition>
-						<delay>20s</delay>
+						<max_attempts type="int">3</max_attempts>
+						<delay>5s</delay>
 						<window>120s</window>
 					</restart_policy>
 				</deploy>
@@ -70,16 +77,16 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 			
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/dns</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/dns</notExists>
 			<value>
 				<dns type="array">172.18.0.1</dns>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
-			<notExists>/template/yaml/services/_var_app_name_/networks</notExists>
+			<path>/template/yaml/services/*</path>
+			<notExists>/template/yaml/services/*/networks</notExists>
 			<value>
 				<networks type="array">cloud_network</networks>
 			</value>
@@ -98,11 +105,12 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_/environment</path>
+			<path>/template/yaml/services/*/environment</path>
 			<value>
-				<NODE_ID>{{.Node.ID}}</NODE_ID>
-				<TASK_ID>{{.Task.ID}}</TASK_ID>
-				<SERVICE_ID>{{.Service.ID}}</SERVICE_ID>
+				<DOCKER_NODE_ID>{{.Node.ID}}</DOCKER_NODE_ID>
+				<DOCKER_TASK_ID>{{.Task.ID}}</DOCKER_TASK_ID>
+				<DOCKER_SERVICE_ID>{{.Service.ID}}</DOCKER_SERVICE_ID>
+				<DOCKER_SERVICE_NAME>{{.Service.Name}}</DOCKER_SERVICE_NAME>
 				<TZ>UTC</TZ>
 			</value>
 		</operation>
@@ -122,25 +130,25 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/volumes</path>
+			<path>/template/yaml/services/*/volumes</path>
 			<name>type</name>
 			<value>array</value>
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/env_file</path>
+			<path>/template/yaml/services/*/env_file</path>
 			<name>type</name>
 			<value>array</value>
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/ports</path>
+			<path>/template/yaml/services/*/ports</path>
 			<name>type</name>
 			<value>array</value>
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/environment</path>
+			<path>/template/yaml/services/*/environment</path>
 			<name>type</name>
 			<value>map</value>
 		</operation>
@@ -158,13 +166,13 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/ports/target</path>
+			<path>/template/yaml/services/*/ports/target</path>
 			<name>type</name>
 			<value>int</value>
 		</operation>
 		
 		<operation type="addAttribute" priority="1000">
-			<path>/template/yaml/services/_var_app_name_/ports/published</path>
+			<path>/template/yaml/services/*/ports/published</path>
 			<name>type</name>
 			<value>int</value>
 		</operation>

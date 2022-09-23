@@ -44,7 +44,15 @@ export class Domain extends CrudItem
 		/* Init variables */
 		this.id = 0;
 		this.domain_name = "";
-		this.nginx_template = "";
+		this.nginx_template = "server {\n" +
+			"  listen 80;\n" +
+			"  server_name %DOMAIN_NAME%;\n" +
+			"  root /var/www/html;\n" +
+			"  index index.php index.html;\n" +
+			"  autoindex off;\n" +
+		  	"%ROUTES%\n" +
+		  	"%SSL%\n" +
+		  	"}";
 		this.space_id = null;
 		this.ssl_id = null;
 		this.enable_auth = 0;
@@ -128,6 +136,13 @@ export class DomainsPageState extends CrudState<Domain>
 		domain_name.component = "Input";
 		this.fields.push( deepClone(domain_name) );
 		
+		/* Domain name field */
+		let nginx_template = new FieldInfo();
+		nginx_template.name = "nginx_template";
+		nginx_template.label = "Nginx template";
+		nginx_template.component = "TextArea";
+		this.fields.push( deepClone(nginx_template) );
+		
 		/* Space id field */
 		let space_id = new FieldInfo();
 		space_id.name = "space_id";
@@ -169,6 +184,7 @@ export class DomainsPageState extends CrudState<Domain>
 		this.form_save.fields.push( deepClone(domain_name) );
 		this.form_save.fields.push( deepClone(ssl_id) );
 		this.form_save.fields.push( deepClone(https_redirect) );
+		this.form_save.fields.push( deepClone(nginx_template) );
 		
 		/* Table fields */
 		domain_name.component = "Label";

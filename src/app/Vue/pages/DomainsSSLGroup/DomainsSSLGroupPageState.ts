@@ -17,9 +17,10 @@
  */
 
 import { AxiosResponse } from "axios";
+import { DialogState } from "vue-helper/Crud/DialogState";
 import { deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
-import { CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
+import { CrudButton, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
 
 
@@ -76,6 +77,8 @@ export class DomainSSLGroup extends CrudItem
 
 export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 {
+	dialog_generate: DialogState<CrudItem>;
+	
 	
 	/**
 	 * Returns class
@@ -112,6 +115,8 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	 */
 	initCrud()
 	{
+		this.dialog_generate = new DialogState();
+		
 		/* ID field */
 		let id = new FieldInfo();
 		id.name = "id";
@@ -158,6 +163,23 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		row_buttons.name = "row_buttons";
 		row_buttons.label = "";
 		row_buttons.component = "RowButtons";
+		row_buttons.component_params["buttons"] = [
+			new CrudButton().assignValues({
+				"type": "default",
+				"label": "Generate",
+				"action": "generate"
+			}),
+			new CrudButton().assignValues({
+				"type": "default",
+				"label": "Edit",
+				"action": "edit"
+			}),
+			new CrudButton().assignValues({
+				"type": "danger",
+				"label": "Delete",
+				"action": "delete"
+			})
+		];
 		
 		/* Form fields */
 		this.form_save.fields.push( deepClone(name) );

@@ -17,7 +17,21 @@
 -->
 
 <template>
-	<CrudList v-bind:store_path="store_path" />
+	<div>
+		<CrudList v-bind:store_path="store_path" @crudEvent="crudEvent" />
+		<Dialog v-bind:store_path="store_path.concat('dialog_generate')">
+			<template v-slot:title>
+				Generate ssl for {{ model.dialog_generate.item.name }}
+			</template>
+			<template v-slot:text>
+				{{ model.dialog_generate.attrs["content"] }}
+			</template>
+			<template v-slot:buttons>
+				<Button type="danger" @click="onGenerateButtonClick('yes')">Yes</Button>
+				<Button type="" @click="onGenerateButtonClick('no')">No</Button>
+			</template>
+		</Dialog>
+	</div>
 </template>
 
 <script lang="js">
@@ -33,6 +47,22 @@ export const DomainsSSLGroupPage =
 	mixins: [mixin],
 	methods:
 	{
+		onGenerateButtonClick: function(button)
+		{
+			if (button == 'no')
+			{
+				this.model.dialog_generate.hide();
+			}
+		},
+		crudEvent: function(event)
+		{
+			if (event.event_name == "row_click")
+			{
+				this.model.dialog_generate.attrs["content"] = "";
+				this.model.dialog_generate.setItem(event.crud_item);
+				this.model.dialog_generate.show();
+			}
+		},
 	},
 	mounted: function () {
 		let page_title = this.model.getMessage("list_title", null);

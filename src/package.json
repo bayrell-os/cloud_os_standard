@@ -3,9 +3,9 @@
 	"version": "0.4.2",
 	"description": "Cloud OS",
 	"scripts": {
-		"build": "webpack --progress --mode production",
-		"build:watch": "webpack --watch --progress --mode production",
-		"watch": "webpack --watch --progress --mode development"
+		"build": "./node_modules/.bin/webpack --progress --mode production",
+		"build:watch": "./node_modules/.bin/webpack --watch --progress --mode production",
+		"watch": "./node_modules/.bin/webpack --watch --progress --mode development"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.8",
