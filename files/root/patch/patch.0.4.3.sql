@@ -211,3 +211,19 @@ DROP TABLE "domains";
 ALTER TABLE "adminer_domains" RENAME TO "domains";
 CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
 COMMIT;
+
+
+-- Add gmtime_created to options
+
+BEGIN;
+CREATE TABLE "adminer_options" (
+  "key" text NOT NULL,
+  "value" text NOT NULL,
+  "gmtime_created" numeric NOT NULL DEFAULT '',
+  "gmtime_updated" numeric NOT NULL DEFAULT '',
+  PRIMARY KEY ("key")
+);
+INSERT INTO "adminer_options" ("key", "value") SELECT "key", "value" FROM "options";
+DROP TABLE "options";
+ALTER TABLE "adminer_options" RENAME TO "options";
+COMMIT;

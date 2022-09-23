@@ -29,11 +29,11 @@ use App\Template;
 
 class Test extends Command
 {
-    protected static $defaultName = 'app:test';
+	protected static $defaultName = 'app:test';
 
-    protected function configure(): void
-    {
-        $this
+	protected function configure(): void
+	{
+		$this
 			// the short description
 			->setDescription('Test')
 
@@ -41,116 +41,19 @@ class Test extends Command
 			// the "--help" option
 			->setHelp('Test')
 		;
-    }
+	}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+		
+		$option = \App\Models\Option::findOrCreate([
+			"key"=>"test"
+		]);
+		$option->value = microtime(1);
+		$option->save();
+		
+		echo $option->value . "\n";
+		
 		return Command::SUCCESS;
-		
-		$template = '<?xml version="1.0" encoding="UTF-8" ?>
-		<template>
-			<name>WordPress</name>
-			<marketplace>http://example.com/shop/wordpress</marketplace>
-			<hub>docker.io/bayrell/alpine_wordpress</hub>
-			<yaml>
-				<services>
-					<_var_service_name_>
-						<image>bayrell/alpine_wordpress:5.7.2-2-amd64</image>
-						<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
-						<environment>
-							<WWW_UID>1000</WWW_UID>
-							<WWW_GID>1000</WWW_GID>
-						</environment>
-					</_var_service_name_>
-				</services>
-			</yaml>
-			<variables>
-				<variable>
-					<name>_var_service_name_</name>
-					<type>string</type>
-				</variable>
-			</variables>
-		</template>';
-		
-		
-		$patch = '<?xml version="1.0" encoding="UTF-8" ?>
-		<patch>
-			<name>Deploy hostname</name>
-			<operations>
-				<operation type="add">
-					<path>/template/yaml/services/_var_service_name_</path>
-					<value>
-						<deploy>
-							<replicas>1</replicas>
-							<endpoint_mode>dnsrr</endpoint_mode>
-							<update_config>
-								<parallelism>1</parallelism>
-								<failure_action>rollback</failure_action>
-								<delay>5s</delay>
-							</update_config>
-							<restart_policy>
-								<condition>on-failure</condition>
-								<delay>10s</delay>
-								<window>120s</window>
-							</restart_policy>
-							<placement>
-								<constraints>node.hostname == _var_hostname_</constraints>
-							</placement>
-						</deploy>
-					</value>
-				</operation>
-				
-				<operation type="add">
-					<path>/template/variables</path>
-					<value>
-						<varibale>
-							<name>_var_hostname_</name>
-							<type>string</type>
-						</varibale>
-					</value>
-				</operation>
-				
-				<operation type="add">
-					<path>/template/yaml/services/_var_service_name_</path>
-					<value>
-						<networks>cloud_backend</networks>
-					</value>
-				</operation>
-				
-				<operation type="add">
-					<path>/template/networks</path>
-					<value>
-						<cloud_backend>
-							<external>true</external>
-						</cloud_backend>
-					</value>
-				</operation>
-				
-				<operation type="add">
-					<path>/template/yaml/services/_var_service_name_</path>
-					<value>
-						<logging>
-							<driver>journald</driver>
-						</logging>
-					</value>
-				</operation>
-				
-			</operations>
-		</patch>';
-		
-		$xml = Template::loadXml($template);
-		Template::patch($xml, $patch);
-		
-		var_dump(Template::saveXml($xml));
-		
-		$data = json_decode(json_encode($xml), true);
-		
-		$yaml = Yaml::dump($data["yaml"], 5);
-		var_dump($yaml);
-		
-		$yaml = Yaml::dump($data["variables"], 5);
-		var_dump($yaml);
-		
-        return Command::SUCCESS;
-    }
+	}
 }

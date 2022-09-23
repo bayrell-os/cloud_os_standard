@@ -143,7 +143,7 @@ class Module
 		$app->addEntity(\App\Console\AdminUpdate::class);
 		$app->addEntity(\App\Console\DockerNginxUpdate::class);
 		$app->addEntity(\App\Console\DockerServicesUpdate::class);
-		// $app->addEntity(\App\Console\Test::class);
+		//$app->addEntity(\App\Console\Test::class);
 		
 	}
 	

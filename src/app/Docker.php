@@ -315,7 +315,7 @@ class Docker
 			])
 			->where([
 				['is_deleted', '=', 0],
-				['timestamp', '!=', $timestamp],
+				['timestamp', '<', $timestamp - 15],
 			])
 			->query()
 		;
@@ -349,9 +349,11 @@ class Docker
 		
 		$services = DockerService::selectQuery()
 			->where([
-				'enable' => 1,
-				'is_deleted' => 0,
+				["enable", "=", "1"],
+				["is_deleted", "=", "0"],
+				["docker_name", "!=", ""],
 			])
+			->orderBy("docker_name", "asc")
 			->all()
 		;
 		
@@ -412,6 +414,7 @@ class Docker
 		);
 		
 		/* Save upstreams */
+		//var_dump( count($upstreams) );
 		$upstreams = implode("\n", $upstreams);
 		$res2 = static::updateLocalFile
 		(
@@ -557,6 +560,7 @@ class Docker
 		);
 		
 		$file_name = "/conf.d/99-" . $network_name . "-upstreams.conf";
+		//var_dump( count($upstreams) );
 		$content = implode("", $upstreams);
 		NginxFile::updateFile($file_name, $content);
 	}
