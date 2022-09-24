@@ -16,15 +16,28 @@
  *  limitations under the License.
 -->
 
+<style lang="scss">
+.domains_ssl_group_page_generate{
+	textarea{
+		width: 100%;
+		height: 200px;
+		outline: 0;
+	}
+}
+</style>
+
 <template>
-	<div>
-		<CrudList v-bind:store_path="store_path" @crudEvent="crudEvent" />
-		<Dialog v-bind:store_path="store_path.concat('dialog_generate')">
+	<div class="domains_ssl_group_page">
+		<CrudList v-bind:store_path="store_path" />
+		<Dialog v-bind:store_path="store_path.concat('dialog_generate')" 
+			v-bind:style="'domains_ssl_group_page_generate'"
+			width="700px"
+		>
 			<template v-slot:title>
 				Generate ssl for {{ model.dialog_generate.item.name }}
 			</template>
 			<template v-slot:text>
-				{{ model.dialog_generate.attrs["content"] }}
+				<textarea v-bind:value='model.dialog_generate.attrs["content"]' readonly></textarea>
 			</template>
 			<template v-slot:buttons>
 				<Button type="danger" @click="onGenerateButtonClick('yes')">Yes</Button>
@@ -39,6 +52,7 @@
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, onRouteUpdate, setPageTitle } from "vue-helper";
 import { CrudList } from "vue-helper/Crud/CrudList.vue";
+import { CRUD_EVENTS, CrudEvent } from "vue-helper/Crud/CrudState";
 
 
 export const DomainsSSLGroupPage =
@@ -47,20 +61,35 @@ export const DomainsSSLGroupPage =
 	mixins: [mixin],
 	methods:
 	{
-		onGenerateButtonClick: function(button)
+		onGenerateButtonClick: async function(button)
 		{
 			if (button == 'no')
 			{
 				this.model.dialog_generate.hide();
 			}
+			else if (button == 'yes')
+			{
+				this.model.dialog_generate.setWaitResponse();
+				let response = await this.model.processGenerateSSL();
+				this.model.dialog_generate.setAxiosResponse(response);
+				this.model.dialog_generate.attrs["content"] = response.data.result.content;
+			}
 		},
-		crudEvent: function(event)
+		onCrudComponentEvent: function($event)
 		{
-			if (event.event_name == "row_click")
+			if (
+				$event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK &&
+				$event.button_name == "generate"
+			)
 			{
 				this.model.dialog_generate.attrs["content"] = "";
-				this.model.dialog_generate.setItem(event.crud_item);
+				this.model.dialog_generate.clear();
+				this.model.dialog_generate.setItem($event.crud_item);
 				this.model.dialog_generate.show();
+			}
+			else
+			{
+				Crud.methods.onCrudComponentEvent.apply(this, [$event]);
 			}
 		},
 	},

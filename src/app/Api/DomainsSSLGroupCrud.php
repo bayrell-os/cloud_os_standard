@@ -27,6 +27,7 @@ use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TinyPHP\ApiResult;
+use TinyPHP\RouteList;
 use TinyPHP\Rules\AllowFields;
 use TinyPHP\Rules\Dictionary;
 use TinyPHP\Rules\Nullable;
@@ -37,6 +38,25 @@ class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 {
 	var $class_name = DomainSSLGroup::class;
 	var $api_name = "domains_ssl_groups";
+	
+	
+	/**
+	 * Declare routes
+	 */
+	function routes(RouteList $routes)
+	{
+		parent::routes($routes);
+		
+		/* Generate service */
+		$routes->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/generate/",
+			"name" => "api:" . $this->api_name . ":generate",
+			"method" => [$this, "actionGenerate"],
+		]);
+		
+	}
+	
 	
 	
 	/**
@@ -78,5 +98,51 @@ class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 			]),
 		];
 	}
-
+	
+	
+	
+	/**
+	 * Action generate
+	 */
+	function actionGenerate()
+	{
+		$result = [];
+		
+		$this->findItem();
+		
+		if ($this->item)
+		{
+			$container_name = $this->item->container_name;
+			$container_name .= ".bus";
+			
+			$res = \TinyPHP\Bus::call
+			(
+				"/" . $container_name . "/ssl/generate/",
+				[
+					"group_id" => $this->item->id,
+				]
+			);
+			
+			$res->debug();
+			
+			if ($res->isSuccess())
+			{
+				$content = $res->result["content"];
+				$result = [
+					"content" => $content,
+				];
+				
+				$error_str = $res->error_str;
+				$this->api_result->success($result, $error_str);
+			}
+			
+			else
+			{
+				$this->api_result->error($result, $res->error_str);
+			}
+		}
+		
+		$this->buildResponse("actionGenerate");
+	}
+	
 }

@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { DialogState } from "vue-helper/Crud/DialogState";
-import { deepClone, notNull, responseOk } from "vue-helper";
+import { callApi, deepClone, notNull, responseOk } from "vue-helper";
 import { CrudItem } from "vue-helper/Crud/CrudItem";
 import { CrudButton, CrudState, FieldInfo, SelectOption } from "vue-helper/Crud/CrudState";
 
@@ -130,6 +130,13 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		name.component = "Input";
 		this.fields.push( deepClone(name) );
 		
+		/* Domain name field */
+		let group_id = new FieldInfo();
+		group_id.name = "group_id";
+		group_id.label = "Group ID";
+		group_id.component = "Label";
+		this.fields.push( deepClone(group_id) );
+		
 		/* Container name field */
 		let container_name = new FieldInfo();
 		container_name.name = "container_name";
@@ -193,7 +200,25 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		this.fields_table.push( deepClone(row_number) );
 		this.fields_table.push( deepClone(name) );
 		this.fields_table.push( deepClone(container_name) );
+		this.fields_table.push( deepClone(group_id) );
 		this.fields_table.push( deepClone(row_buttons) );
+	}
+	
+	
+	
+	/**
+	 * Returns form value
+	 */
+	getItemValue(index: number, name: string): any
+	{
+		let item: any = this.items[index];
+		
+		if (name == "group_id")
+		{
+			return "grp" + item["id"];
+		}
+		
+		return super.getItemValue(index, name);
 	}
 	
 	
@@ -251,5 +276,78 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 				}
 			);
 		}
+	}
+	
+	
+	
+	/**
+	 * Return api search url
+	 */
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
+	{
+		let api_name = this.getApiObjectName();
+		
+		if (api_type == "generate")
+		{
+			return "/api/" + api_name + "/generate/";
+		}
+		
+		return super.getApiUrl(api_type, params);
+	}
+	
+	
+	
+	/**
+	 * Generate SSL
+	 */
+	async processGenerateSSL()
+	{
+		let item:CrudItem = this.dialog_generate.item as CrudItem;
+		
+		let res:boolean = await this.before("processGenerateSSL", {item});
+		if (!res) return;
+		
+		/* Get post data */
+		let post_data = {
+			"pk": item ? this.getPrimaryKeyFromItem(item) : null,
+		};
+		post_data = await this.processPostData("processGenerateSSL", post_data);
+		
+		/* Send post data */
+		this.form_save.setWaitResponse();
+		let response:AxiosResponse | null = await this.getClass()
+			.processGenerateSSLApi(post_data);
+		this.form_save.setAxiosResponse(response);
+		
+		await this.after("processGenerateSSL", {"response": response, "item": item});
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Save form api
+	 */
+	static async processGenerateSSLApi(post_data:any): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		let pk = post_data["pk"];
+		
+		let url = this.getApiUrl("generate", {"post_data": post_data});
+			
+		try
+		{
+			response = await callApi(url, post_data);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
 	}
 }

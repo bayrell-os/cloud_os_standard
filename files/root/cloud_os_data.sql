@@ -75,7 +75,7 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 				</deploy>
 			</value>
 		</operation>
-			
+		
 		<operation type="add">
 			<path>/template/yaml/services/*</path>
 			<notExists>/template/yaml/services/*/dns</notExists>

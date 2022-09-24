@@ -40,6 +40,7 @@ class Module
 		add_chain("init_di_defs",static::class, "init_di_defs", CHAIN_LAST);
 		add_chain("register_entities", static::class, "register_entities", CHAIN_LAST);
 		add_chain("method_not_found", static::class, "method_not_found");
+		add_chain("bus_gateway", static::class, "bus_gateway");
 		add_chain("routes", static::class, "routes");
 	}
 	
@@ -145,6 +146,25 @@ class Module
 		$app->addEntity(\App\Console\DockerServicesUpdate::class);
 		//$app->addEntity(\App\Console\Test::class);
 		
+	}
+	
+	
+	
+	/**
+	 * Bus gateway
+	 */
+	static function bus_gateway($res)
+	{
+		$gateway = $res["project"];
+		
+		/* Add container name */
+		if (substr($gateway, -strlen(".bus")) == ".bus")
+		{
+			$container = substr($gateway, 0, -strlen(".bus"));
+			$res["gateway"] = "http://" . $container . ":81/api/bus/";
+		}
+		
+		return $res;
 	}
 	
 	
