@@ -156,7 +156,7 @@ export const ServicesPage =
 			}
 			else
 			{
-				Crud.methods.onCrudComponentEvent.apply(this, [$event]);
+				CrudList.methods.onCrudComponentEvent.apply(this, [$event]);
 			}
 		},
 		onDialogFormButtonClick: function(action)
@@ -171,7 +171,7 @@ export const ServicesPage =
 			}
 			else
 			{
-				Crud.methods.onDialogFormButtonClick.apply(this, [action]);
+				CrudList.methods.onDialogFormButtonClick.apply(this, [action]);
 			}
 		}
 	},

@@ -34,7 +34,7 @@
 			width="700px"
 		>
 			<template v-slot:title>
-				Generate ssl for {{ model.dialog_generate.item.name }}
+				Generate ssl for "{{ model.dialog_generate.item.name }}" ?
 			</template>
 			<template v-slot:text>
 				<textarea v-bind:value='model.dialog_generate.attrs["content"]' readonly></textarea>
@@ -89,7 +89,7 @@ export const DomainsSSLGroupPage =
 			}
 			else
 			{
-				Crud.methods.onCrudComponentEvent.apply(this, [$event]);
+				CrudList.methods.onCrudComponentEvent.apply(this, [$event]);
 			}
 		},
 	},
