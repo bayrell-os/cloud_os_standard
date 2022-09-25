@@ -628,8 +628,13 @@ class Docker
 				}
 				
 				/* Proxy params */
+				$domain_target_prefix_last_slash = "/";
+				if ($domain_target_prefix == "" && !$has_rewrite)
+				{
+					$domain_target_prefix_last_slash = "";
+				}
 				$nginx_route .= "    proxy_pass http://" . $upstream_name .
-					$domain_target_prefix . "/;\n";
+					$domain_target_prefix . $domain_target_prefix_last_slash . ";\n";
 				$nginx_route .= "    include proxy_params;\n";
 				
 				/* Add websocket settings */
