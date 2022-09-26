@@ -107,6 +107,7 @@ export const App =
 			[
 				
 				{ "name": "app:main", "title": "Main" },
+				{ "name": "app:about", "title": "About"},
 				
 				{
 					"title": "Applications",
@@ -159,7 +160,6 @@ export const App =
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
 						{ "name": "app:users", "title": "Users"},
 						{ "name": "app:settings", "title": "Settings"},
-						{ "name": "app:about", "title": "About"},
 					]
 				}
 				
