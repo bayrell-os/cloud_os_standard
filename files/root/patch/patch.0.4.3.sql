@@ -1,4 +1,19 @@
 
+-- Remove foreign key from app_modificators
+
+BEGIN;
+CREATE TABLE "adminer_app_modificators" (
+  "app_id" integer NOT NULL,
+  "modificator_id" integer NOT NULL
+);
+INSERT INTO "adminer_app_modificators" ("app_id", "modificator_id") SELECT "app_id", "modificator_id" FROM "app_modificators";
+DROP TABLE "app_modificators";
+ALTER TABLE "adminer_app_modificators" RENAME TO "app_modificators";
+CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
+CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
+COMMIT;
+
+
 -- Remove foreign key from applications
 
 BEGIN;
@@ -139,21 +154,6 @@ ALTER TABLE "adminer_docker_yaml_files" RENAME TO "docker_yaml_files";
 CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
 CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
 CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
-COMMIT;
-
-
--- Remove foreign key from app_modificators
-
-BEGIN;
-CREATE TABLE "adminer_app_modificators" (
-  "app_id" integer NOT NULL,
-  "modificator_id" integer NOT NULL
-);
-INSERT INTO "adminer_app_modificators" ("app_id", "modificator_id") SELECT "app_id", "modificator_id" FROM "app_modificators";
-DROP TABLE "app_modificators";
-ALTER TABLE "adminer_app_modificators" RENAME TO "app_modificators";
-CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
-CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
 COMMIT;
 
 
