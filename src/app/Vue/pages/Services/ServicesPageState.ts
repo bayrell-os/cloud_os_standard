@@ -349,9 +349,15 @@ export class ServicesPageState extends CrudState<Service>
 		if (!res) return;
 		
 		/* Ajax request */
+		let post_data:any = this.getSearchData({
+			"page": this.page,
+			"limit": this.limit,
+		});
+		post_data = await this.processPostData("onLoadPageList", post_data);
+		post_data["refresh"] = 1;
 		this.refresh_state.setWaitResponse();
 		let response:AxiosResponse | null = await this.getClass()
-			.processLoadDataApi(true)
+			.processLoadListApi(post_data)
 		;
 		this.refresh_state.setAxiosResponse(response);
 		

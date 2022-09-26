@@ -162,6 +162,7 @@ class Module
 		if (substr($gateway, -strlen(".bus")) == ".bus")
 		{
 			$container = substr($gateway, 0, -strlen(".bus"));
+			$container = gethostbyname($container);
 			$res["gateway"] = "http://" . $container . ":81/api/bus/";
 		}
 		

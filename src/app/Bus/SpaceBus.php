@@ -119,6 +119,8 @@ class SpaceBus extends BusApiRoute
 			)
 			->where("spaces_users.space_id", $space->id)
 			->where("t.login", $login)
+			->where("t.banned", 0)
+			->where("t.is_deleted", 0)
 			->one()
 		;
 		if (!$user)

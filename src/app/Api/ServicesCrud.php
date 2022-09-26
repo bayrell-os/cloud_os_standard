@@ -117,7 +117,7 @@ class ServicesCrud extends \TinyPHP\ApiCrudRoute
 	{
 		parent::initSearch();
 		
-		$refresh = $this->container->request->query->get("refresh");
+		$refresh = $this->container->post("refresh");
 		if ($refresh == "1")
 		{
 			//Docker::updateServices();

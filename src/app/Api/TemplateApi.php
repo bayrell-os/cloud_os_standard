@@ -191,6 +191,13 @@ class TemplateApi extends \TinyPHP\ApiRoute
 					->one()
 				;
 			}
+			else
+			{
+				if ($this->template_version->template_id != $this->template->id)
+				{
+					throw new \Exception("Wrong template id. Try to import as new template");
+				}
+			}
 		}
 		
 		$this->old_data = $this->template_version ? $this->template_version->toArray() : [];
