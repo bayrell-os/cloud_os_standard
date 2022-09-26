@@ -49,5 +49,8 @@ app.mount('#app');
 window["appInstance"] = app;
 window["storeInstance"] = storeApp;
 
+storeInstance.state.hostname = window["app_settings"].hostname;
+storeInstance.state.app_version = window["app_settings"].version;
+
 /* Create test store */
 initTestStore(storeApp)

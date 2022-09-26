@@ -75,7 +75,7 @@
 		<div class='app_layout_wrap'>
 			<div class='app_layout_menu_wrap'>
 				<div class='app_layout_site_name'>
-					<a class='nolink' href='/'>Cloud OS</a>
+					<a class='nolink' href='/'>{{ getHostname() }}</a>
 				</div>
 				
 				<div class='app_layout_menu'>
@@ -159,6 +159,7 @@ export const App =
 						{ "name": "app:nginx_files", "title": "Nginx Files" },
 						{ "name": "app:users", "title": "Users"},
 						{ "name": "app:settings", "title": "Settings"},
+						{ "name": "app:about", "title": "About"},
 					]
 				}
 				
@@ -170,6 +171,10 @@ export const App =
 	},
 	methods:
 	{
+		getHostname()
+		{
+			return this.$store.state.hostname;
+		},
 	}
 };
 

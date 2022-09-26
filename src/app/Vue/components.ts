@@ -19,6 +19,7 @@ import Tab from 'vue-helper/Crud/Tab.vue';
 
 /* App components */
 import AppMenu from './AppMenu.vue';
+import AboutPage from './pages/About/AboutPage.vue';
 import ApplicationAdminButton from './pages/Applications/ApplicationAdminButton.vue';
 import ApplicationModificators from './pages/Applications/ApplicationModificators.vue';
 import ApplicationParams from './pages/Applications/ApplicationParams.vue';
@@ -74,6 +75,7 @@ export default {
     
     /* App components */
     "AppMenu": AppMenu,
+    "AboutPage": AboutPage,
     "ApplicationAdminButton": ApplicationAdminButton,
     "ApplicationModificators": ApplicationModificators,
     "ApplicationParams": ApplicationParams,

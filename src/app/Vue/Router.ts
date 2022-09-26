@@ -124,7 +124,7 @@ const routes =
 	
 	/* Stacks */
 	{
-		path: '/stacks/ssl/',
+		path: '/stacks/',
 		name: 'app:stacks',
 		component: components.StacksPage,
 		props: { store_path: ["StacksPage"] },
@@ -206,6 +206,14 @@ const routes =
 		name: 'app:settings',
 		component: components.SettingsPage,
 		props: { store_path: ["SettingsPage"] },
+	},
+	
+	/* About */
+	{
+		path: '/about/',
+		name: 'app:about',
+		component: components.AboutPage,
+		props: { store_path: ["AboutPage"] },
 	},
 	
 	/* Page not found */

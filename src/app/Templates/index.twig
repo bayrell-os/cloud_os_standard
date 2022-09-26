@@ -6,6 +6,12 @@
 </head>
 <body>
 	<div id="app"></div>
-	<script src="/dist/bundle.js?v=0.4.3-2"></script>
+    <script>
+        window["app_settings"] = {
+            "hostname": {{ hostname | json_encode | raw }},
+            "version": {{ version | json_encode | raw }},
+        };
+    </script>
+	<script src="/dist/bundle.js?v={{ version }}"></script>
 </body>
 </html>

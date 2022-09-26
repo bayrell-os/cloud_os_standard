@@ -133,6 +133,7 @@ class Module
 		$app->addEntity(\App\Api\YamlFilesCrud::class);
 		
 		/* Add routes */
+		$app->addEntity(\App\Routes\DefaultRoute::class);
 		$app->addEntity(\App\Routes\DatabaseRoute::class);
 		
 		/* Bus functions */
