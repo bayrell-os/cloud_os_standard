@@ -31,7 +31,7 @@
 
 <template>
 	<div class="page_about">
-		<p>BAYRELL Cloud OS Desktop Client. Version: {{ state.app_version }}</p>
+		<p>BAYRELL Cloud OS. Version: {{ state.app_version }}</p>
 		
 		<p>(c) Copyright 2020 - 2022 "Ildar Bikmamatov" &lt;support@bayrell.org&gt;</p>
 		
