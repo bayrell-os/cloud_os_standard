@@ -55,6 +55,14 @@ class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 			"method" => [$this, "actionGenerate"],
 		]);
 		
+		/* Refresh service */
+		$routes->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/" . $this->api_name . "/refresh/",
+			"name" => "api:" . $this->api_name . ":refresh",
+			"method" => [$this, "actionRefresh"],
+		]);
+		
 	}
 	
 	
@@ -125,24 +133,42 @@ class DomainsSSLGroupCrud extends \TinyPHP\ApiCrudRoute
 			
 			$res->debug();
 			
-			if ($res->isSuccess())
-			{
-				$content = $res->result["content"];
-				$result = [
-					"content" => $content,
-				];
-				
-				$error_str = $res->error_str;
-				$this->api_result->success($result, $error_str);
-			}
-			
-			else
-			{
-				$this->api_result->error($result, $res->error_str);
-			}
+			$this->api_result->setApiResult( $res );
 		}
 		
 		$this->buildResponse("actionGenerate");
+	}
+	
+	
+	
+	/**
+	 * Action refresh
+	 */
+	function actionRefresh()
+	{
+		$result = [];
+		
+		$this->findItem();
+		
+		if ($this->item)
+		{
+			$container_name = $this->item->container_name;
+			$container_name .= ".bus";
+			
+			$res = \TinyPHP\Bus::call
+			(
+				"/" . $container_name . "/ssl/refresh/",
+				[
+					"group_id" => $this->item->id,
+				]
+			);
+			
+			$res->debug();
+			
+			$this->api_result->setApiResult( $res );
+		}
+		
+		$this->buildResponse("actionRefresh");
 	}
 	
 }

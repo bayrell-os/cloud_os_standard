@@ -37,11 +37,17 @@
 				Generate ssl for "{{ model.dialog_generate.item.name }}" ?
 			</template>
 			<template v-slot:text>
-				<textarea v-bind:value='model.dialog_generate.attrs["content"]' readonly></textarea>
+				<textarea v-bind:value='model.dialog_generate.attrs["content"]'
+					readonly></textarea>
 			</template>
 			<template v-slot:buttons>
-				<Button type="danger" @click="onGenerateButtonClick('yes')">Yes</Button>
-				<Button type="" @click="onGenerateButtonClick('no')">No</Button>
+				<Button type="danger" v-bind:disabled="model.is_generated"
+					@click="onGenerateButtonClick('generate')"
+				>
+					Generate {{ getGenerateText() }}
+				</Button>
+				<Button type="primary" @click="onGenerateButtonClick('refresh')">Refresh</Button>
+				<Button type="" @click="onGenerateButtonClick('no')">Close</Button>
 			</template>
 		</Dialog>
 	</div>
@@ -61,16 +67,29 @@ export const DomainsSSLGroupPage =
 	mixins: [mixin],
 	methods:
 	{
+		getGenerateText: function()
+		{
+			if (this.model.is_generated) return "[True]";
+			return "[False]";
+		},
 		onGenerateButtonClick: async function(button)
 		{
 			if (button == 'no')
 			{
 				this.model.dialog_generate.hide();
 			}
-			else if (button == 'yes')
+			else if (button == 'generate')
 			{
+				this.model.is_generated = true;
 				this.model.dialog_generate.setWaitResponse();
 				let response = await this.model.processGenerateSSL();
+				this.model.dialog_generate.setAxiosResponse(response);
+			}
+			else if (button == 'refresh')
+			{
+				this.is_generated = false;
+				this.model.dialog_generate.setWaitResponse();
+				let response = await this.model.processRefreshSSL();
 				this.model.dialog_generate.setAxiosResponse(response);
 				this.model.dialog_generate.attrs["content"] = response.data.result.content;
 			}
@@ -82,6 +101,7 @@ export const DomainsSSLGroupPage =
 				$event.button_name == "generate"
 			)
 			{
+				this.model.is_generated = false;
 				this.model.dialog_generate.attrs["content"] = "";
 				this.model.dialog_generate.clear();
 				this.model.dialog_generate.setItem($event.crud_item);

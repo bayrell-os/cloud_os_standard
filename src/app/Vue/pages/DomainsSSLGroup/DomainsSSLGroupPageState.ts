@@ -78,6 +78,7 @@ export class DomainSSLGroup extends CrudItem
 export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 {
 	dialog_generate: DialogState<CrudItem>;
+	is_generated: false;
 	
 	
 	/**
@@ -291,6 +292,10 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		{
 			return "/api/" + api_name + "/generate/";
 		}
+		else if (api_type == "refresh")
+		{
+			return "/api/" + api_name + "/refresh/";
+		}
 		
 		return super.getApiUrl(api_type, params);
 	}
@@ -336,6 +341,62 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 		
 		let url = this.getApiUrl("generate", {"post_data": post_data});
 			
+		try
+		{
+			response = await callApi(url, post_data);
+		}
+		catch (e)
+		{
+			if (axios.isAxiosError(e))
+			{
+				response = e["response"] as AxiosResponse;
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Refresh SSL
+	 */
+	async processRefreshSSL()
+	{
+		let item:CrudItem = this.dialog_generate.item as CrudItem;
+		
+		let res:boolean = await this.before("processRefreshSSL", {item});
+		if (!res) return;
+		
+		/* Get post data */
+		let post_data = {
+			"pk": item ? this.getPrimaryKeyFromItem(item) : null,
+		};
+		post_data = await this.processPostData("processRefreshSSL", post_data);
+		
+		/* Send post data */
+		this.form_save.setWaitResponse();
+		let response:AxiosResponse | null = await this.getClass()
+			.processRefreshSSLApi(post_data);
+		this.form_save.setAxiosResponse(response);
+		
+		await this.after("processRefreshSSL", {"response": response, "item": item});
+		
+		return response;
+	}
+	
+	
+	
+	/**
+	 * Save form api
+	 */
+	static async processRefreshSSLApi(post_data:any): Promise<AxiosResponse | null>
+	{
+		let response:AxiosResponse | null = null;
+		let pk = post_data["pk"];
+		
+		let url = this.getApiUrl("refresh", {"post_data": post_data});
+		
 		try
 		{
 			response = await callApi(url, post_data);
