@@ -188,7 +188,7 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 	<operations>
     
     <operation type="add">
-		<path>/template/yaml/services/_var_app_name_/environment</path>
+		<path>/template/yaml/services/*/environment</path>
 		<value>
 			<CLOUD_OS_KEY>%CLOUD_OS_KEY%</CLOUD_OS_KEY>
 			<CLOUD_OS_GATEWAY>cloud_os_standard_1:81</CLOUD_OS_GATEWAY>
