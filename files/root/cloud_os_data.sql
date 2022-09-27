@@ -4,7 +4,7 @@ INSERT INTO "applications" ("id", "stack_name", "name", "template_version_id", "
 
 INSERT INTO "applications" ("id", "stack_name", "name", "template_version_id", "status", "content", "modificators", "custom_patch", "yaml", "yaml_file_id", "variables", "environments", "volumes", "gmtime_created", "gmtime_updated") VALUES (2,	'cloud_os',	'virtual_space',	2,	'0',	'',	'',	'',	'',	NULL,	'{"_var_app_name_":"virtual_space","_var_service_name_":"cloud_os_virtual_space","_var_hostname_":"docker0"}',	'',	'',	'%GMTIME%',	'%GMTIME%');
 
-INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (1,	'org.bayrell.modificator.cloud_os',	'1.3',	'Cloud OS',	'<?xml version="1.1" encoding="UTF-8" ?>
+INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (1,	'org.bayrell.modificator.cloud_os',	'1.5',	'Cloud OS',	'<?xml version="1.1" encoding="UTF-8" ?>
 <modificator>
 	<uid>org.bayrell.modificator.cloud_os</uid>
 	<name>Cloud OS</name>
@@ -200,26 +200,26 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 	</operations>
 </modificator>',	'0',	'%GMTIME%',	'%GMTIME%');
 
-INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (3,	'org.bayrell.modificator.deploy_hostname',	'1.0',	'Deploy hostname',	'<?xml version="1.1" encoding="UTF-8" ?>
+INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (3,	'org.bayrell.modificator.deploy_hostname',	'1.0',	'Deploy hostname',	'<?xml version="1.0" encoding="UTF-8" ?>
 <modificator>
 	<uid>org.bayrell.modificator.deploy_hostname</uid>
 	<name>Deploy hostname</name>
 	<version>1.0</version>
+	<xml name="bayrell.org" priority="10">https://cloud.bayrell.org/marketplace/org.bayrell.modificator.deploy_hostname.xml</xml>
+	<xml name="github.com" priority="20">https://raw.githubusercontent.com/bayrell-os/marketplace/main/org.bayrell.modificator.deploy_hostname.xml</xml>
+	<date>2022-08-09T17:15:00+06:00</date>
 	<operations>
-	
 		<operation type="remove">
-			<path>/template/yaml/services/_var_app_name_/deploy/placement</path>
+			<path>/template/yaml/services/*/deploy/placement</path>
 		</operation>
-
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_/deploy</path>
+			<path>/template/yaml/services/*/deploy</path>
 			<value>
-			<placement>
-				<constraints type="array">node.hostname == _var_hostname_</constraints>
-			</placement>
+				<placement>
+					<constraints type="array">node.hostname == _var_hostname_</constraints>
+				</placement>
 			</value>
 		</operation>
-
 		<operation type="add">
 			<path>/template/variables</path>
 			<notExists>/template/variables/variable[name="_var_hostname_"]</notExists>
@@ -231,7 +231,6 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 				</variable>
 			</value>
 		</operation>
-		
 	</operations>
 </modificator>',	'0',	'%GMTIME%',	'%GMTIME%');
 
@@ -242,7 +241,7 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 	<version>1.0</version>
 	<operations>
 		<operation type="replace">
-			<path>/template/yaml/services/_var_app_name_/image</path>
+			<path>/template/yaml/services/*/image</path>
 			<value>
 				<image>_var_image_</image>
 			</value>
@@ -261,20 +260,21 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 	</operations>
 </modificator>',	'0',	'%GMTIME%',	'%GMTIME%');
 
-INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (5,	'org.bayrell.modificator.volume_data',	'1.0',	'Volume /data',	'<?xml version="1.1" encoding="UTF-8" ?>
+INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority", "gmtime_created", "gmtime_updated") VALUES (5,	'org.bayrell.modificator.volume_data',	'1.0',	'Volume /data',	'<?xml version="1.0" encoding="UTF-8" ?>
 <modificator>
 	<uid>org.bayrell.modificator.volume_data</uid>
 	<name>Volume /data</name>
+	<xml name="bayrell.org">https://cloud.bayrell.org/marketplace/org.bayrell.modificator.volume_data.xml</xml>
+	<xml name="github.com">https://raw.githubusercontent.com/bayrell-os/marketplace/main/org.bayrell.modificator.volume_data.xml</xml>
 	<version>1.0</version>
+	<date>2022-05-15T18:32:00+06:00</date>
 	<operations>
-		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
+			<path>/template/yaml/services/*</path>
 			<value>
 				<volumes>_var_app_name__data:/data</volumes>
 			</value>
 		</operation>
-		
 		<operation type="add">
 			<path>/template/yaml</path>
 			<notExists>/template/yaml/volumes</notExists>
@@ -282,7 +282,6 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 				<volumes></volumes>
 			</value>
 		</operation>
-		
 		<operation type="add">
 			<path>/template/yaml/volumes</path>
 			<notExists>/template/yaml/volumes/_var_app_name__data</notExists>
@@ -290,7 +289,6 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 				<_var_app_name__data />
 			</value>
 		</operation>
-		
 	</operations>
 </modificator>',	'0',	'%GMTIME%',	'%GMTIME%');
 
@@ -298,11 +296,12 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 <modificator>
 	<uid>org.bayrell.modificator.volume_shared</uid>
 	<name>Volume /shared</name>
+    <date>2022-08-09T17:15:00+06:00</date>
 	<version>1.0</version>
 	<operations>
 		
 		<operation type="add">
-			<path>/template/yaml/services/_var_app_name_</path>
+			<path>/template/yaml/services/*</path>
 			<value>
 				<volumes>_var_folder_shared_:/shared</volumes>
 			</value>
@@ -342,30 +341,24 @@ INSERT INTO "templates" ("id", "uid", "name", "gmtime_created", "gmtime_updated"
 
 INSERT INTO "templates" ("id", "uid", "name", "gmtime_created", "gmtime_updated") VALUES (2,	'org.bayrell.virtual_space',	'Virtual space',	'%GMTIME%',	'%GMTIME%');
 
-INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") VALUES (1,	1,	'0.4.2',	'<?xml version="1.1" encoding="UTF-8" ?>
+INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") VALUES (1,	1,	'0.4.3',	'<?xml version="1.1" encoding="UTF-8" ?>
 <template>
 	<uid>org.bayrell.load_balancer_http</uid>
 	<name>Cloud OS HTTP load balancer</name>
-	<version>0.4.2</version>
+	<version>0.4.3</version>
 	<maintainer>Ildar &lt;ildar@bayrell.org&gt;</maintainer>
 	<marketplace>https://cloud_os.bayrell.org/</marketplace>
-	<link name="Docker hub">
-		https://hub.docker.com/r/bayrell/load_balancer_http
-	</link>
-	<link name="Github">
-		https://github.com/bayrell-os/load_balancer_http
-	</link>
-	<xml name="bayrell.org" priority="10">
-		https://cloud.bayrell.org/marketplace/org.bayrell.load_balancer_http.xml
-	</xml>
-	<xml name="github.com" priority="20">
-		https://raw.githubusercontent.com/bayrell-os/load_balancer_http/main/org.bayrell.load_balancer_http.xml
-	</xml>
+	<link name="Docker hub">https://hub.docker.com/r/bayrell/load_balancer_http</link>
+	<link name="Github">https://github.com/bayrell-os/load_balancer_http</link>
+	<xml name="bayrell.org" priority="10">https://cloud.bayrell.org/marketplace/org.bayrell.load_balancer_http.xml</xml>
+	<xml name="github.com" priority="20">https://raw.githubusercontent.com/bayrell-os/load_balancer_http/main/org.bayrell.load_balancer_http.xml</xml>
+	<arch>amd64</arch>
+	<arch>arm64v8</arch>
 	<license>MIT</license>
 	<yaml>
 		<services>
 			<_var_app_name_>
-				<image>docker.io/bayrell/load_balancer_http:0.4.2</image>
+				<image>docker.io/bayrell/load_balancer_http:0.4.3</image>
 				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
 				<volumes>_var_app_name__data:/data</volumes>
 				<ports>
@@ -405,14 +398,14 @@ INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gm
 	</variables>
 </template>',	'%GMTIME%',	'%GMTIME%');
 
-INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") VALUES (2,	2,	'0.4.2',	'<?xml version="1.0" encoding="UTF-8" ?>
+INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gmtime_created", "gmtime_updated") VALUES (2,	2,	'0.4.3',	'<?xml version="1.0" encoding="UTF-8" ?>
 <template>
 	<uid>org.bayrell.virtual_space</uid>
 	<name>Virtual space</name>
-	<version>0.4.2</version>
+	<version>0.4.3</version>
 	<maintainer>Ildar &lt;ildar@bayrell.org&gt;</maintainer>
 	<marketplace>https://cloud.bayrell.org/</marketplace>
-	<date>2022-05-16T20:24:00+06:00</date>
+	<date>2022-22-20T00:37:00+06:00</date>
 	<arch>amd64</arch>
 	<arch>arm64v8</arch>
 	<link name="Docker hub">https://hub.docker.com/r/bayrell/virtual_space</link>
@@ -422,7 +415,7 @@ INSERT INTO "templates_versions" ("id", "template_id", "version", "content", "gm
 	<yaml>
 		<services>
 			<_var_app_name_>
-				<image>docker.io/bayrell/virtual_space:0.4.2</image>
+				<image>docker.io/bayrell/virtual_space:0.4.3</image>
 				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
 				<volumes>_var_app_name_:/data</volumes>
 			</_var_app_name_>
