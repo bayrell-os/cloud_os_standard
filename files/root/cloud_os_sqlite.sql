@@ -3,9 +3,7 @@
 DROP TABLE IF EXISTS "app_modificators";
 CREATE TABLE "app_modificators" (
   "app_id" integer NOT NULL,
-  "modificator_id" integer NOT NULL,
-  FOREIGN KEY ("modificator_id") REFERENCES "modificators" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("app_id") REFERENCES "applications" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "modificator_id" integer NOT NULL
 );
 
 CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
@@ -29,8 +27,7 @@ CREATE TABLE "applications" (
   "environments" text NOT NULL DEFAULT '',
   "volumes" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("template_version_id") REFERENCES "templates_versions" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
@@ -84,8 +81,7 @@ CREATE TABLE "docker_yaml_files" (
   "timestamp" integer NOT NULL DEFAULT '0',
   "is_deleted" integer NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("stack_name") REFERENCES "stacks" ("stack_name") ON DELETE RESTRICT ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
@@ -100,13 +96,12 @@ CREATE TABLE "domains" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "space_id" integer NULL,
   "ssl_id" integer NULL,
+  "https_redirect" integer NULL DEFAULT '0',
   "domain_name" text NOT NULL,
   "nginx_template" text NOT NULL DEFAULT '',
   "is_deleted" integer NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("space_id") REFERENCES "spaces" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("ssl_id") REFERENCES "domains_ssl_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "domains_domain_name" ON "domains" ("domain_name");
@@ -116,6 +111,8 @@ DROP TABLE IF EXISTS "domains_ssl_groups";
 CREATE TABLE "domains_ssl_groups" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL,
+  "container_name" text NOT NULL DEFAULT '',
+  "cert_info" text NOT NULL DEFAULT '',
   "public_key" text NOT NULL DEFAULT '',
   "private_key" text NOT NULL DEFAULT '',
   "gmtime_created" numeric NOT NULL,
@@ -168,6 +165,8 @@ DROP TABLE IF EXISTS "options";
 CREATE TABLE "options" (
   "key" text NOT NULL,
   "value" text NOT NULL,
+  "gmtime_created" numeric NOT NULL DEFAULT '',
+  "gmtime_updated" numeric NOT NULL DEFAULT '',
   PRIMARY KEY ("key")
 );
 
@@ -222,8 +221,7 @@ CREATE TABLE "spaces_roles" (
   "name" integer NOT NULL,
   "is_deleted" integer NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("space_id") REFERENCES "spaces" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "spaces_roles_space_id_name" ON "spaces_roles" ("space_id", "name");
@@ -237,8 +235,7 @@ CREATE TABLE "spaces_users" (
   "space_id" integer NOT NULL,
   "user_id" numeric NOT NULL,
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("space_id") REFERENCES "spaces" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "spaces_users_space_id_user_id" ON "spaces_users" ("space_id", "user_id");
@@ -252,9 +249,7 @@ CREATE TABLE "spaces_users_roles" (
   "role_id" integer NOT NULL,
   "is_deleted" integer NOT NULL DEFAULT '0',
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("role_id") REFERENCES "spaces_roles" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "users_in_groups_user_id_group_id" ON "spaces_users_roles" ("user_id", "role_id");
@@ -292,8 +287,7 @@ CREATE TABLE "templates_versions" (
   "version" text NOT NULL,
   "content" text NOT NULL,
   "gmtime_created" numeric NOT NULL,
-  "gmtime_updated" numeric NOT NULL,
-  FOREIGN KEY ("template_id") REFERENCES "templates" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "gmtime_updated" numeric NOT NULL
 );
 
 CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
@@ -320,8 +314,7 @@ CREATE TABLE "users_auth" (
   "user_id" integer NOT NULL,
   "method" text NOT NULL,
   "test" text NOT NULL DEFAULT '',
-  "value" text NOT NULL,
-  FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  "value" text NOT NULL
 );
 
 CREATE UNIQUE INDEX "users_auth_user_id_method" ON "users_auth" ("user_id", "method");
