@@ -17,7 +17,7 @@
  */
 
 import axios, { AxiosResponse } from "axios";
-import { deepClone, responseOk } from "vue-helper";
+import { deepClone, responseOk, setPageTitle } from "vue-helper";
 import { CrudButton, CrudState, FieldInfo } from "vue-helper/Crud/CrudState";
 import { Template } from "./TemplatesListPageState";
 import { TemplateVersion } from "./TemplatesVersionsPageState";
@@ -168,7 +168,7 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 		}
 		else if (message_type == "add_title")
 		{
-			return "Import template";
+			return "Import XML";
 		}
 		return super.getMessage(message_type, item);
 	}
@@ -187,9 +187,20 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 		}
 		else if (api_type == "update")
 		{
-			return "/api/template/import/";
+			return "/api/template/save/";
 		}
 		return super.getApiUrl(api_type, params);
+	}
+	
+	
+	
+	/**
+	 * Page data
+	 */
+	async onRouteUpdate(route: any)
+	{
+		this.template = null;
+		super.onRouteUpdate(route);
 	}
 	
 	
@@ -199,17 +210,24 @@ export class TemplateSavePageState extends CrudState<TemplateVersion>
 	 */
 	async after(kind: string, params: Record<string, any>)
 	{
-		super.after(kind, params);
+		let item_original = params["item_original"];
+		let response = params["response"] as AxiosResponse;
 		
-		if (kind == "onLoadPageSave")
+		if (kind == "onLoadPageSave" || kind == "processSaveForm")
 		{
-			this.template = null;
-			
-			let response = params["response"] as AxiosResponse;
 			if (response && responseOk(response))
 			{
 				this.template = (new Template()).assignValues(response.data.result.template);
 			}
 		}
+		
+		if (kind == "processSaveForm" && item_original == null && response && responseOk(response))
+		{
+			this.template = null;
+			this.form_save.item_original = null;
+			this.setPageAction("create");
+		}
+		
+		super.after(kind, params);
 	}
 }

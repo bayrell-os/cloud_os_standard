@@ -24,6 +24,14 @@
 <template>
 	<CrudSave v-bind:store_path="store_path" v-bind:page_action="page_action">
 		
+		<template v-slot:component_crud_save_back>
+			<div class="component_crud_save_back">
+				<div v-if="model.isUpdate()">
+					<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
+				</div>
+			</div>
+		</template>
+		
 		<template v-slot:component_crud_save_before>
 			<div class="template_view_page__table_before" v-if="model.template != null">
 				<div class="template_view_page__table_before_row">
@@ -84,12 +92,7 @@ export const TemplateEditPage =
 				});
 			}
 		},
-	},
-	mounted: function () {
-		let item = this.model.form_save.item_original;
-		let page_title = this.model.getMessage("save_title", item);
-		this.setPageTitle(page_title);
-	},
+	}
 }
 componentExtend(TemplateEditPage, CrudSave);
 export default defineComponent(TemplateEditPage);

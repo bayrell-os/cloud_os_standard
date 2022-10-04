@@ -23,6 +23,7 @@ namespace App\Api;
 use App\Docker;
 use App\Api\ApplicationsCrud;
 use App\Models\Application;
+use App\Models\Modificator;
 use App\Models\Template;
 use App\Models\TemplateVersion;
 use App\XML;
@@ -40,16 +41,16 @@ use TinyPHP\Utils;
 class TemplateApi extends \TinyPHP\ApiRoute
 {
 	var $update_data = null;
-    var $xml = null;
-    var $xml_uid = null;
-    var $xml_name = null;
-    var $xml_version = null;
-    var $template = null;
-    var $template_version = null;
-    var $old_data = null;
-    var $new_data = null;
+	var $xml = null;
+	var $xml_uid = null;
+	var $xml_name = null;
+	var $xml_version = null;
+	var $template = null;
+	var $template_version = null;
+	var $old_data = null;
+	var $new_data = null;
 	
-    
+	
 	/**
 	 * Declare routes
 	 */
@@ -63,13 +64,19 @@ class TemplateApi extends \TinyPHP\ApiRoute
 			"name" => "api:template:import",
 			"method" => [$this, "actionImport"],
 		]);
-        
+		$routes->addRoute([
+			"methods" => [ "POST" ],
+			"url" => "/api/template/save/",
+			"name" => "api:template:save",
+			"method" => [$this, "actionSave"],
+		]);
+		
 	}
-    
+	
 	
 	
 	/**
-	 * Init api
+	 * Init update data
 	 */
 	function initUpdateData($action)
 	{
@@ -85,19 +92,21 @@ class TemplateApi extends \TinyPHP\ApiRoute
 			throw new \Exception("Post item is empty");
 		}
 		
-		$this->update_data = $this->toDatabase($action, $update_data);
-    }
-    
-    
-    
-    /**
+		$this->post_data = $post;
+		$this->update_data = $update_data;
+		$this->database_data = $this->toDatabase($action, $update_data);
+	}
+	
+	
+	
+	/**
 	 * To database
 	 */
 	function toDatabase($action, $item)
 	{
 		return $item;
 	}
-    
+	
 	
 	
 	/**
@@ -119,7 +128,7 @@ class TemplateApi extends \TinyPHP\ApiRoute
 	 */
 	function parseTemplate()
 	{
-		$content = isset($this->update_data["content"]) ? $this->update_data["content"] : "";
+		$content = isset($this->database_data["content"]) ? $this->database_data["content"] : "";
 		if ($content == "")
 		{
 			throw new \Exception("Template is empty");
@@ -130,15 +139,18 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		{
 			throw new \Exception("XML error: " . implode(". ", $errors));
 		}
-		if ($xml->getName() != "template")
+		
+		$template_name = $xml->getName();
+		if (!in_array($template_name, ["template", "modificator"]))
 		{
-			throw new \Exception("XML must be template");
+			throw new \Exception("XML must be template or modificator");
 		}
 		
 		$this->xml = $xml;
 		$this->xml_uid = (string)$xml->uid;
 		$this->xml_name = (string)$xml->name;
 		$this->xml_version = (string)$xml->version;
+		$this->xml_type = $template_name;
 		
 		/* Check xml params */
 		if ($this->xml_uid == "")
@@ -153,8 +165,24 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		{
 			throw new \Exception("XML name is not defined");
 		}
+	}
+	
+	
+	
+	/**
+	 * Save template
+	 */
+	function actionSave()
+	{
+		$this->initUpdateData("actionSave");
+		$this->parseTemplate();
 		
-		/* Get existing template if edit */
+		if ($this->xml_type != "template")
+		{
+			throw new \Exception("XML must be template");
+		}
+		
+		/* Find template version */
 		$pk_post = $this->container->post("pk");
 		if ($pk_post)
 		{
@@ -166,52 +194,88 @@ class TemplateApi extends \TinyPHP\ApiRoute
 				->one()
 			;
 		}
+		if ($this->template_version == null)
+		{
+			throw new \Exception("Template version not found");
+		}
 		
 		/* Find template */
+		$this->template = Template::selectQuery()
+			->where([
+				["id", "=", $this->template_version->template_id],
+			])
+			->one()
+		;
 		if ($this->template == null)
 		{
-			$this->template = Template::selectQuery()
+			throw new \Exception("Template not found");
+		}
+		if ($this->xml_uid != $this->template->uid)
+		{
+			throw new \Exception("Wrong template xml uid");
+		}
+		
+		$this->old_data = $this->template_version ? $this->template_version->toArray() : [];
+		
+		/* Edit template version */
+		$this->template_version->template_id = $this->template->id;
+		$this->template_version->version = $this->xml_version;
+		$this->template_version->content = $this->database_data["content"];
+		$this->new_data = $this->template_version->save()->refresh();
+		
+		/* Save template name */
+		$this->template->name = $this->xml_name;
+		$this->template->save();
+		
+		/* Create result */
+		$old_data = $this->fromDatabase("actionSave", $this->old_data);
+		$new_data = $this->fromDatabase("actionSave", $this->new_data);
+		
+		$result =
+		[
+			"type" => "template",
+			"old_data" => $old_data,
+			"new_data" => $new_data,
+			"template" => \TinyPHP\Utils::object_intersect
+			(
+				$this->template->toArray(),
+				[
+					"id", "uid", "name", "gmtime_created", "gmtime_updated"
+				]
+			),
+		];
+		
+		$this->api_result->success($result, "Ok");
+	}
+	
+	
+	
+	/**
+	 * Import template
+	 */
+	function importTemplate()
+	{
+		/* Find template */
+		$this->template = Template::selectQuery()
+			->where([
+				["uid", "=", $this->xml_uid],
+			])
+			->one()
+		;
+		
+		/* Find template version */
+		if ($this->template)
+		{
+			$this->template_version = TemplateVersion::selectQuery()
 				->where([
-					["uid", "=", $this->xml_uid],
+					["template_id", "=", $this->template->id],
+					["version", "=", $this->xml_version],
 				])
 				->one()
 			;
 		}
 		
-		/* Find template version */
-		if ($this->template)
-		{
-			if ($this->template_version == null)
-			{
-				$this->template_version = TemplateVersion::selectQuery()
-					->where([
-						["template_id", "=", $this->template->id],
-						["version", "=", $this->xml_version],
-					])
-					->one()
-				;
-			}
-			else
-			{
-				if ($this->template_version->template_id != $this->template->id)
-				{
-					throw new \Exception("Wrong template id. Try to import as new template");
-				}
-			}
-		}
-		
 		$this->old_data = $this->template_version ? $this->template_version->toArray() : [];
-	}
-	
-    
-	
-	/**
-	 * Import template
-	 */
-	function actionImport()
-	{
-		$this->initUpdateData("actionImport");
-		$this->parseTemplate();
 		
 		/* Create template if need */
 		if ($this->template == null)
@@ -231,8 +295,12 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		/* Edit template version */
 		$this->template_version->template_id = $this->template->id;
 		$this->template_version->version = $this->xml_version;
-		$this->template_version->content = $this->update_data["content"];
+		$this->template_version->content = $this->database_data["content"];
 		$this->new_data = $this->template_version->save()->refresh();
+		
+		/* Save template name */
+		$this->template->name = $this->xml_name;
+		$this->template->save();
 		
 		/* Create result */
 		$old_data = $this->fromDatabase("actionImport", $this->old_data);
@@ -240,11 +308,87 @@ class TemplateApi extends \TinyPHP\ApiRoute
 		
 		$result =
 		[
+			"type" => "template",
+			"old_data" => $old_data,
+			"new_data" => $new_data,
+			"template" => \TinyPHP\Utils::object_intersect
+			(
+				$this->template->toArray(),
+				[
+					"id", "uid", "name", "gmtime_created", "gmtime_updated"
+				]
+			),
+		];
+		
+		$this->api_result->success($result, "Ok");
+	}
+	
+	
+	
+	/**
+	 * Import modificator
+	 */
+	function importModificator()
+	{
+		/* Find template */
+		$this->modificator = Modificator::selectQuery()
+			->where([
+				["uid", "=", $this->xml_uid],
+			])
+			->one()
+		;
+		
+		$this->old_data = $this->modificator ? $this->modificator->toArray() : [];
+		
+		if ($this->modificator == null)
+		{
+			$this->modificator = new Modificator();
+		}
+		
+		$uid = (string)$this->xml->uid;
+		$name = (string)$this->xml->name;
+		$version = (string)$this->xml->version;
+		$priority = (int)$this->xml->priority;
+		$this->modificator["uid"] = $uid;
+		$this->modificator["name"] = $name;
+		$this->modificator["priority"] = $priority;
+		$this->modificator["version"] = $version;
+		$this->modificator["content"] = $this->database_data["content"];
+		$this->new_data = $this->modificator->save()->refresh();
+		
+		/* Create result */
+		$old_data = $this->fromDatabase("actionImport", $this->old_data);
+		$new_data = $this->fromDatabase("actionImport", $this->new_data);
+		
+		$result =
+		[
+			"type" => "modificator",
 			"old_data" => $old_data,
 			"new_data" => $new_data,
 		];
 		
 		$this->api_result->success($result, "Ok");
 	}
+	
+	
+	
+	/**
+	 * Import template
+	 */
+	function actionImport()
+	{
+		$this->initUpdateData("actionImport");
+		$this->parseTemplate();
+		
+		if ($this->xml_type == "template")
+		{
+			$this->importTemplate();
+		}
+		else if ($this->xml_type == "modificator")
+		{
+			$this->importModificator();
+		}
+	}
+	
 	
 }

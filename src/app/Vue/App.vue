@@ -119,14 +119,19 @@ export const App =
 								"app:applications:edit",
 							],
 						},
+						{ "name": "app:templates:import", "title": "Import XML" },
 						{ "name": "app:templates", "title": "Templates",
 							"names": [
-								"app:templates:import",
 								"app:templates:view",
 								"app:templates:edit",
 							],
 						},
-						{ "name": "app:modificators", "title": "Modificators" },
+						{ "name": "app:modificators", "title": "Modificators",
+							"names": [
+								"app:modificators:add",
+								"app:modificators:edit",
+							],
+						},
 					]
 				},
 				
