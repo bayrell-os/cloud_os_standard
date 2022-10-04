@@ -241,11 +241,11 @@ export class DomainsSSLGroupPageState extends CrudState<DomainSSLGroup>
 	{
 		if (message_type == "list_title")
 		{
-			return "Domains SSL Group";
+			return "SSL Group";
 		}
 		else if (message_type == "item")
 		{
-			return "domain SSL Group";
+			return "SSL Group";
 		}
 		return super.getMessage(message_type, item);
 	}

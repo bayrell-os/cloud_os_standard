@@ -235,6 +235,8 @@ export class SpacesPageState extends CrudState<Space>
 	 **/
 	async after(kind: string, params: Record<string, any>)
 	{
+		await super.after(kind, params);
+		
 		if (kind == "onLoadPageSave" && this.form_save.isEdit())
 		{
 			let response:AxiosResponse = params["response"];

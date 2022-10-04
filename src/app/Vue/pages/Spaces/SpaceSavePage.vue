@@ -74,12 +74,7 @@ export const SpaceSavePage =
 	mixins: [mixin],
 	methods:
 	{
-	},
-	mounted: function () {
-		let item = this.model.form_save.item_original;
-		let page_title = this.model.getMessage("save_title", item);
-		this.setPageTitle(page_title);
-	},
+	}
 }
 
 componentExtend(SpaceSavePage, CrudList);

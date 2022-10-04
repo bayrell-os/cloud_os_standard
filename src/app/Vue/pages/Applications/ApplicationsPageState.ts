@@ -344,28 +344,6 @@ export class ApplicationsPageState extends CrudState<Application>
 		if (["onLoadPageSave"].indexOf(kind) >= 0)
 		{
 			this.reloadTemplatesVersions();
-			/*
-			let response = params["response"] as AxiosResponse;
-			if (response && responseOk(response))
-			{
-				
-				this.setOptionsFromDictionary
-				(
-					response,
-					["all"],
-					"template_version_id",
-					"templates_versions",
-					function (item: any)
-					{
-						return new SelectOption()
-							.assignValues({
-								"id": item["id"],
-								"value": item["version"],
-							})
-						;
-					}
-				);
-			}*/
 		}
 	}
 	

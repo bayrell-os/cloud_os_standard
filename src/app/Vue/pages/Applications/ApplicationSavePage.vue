@@ -316,12 +316,7 @@ export const ApplicationsEditPage =
 				this.model.dialog_stop_app.hide();
 			}
 		},
-	},
-	mounted: function () {
-		let item = this.model.form_save.item_original;
-		let page_title = this.model.getMessage("save_title", item);
-		this.setPageTitle(page_title);
-	},
+	}
 };
 
 componentExtend(ApplicationsEditPage, CrudList);

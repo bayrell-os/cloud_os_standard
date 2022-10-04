@@ -33,11 +33,7 @@ export const SpacesListPage =
 	mixins: [mixin],
 	methods:
 	{
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		setPageTitle(page_title);
-	},
+	}
 }
 
 componentExtend(SpacesListPage, CrudList);

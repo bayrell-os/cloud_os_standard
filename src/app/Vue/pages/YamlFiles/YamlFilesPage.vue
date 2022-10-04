@@ -45,11 +45,7 @@ export const YamlFilesPage =
 	},
 	methods:
 	{
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		setPageTitle(page_title);
-	},
+	}
 }
 componentExtend(YamlFilesPage, CrudList);
 export default defineComponent(YamlFilesPage);

@@ -34,11 +34,7 @@ export const NginxFilesPage =
 	mixins: [mixin],
 	methods:
 	{
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		setPageTitle(page_title);
-	},
+	}
 }
 
 componentExtend(NginxFilesPage, CrudList);

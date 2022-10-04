@@ -56,11 +56,7 @@ export const ApplicationsListPage =
 				}
 			}
 		},
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		this.setPageTitle(page_title);
-	},
+	}
 }
 componentExtend(ApplicationsListPage, CrudList);
 export default defineComponent(ApplicationsListPage);

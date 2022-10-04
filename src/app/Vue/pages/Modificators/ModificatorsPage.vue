@@ -45,11 +45,7 @@ export const Modificators =
 	},
 	methods:
 	{
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		this.setPageTitle(page_title);
-	},
+	}
 }
 componentExtend(Modificators, CrudList);
 export default defineComponent(Modificators);

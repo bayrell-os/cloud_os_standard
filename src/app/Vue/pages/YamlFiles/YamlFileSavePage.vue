@@ -83,12 +83,7 @@ export const YamlFileSavePage =
 				this.model.dialog_compose.hide();
 			}
 		}
-	},
-	mounted: function () {
-		let item = this.model.form_save.item_original;
-		let page_title = this.model.getMessage("save_title", item);
-		this.setPageTitle(page_title);
-	},
+	}
 }
 componentExtend(YamlFileSavePage, CrudList);
 export default defineComponent(YamlFileSavePage);

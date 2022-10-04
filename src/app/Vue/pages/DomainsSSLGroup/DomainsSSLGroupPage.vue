@@ -112,11 +112,7 @@ export const DomainsSSLGroupPage =
 				CrudList.methods.onCrudComponentEvent.apply(this, [$event]);
 			}
 		},
-	},
-	mounted: function () {
-		let page_title = this.model.getMessage("list_title", null);
-		setPageTitle(page_title);
-	},
+	}
 }
 
 componentExtend(DomainsSSLGroupPage, CrudList);
