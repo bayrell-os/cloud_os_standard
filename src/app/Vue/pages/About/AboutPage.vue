@@ -44,7 +44,7 @@
 		
 		<p>
 			Source code:
-			<a class="link" href="https://github.com/bayrell-os/desktop_client">https://github.com/bayrell-os/desktop_client</a>
+			<a class="link" href="https://github.com/bayrell-os/cloud_os_standard">https://github.com/bayrell-os/cloud_os_standard</a>
 		</p>
 		
 		<br/>
