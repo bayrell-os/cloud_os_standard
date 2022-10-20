@@ -336,6 +336,7 @@ INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated") VALUES (
 INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated") VALUES ('test',	'%GMTIME%',	'%GMTIME%');
 INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated") VALUES ('database',	'%GMTIME%',	'%GMTIME%');
 INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated") VALUES ('app',	'%GMTIME%',	'%GMTIME%');
+INSERT INTO "stacks" ("stack_name", "gmtime_created", "gmtime_updated") VALUES ('vspace',	'%GMTIME%',	'%GMTIME%');
 
 INSERT INTO "templates" ("id", "uid", "name", "gmtime_created", "gmtime_updated") VALUES (1,	'org.bayrell.load_balancer_http',	'Cloud OS HTTP load balancer',	'%GMTIME%',	'%GMTIME%');
 
