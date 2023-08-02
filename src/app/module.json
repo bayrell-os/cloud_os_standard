@@ -6,6 +6,7 @@
 		"Components/Main/IndexPage.bay",
 		"Components/Main/IndexPageModel.bay",
 		"Components/Main/MainRoute.bay",
+		"Components/DefaultLayout.bay",
 		"Components/NotFoundPage.bay",
 		"Components/NotFoundRoute.bay",
 		"Hooks/AppHook.bay",

@@ -10,6 +10,8 @@
 src/source
 src/tmp
 src/vendor
+src/public/assets/app.js
+src/public/assets/runtime.js
 
 # Logs
 src/logs

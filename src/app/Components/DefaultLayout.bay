@@ -1,0 +1,282 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.DefaultLayout">
+
+<use name="Runtime.Core.Message" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Bayrell.CloudOS.ModuleDescription" />
+
+
+<style>
+.app_layout{
+	height: 100%;
+}
+.app_layout_wrap{
+	position: relative;
+	display: flex;
+	align-items: stretch;
+	min-height: 100%;
+}
+.app_layout_menu_wrap{
+	position: relative;
+	width: 200px;
+}
+.app_layout_content_wrap{
+	position: relative;
+	width: calc(100% - 200px);
+	padding-bottom: 10px;
+}
+.app_layout_site_name, .app_layout_title, .app_layout_top_menu{
+	font-size: 16px;
+	height: 40px;
+}
+.app_layout_site_name, .app_layout_title, .app_layout_top_menu,
+.app_layout_page, .app_layout_content{
+	padding: 10px;
+}
+.app_layout_top_menu_item{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.app_layout_site_name{
+	border-right: 1px ${ vars["color_border"] } solid;
+}
+.app_layout_top_menu{
+	display: flex;
+	align-items: stretch;
+}
+.app_layout_content{
+	position: relative;
+	height: calc(100% - 70px);
+	padding-bottom: 0;
+	/*padding-right: 0;*/
+}
+.app_layout_menu{
+	position: relative;
+	height: calc(100% - 40px);
+	overflow-y: auto;
+	border-right: 1px ${ vars["color_border"] } solid;
+}
+.app_layout_menu_item_label{
+	font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+}
+.app_layout_menu_item a{
+	display: block;
+	padding: 10px;
+	border-bottom: 1px solid ${ vars["color_border"] };
+}
+.app_layout_menu_item a:hover{
+	background-color: ${ vars["color_hover"] };
+}
+.app_layout_menu_item a.active, .app_layout_menu_item a.active:hover{
+	background-color: ${ vars["color_selected"] };
+	border-color: ${ vars["color_selected"] };
+	color: ${ vars["color_selected_background"] };
+}
+</style>
+
+
+<template name="renderMenuItem" args="Dict item">
+	<div class='app_layout_menu_item'>
+		
+		%if (item.has("items"))
+		{
+			<div class="app_layout_menu_item_label">{{ item["title"] }}</div>
+			
+			%set Collection items = item["items"];
+			%for (int i=0; i<items.count(); i++)
+			{
+				%set Dict sub_item = items[i];
+				<div class="app_layout_menu_item">
+					%set bool is_active = static::isMenuActive(layout, item);
+					<a href={{ static::url(sub_item["link"]) }} class="nolink"
+						class={{ is_active ? "active" : "" }}
+					>{{ sub_item["title"] }}</a>
+				</div>
+			}
+		}
+		
+		%else
+		{
+			%set bool is_active = static::isMenuActive(layout, item);
+			<div class="app_layout_menu_item">
+				<a href={{ static::url(item["link"]) }} class="nolink"
+					class={{ is_active ? "active" : "" }}
+				>{{ item["title"] }}</a>
+			</div>
+		}
+		
+	</div>
+</template>
+
+
+<template>
+	
+	<div class='app_layout'>
+		<div class='app_layout_wrap'>
+			<div class='app_layout_menu_wrap'>
+				<div class='app_layout_site_name'>
+					<a class='nolink' href='/'>{{ static::getHostname() }}</a>
+				</div>
+				<div class='app_layout_menu'>
+					%set Collection menu = static::getMenu();
+					%for (int i=0; i<menu.count(); i++)
+					{
+						%render static::renderMenuItem(menu[i]);
+					}
+				</div>
+			</div>
+			<div class='app_layout_content_wrap'>
+				<div class='app_layout_title'>{{ layout.title }}</div>
+				<div class='app_layout_content'>
+					%var string page_class_name = layout.page_class_name;
+					%var string page_model_class_name = layout.page_model_class_name;
+					<{page_class_name} @model=[ "pages", page_model_class_name ] />
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</template>
+
+
+<script>
+
+
+/**
+ * Returns hostname
+ */
+pure string getHostname() => "Hostname";
+
+
+/**
+ * Returns true if menu is active
+ */
+pure bool isMenuActive(LayoutModel layout, Dict item)
+{
+	if (layout.route.name == item["link"])
+	{
+		return true;
+	}
+	return false;
+}
+
+
+/**
+ * Returns menu items
+ */
+pure Collection getMenu()
+{
+	return [
+		
+		{
+			"title": "Main",
+			"link": "site:page:index",
+		},
+		{
+			"title": "About",
+			"link": "site:page:about",
+		},
+		{
+			"title": "Applications",
+			"items":
+			[
+				{
+					"title": "Applications",
+					"link": "site:applications:index",
+				},
+				{
+					"title": "Import XML",
+					"link": "site:templates:import",
+				},
+				{
+					"title": "Templates",
+					"link": "site:templates:index",
+				},
+				{
+					"title": "Modificators",
+					"link": "site:modificators:index",
+				},
+			]
+		},
+		
+		{
+			"title": "Docker Swarm",
+			"items":
+			[
+				{
+					"title": "Services",
+					"link": "site:services:index",
+				},
+				{
+					"title": "Yaml files",
+					"link": "site:yaml:index",
+				},
+				{
+					"title": "Stacks",
+					"link": "site:stacks:index",
+				},
+			]
+		},
+		
+		{
+			"title": "Cloud OS",
+			"items":
+			[
+				{
+					"title": "Workspace",
+					"link": "site:spaces:index",
+				},
+				{
+					"title": "Domains",
+					"link": "site:domains:index",
+				},
+				{
+					"title": "SSL Group",
+					"link": "site:ssl:index",
+				},
+				{
+					"title": "Routes",
+					"link": "site:routes:index",
+				},
+				{
+					"title": "Nginx files",
+					"link": "site:nginx:index",
+				},
+				{
+					"title": "Users",
+					"link": "site:users:index",
+				},
+				{
+					"title": "Settings page",
+					"link": "site:settings:index",
+				},
+			]
+		},
+		
+	];
+}
+
+</script>
+
+
+</class>

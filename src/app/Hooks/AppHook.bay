@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Hooks;
 
 use Runtime.re;
+use Runtime.ModelProxy;
 use Runtime.Web.AppHook as BaseAppHook;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
@@ -37,7 +38,30 @@ class AppHook extends BaseAppHook
 		this.registerMethod( static::RENDER_FOOTER, "render_footer" );
 		#endif
 		
+		this.register( static::CSS_VARS );
+		this.register( static::CSS_CLASS_NAMES );
+		this.register( static::INIT_LAYOUT );
+		this.register( static::LAYOUT_PAGE_CLASS_NAME );
 		this.registerMethod( static::CALL_ROUTE_AFTER, "page_not_found", 9999 );
+	}
+	
+	
+	/**
+	 * Get css vars
+	 */
+	Dict css_vars(Dict d)
+	{
+		d <= color_primary <= "#337ab7";
+		d <= color_danger <= "#d14b42";
+		d <= color_success <= "#090";
+		d <= color_selected <= "#337ab7";
+		d <= color_selected_background <= "#fff";
+		d <= color_border <= "#e7e7e7";
+		d <= color_hover <= "#eee";
+		d <= color_table_border <= "#ccc";
+		d <= color_table_hover <= "#eee";
+		d <= color_table_selected <= "#337ab7";
+		return d;
 	}
 	
 	
@@ -62,6 +86,43 @@ class AppHook extends BaseAppHook
 		d <= classes <= d["classes"].concat([
 			"Bayrell.CloudOS.Components.Scripts",
 		]);
+		
+		return d;
+	}
+	
+	
+	/**
+	 * Get css class names
+	 */
+	Dict css_class_names(Dict d)
+	{
+		d["css_class_names"].prependValue("Bayrell.CloudOS.Components.CSS");
+		return d;
+	}
+	
+	
+	/**
+	 * Returns layout class name
+	 */
+	Map layout_page_class_name(Map d)
+	{
+		d <= default <= "Bayrell.CloudOS.Components.DefaultLayout";
+		return d;
+	}
+	
+	
+	/**
+	 * Init layout
+	 */
+	async Dict init_layout(Dict d)
+	{
+		RenderContainer container = d["container"];
+		string host = container.request.host;
+		ModelProxy layout = container.layoutProxy();
+		ModelProxy seo = layout.proxy(["models", "seo"]);
+		
+		seo.setAttr("site_name", "Cloud OS");
+		seo.setAttr("title_ext", "Cloud OS");
 		
 		return d;
 	}
