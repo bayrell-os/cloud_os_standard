@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+    
+    code_server:
+        image: bayrell/ubuntu_code_server:3.11.0
+        hostname: "code_server.local"
+        volumes:
+            - "code_server_data:/data"
+            - "/home/ubuntu:/home/ubuntu"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        ports:
+            - "8000:8000"
+        environment:
+            TZ: "Asia/Almaty"
+            WWW_UID: 1000
+            WWW_GID: 1000
+            DOCKER_GID: 113
+        restart: always
+        networks:
+            - cloud_network
+        logging:
+            driver: journald
+    
+    
+volumes:
+    code_server_data:
+    
+networks:
+    cloud_network:
+        external: true

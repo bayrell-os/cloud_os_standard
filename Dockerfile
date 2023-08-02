@@ -1,20 +1,23 @@
 ARG ARCH=
-FROM bayrell/alpine_php_fpm:7.3-5${ARCH}
+FROM bayrell/ubuntu_php_fpm:7.4-3${ARCH}
 
-RUN apk add sudo docker dnsmasq curl php7-curl mariadb-client; \
-	rm -rf /var/cache/apk/*; \
-	sed -i 's|# %wheel ALL=(ALL) NOPASSWD: ALL|%wheel ALL=(ALL) NOPASSWD: ALL|g' /etc/sudoers; \
-	adduser www docker; \
-	adduser www wheel; \
-	adduser www www-data; \
+RUN cd ~; \
+	export DEBIAN_FRONTEND='noninteractive'; \
+	apt-get update; \
+	apt-get install docker.io dnsmasq sqlite openssh-server -y; \
+	usermod -a -G docker www-data; \
 	echo "Ok"
 
+ADD src /srv
 ADD files /src/files
+
 RUN cd ~; \
+	ln -s /data/root/.docker /root/.docker; \
+	cp /etc/passwd /etc/passwd.orig; \
 	cp -rf /src/files/etc/* /etc/; \
 	cp -rf /src/files/root/* /root/; \
-	rm -rf /src/files; \
+	rm -rf /etc/ssh; \
+	ln -s /data/ssh /etc/ssh; \
+	mkdir /run/sshd; \
 	chmod +x /root/run.sh; \
 	echo "Ok"
-	
-ADD src /var/www

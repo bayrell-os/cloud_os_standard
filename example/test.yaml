@@ -1,0 +1,22 @@
+version: "3.3"
+
+services:
+    
+    test:
+        image: bayrell/alpine_php_fpm:7.4
+        hostname: "test.local"
+        env_file:
+            - ./env.conf
+        environment:
+            TZ: "Asia/Almaty"
+            WWW_UID: 1000
+            WWW_GID: 1000
+        restart: unless-stopped
+        networks:
+            - cloud_network
+        logging:
+            driver: journald
+    
+networks:
+    cloud_network:
+        external: true
