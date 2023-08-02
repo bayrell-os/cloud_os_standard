@@ -18,6 +18,11 @@
 
 namespace Bayrell.CloudOS;
 
+use Runtime.Entity.Hook;
+use Runtime.Web.Annotations.Api;
+use Runtime.Web.Annotations.RemoteClass;
+use Runtime.Web.Annotations.Route;
+
 
 static class ModuleDescription
 {
@@ -52,7 +57,12 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		#ifdef BACKEND then
+		/* new Api("Bayrell.CloudOS.Api.MainApi"), */
+		#endif
 		
+		new Hook("Bayrell.Hooks.AppHook"),
+		new Route("Bayrell.CloudOS.Components.MainRoutes"),
 	];
 	
 }
