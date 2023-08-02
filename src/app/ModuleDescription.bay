@@ -48,7 +48,7 @@ static class ModuleDescription
 	{
 		"Runtime": ">=0.3",
 		"Runtime.Web": "*",
-		"Runtime.Web.CRUD": "*",
+		"Runtime.Web.Crud": "*",
 	};
 	
 	
@@ -57,12 +57,8 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		#ifdef BACKEND then
-		/* new Api("Bayrell.CloudOS.Api.MainApi"), */
-		#endif
-		
-		new Hook("Bayrell.Hooks.AppHook"),
-		new Route("Bayrell.CloudOS.Components.MainRoutes"),
+		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
+		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
 	];
 	
 }

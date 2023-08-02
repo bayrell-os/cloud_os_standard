@@ -32,7 +32,38 @@ class AppHook extends BaseAppHook
 	 */
 	void register_hooks()
 	{
+		#ifdef BACKEND then
+		this.registerMethod( static::RENDER_HEAD, "render_css", 9999 );
+		this.registerMethod( static::RENDER_FOOTER, "render_footer" );
+		#endif
+		
 		this.registerMethod( static::CALL_ROUTE_AFTER, "page_not_found", 9999 );
+	}
+	
+	
+	/**
+	 * Returns render css
+	 */
+	Dict render_css(Dict d)
+	{
+		d <= classes <= d["classes"].concat([
+			"Bayrell.CloudOS.Components.CSS",
+		]);
+		
+		return d;
+	}
+	
+	
+	/**
+	 * Returns render footer
+	 */
+	Dict render_footer(Dict d)
+	{
+		d <= classes <= d["classes"].concat([
+			"Bayrell.CloudOS.Components.Scripts",
+		]);
+		
+		return d;
 	}
 	
 	

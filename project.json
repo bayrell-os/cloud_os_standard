@@ -1,0 +1,41 @@
+{
+	"name": "BAYRELL Cloud OS",
+	"languages": ["php", "es6"],
+	"modules":
+	[
+		{
+			"src": "src/app",
+			"type": "module"
+		},
+        {
+			"src": "src/lib",
+			"type": "folder"
+		}
+	],
+	"assets":
+	[
+		{
+			"type": "js",
+			"dest": "src/public/assets/app.js",
+			"modules":
+			[
+				"Bayrell.CloudOS"
+			]
+		},
+		{
+			"type": "js",
+			"dest": "src/public/assets/runtime.js",
+			"modules":
+			[
+				"Runtime",
+				"Runtime.Web",
+				"Runtime.Web.Crud"
+			]
+		}
+	],
+	"exclude":
+	[
+		"./example",
+		"./files"
+	]
+}

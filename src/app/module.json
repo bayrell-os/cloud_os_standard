@@ -1,0 +1,24 @@
+{
+	"name": "Bayrell.CloudOS",
+	"assets":
+	[
+		"Main.bay",
+		"Components/Main/IndexPage.bay",
+		"Components/Main/IndexPageModel.bay",
+		"Components/Main/MainRoute.bay",
+		"Components/NotFoundPage.bay",
+		"Components/NotFoundRoute.bay",
+		"Hooks/AppHook.bay",
+		"ModuleDescription.bay"
+	],
+	"src": "./",
+	"dest":
+	{
+		"php": "./../source/php",
+		"es6": "./../source/es6"
+	},
+	"allow":
+	[
+		"\\.bay$"
+	]
+}

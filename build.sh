@@ -13,14 +13,12 @@ case "$1" in
 	
 	test)
 		echo "Build $IMAGE:$VERSION-$TAG"
-		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-$TAG --file Dockerfile
 		cd ..
 	;;
 	
 	test-arm64v8)
 		echo "Build $IMAGE:$VERSION-arm64v8-$TAG"
-		$0 project
 		docker build ./ -t bayrell/cloud_os_standard:$VERSION-arm64v8-$TAG \
 			--file Dockerfile --build-arg ARCH=-arm64v8
 		cd ..
@@ -48,14 +46,7 @@ case "$1" in
 		docker manifest push --purge bayrell/cloud_os_standard:$VERSION
 	;;
 	
-	project)
-		pushd src
-		npm run build
-		popd
-	;;
-	
 	all)
-		$0 project
 		$0 amd64
 		$0 arm64v8
 		$0 manifest

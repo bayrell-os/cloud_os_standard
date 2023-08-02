@@ -3,11 +3,11 @@ version: "3.3"
 services:
     
     standard:
-        image: bayrell/cloud_os_standard:0.4.4
+        image: bayrell/cloud_os_standard:0.5.0
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_data:/data"
-            - "/home/ubuntu/bayrell/cloud_os_standard_0.4/src:/srv"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.5/src:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "/etc/hostname:/etc/hostname_orig:ro"
         ports:

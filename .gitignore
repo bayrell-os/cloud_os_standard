@@ -6,14 +6,10 @@
 /example/jwt_public.key
 /tmp
 
-# Backend
-src/var
-src/vendor
-
-# Frontend
-src/var
-src/public/dist
+# App
+src/source
 src/tmp
+src/vendor
 
 # Logs
 src/logs
