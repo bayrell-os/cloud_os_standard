@@ -1,0 +1,15 @@
+[submodule "src/lib/Runtime"]
+	path = src/lib/Runtime
+	url = https://github.com/bayrell/Runtime
+[submodule "src/lib/Runtime.Crypt"]
+	path = src/lib/Runtime.Crypt
+	url = https://github.com/bayrell/Runtime.Crypt
+[submodule "src/lib/Runtime.ORM"]
+	path = src/lib/Runtime.ORM
+	url = https://github.com/bayrell/Runtime.ORM
+[submodule "src/lib/Runtime.Web"]
+	path = src/lib/Runtime.Web
+	url = https://github.com/bayrell/Runtime.Web
+[submodule "src/lib/Runtime.Web.Crud"]
+	path = src/lib/Runtime.Web.Crud
+	url = https://github.com/bayrell/Runtime.Web.Crud
