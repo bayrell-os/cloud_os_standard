@@ -43,7 +43,7 @@ class MainRoute extends BaseRoute
 			new RouteInfo
 			{
 				"uri": "/",
-				"name": "site:page:index",
+				"name": "app:page:index",
 				"method": "actionIndex",
 			},
 		];

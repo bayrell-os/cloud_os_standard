@@ -190,11 +190,11 @@ pure Collection getMenu()
 		
 		{
 			"title": "Main",
-			"link": "site:page:index",
+			"link": "app:page:index",
 		},
 		{
 			"title": "About",
-			"link": "site:page:about",
+			"link": "app:page:about",
 		},
 		{
 			"title": "Applications",
@@ -202,19 +202,19 @@ pure Collection getMenu()
 			[
 				{
 					"title": "Applications",
-					"link": "site:applications:index",
+					"link": "app:applications:index",
 				},
 				{
 					"title": "Import XML",
-					"link": "site:templates:import",
+					"link": "app:templates:import",
 				},
 				{
 					"title": "Templates",
-					"link": "site:templates:index",
+					"link": "app:templates:index",
 				},
 				{
 					"title": "Modificators",
-					"link": "site:modificators:index",
+					"link": "app:modificators:index",
 				},
 			]
 		},
@@ -225,15 +225,15 @@ pure Collection getMenu()
 			[
 				{
 					"title": "Services",
-					"link": "site:services:index",
+					"link": "app:services:index",
 				},
 				{
 					"title": "Yaml files",
-					"link": "site:yaml:index",
+					"link": "app:yaml:index",
 				},
 				{
 					"title": "Stacks",
-					"link": "site:stacks:index",
+					"link": "app:stacks:index",
 				},
 			]
 		},
@@ -244,31 +244,31 @@ pure Collection getMenu()
 			[
 				{
 					"title": "Workspace",
-					"link": "site:spaces:index",
+					"link": "app:spaces:index",
 				},
 				{
 					"title": "Domains",
-					"link": "site:domains:index",
+					"link": "app:domains:index",
 				},
 				{
 					"title": "SSL Group",
-					"link": "site:ssl:index",
+					"link": "app:ssl:index",
 				},
 				{
 					"title": "Routes",
-					"link": "site:routes:index",
+					"link": "app:routes:index",
 				},
 				{
 					"title": "Nginx files",
-					"link": "site:nginx:index",
+					"link": "app:nginx:index",
 				},
 				{
 					"title": "Users",
-					"link": "site:users:index",
+					"link": "app:users:index",
 				},
 				{
 					"title": "Settings",
-					"link": "site:settings:index",
+					"link": "app:settings:index",
 				},
 			]
 		},

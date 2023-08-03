@@ -23,15 +23,16 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
+use Bayrell.CloudOS.Api.Rules.ApplicationModificator;
 use Bayrell.CloudOS.Models.User;
 
 
-class UserApi extends CrudPageApi
+class ApplicationApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.user";
+	pure string getApiName() => "app.application";
 	
 	
 	/**
@@ -65,6 +66,22 @@ class UserApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new ForeignKeyResolver{
+			"relation": "applications",
+			"name": "templates_versions",
+		},
+		new ForeignKeyResolver{
+			"relation": "applications",
+			"name": "yaml_files",
+		},
+		new ForeignKeyResolver{
+			"relation": "applications",
+			"name": "app_modificators",
+		},
+		new ForeignKeyResolver{
+			"relation": "templates_versions",
+			"name": "templates",
+		},
 	];
 	
 	

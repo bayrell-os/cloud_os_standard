@@ -33,10 +33,167 @@ use Runtime.ORM.Annotations.Unique;
 
 class Schema extends DatabaseSchema
 {
+	
 	/**
-	 * Users
+	 * Applications
 	 */
-	@Table{ "name": "users" }
+	@Table{ "name": "applications", "model_name": classof Application }
+	pure memorize Collection<BaseStruct> applications() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "stack_name"},
+		new StringType{"name": "name"},
+		new BigIntType{"name": "template_version_id"},
+		new TinyIntType{"name": "status"},
+		new StringType{"name": "content"},
+		new CollectionType{"name": "patches", "model_name": classof Modificator},
+		new StringType{"name": "custom_patch"},
+		new StringType{"name": "yaml"},
+		new BigIntType{"name": "yaml_file_id"},
+		new DictType{"name": "variables"},
+		new CollectionType{"name": "environments", "model_name": classof AppEnvironment},
+		new CollectionType{"name": "volumes", "model_name": classof AppVolume},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["stack_name", "name"]},
+		new Index{"keys": ["template_version_id"]},
+		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"relation": "templates_versions",
+			"primary_key": "id",
+			"foreign_key": "template_version_id",
+		},
+		new ForeignKey
+		{
+			"relation": "yaml_files",
+			"primary_key": "id",
+			"foreign_key": "yaml_file_id",
+		},
+		new ManyToMany
+		{
+			"relation": "app_modificators",
+			"foreign_name": "modificators",
+			"primary_key": {
+				"external": "id",
+				"key": "modificator_id",
+			},
+			"foreign_key": {
+				"external": "id",
+				"key": "app_id",
+			},
+			"field_name": "modificators",
+			"resolve": Collection (Collection<Dict> items, Application item) =>
+				items
+					.filter(
+						bool (Dict obj) use item => obj["app_id"] => item.id,
+					)
+					.map(
+						int (Dict obj) => obj["modificator_id"]
+					)
+				,
+		},
+	];
+	
+	
+	/**
+	 * Applications To Modificators
+	 */
+	@Table{ "name": "app_modificators" }
+	pure memorize Collection<BaseStruct> applications() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "app_id"},
+		new BigIntType{"name": "modificator_id"},
+		
+		/* Index */
+		new Unique{"keys": ["app_id", "modificator_id"]},
+		new Index{"keys": ["modificator_id"]},
+	];
+	
+	
+	/**
+	 * Modificators
+	 */
+	@Table{ "name": "modificators" }
+	pure memorize Collection<BaseStruct> applications() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "uid"},
+		new StringType{"name": "version"},
+		new StringType{"name": "name"},
+		new StringType{"name": "content"},
+		new BigIntType{"name": "priority"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["uid"]},
+	];
+	
+	
+	/**
+	 * Template
+	 */
+	@Table{ "name": "templates", "model_name": classof Template }
+	pure memorize Collection<BaseStruct> templates() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "uid"},
+		new StringType{"name": "name"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["uid"]},
+	];
+	
+	
+	/**
+	 * Template version
+	 */
+	@Table{ "name": "templates_versions" }
+	pure memorize Collection<BaseStruct> templates_versions() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new BigIntType{"name": "template_id"},
+		new StringType{"name": "version"},
+		new StringType{"name": "content"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["template_id", "version"]},
+		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"relation": "templates",
+			"primary_key": "id",
+			"foreign_key": "template_id",
+		},
+	];
+	
+	
+	/**
+	 * User
+	 */
+	@Table{ "name": "users", "model_name": classof User }
 	pure memorize Collection<BaseStruct> users() =>
 	[
 		/* Fields */

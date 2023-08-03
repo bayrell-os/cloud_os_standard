@@ -27,8 +27,8 @@ struct User extends BaseStruct
 	int id;
 	string login;
 	string name;
-	string banned;
-	string is_deleted;
+	int banned;
+	int is_deleted;
 	DateTime gmtime_created;
 	DateTime gmtime_updated;
 }
