@@ -44,7 +44,7 @@ class ApplicationApi extends CrudPageApi
 	/**
 	 * Returns relation name
 	 */
-	pure string getRelationName() => "users";
+	pure string getRelationName() => "applications";
 	
 	
 	/**
@@ -68,19 +68,19 @@ class ApplicationApi extends CrudPageApi
 	[
 		new ForeignKeyResolver{
 			"relation": "applications",
-			"name": "templates_versions",
+			"alias_name": "templates_versions",
 		},
 		new ForeignKeyResolver{
 			"relation": "applications",
-			"name": "yaml_files",
+			"alias_name": "yaml_files",
 		},
 		new ForeignKeyResolver{
 			"relation": "applications",
-			"name": "app_modificators",
+			"alias_name": "app_modificators",
 		},
 		new ForeignKeyResolver{
 			"relation": "templates_versions",
-			"name": "templates",
+			"alias_name": "templates",
 		},
 	];
 	
