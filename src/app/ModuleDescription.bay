@@ -57,8 +57,10 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		new Api("Bayrell.CloudOS.Api.UserApi"),
 		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
+		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 	];
 	
 }

@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Components.Users;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Bayrell.CloudOS.Models.User;
 
 
 class UsersPageModel extends CrudPageModel
@@ -47,7 +48,7 @@ class UsersPageModel extends CrudPageModel
 	/**
 	 * Validate model
 	 */
-	public boolean validateForm()
+	public bool validateForm()
 	{
 		return true;
 	}

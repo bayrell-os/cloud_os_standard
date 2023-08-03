@@ -20,13 +20,17 @@
     extends="Runtime.Web.Crud.ListPage">
 
 
+<use name="Runtime.Web.Layout" />
+<use name="Bayrell.CloudOS.Components.Users.UsersPageModel" />
+<use name="Bayrell.CloudOS.Models.User" />
+
 <style>
 </style>
 
 
 <script>
 
-pure Collection<string> getColumns(Layout layout, ProductPageModel model) =>
+pure Collection<string> getColumns(Layout layout, UsersPageModel model) =>
 [
 	"login",
 	"name",
@@ -34,7 +38,7 @@ pure Collection<string> getColumns(Layout layout, ProductPageModel model) =>
 ];
 
 
-pure Dict<string> getLabels(Layout layout, ProductPageModel model) =>
+pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 {
 	"title": "Login",
 	"show_in_catalog": "Name",
@@ -44,7 +48,7 @@ pure Dict<string> getLabels(Layout layout, ProductPageModel model) =>
 </script>
 
 
-<template name="renderField" args="int index, string field_name, Product item">
+<template name="renderField" args="int index, string field_name, User item">
 	
 	%if (field_name == "buttons")
 	{

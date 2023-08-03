@@ -19,6 +19,9 @@
 <class name="Bayrell.CloudOS.Components.Users.UsersSavePage"
     extends="Runtime.Web.Crud.SavePage">
 
+<use name="Runtime.Web.Crud.Input" component="true" />
+<use name="Runtime.Web.Crud.Select" component="true" />
+
 
 <style>
 </style>

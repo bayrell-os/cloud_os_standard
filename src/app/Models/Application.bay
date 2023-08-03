@@ -20,6 +20,8 @@ namespace Bayrell.CloudOS.Models;
 
 use Runtime.BaseStruct;
 use Runtime.DateTime;
+use Bayrell.CloudOS.Models.AppVolume;
+use Bayrell.CloudOS.Models.Modificator;
 
 
 struct Application extends BaseStruct

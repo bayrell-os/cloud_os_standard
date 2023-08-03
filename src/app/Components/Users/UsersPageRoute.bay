@@ -18,7 +18,11 @@
 
 namespace Bayrell.CloudOS.Components.Users;
 
+use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.Users.UsersListPage;
+use Bayrell.CloudOS.Components.Users.UsersPageModel;
+use Bayrell.CloudOS.Components.Users.UsersSavePage;
 
 
 class UsersPageRoute extends CrudRoute
@@ -32,13 +36,13 @@ class UsersPageRoute extends CrudRoute
 		new RouteInfo
 		{
 			"uri": "/users/",
-			"name": "app:users:index",
+			"name": "site:users:index",
 			"method": "actionIndex",
 		},
 		new RouteInfo
 		{
 			"uri": "/users/{id}/",
-			"name": "app:users:edit",
+			"name": "site:users:edit",
 			"method": "actionEdit",
 		},
 	];
