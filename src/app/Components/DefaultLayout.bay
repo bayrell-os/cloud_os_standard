@@ -267,7 +267,7 @@ pure Collection getMenu()
 					"link": "site:users:index",
 				},
 				{
-					"title": "Settings page",
+					"title": "Settings",
 					"link": "site:settings:index",
 				},
 			]
