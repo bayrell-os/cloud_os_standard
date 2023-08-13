@@ -104,4 +104,16 @@ class UserApi extends CrudPageApi
 		return data;
 	}
 	
+	
+	/**
+	 * Validate item
+	 */
+	async Dict validateItem(Dict update_data)
+	{
+		return {
+			"login": update_data["login"],
+			"name": update_data["name"],
+			"banned": update_data["banned"],
+		};
+	}
 }

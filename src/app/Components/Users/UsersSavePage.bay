@@ -19,51 +19,21 @@
 <class name="Bayrell.CloudOS.Components.Users.UsersSavePage"
     extends="Runtime.Web.Crud.SavePage">
 
+<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 
 
 <style>
 </style>
 
 
-<template name="renderRow" args="Dict params">
-	
-	%set string class_name = params["class_name"];
-	%set string field_name = params["field_name"];
-	%set Dict component_settings = params["component_settings"];
-	
-	<div class="web_form__row" @key={{ field_name }}>
-		
-		<label class="web_form__row_label">{{ params["label"] }}</label>
-		
-		<{class_name}
-			name={{ params["@key"] }}
-			@model={{ ["item"].concat( field_name ) }}
-			...component_settings
-		/>
-		
-		%set Collection<string> field_result = model.getFieldResult(field_name);
-		%if (field_result.count() == 0)
-		{
-			<div class="web_form__field_result" data-name={{ field_name }} @key="result1"></div>
-		}
-		%else
-		{
-			<div class="web_form__field_result" data-name={{ field_name }} @key="result2">
-				%for (int i=0; i<field_result.count(); i++)
-				{
-					<div>{{ field_result[i] }}</div>
-				}
-			</div>
-		}
-		
-	</div>
-	
+<template name="renderTop">
 </template>
 
 
-<template name="renderForm">
+<template name="renderRows">
 	
 	%render static::renderRow{
 		"label": "Login",
@@ -81,23 +51,25 @@
 		"label": "Banned",
 		"class_name": classof Select,
 		"field_name": "banned",
+		"component_settings": {
+			"options": [
+				{"label": "No", "value": "0"},
+				{"label": "Yes", "value": "1"},
+			],
+		},
 	};
     
 </template>
 
 
 <template name="renderButtons">
-	<Button @event:MouseClickEvent="onSave">Save</Button>
+	<center>
+		<Button type="primary" @event:MouseClickEvent="onSaveClick">Save</Button>
+	</center>
 </template>
 
 
 <script>
-
-void onSave()
-{
-	this.form.save();
-}
-
 </script>
 
 

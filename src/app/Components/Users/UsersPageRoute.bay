@@ -42,6 +42,12 @@ class UsersPageRoute extends CrudRoute
 		},
 		new RouteInfo
 		{
+			"uri": "/users/add/",
+			"name": "app:users:add",
+			"method": "actionAdd",
+		},
+		new RouteInfo
+		{
 			"uri": "/users/{id}/",
 			"name": "app:users:edit",
 			"method": "actionEdit",
