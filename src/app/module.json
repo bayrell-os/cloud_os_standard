@@ -13,6 +13,7 @@
 		"Components/NotFoundPage.bay",
 		"Components/NotFoundRoute.bay",
 		"Hooks/AppHook.bay",
+		"Hooks/RuntimeHook.bay",
 		"Models/Application.bay",
 		"Models/AppVolume.bay",
 		"Models/DockerService.bay",

@@ -27,7 +27,7 @@ class UsersPageModel extends CrudPageModel
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.users";
+	pure string getApiName() => "app.user";
 	
 	
 	/**

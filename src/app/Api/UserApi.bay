@@ -41,9 +41,9 @@ class UserApi extends CrudPageApi
 	
 	
 	/**
-	 * Returns relation name
+	 * Returns table name
 	 */
-	pure string getRelationName() => "users";
+	pure string getTableName() => "users";
 	
 	
 	/**

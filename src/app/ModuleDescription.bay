@@ -49,6 +49,10 @@ static class ModuleDescription
 		"Runtime": ">=0.3",
 		"Runtime.Web": "*",
 		"Runtime.Web.Crud": "*",
+		
+		#ifdef BACKEND then
+		"Runtime.ORM": "*",
+		#endif
 	};
 	
 	
@@ -59,6 +63,7 @@ static class ModuleDescription
 	[
 		new Api("Bayrell.CloudOS.Api.UserApi"),
 		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
+		new Hook("Bayrell.CloudOS.Hooks.RuntimeHook"),
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 	];
