@@ -5,6 +5,7 @@
 		"Components/Main/IndexPage.bay",
 		"Components/Main/IndexPageModel.bay",
 		"Components/Main/MainRoute.bay",
+		"Components/Users/UsersDeletePage.bay",
 		"Components/Users/UsersListPage.bay",
 		"Components/Users/UsersPageModel.bay",
 		"Components/Users/UsersPageRoute.bay",

@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.Entity.Hook;
+use Runtime.ORM.Annotations.Database;
 use Runtime.Web.Annotations.Api;
 use Runtime.Web.Annotations.RemoteClass;
 use Runtime.Web.Annotations.Route;
@@ -66,6 +67,10 @@ static class ModuleDescription
 		new Hook("Bayrell.CloudOS.Hooks.RuntimeHook"),
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
+		
+		#ifdef BACKEND then
+		new Database("Bayrell.CloudOS.Database.Schema"),
+		#endif
 	];
 	
 }

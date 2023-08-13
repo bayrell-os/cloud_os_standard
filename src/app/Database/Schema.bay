@@ -23,15 +23,26 @@ use Runtime.BaseStruct;
 use Runtime.ORM.DatabaseSchema;
 use Runtime.ORM.Annotations.AutoIncrement;
 use Runtime.ORM.Annotations.BigIntType;
+use Runtime.ORM.Annotations.CollectionType;
 use Runtime.ORM.Annotations.DateTimeType;
+use Runtime.ORM.Annotations.DictType;
+use Runtime.ORM.Annotations.ForeignKey;
+use Runtime.ORM.Annotations.Index;
+use Runtime.ORM.Annotations.ManyToMany;
 use Runtime.ORM.Annotations.Primary;
 use Runtime.ORM.Annotations.StringType;
 use Runtime.ORM.Annotations.Table;
 use Runtime.ORM.Annotations.TinyIntType;
 use Runtime.ORM.Annotations.Unique;
+use Bayrell.CloudOS.Models.AppEnvironment;
+use Bayrell.CloudOS.Models.AppVolume;
+use Bayrell.CloudOS.Models.Application;
+use Bayrell.CloudOS.Models.Modificator;
+use Bayrell.CloudOS.Models.Template;
+use Bayrell.CloudOS.Models.User;
 
 
-class Schema extends DatabaseSchema
+class Schema
 {
 	
 	/**
@@ -92,7 +103,7 @@ class Schema extends DatabaseSchema
 			"resolve": Collection (Collection<Dict> items, Application item) =>
 				items
 					.filter(
-						bool (Dict obj) use item => obj["app_id"] => item.id,
+						bool (Dict obj) use (item) => obj["app_id"] == item.id,
 					)
 					.map(
 						int (Dict obj) => obj["modificator_id"]
@@ -106,7 +117,7 @@ class Schema extends DatabaseSchema
 	 * Applications To Modificators
 	 */
 	@Table{ "name": "app_modificators" }
-	pure memorize Collection<BaseStruct> applications() =>
+	pure memorize Collection<BaseStruct> app_modificators() =>
 	[
 		/* Fields */
 		new BigIntType{"name": "app_id"},
@@ -122,7 +133,7 @@ class Schema extends DatabaseSchema
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
-	pure memorize Collection<BaseStruct> applications() =>
+	pure memorize Collection<BaseStruct> modificators() =>
 	[
 		/* Fields */
 		new BigIntType{"name": "id"},

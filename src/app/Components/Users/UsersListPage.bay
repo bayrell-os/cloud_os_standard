@@ -23,8 +23,13 @@
 <use name="Runtime.Web.Layout" />
 <use name="Bayrell.CloudOS.Components.Users.UsersPageModel" />
 <use name="Bayrell.CloudOS.Models.User" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 
 <style>
+.web_table__row_buttons %(Button)web_button{
+	margin-left: 5px;
+	margin-right: 5px;
+}
 </style>
 
 
@@ -32,37 +37,43 @@
 
 pure Collection<string> getColumns(Layout layout, UsersPageModel model) =>
 [
+	"row_number",
 	"login",
 	"name",
 	"banned",
+	"row_buttons",
 ];
 
 
 pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 {
-	"title": "Login",
-	"show_in_catalog": "Name",
-	"show_on_top": "Banned",
+	"login": "Login",
+	"name": "Name",
+	"banned": "Banned",
 };
 
 </script>
 
 
-<template name="renderField" args="int index, string field_name, User item">
+<template name="renderTitle">
+</template>
+
+
+<template name="renderField" args="int row_number, string field_name, User item">
 	
-	%if (field_name == "buttons")
+	%if (field_name == "row_buttons")
 	{
-		<Button
-			href={{ static::url("site:users:edit", {"id": item.id }) }}
+		<Button type="small"
+			href={{ static::url("app:users:edit", {"id": item.id }) }}
 		>Edit</Button>
-		<Button type="danger"
-			href={{ static::url("site:users:delete", {"id": item.id }) }}
+		<Button type="danger small"
+			href={{ static::url("app:users:delete", {"id": item.id }) }}
 		>Delete</Button>
 	}
 	
 	%else
 	{
-		{{ item[field_name] }}
+		%render parent::renderField(row_number, field_name, item);
 	}
 	
 </template>

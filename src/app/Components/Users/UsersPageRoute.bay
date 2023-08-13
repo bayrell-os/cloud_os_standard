@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Components.Users;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.Users.UsersDeletePage;
 use Bayrell.CloudOS.Components.Users.UsersListPage;
 use Bayrell.CloudOS.Components.Users.UsersPageModel;
 use Bayrell.CloudOS.Components.Users.UsersSavePage;
@@ -44,6 +45,12 @@ class UsersPageRoute extends CrudRoute
 			"uri": "/users/{id}/",
 			"name": "app:users:edit",
 			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/users/{id}/delete/",
+			"name": "app:users:delete",
+			"method": "actionDelete",
 		},
 	];
 	
@@ -75,6 +82,6 @@ class UsersPageRoute extends CrudRoute
 	/**
 	 * Returns delete page name
 	 */
-	string getDeletePageName() => "";
+	string getDeletePageName() => classof UsersDeletePage;
 	
 }
