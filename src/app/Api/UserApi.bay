@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Api;
 
 use Runtime.re;
+use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
@@ -115,5 +116,18 @@ class UserApi extends CrudPageApi
 			"name": update_data["name"],
 			"banned": update_data["banned"],
 		};
+	}
+	
+	
+	/**
+	 * Before save
+	 */
+	async void beforeSave(Relation item, Dict update_data)
+	{
+		if (item.isNew())
+		{
+			item.set("gmtime_created", DateTime::now());
+		}
+		item.set("gmtime_updated", DateTime::now());
 	}
 }

@@ -52,19 +52,36 @@ class Schema
 	pure memorize Collection<BaseStruct> applications() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
+		new BigIntType{"name": "id", "no_default": true},
 		new StringType{"name": "stack_name"},
 		new StringType{"name": "name"},
 		new BigIntType{"name": "template_version_id"},
 		new TinyIntType{"name": "status"},
 		new StringType{"name": "content"},
-		new CollectionType{"name": "patches", "model_name": classof Modificator},
+		new CollectionType{
+			"name": "patches",
+			"annotations": "modificators",
+			"model_name": classof Modificator,
+		},
 		new StringType{"name": "custom_patch"},
 		new StringType{"name": "yaml"},
 		new BigIntType{"name": "yaml_file_id"},
 		new DictType{"name": "variables"},
-		new CollectionType{"name": "environments", "model_name": classof AppEnvironment},
-		new CollectionType{"name": "volumes", "model_name": classof AppVolume},
+		new CollectionType{
+			"name": "environments",
+			"model_name": classof AppEnvironment,
+			"annotations": [
+			],
+		},
+		new CollectionType{
+			"name": "volumes",
+			"model_name": classof AppVolume,
+			"annotations": [
+				new StringType{"name": "key"},
+				new StringType{"name": "value"},
+				new BigIntType{"name": "enable"},
+			],
+		},
 		new DateTimeType{"name": "gmtime_created"},
 		new DateTimeType{"name": "gmtime_updated"},
 		
@@ -136,7 +153,7 @@ class Schema
 	pure memorize Collection<BaseStruct> modificators() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
+		new BigIntType{"name": "id", "no_default": true},
 		new StringType{"name": "uid"},
 		new StringType{"name": "version"},
 		new StringType{"name": "name"},
@@ -159,7 +176,7 @@ class Schema
 	pure memorize Collection<BaseStruct> templates() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
+		new BigIntType{"name": "id", "no_default": true},
 		new StringType{"name": "uid"},
 		new StringType{"name": "name"},
 		new DateTimeType{"name": "gmtime_created"},
@@ -179,7 +196,7 @@ class Schema
 	pure memorize Collection<BaseStruct> templates_versions() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
+		new BigIntType{"name": "id", "no_default": true},
 		new BigIntType{"name": "template_id"},
 		new StringType{"name": "version"},
 		new StringType{"name": "content"},
@@ -208,7 +225,7 @@ class Schema
 	pure memorize Collection<BaseStruct> users() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
+		new BigIntType{"name": "id", "no_default": true},
 		new StringType{"name": "login"},
 		new StringType{"name": "name"},
 		new TinyIntType{"name": "banned"},
