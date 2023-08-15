@@ -16,33 +16,29 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Users.UsersListPage"
+<class name="Bayrell.CloudOS.Components.DockerStack.StackListPage"
     extends="Runtime.Web.Crud.ListPage">
 
 
 <use name="Runtime.Web.Layout" />
-<use name="Bayrell.CloudOS.Components.Users.UsersPageModel" />
-<use name="Bayrell.CloudOS.Models.User" />
+<use name="Bayrell.CloudOS.Components.DockerStack.StackPageModel" />
+<use name="Bayrell.CloudOS.Models.DockerStack" />
 <use name="Runtime.Web.Crud.Button" component="true" />
 
 
 <script>
 
-pure Collection<string> getColumns(Layout layout, UsersPageModel model) =>
+pure Collection<string> getColumns(Layout layout, StackPageModel model) =>
 [
 	"row_number",
-	"login",
-	"name",
-	"banned",
+	"stack_name",
 	"row_buttons",
 ];
 
 
-pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
+pure Dict<string> getLabels(Layout layout, StackPageModel model) =>
 {
-	"login": "Login",
-	"name": "Name",
-	"banned": "Banned",
+	"stack_name": "Stack name",
 };
 
 </script>
@@ -50,7 +46,7 @@ pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="success middle" href={{ static::url("app:users:add") }}>[+] Add</Button>
+		<Button type="success middle" href={{ static::url("app:docker:stack:add") }}>[+] Add</Button>
 	</div>
 </template>
 
@@ -60,10 +56,10 @@ pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 	%if (field_name == "row_buttons")
 	{
 		<Button type="small"
-			href={{ static::url("app:users:edit", {"id": item.id }) }}
+			href={{ static::url("app:docker:stack:edit", {"id": item.stack_name }) }}
 		>Edit</Button>
 		<Button type="danger small"
-			href={{ static::url("app:users:delete", {"id": item.id }) }}
+			href={{ static::url("app:docker:stack:delete", {"id": item.stack_name }) }}
 		>Delete</Button>
 	}
 	%else

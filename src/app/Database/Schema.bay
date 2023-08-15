@@ -39,6 +39,7 @@ use Runtime.ORM.Annotations.Unique;
 use Bayrell.CloudOS.Models.AppEnvironment;
 use Bayrell.CloudOS.Models.AppVolume;
 use Bayrell.CloudOS.Models.Application;
+use Bayrell.CloudOS.Models.DockerStack;
 use Bayrell.CloudOS.Models.Modificator;
 use Bayrell.CloudOS.Models.Template;
 use Bayrell.CloudOS.Models.User;
@@ -158,6 +159,22 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Docker stack
+	 */
+	@Table{ "name": "stacks", "model_name": classof DockerStack }
+	pure memorize Collection<BaseStruct> stacks() =>
+	[
+		/* Fields */
+		new StringType{"name": "stack_name"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new Primary{"keys": ["stack_name"]},
+	];
+	
+	
+	/**
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
@@ -257,7 +274,10 @@ class Schema extends DatabaseSchema
 	static Dict onBeforeSave(Dict d)
 	{
 		Relation item = d["item"];
-		if (item.getTableName() == "users")
+		if (
+			item.getTableName() == "stacks" or
+			item.getTableName() == "users"
+		)
 		{
 			if (item.isNew())
 			{

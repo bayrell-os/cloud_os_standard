@@ -225,15 +225,15 @@ pure Collection getMenu()
 			[
 				{
 					"title": "Services",
-					"link": "app:services:index",
+					"link": "app:docker:services:index",
 				},
 				{
 					"title": "Yaml files",
-					"link": "app:yaml:index",
+					"link": "app:docker:yaml:index",
 				},
 				{
 					"title": "Stacks",
-					"link": "app:stacks:index",
+					"link": "app:docker:stack:index",
 				},
 			]
 		},

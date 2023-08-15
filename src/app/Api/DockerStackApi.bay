@@ -1,0 +1,119 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Api;
+
+use Runtime.re;
+use Runtime.DateTime;
+use Runtime.ORM.Query;
+use Runtime.ORM.Relation;
+use Runtime.Web.Crud.CrudPageApi;
+use Runtime.Web.Crud.Rules.CrudRule;
+use Bayrell.CloudOS.Models.DockerStack;
+
+
+class DockerStackApi extends CrudPageApi
+{
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.docker.stack";
+	
+	
+	/**
+	 * Returns model name
+	 */
+	pure string getModelName() => classof DockerStack;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string getTableName() => "stacks";
+	
+	
+	/**
+	 * Returns api methods
+	 */
+	pure string getApiMethod(string api_name)
+	{
+		if (api_name == "crud.search") return "actionSearch";
+		if (api_name == "crud.search_one") return "actionSearchOne";
+		if (api_name == "crud.item") return "actionItem";
+		if (api_name == "crud.save") return "actionSave";
+		if (api_name == "crud.delete") return "actionDelete";
+		return "";
+	}
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Collection<CrudRule> getRules() =>
+	[
+	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async Query buildSearchQuery(Query q)
+	{
+		q = q
+			|> .orderBy("stack_name", "asc")
+		;
+		return q;
+	}
+	
+	
+	/**
+	 * Returns database params
+	 */
+	Dict getDatabaseParams() => { "name": "default" };
+	
+	
+	/**
+	 * Delete item
+	 */
+	async void deleteItem(Relation item)
+	{
+		await parent::deleteItem(item);
+	}
+	
+	
+	/**
+	 * Event
+	 */
+	async void event(string event, Dict data)
+	{
+		data = await parent::event(event, data);
+		return data;
+	}
+	
+	
+	/**
+	 * Validate item
+	 */
+	async Dict validateItem(Dict update_data)
+	{
+		return {
+			"stack_name": update_data["stack_name"],
+		};
+	}
+	
+}

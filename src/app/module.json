@@ -2,6 +2,11 @@
 	"name": "Bayrell.CloudOS",
 	"assets":
 	[
+		"Components/DockerStack/StackDeletePage.bay",
+		"Components/DockerStack/StackListPage.bay",
+		"Components/DockerStack/StackPageModel.bay",
+		"Components/DockerStack/StackPageRoute.bay",
+		"Components/DockerStack/StackSavePage.bay",
 		"Components/Main/IndexPage.bay",
 		"Components/Main/IndexPageModel.bay",
 		"Components/Main/MainRoute.bay",
