@@ -118,16 +118,4 @@ class UserApi extends CrudPageApi
 		};
 	}
 	
-	
-	/**
-	 * Before save
-	 */
-	async void beforeSave(Relation item, Dict update_data)
-	{
-		if (item.isNew())
-		{
-			item.set("gmtime_created", DateTime::now());
-		}
-		item.set("gmtime_updated", DateTime::now());
-	}
 }

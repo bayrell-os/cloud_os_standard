@@ -69,6 +69,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 		
 		#ifdef BACKEND then
+		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		#endif
 	];

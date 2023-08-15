@@ -54,4 +54,32 @@ class UsersPageModel extends CrudPageModel
 	}
 	
 	
+	/**
+	 * Returns page title
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "index")
+		{
+			return "Users";
+		}
+		else if (action == "add")
+		{
+			return "Add user";
+		}
+		else if (action == "edit")
+		{
+			return "Edit user '" ~ this.save_form.item["login"] ~ "'";
+		}
+		else if (action == "delete")
+		{
+			return "Delete user ?";
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete user '" ~ this.delete_form.item["login"] ~ "' ?";
+		}
+		return "";
+	}
+	
 }

@@ -17,33 +17,24 @@
 -->
 
 <class name="Bayrell.CloudOS.Components.Users.UsersDeletePage"
-    extends="Runtime.Web.Crud.DeletePage">
+	extends="Runtime.Web.Crud.DeletePage">
 
-<use name="Runtime.Web.Crud.Input" component="true" />
-<use name="Runtime.Web.Crud.Select" component="true" />
+<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 
 
 <style>
 </style>
 
 
-<template name="renderForm">
-	    
-</template>
-
-
-<template name="renderButtons">
-	<Button @event:MouseClickEvent="onSave">Delete</Button>
+<template name="renderTop">
+	<div class="web_table__top">
+		<Button type="default middle" href={{ static::url("app:users:index") }}>Back</Button>
+	</div>
 </template>
 
 
 <script>
-
-void onSave()
-{
-	this.form.save();
-}
-
 </script>
 
 

@@ -17,7 +17,7 @@
 -->
 
 <class name="Bayrell.CloudOS.Components.Users.UsersSavePage"
-    extends="Runtime.Web.Crud.SavePage">
+	extends="Runtime.Web.Crud.SavePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
@@ -30,42 +30,45 @@
 
 
 <template name="renderTop">
+	<div class="web_table__top">
+		<Button type="default middle" href={{ static::url("app:users:index") }}>Back</Button>
+	</div>
 </template>
 
 
-<template name="renderRows">
-	
-	%render static::renderRow{
-		"label": "Login",
-		"class_name": classof Input,
-		"field_name": "login",
-	};
-	
-	%render static::renderRow{
-		"label": "Name",
-		"class_name": classof Input,
-		"field_name": "name",
-	};
-	
-    %render static::renderRow{
-		"label": "Banned",
-		"class_name": classof Select,
-		"field_name": "banned",
-		"component_settings": {
-			"options": [
-				{"label": "No", "value": "0"},
-				{"label": "Yes", "value": "1"},
-			],
-		},
-	};
-    
+<template name="renderContent">
+	<div class="web_form__content">
+		%render static::renderRow{
+			"label": "Login",
+			"class_name": classof Input,
+			"field_name": "login",
+		};
+		
+		%render static::renderRow{
+			"label": "Name",
+			"class_name": classof Input,
+			"field_name": "name",
+		};
+		
+		%render static::renderRow{
+			"label": "Banned",
+			"class_name": classof Select,
+			"field_name": "banned",
+			"component_settings": {
+				"options": [
+					{"label": "No", "value": "0"},
+					{"label": "Yes", "value": "1"},
+				],
+			},
+		};
+	</div>
 </template>
 
 
 <template name="renderButtons">
-	<center>
+	<div class="web_form__buttons">
 		<Button type="primary" @event:MouseClickEvent="onSaveClick">Save</Button>
-	</center>
+	</div>
 </template>
 
 
