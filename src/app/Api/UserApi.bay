@@ -24,6 +24,11 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
+use Runtime.Web.Crud.Rules.LowerCase;
+use Runtime.Web.Crud.Rules.Purify;
+use Runtime.Web.Crud.Rules.Required;
+use Runtime.Web.Crud.Rules.SaveFields;
+use Runtime.Web.Crud.Rules.Unique;
 use Bayrell.CloudOS.Models.User;
 
 
@@ -66,6 +71,21 @@ class UserApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new SaveFields
+		{
+			"fields":
+			[
+				"login",
+				"name",
+				"banned",
+			]
+		},
+		new Purify{ "name": "login" },
+		new LowerCase{ "name": "login" },
+		new Unique{ "name": "login" },
+		new Required{ "name": "login" },
+		new Required{ "name": "name" },
+		new Required{ "name": "banned" },
 	];
 	
 	
@@ -103,19 +123,6 @@ class UserApi extends CrudPageApi
 	{
 		data = await parent::event(event, data);
 		return data;
-	}
-	
-	
-	/**
-	 * Validate item
-	 */
-	async Dict validateItem(Dict update_data)
-	{
-		return {
-			"login": update_data["login"],
-			"name": update_data["name"],
-			"banned": update_data["banned"],
-		};
 	}
 	
 }
