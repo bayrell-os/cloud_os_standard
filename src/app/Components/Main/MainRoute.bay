@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Components.Main;
 
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
+use Bayrell.CloudOS.Components.Main.AboutPage;
 use Bayrell.CloudOS.Components.Main.IndexPage;
 use Bayrell.CloudOS.Components.Main.IndexPageModel;
 
@@ -46,6 +47,12 @@ class MainRoute extends BaseRoute
 				"name": "app:page:index",
 				"method": "actionIndex",
 			},
+			new RouteInfo
+			{
+				"uri": "/about/",
+				"name": "app:page:about",
+				"method": "actionAbout",
+			},
 		];
 	}
     
@@ -65,5 +72,17 @@ class MainRoute extends BaseRoute
 		this.render(classof IndexPage);
 	}
 	
+	
+	/**
+	 * Action about
+	 */
+	async void actionAbout()
+	{
+		/* Set title */
+		this.setPageTitle("About page");
+		
+		/* Render page */
+		this.render(classof AboutPage);
+	}
 	
 }

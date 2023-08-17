@@ -107,7 +107,7 @@
 			{
 				%set Dict sub_item = items[i];
 				<div class="app_layout_menu_item">
-					%set bool is_active = static::isMenuActive(layout, item);
+					%set bool is_active = static::isMenuActive(layout, sub_item);
 					<a href={{ static::url(sub_item["link"]) }} class="nolink"
 						class={{ is_active ? "active" : "" }}
 					>{{ sub_item["title"] }}</a>
@@ -193,10 +193,6 @@ pure Collection getMenu()
 			"link": "app:page:index",
 		},
 		{
-			"title": "About",
-			"link": "app:page:about",
-		},
-		{
 			"title": "Applications",
 			"items":
 			[
@@ -269,6 +265,10 @@ pure Collection getMenu()
 				{
 					"title": "Settings",
 					"link": "app:settings:index",
+				},
+				{
+					"title": "About",
+					"link": "app:page:about",
 				},
 			]
 		},
