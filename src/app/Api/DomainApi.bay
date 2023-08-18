@@ -29,27 +29,27 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.User;
+use Bayrell.CloudOS.Models.Domain;
 
 
-class UserApi extends CrudPageApi
+class DomainApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.user";
+	pure string getApiName() => "app.domain";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof User;
+	pure string getModelName() => classof Domain;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "users";
+	pure string getTableName() => "domains";
 	
 	
 	/**
@@ -75,17 +75,13 @@ class UserApi extends CrudPageApi
 		{
 			"fields":
 			[
-				"login",
-				"name",
-				"banned",
+				"domain_name",
 			]
 		},
-		new Purify{ "name": "login" },
-		new LowerCase{ "name": "login" },
-		new Required{ "name": "login" },
-		new Required{ "name": "name" },
-		new Required{ "name": "banned" },
-		new Unique{ "keys": ["login"] },
+		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "domain_name" },
+		new Unique{"keys": ["domain_name"]},
 	];
 	
 	
@@ -95,7 +91,7 @@ class UserApi extends CrudPageApi
 	async Query buildSearchQuery(Query q)
 	{
 		q = q
-			|> .orderBy("id", "desc")
+			|> .orderBy("id", "asc")
 		;
 		return q;
 	}

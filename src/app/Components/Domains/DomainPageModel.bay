@@ -16,24 +16,24 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.Web.Crud.CrudPageModel;
-use Bayrell.CloudOS.Models.DockerStack;
+use Bayrell.CloudOS.Models.Domains;
 
 
-class StackPageModel extends CrudPageModel
+class DomainPageModel extends CrudPageModel
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.domain";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof DockerStack;
+	pure string getModelName() => classof Domains;
 	
 	
 	/**
@@ -61,23 +61,23 @@ class StackPageModel extends CrudPageModel
 	{
 		if (action == "index")
 		{
-			return "Docker stack";
+			return "Docker domain";
 		}
 		else if (action == "add")
 		{
-			return "Add stack";
+			return "Add domain";
 		}
 		else if (action == "edit")
 		{
-			return "Edit stack '" ~ this.save_form.item["stack_name"] ~ "'";
+			return "Edit domain '" ~ this.save_form.item["domain_name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
-			return "Delete stack ?";
+			return "Delete domain ?";
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete stack '" ~ this.delete_form.item["stack_name"] ~ "' ?";
+			return "Delete domain '" ~ this.delete_form.item["domain_name"] ~ "' ?";
 		}
 		return "";
 	}

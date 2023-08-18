@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerStack.StackSavePage"
+<class name="Bayrell.CloudOS.Components.Domains.DomainSavePage"
 	extends="Runtime.Web.Crud.SavePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
@@ -31,7 +31,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default middle" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+		<Button type="default middle" href={{ static::url("app:domains:index") }}>Back</Button>
 	</div>
 </template>
 
@@ -39,9 +39,9 @@
 <template name="renderContent">
 	<div class="web_form__content">
 		%render static::renderRow{
-			"label": "Stack name",
+			"label": "Domain name",
 			"class_name": classof Input,
-			"field_name": "stack_name",
+			"field_name": "domain_name",
 		};
 	</div>
 </template>

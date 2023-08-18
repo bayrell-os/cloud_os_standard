@@ -24,6 +24,11 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
+use Runtime.Web.Crud.Rules.LowerCase;
+use Runtime.Web.Crud.Rules.Purify;
+use Runtime.Web.Crud.Rules.Required;
+use Runtime.Web.Crud.Rules.SaveFields;
+use Runtime.Web.Crud.Rules.Unique;
 use Bayrell.CloudOS.Models.DockerStack;
 
 
@@ -66,6 +71,17 @@ class DockerStackApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new SaveFields
+		{
+			"fields":
+			[
+				"stack_name",
+			]
+		},
+		new Purify{ "name": "stack_name" },
+		new LowerCase{ "name": "stack_name" },
+		new Required{ "name": "stack_name" },
+		new Unique{"keys": ["stack_name", "file_name"]},
 	];
 	
 	

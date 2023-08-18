@@ -24,7 +24,7 @@ use Runtime.DateTime;
 
 struct Domain extends BaseStruct
 {
-	int service_id;
+	int id;
 	int space_id;
 	int ssl_id;
 	int https_redirect;

@@ -16,17 +16,17 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.DockerStack.StackDeletePage;
-use Bayrell.CloudOS.Components.DockerStack.StackListPage;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
-use Bayrell.CloudOS.Components.DockerStack.StackSavePage;
+use Bayrell.CloudOS.Components.Domains.DomainDeletePage;
+use Bayrell.CloudOS.Components.Domains.DomainListPage;
+use Bayrell.CloudOS.Components.Domains.DomainPageModel;
+use Bayrell.CloudOS.Components.Domains.DomainSavePage;
 
 
-class StackPageRoute extends CrudRoute
+class DomainPageRoute extends CrudRoute
 {
 	
 	/**
@@ -36,26 +36,26 @@ class StackPageRoute extends CrudRoute
 	[
 		new RouteInfo
 		{
-			"uri": "/docker/stack/",
-			"name": "app:docker:stack:index",
+			"uri": "/docker/domains/",
+			"name": "app:domains:index",
 			"method": "actionIndex",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/add/",
-			"name": "app:docker:stack:add",
+			"uri": "/docker/domains/add/",
+			"name": "app:domains:add",
 			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/",
-			"name": "app:docker:stack:edit",
+			"uri": "/docker/domains/{id}/",
+			"name": "app:domains:edit",
 			"method": "actionEdit",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/delete/",
-			"name": "app:docker:stack:delete",
+			"uri": "/docker/domains/{id}/delete/",
+			"name": "app:domains:delete",
 			"method": "actionDelete",
 		},
 	];
@@ -64,7 +64,7 @@ class StackPageRoute extends CrudRoute
 	/**
 	 * Returns id field name
 	 */
-	pure string getFieldNameId() => "stack_name";
+	pure string getFieldNameId() => "id";
 	
 	
 	/**
@@ -76,24 +76,24 @@ class StackPageRoute extends CrudRoute
 	/**
 	 * Returns page model
 	 */
-	string getPageModelName() => classof StackPageModel;
+	string getPageModelName() => classof DomainPageModel;
 	
 	
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof StackListPage;
+	string getIndexPageName() => classof DomainListPage;
 	
 	
 	/**
 	 * Returns save page name
 	 */
-	string getSavePageName() => classof StackSavePage;
+	string getSavePageName() => classof DomainSavePage;
 	
 	
 	/**
 	 * Returns delete page name
 	 */
-	string getDeletePageName() => classof StackDeletePage;
+	string getDeletePageName() => classof DomainDeletePage;
 	
 }
