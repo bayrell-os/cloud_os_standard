@@ -24,27 +24,31 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
-use Bayrell.CloudOS.Models.DockerStack;
+use Runtime.Web.Crud.Rules.LowerCase;
+use Runtime.Web.Crud.Rules.Purify;
+use Runtime.Web.Crud.Rules.Required;
+use Runtime.Web.Crud.Rules.SaveFields;
+use Bayrell.CloudOS.Models.DockerYamlFile;
 
 
-class DockerStackApi extends CrudPageApi
+class DockerYamlFileApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.docker.yaml";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof DockerStack;
+	pure string getModelName() => classof DockerYamlFile;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "stacks";
+	pure string getTableName() => "docker_yaml_files";
 	
 	
 	/**
@@ -66,6 +70,19 @@ class DockerStackApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new SaveFields
+		{
+			"fields":
+			[
+				"stack_name",
+				"file_name",
+				"content",
+			]
+		},
+		new Purify{ "name": "stack_name" },
+		new LowerCase{ "name": "stack_name" },
+		new Required{ "name": "stack_name" },
+		new Required{ "name": "file_name" },
 	];
 	
 	
@@ -76,6 +93,7 @@ class DockerStackApi extends CrudPageApi
 	{
 		q = q
 			|> .orderBy("stack_name", "asc")
+			|> .orderBy("file_name", "asc")
 		;
 		return q;
 	}

@@ -1,0 +1,99 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.DockerStack;
+
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.DockerStack.StackDeletePage;
+use Bayrell.CloudOS.Components.DockerStack.StackListPage;
+use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
+use Bayrell.CloudOS.Components.DockerStack.StackSavePage;
+
+
+class StackPageRoute extends CrudRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/docker/stack/",
+			"name": "app:docker:stack:index",
+			"method": "actionIndex",
+		},
+		new RouteInfo
+		{
+			"uri": "/docker/stack/add/",
+			"name": "app:docker:stack:add",
+			"method": "actionAdd",
+		},
+		new RouteInfo
+		{
+			"uri": "/docker/stack/{id}/",
+			"name": "app:docker:stack:edit",
+			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/docker/stack/{id}/delete/",
+			"name": "app:docker:stack:delete",
+			"method": "actionDelete",
+		},
+	];
+	
+	
+	/**
+	 * Returns id field name
+	 */
+	pure string getFieldNameId() => "stack_name";
+	
+	
+	/**
+	 * Returns layout name
+	 */
+	string getLayoutName() => "default";
+	
+	
+	/**
+	 * Returns page model
+	 */
+	string getPageModelName() => classof StackPageModel;
+	
+	
+	/**
+	 * Returns index page name
+	 */
+	string getIndexPageName() => classof StackListPage;
+	
+	
+	/**
+	 * Returns save page name
+	 */
+	string getSavePageName() => classof StackSavePage;
+	
+	
+	/**
+	 * Returns delete page name
+	 */
+	string getDeletePageName() => classof StackDeletePage;
+	
+}

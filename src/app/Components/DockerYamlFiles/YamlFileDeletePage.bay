@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,22 +14,28 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-namespace Bayrell.CloudOS.Models;
+<class name="Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileDeletePage"
+	extends="Runtime.Web.Crud.DeletePage">
 
-use Runtime.BaseStruct;
-use Runtime.DateTime;
+<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 
 
-struct DockerYamlFile extends BaseStruct
-{
-	int id;
-	string file_name;
-	string stack_name;
-	string content;
-	int timestamp;
-	int is_deleted;
-	DateTime gmtime_created;
-	DateTime gmtime_updated;
-}
+<style>
+</style>
+
+
+<template name="renderTop">
+	<div class="web_table__top">
+		<Button type="default middle" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+	</div>
+</template>
+
+
+<script>
+</script>
+
+
+</class>

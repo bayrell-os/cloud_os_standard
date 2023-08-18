@@ -40,6 +40,7 @@ use Bayrell.CloudOS.Models.AppEnvironment;
 use Bayrell.CloudOS.Models.AppVolume;
 use Bayrell.CloudOS.Models.Application;
 use Bayrell.CloudOS.Models.DockerStack;
+use Bayrell.CloudOS.Models.DockerYamlFile;
 use Bayrell.CloudOS.Models.Modificator;
 use Bayrell.CloudOS.Models.Template;
 use Bayrell.CloudOS.Models.User;
@@ -175,6 +176,30 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Docker yaml files
+	 */
+	@Table{ "name": "docker_yaml_files", "model_name": classof DockerYamlFile }
+	pure memorize Collection<BaseStruct> docker_yaml_files() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new StringType{"name": "file_name"},
+		new StringType{"name": "stack_name", "default": "app"},
+		new StringType{"name": "content"},
+		new BigIntType{"name": "timestamp"},
+		new BigIntType{"name": "is_deleted"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Index{"keys": ["file_name"]},
+		new Unique{"keys": ["stack_name", "file_name"]},
+	];
+	
+	
+	/**
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
@@ -275,6 +300,7 @@ class Schema extends DatabaseSchema
 	{
 		Relation item = d["item"];
 		if (
+			item.getTableName() == "docker_yaml_files" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"
 		)
