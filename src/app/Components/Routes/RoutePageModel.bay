@@ -16,24 +16,24 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Routes;
 
 use Runtime.Web.Crud.CrudPageModel;
-use Bayrell.CloudOS.Models.DockerStack;
+use Bayrell.CloudOS.Models.Route;
 
 
-class StackPageModel extends CrudPageModel
+class RoutePageModel extends CrudPageModel
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.route";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof DockerStack;
+	pure string getModelName() => classof Route;
 	
 	
 	/**
@@ -61,23 +61,25 @@ class StackPageModel extends CrudPageModel
 	{
 		if (action == "index")
 		{
-			return "Docker stack";
+			return "Routes";
 		}
 		else if (action == "add")
 		{
-			return "Add stack";
+			return "Add route";
 		}
 		else if (action == "edit")
 		{
-			return "Edit stack '" ~ this.save_form.item["stack_name"] ~ "'";
+			return "Edit route '" ~ this.save_form.item["domain_name"] ~
+				this.save_form.item["route_prefix"] ~ "'";
 		}
 		else if (action == "delete")
 		{
-			return "Delete stack ?";
+			return "Delete route ?";
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete stack '" ~ this.delete_form.item["stack_name"] ~ "' ?";
+			return "Delete route '" ~ this.delete_form.item["domain_name"] ~
+				this.save_form.item["route_prefix"] ~ "' ?";
 		}
 		return "";
 	}

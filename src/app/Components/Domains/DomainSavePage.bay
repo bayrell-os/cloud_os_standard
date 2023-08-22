@@ -20,9 +20,9 @@
 	extends="Runtime.Web.Crud.SavePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Runtime.Web.Crud.Button" component="true" />
 
 
 <style>

@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerStack.StackDeletePage"
+<class name="Bayrell.CloudOS.Components.Routes.RouteDeletePage"
 	extends="Runtime.Web.Crud.DeletePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
@@ -29,7 +29,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:routes:index") }}>Back</Button>
 	</div>
 </template>
 

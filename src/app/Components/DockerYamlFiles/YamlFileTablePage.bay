@@ -53,7 +53,7 @@ pure Dict<string> getLabels(Layout layout, YamlFilePageModel model) =>
 </template>
 
 
-<template name="renderField" args="int row_number, string field_name, User item">
+<template name="renderField" args="int row_number, string field_name, DockerYamlFile item">
 	
 	%if (field_name == "row_buttons")
 	{

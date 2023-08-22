@@ -98,29 +98,4 @@ class DockerYamlFileApi extends CrudPageApi
 		return q;
 	}
 	
-	
-	/**
-	 * Returns database params
-	 */
-	Dict getDatabaseParams() => { "name": "default" };
-	
-	
-	/**
-	 * Delete item
-	 */
-	async void deleteItem(Relation item)
-	{
-		await parent::deleteItem(item);
-	}
-	
-	
-	/**
-	 * Event
-	 */
-	async void event(string event, Dict data)
-	{
-		data = await parent::event(event, data);
-		return data;
-	}
-	
 }

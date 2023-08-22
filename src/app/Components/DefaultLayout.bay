@@ -75,9 +75,9 @@
 	border-right: 1px ${ vars["color_border"] } solid;
 }
 .app_layout_menu_item_label{
-	font-size: 14px;
+	font-size: 1rem;
     font-weight: bold;
-    padding: 10px;
+    padding: 0.5rem;
 }
 .app_layout_menu_item a{
 	display: block;

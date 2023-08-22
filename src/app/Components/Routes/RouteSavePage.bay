@@ -16,13 +16,14 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerStack.StackSavePage"
+<class name="Bayrell.CloudOS.Components.Routes.RouteSavePage"
 	extends="Runtime.Web.Crud.SavePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Runtime.Web.Crud.Button" component="true" />
+<use name="Runtime.Web.Crud.TextArea" component="true" />
 
 
 <style>
@@ -31,18 +32,74 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:routes:index") }}>Back</Button>
 	</div>
 </template>
 
 
 <template name="renderContent">
 	<div class="web_form__content">
+	
 		%render static::renderRow{
-			"label": "Stack name",
-			"class_name": classof Input,
-			"field_name": "stack_name",
+			"label": "Enable",
+			"class_name": classof Select,
+			"field_name": "enable",
+			"component_settings": {
+				"options": [
+					{"label": "No", "value": "0"},
+					{"label": "Yes", "value": "1"},
+				],
+			},
 		};
+		
+		
+		<!-- Source -->
+		
+		%render static::renderRow{
+			"label": "Domain name",
+			"class_name": classof Input,
+			"field_name": "domain_name",
+		};
+		
+		%render static::renderRow{
+			"label": "Source port",
+			"class_name": classof Input,
+			"field_name": "source_port",
+		};
+		
+		%render static::renderRow{
+			"label": "Route prefix",
+			"class_name": classof Input,
+			"field_name": "route_prefix",
+		};
+		
+		
+		<!-- Dest -->
+		
+		%render static::renderRow{
+			"label": "Docker name",
+			"class_name": classof Input,
+			"field_name": "docker_name",
+		};
+		
+		%render static::renderRow{
+			"label": "Target port",
+			"class_name": classof Input,
+			"field_name": "target_port",
+		};
+		
+		%render static::renderRow{
+			"label": "Target prefix",
+			"class_name": classof Input,
+			"field_name": "target_prefix",
+		};
+		
+		%render static::renderRow{
+			"label": "Nginx config",
+			"class_name": classof TextArea,
+			"field_name": "nginx_config",
+		};
+		
 	</div>
 </template>
 

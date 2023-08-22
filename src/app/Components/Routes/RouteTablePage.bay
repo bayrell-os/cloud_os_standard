@@ -16,29 +16,35 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerStack.StackTablePage"
+<class name="Bayrell.CloudOS.Components.Routes.RouteTablePage"
     extends="Runtime.Web.Crud.TablePage">
 
 
 <use name="Runtime.Web.Layout" />
-<use name="Bayrell.CloudOS.Components.DockerStack.StackPageModel" />
-<use name="Bayrell.CloudOS.Models.DockerStack" />
+<use name="Bayrell.CloudOS.Components.Routes.RoutePageModel" />
+<use name="Bayrell.CloudOS.Models.Routes" />
 <use name="Runtime.Web.Crud.Button" component="true" />
 
 
 <script>
 
-pure Collection<string> getColumns(Layout layout, StackPageModel model) =>
+pure Collection<string> getColumns(Layout layout, RoutePageModel model) =>
 [
 	"row_number",
-	"stack_name",
+	"enable",
+	"protocol",
+	"source",
+	"dest",
 	"row_buttons",
 ];
 
 
-pure Dict<string> getLabels(Layout layout, StackPageModel model) =>
+pure Dict<string> getLabels(Layout layout, RoutePageModel model) =>
 {
-	"stack_name": "Stack name",
+	"enable": "Enable",
+	"protocol": "Protocol",
+	"source": "Source",
+	"dest": "Dest",
 };
 
 </script>
@@ -46,21 +52,33 @@ pure Dict<string> getLabels(Layout layout, StackPageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="success middle" href={{ static::url("app:docker:stack:add") }}>[+] Add</Button>
+		<Button type="success middle" href={{ static::url("app:routes:add") }}>[+] Add</Button>
 	</div>
 </template>
 
 
-<template name="renderField" args="int row_number, string field_name, User item">
+<template name="renderField" args="int row_number, string field_name, Route item">
 	
 	%if (field_name == "row_buttons")
 	{
 		<Button type="small"
-			href={{ static::url("app:docker:stack:edit", {"id": item.stack_name }) }}
+			href={{ static::url("app:routes:edit", {"id": item.id }) }}
 		>Edit</Button>
 		<Button type="danger small"
-			href={{ static::url("app:docker:stack:delete", {"id": item.stack_name }) }}
+			href={{ static::url("app:routes:delete", {"id": item.id }) }}
 		>Delete</Button>
+	}
+	%elseif (field_name == "source")
+	{
+		{{ item["domain_name"] ~
+			(item["source_port"] != 80 ? ":" ~ item["source_port"] : "") ~
+			(item["route_prefix"] != "/" ? item["route_prefix"] : "") }}
+	}
+	%elseif (field_name == "dest")
+	{
+		{{ item["docker_name"] ~
+			(item["target_port"] != 80 ? ":" ~ item["target_port"] : "") ~
+			(item["target_prefix"] != "/" ? item["target_prefix"] : "") }}
 	}
 	%else
 	{

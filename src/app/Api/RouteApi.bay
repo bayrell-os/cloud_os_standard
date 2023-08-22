@@ -29,27 +29,27 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Domain;
+use Bayrell.CloudOS.Models.Route;
 
 
-class DomainApi extends CrudPageApi
+class RouteApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.domain";
+	pure string getApiName() => "app.route";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof Domain;
+	pure string getModelName() => classof Route;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains";
+	pure string getTableName() => "routes";
 	
 	
 	/**
@@ -75,13 +75,24 @@ class DomainApi extends CrudPageApi
 		{
 			"fields":
 			[
+				"enable",
+				"protocol",
+				"protocol_data",
 				"domain_name",
+				"route_prefix",
+				"docker_name",
+				"source_port",
+				"target_port",
+				"target_prefix",
+				"nginx_config",
 			]
 		},
+		new Purify{ "name": "docker_name" },
 		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "docker_name" },
 		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "docker_name" },
 		new Required{ "name": "domain_name" },
-		new Unique{"keys": ["domain_name"]},
 	];
 	
 	

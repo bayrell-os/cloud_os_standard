@@ -36,25 +36,25 @@ class DomainPageRoute extends CrudRoute
 	[
 		new RouteInfo
 		{
-			"uri": "/docker/domains/",
+			"uri": "/domains/",
 			"name": "app:domains:index",
 			"method": "actionIndex",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/domains/add/",
+			"uri": "/domains/add/",
 			"name": "app:domains:add",
 			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/domains/{id}/",
+			"uri": "/domains/{id}/",
 			"name": "app:domains:edit",
 			"method": "actionEdit",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/domains/{id}/delete/",
+			"uri": "/domains/{id}/delete/",
 			"name": "app:domains:delete",
 			"method": "actionDelete",
 		},

@@ -44,6 +44,7 @@ use Bayrell.CloudOS.Models.DockerYamlFile;
 use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Models.Modificator;
 use Bayrell.CloudOS.Models.NginxFile;
+use Bayrell.CloudOS.Models.Route;
 use Bayrell.CloudOS.Models.Template;
 use Bayrell.CloudOS.Models.User;
 
@@ -232,6 +233,33 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Routes
+	 */
+	@Table{ "name": "routes", "model_name": classof Route }
+	pure memorize Collection<BaseStruct> routes() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "enable"},
+		new StringType{"name": "protocol"},
+		new DictType{"name": "protocol_data"},
+		new StringType{"name": "domain_name"},
+		new StringType{"name": "route_prefix", "default": "/"},
+		new StringType{"name": "docker_name"},
+		new StringType{"name": "source_port", "default": "80"},
+		new StringType{"name": "target_port", "default": "80"},
+		new StringType{"name": "target_prefix", "default": "/"},
+		new StringType{"name": "nginx_config"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["name"]},
+	];
+	
+	
+	/**
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
@@ -349,6 +377,8 @@ class Schema extends DatabaseSchema
 		Relation item = d["item"];
 		if (
 			item.getTableName() == "docker_yaml_files" or
+			item.getTableName() == "gmtime_updated" or
+			item.getTableName() == "routes" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"
 		)

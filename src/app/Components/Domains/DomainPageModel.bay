@@ -61,7 +61,7 @@ class DomainPageModel extends CrudPageModel
 	{
 		if (action == "index")
 		{
-			return "Docker domain";
+			return "Domain";
 		}
 		else if (action == "add")
 		{
