@@ -19,7 +19,7 @@
 namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.Web.Crud.CrudPageModel;
-use Bayrell.CloudOS.Models.Domains;
+use Bayrell.CloudOS.Models.Domain;
 
 
 class DomainPageModel extends CrudPageModel
@@ -33,7 +33,7 @@ class DomainPageModel extends CrudPageModel
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof Domains;
+	pure string getModelName() => classof Domain;
 	
 	
 	/**

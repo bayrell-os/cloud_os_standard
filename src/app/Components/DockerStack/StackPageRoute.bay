@@ -21,9 +21,9 @@ namespace Bayrell.CloudOS.Components.DockerStack;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.DockerStack.StackDeletePage;
-use Bayrell.CloudOS.Components.DockerStack.StackListPage;
 use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
 use Bayrell.CloudOS.Components.DockerStack.StackSavePage;
+use Bayrell.CloudOS.Components.DockerStack.StackTablePage;
 
 
 class StackPageRoute extends CrudRoute
@@ -82,7 +82,7 @@ class StackPageRoute extends CrudRoute
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof StackListPage;
+	string getIndexPageName() => classof StackTablePage;
 	
 	
 	/**

@@ -21,9 +21,9 @@ namespace Bayrell.CloudOS.Components.Users;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Users.UsersDeletePage;
-use Bayrell.CloudOS.Components.Users.UsersListPage;
 use Bayrell.CloudOS.Components.Users.UsersPageModel;
 use Bayrell.CloudOS.Components.Users.UsersSavePage;
+use Bayrell.CloudOS.Components.Users.UsersTablePage;
 
 
 class UsersPageRoute extends CrudRoute
@@ -76,7 +76,7 @@ class UsersPageRoute extends CrudRoute
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof UsersListPage;
+	string getIndexPageName() => classof UsersTablePage;
 	
 	
 	/**

@@ -1,5 +1,20 @@
 <?php
 
+ini_set('display_errors', 1);
+
+/* Обработчик ошибок */
+set_exception_handler( function ($e){
+	
+	if (!$e) return;
+	
+	http_response_code(500);
+	
+	echo "<b>Fatal Error</b><br/>";
+	echo nl2br($e->getMessage()) . "<br/>\n";
+	echo "in file " . $e->getFile() . ":" . $e->getLine() . "<br>\n";
+	echo nl2br($e->getTraceAsString()) . "<br/>\n";
+} );
+
 define( "BASE_PATH", __DIR__ );
 $loader = require_once BASE_PATH . "/vendor/autoload.php";
 

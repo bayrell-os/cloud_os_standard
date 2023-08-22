@@ -29,27 +29,27 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.DockerStack;
+use Bayrell.CloudOS.Models.NginxFile;
 
 
-class DockerStackApi extends CrudPageApi
+class NginxFileApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.nginx_file";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof DockerStack;
+	pure string getModelName() => classof NginxFile;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "stacks";
+	pure string getTableName() => "nginx_files";
 	
 	
 	/**
@@ -75,13 +75,17 @@ class DockerStackApi extends CrudPageApi
 		{
 			"fields":
 			[
-				"stack_name",
+				"name",
+				"enable",
+				"content",
 			]
 		},
-		new Purify{ "name": "stack_name" },
-		new LowerCase{ "name": "stack_name" },
-		new Required{ "name": "stack_name" },
-		new Unique{"keys": ["stack_name"]},
+		new Purify{ "name": "name" },
+		new LowerCase{ "name": "name" },
+		new Required{ "name": "name" },
+		new Required{ "name": "enable" },
+		new Required{ "name": "content" },
+		new Unique{"keys": ["name"]},
 	];
 	
 	
@@ -91,7 +95,7 @@ class DockerStackApi extends CrudPageApi
 	async Query buildSearchQuery(Query q)
 	{
 		q = q
-			|> .orderBy("stack_name", "asc")
+			|> .orderBy("name", "asc")
 		;
 		return q;
 	}

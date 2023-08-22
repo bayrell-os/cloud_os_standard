@@ -16,13 +16,14 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerStack.StackSavePage"
+<class name="Bayrell.CloudOS.Components.NginxFiles.NginxFileSavePage"
 	extends="Runtime.Web.Crud.SavePage">
 
 <use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Runtime.Web.Crud.Button" component="true" />
+<use name="Runtime.Web.Crud.TextArea" component="true" />
 
 
 <style>
@@ -31,7 +32,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default middle" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:nginx_files:index") }}>Back</Button>
 	</div>
 </template>
 
@@ -39,17 +40,28 @@
 <template name="renderContent">
 	<div class="web_form__content">
 		%render static::renderRow{
-			"label": "Stack name",
+			"label": "File name",
 			"class_name": classof Input,
-			"field_name": "stack_name",
+			"field_name": "name",
 		};
-	</div>
-</template>
-
-
-<template name="renderButtons">
-	<div class="web_form__buttons">
-		<Button type="primary" @event:MouseClickEvent="onSaveClick">Save</Button>
+		
+		%render static::renderRow{
+			"label": "Enable",
+			"class_name": classof Select,
+			"field_name": "enable",
+			"component_settings": {
+				"options": [
+					{"label": "No", "value": "0"},
+					{"label": "Yes", "value": "1"},
+				],
+			},
+		};
+		
+		%render static::renderRow{
+			"label": "Content",
+			"class_name": classof TextArea,
+			"field_name": "content",
+		};
 	</div>
 </template>
 

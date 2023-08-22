@@ -256,7 +256,7 @@ pure Collection getMenu()
 				},
 				{
 					"title": "Nginx files",
-					"link": "app:nginx:index",
+					"link": "app:nginx_files:index",
 				},
 				{
 					"title": "Users",

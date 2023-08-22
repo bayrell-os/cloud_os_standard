@@ -29,7 +29,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default middle" href={{ static::url("app:domains:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:domains:index") }}>Back</Button>
 	</div>
 </template>
 

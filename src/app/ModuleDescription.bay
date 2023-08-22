@@ -68,12 +68,14 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Domains.DomainPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
+		new Route("Bayrell.CloudOS.Components.NginxFiles.NginxFilePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 		
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.DockerStackApi"),
 		new Api("Bayrell.CloudOS.Api.DockerYamlFileApi"),
 		new Api("Bayrell.CloudOS.Api.DomainApi"),
+		new Api("Bayrell.CloudOS.Api.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Api.UserApi"),
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),

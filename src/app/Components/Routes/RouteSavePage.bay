@@ -31,7 +31,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default middle" href={{ static::url("app:docker:stack:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:docker:stack:index") }}>Back</Button>
 	</div>
 </template>
 
@@ -43,13 +43,6 @@
 			"class_name": classof Input,
 			"field_name": "stack_name",
 		};
-	</div>
-</template>
-
-
-<template name="renderButtons">
-	<div class="web_form__buttons">
-		<Button type="primary" @event:MouseClickEvent="onSaveClick">Save</Button>
 	</div>
 </template>
 

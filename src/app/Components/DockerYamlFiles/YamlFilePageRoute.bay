@@ -21,9 +21,9 @@ namespace Bayrell.CloudOS.Components.DockerYamlFiles;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileDeletePage;
-use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileListPage;
 use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageModel;
 use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileSavePage;
+use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileTablePage;
 
 
 class YamlFilePageRoute extends CrudRoute
@@ -82,7 +82,7 @@ class YamlFilePageRoute extends CrudRoute
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof YamlFileListPage;
+	string getIndexPageName() => classof YamlFileTablePage;
 	
 	
 	/**

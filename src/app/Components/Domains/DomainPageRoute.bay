@@ -21,9 +21,9 @@ namespace Bayrell.CloudOS.Components.Domains;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Domains.DomainDeletePage;
-use Bayrell.CloudOS.Components.Domains.DomainListPage;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
 use Bayrell.CloudOS.Components.Domains.DomainSavePage;
+use Bayrell.CloudOS.Components.Domains.DomainTablePage;
 
 
 class DomainPageRoute extends CrudRoute
@@ -82,7 +82,7 @@ class DomainPageRoute extends CrudRoute
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof DomainListPage;
+	string getIndexPageName() => classof DomainTablePage;
 	
 	
 	/**

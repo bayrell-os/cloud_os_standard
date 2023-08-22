@@ -32,7 +32,7 @@
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default middle" href={{ static::url("app:docker:yaml:index") }}>Back</Button>
+		<Button type="default" href={{ static::url("app:docker:yaml:index") }}>Back</Button>
 	</div>
 </template>
 
@@ -54,13 +54,6 @@
 			"class_name": classof TextArea,
 			"field_name": "content",
 		};
-	</div>
-</template>
-
-
-<template name="renderButtons">
-	<div class="web_form__buttons">
-		<Button type="primary" @event:MouseClickEvent="onSaveClick">Save</Button>
 	</div>
 </template>
 

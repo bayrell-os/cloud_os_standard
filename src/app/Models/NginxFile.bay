@@ -22,7 +22,7 @@ use Runtime.BaseStruct;
 use Runtime.DateTime;
 
 
-struct User extends BaseStruct
+struct NginxFile extends BaseStruct
 {
 	int id;
 	string name;

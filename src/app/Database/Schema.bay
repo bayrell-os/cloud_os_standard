@@ -43,6 +43,7 @@ use Bayrell.CloudOS.Models.DockerStack;
 use Bayrell.CloudOS.Models.DockerYamlFile;
 use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Models.Modificator;
+use Bayrell.CloudOS.Models.NginxFile;
 use Bayrell.CloudOS.Models.Template;
 use Bayrell.CloudOS.Models.User;
 
@@ -161,22 +162,6 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
-	 * Docker stack
-	 */
-	@Table{ "name": "stacks", "model_name": classof DockerStack }
-	pure memorize Collection<BaseStruct> stacks() =>
-	[
-		/* Fields */
-		new StringType{"name": "stack_name"},
-		new DateTimeType{"name": "gmtime_created"},
-		new DateTimeType{"name": "gmtime_updated"},
-		
-		/* Index */
-		new Primary{"keys": ["stack_name"]},
-	];
-	
-	
-	/**
 	 * Docker yaml files
 	 */
 	@Table{ "name": "docker_yaml_files", "model_name": classof DockerYamlFile }
@@ -213,7 +198,7 @@ class Schema extends DatabaseSchema
 		new BigIntType{"name": "https_redirect"},
 		new StringType{"name": "domain_name"},
 		new StringType{"name": "nginx_template"},
-		new BigIntType{"name": "is_deleted"},
+		new TinyIntType{"name": "is_deleted"},
 		new DateTimeType{"name": "gmtime_created"},
 		new DateTimeType{"name": "gmtime_updated"},
 		
@@ -221,6 +206,28 @@ class Schema extends DatabaseSchema
 		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["domain_name"]},
+	];
+	
+	
+	/**
+	 * Nginx files
+	 */
+	@Table{ "name": "nginx_files", "model_name": classof NginxFile }
+	pure memorize Collection<BaseStruct> nginx_files() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new StringType{"name": "name"},
+		new BigIntType{"name": "enable"},
+		new StringType{"name": "content"},
+		new BigIntType{"name": "timestamp"},
+		new TinyIntType{"name": "is_deleted"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["name"]},
 	];
 	
 	
@@ -244,6 +251,22 @@ class Schema extends DatabaseSchema
 		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["uid"]},
+	];
+	
+	
+	/**
+	 * Docker stack
+	 */
+	@Table{ "name": "stacks", "model_name": classof DockerStack }
+	pure memorize Collection<BaseStruct> stacks() =>
+	[
+		/* Fields */
+		new StringType{"name": "stack_name"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new Primary{"keys": ["stack_name"]},
 	];
 	
 	
