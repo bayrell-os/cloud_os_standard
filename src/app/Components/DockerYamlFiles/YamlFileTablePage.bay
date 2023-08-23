@@ -48,7 +48,7 @@ pure Dict<string> getLabels(Layout layout, YamlFilePageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="success middle" href={{ static::url("app:docker:yaml:index") }}>[+] Add</Button>
+		<Button type="success middle" href={{ static::url("app:docker:yaml:add") }}>[+] Add</Button>
 	</div>
 </template>
 

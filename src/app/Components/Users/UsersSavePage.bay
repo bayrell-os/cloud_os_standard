@@ -40,7 +40,7 @@
 	<div class="web_form__content">
 		%render static::renderRow(classof Input, model.fields["login"]);
 		%render static::renderRow(classof Input, model.fields["name"]);
-		%render static::renderRow(classof Input, model.fields["banned"]);
+		%render static::renderRow(classof Select, model.fields["banned"]);
 	</div>
 </template>
 

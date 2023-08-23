@@ -32,6 +32,7 @@ pure Collection<string> getColumns(Layout layout, NginxFilePageModel model) =>
 [
 	"row_number",
 	"name",
+	"enable",
 	"row_buttons",
 ];
 
@@ -39,6 +40,7 @@ pure Collection<string> getColumns(Layout layout, NginxFilePageModel model) =>
 pure Dict<string> getLabels(Layout layout, NginxFilePageModel model) =>
 {
 	"name": "File name",
+	"enable": "Enable",
 };
 
 </script>
@@ -61,6 +63,10 @@ pure Dict<string> getLabels(Layout layout, NginxFilePageModel model) =>
 		<Button type="danger small"
 			href={{ static::url("app:nginx_files:delete", {"id": item.id }) }}
 		>Delete</Button>
+	}
+	%elseif (field_name == "enable")
+	{
+		{{ model.fields["enable"].getOptionLabel(item[field_name]) }}
 	}
 	%else
 	{

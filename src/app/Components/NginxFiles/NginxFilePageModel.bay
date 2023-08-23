@@ -20,7 +20,7 @@ namespace Bayrell.CloudOS.Components.NginxFiles;
 
 use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.FieldInfo;
-use Bayrell.CloudOS.Models.NginxFiles;
+use Bayrell.CloudOS.Models.NginxFile;
 
 
 struct NginxFilePageModel extends CrudPageModel
@@ -54,7 +54,7 @@ struct NginxFilePageModel extends CrudPageModel
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof NginxFiles;
+	pure string getModelName() => classof NginxFile;
 	
 	
 	/**

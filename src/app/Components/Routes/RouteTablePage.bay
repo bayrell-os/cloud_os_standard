@@ -68,6 +68,14 @@ pure Dict<string> getLabels(Layout layout, RoutePageModel model) =>
 			href={{ static::url("app:routes:delete", {"id": item.id }) }}
 		>Delete</Button>
 	}
+	%elseif (field_name == "enable")
+	{
+		{{ model.fields["enable"].getOptionLabel(item[field_name]) }}
+	}
+	%elseif (field_name == "protocol")
+	{
+		{{ model.fields["protocol"].getOptionLabel(item[field_name]) }}
+	}
 	%elseif (field_name == "source")
 	{
 		{{ item["domain_name"] ~

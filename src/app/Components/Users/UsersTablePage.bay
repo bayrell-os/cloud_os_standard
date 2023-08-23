@@ -66,6 +66,10 @@ pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 			href={{ static::url("app:users:delete", {"id": item.id }) }}
 		>Delete</Button>
 	}
+	%elseif (field_name == "banned")
+	{
+		{{ model.fields["banned"].getOptionLabel(item[field_name]) }}
+	}
 	%else
 	{
 		%render parent::renderField(row_number, field_name, item);

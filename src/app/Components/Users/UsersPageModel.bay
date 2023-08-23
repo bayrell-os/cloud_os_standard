@@ -31,12 +31,12 @@ struct UsersPageModel extends CrudPageModel
 			"field_name": "name",
 		},
 		"name": new FieldInfo{
-			"label": "name",
-			"field_name": "Name",
+			"label": "Name",
+			"field_name": "name",
 		},
 		"banned": new FieldInfo{
-			"label": "banned",
-			"field_name": "Banned",
+			"label": "Banned",
+			"field_name": "banned",
 			"options": [
 				{"label": "No", "value": "0"},
 				{"label": "Yes", "value": "1"},
