@@ -1,0 +1,79 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.SSLGroup.SSLTablePage"
+    extends="Runtime.Web.Crud.TablePage">
+
+<use name="Runtime.Web.Layout" />
+<use name="Bayrell.CloudOS.Components.SSLGroup.SSLPageModel" />
+<use name="Bayrell.CloudOS.Models.DomainSSLGroup" />
+<use name="Runtime.Web.Crud.Button" component="true" />
+
+
+<script>
+
+pure Collection<string> getColumns(Layout layout, SSLPageModel model) =>
+[
+	"row_number",
+	"name",
+	"container_name",
+	"row_buttons",
+];
+
+
+pure Dict<string> getLabels(Layout layout, SSLPageModel model) =>
+{
+	"name": "Name",
+	"container_name": "Container name",
+};
+
+</script>
+
+
+<template name="renderTop">
+	<div class="web_table__top">
+		<Button type="success middle" href={{ static::url("app:ssl:add") }}>[+] Add</Button>
+	</div>
+</template>
+
+
+<template name="renderField" args="int row_number, string field_name, DomainSSLGroup item">
+	
+	%if (field_name == "row_buttons")
+	{
+		<Button type="small"
+			href={{ static::url("app:ssl:edit", {"id": item.id }) }}
+		>Edit</Button>
+		<Button type="danger small"
+			href={{ static::url("app:ssl:delete", {"id": item.id }) }}
+		>Delete</Button>
+	}
+	%else
+	{
+		%render parent::renderField(row_number, field_name, item);
+	}
+	
+</template>
+
+
+<template name="renderButtons">
+	<Button @event:MouseClickEvent="onSave">Save</Button>
+</template>
+
+
+</class>

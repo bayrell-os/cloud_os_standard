@@ -42,6 +42,7 @@ use Bayrell.CloudOS.Models.Application;
 use Bayrell.CloudOS.Models.DockerStack;
 use Bayrell.CloudOS.Models.DockerYamlFile;
 use Bayrell.CloudOS.Models.Domain;
+use Bayrell.CloudOS.Models.DomainSSLGroup;
 use Bayrell.CloudOS.Models.Modificator;
 use Bayrell.CloudOS.Models.NginxFile;
 use Bayrell.CloudOS.Models.Route;
@@ -200,6 +201,29 @@ class Schema extends DatabaseSchema
 		new StringType{"name": "domain_name"},
 		new StringType{"name": "nginx_template"},
 		new TinyIntType{"name": "is_deleted"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["domain_name"]},
+	];
+	
+	
+	/**
+	 * Domains ssl group
+	 */
+	@Table{ "name": "domains_ssl_groups", "model_name": classof DomainSSLGroup }
+	pure memorize Collection<BaseStruct> domains_ssl_groups() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new StringType{"name": "name"},
+		new StringType{"name": "container_name"},
+		new DictType{"name": "cert_info"},
+		new StringType{"name": "public_key"},
+		new StringType{"name": "private_key"},
 		new DateTimeType{"name": "gmtime_created"},
 		new DateTimeType{"name": "gmtime_updated"},
 		
@@ -377,6 +401,8 @@ class Schema extends DatabaseSchema
 		Relation item = d["item"];
 		if (
 			item.getTableName() == "docker_yaml_files" or
+			item.getTableName() == "domains" or
+			item.getTableName() == "domains_ssl_groups" or
 			item.getTableName() == "gmtime_updated" or
 			item.getTableName() == "routes" or
 			item.getTableName() == "stacks" or
