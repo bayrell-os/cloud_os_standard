@@ -39,29 +39,9 @@
 
 <template name="renderContent">
 	<div class="web_form__content">
-		%render static::renderRow{
-			"label": "File name",
-			"class_name": classof Input,
-			"field_name": "name",
-		};
-		
-		%render static::renderRow{
-			"label": "Enable",
-			"class_name": classof Select,
-			"field_name": "enable",
-			"component_settings": {
-				"options": [
-					{"label": "No", "value": "0"},
-					{"label": "Yes", "value": "1"},
-				],
-			},
-		};
-		
-		%render static::renderRow{
-			"label": "Content",
-			"class_name": classof TextArea,
-			"field_name": "content",
-		};
+		%render static::renderRow(classof Input, model.fields["name"]);
+		%render static::renderRow(classof Input, model.fields["enable"]);
+		%render static::renderRow(classof TextArea, model.fields["content"]);
 	</div>
 </template>
 

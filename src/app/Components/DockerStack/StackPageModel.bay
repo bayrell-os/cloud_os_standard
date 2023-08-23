@@ -19,11 +19,20 @@
 namespace Bayrell.CloudOS.Components.DockerStack;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.DockerStack;
 
 
-class StackPageModel extends CrudPageModel
+struct StackPageModel extends CrudPageModel
 {
+	Dict fields = {
+		"stack_name": new FieldInfo{
+			"label": "Stack name",
+			"field_name": "stack_name",
+		}
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +43,6 @@ class StackPageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof DockerStack;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

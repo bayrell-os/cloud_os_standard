@@ -40,75 +40,21 @@
 <template name="renderContent">
 	<div class="web_form__content">
 	
-		%render static::renderRow{
-			"label": "Enable",
-			"class_name": classof Select,
-			"field_name": "enable",
-			"component_settings": {
-				"options": [
-					{"label": "No", "value": "0"},
-					{"label": "Yes", "value": "1"},
-				],
-			},
-		};
-		
-		%render static::renderRow{
-			"label": "Protocol",
-			"class_name": classof Select,
-			"field_name": "protocol",
-			"component_settings": {
-				"options": [
-					{"label": "HTTP", "value": "http"},
-				],
-			},
-		};
+		%render static::renderRow(classof Select, model.fields["enable"]);
+		%render static::renderRow(classof Select, model.fields["protocol"]);
 		
 		<!-- Source -->
-		
-		%render static::renderRow{
-			"label": "Domain name",
-			"class_name": classof Input,
-			"field_name": "domain_name",
-		};
-		
-		%render static::renderRow{
-			"label": "Source port",
-			"class_name": classof Input,
-			"field_name": "source_port",
-		};
-		
-		%render static::renderRow{
-			"label": "Route prefix",
-			"class_name": classof Input,
-			"field_name": "route_prefix",
-		};
-		
+		%render static::renderRow(classof Input, model.fields["domain_name"]);
+		%render static::renderRow(classof Input, model.fields["source_port"]);
+		%render static::renderRow(classof Input, model.fields["route_prefix"]);
 		
 		<!-- Dest -->
+		%render static::renderRow(classof Input, model.fields["docker_name"]);
+		%render static::renderRow(classof Input, model.fields["target_port"]);
+		%render static::renderRow(classof Input, model.fields["target_prefix"]);
 		
-		%render static::renderRow{
-			"label": "Docker name",
-			"class_name": classof Input,
-			"field_name": "docker_name",
-		};
-		
-		%render static::renderRow{
-			"label": "Target port",
-			"class_name": classof Input,
-			"field_name": "target_port",
-		};
-		
-		%render static::renderRow{
-			"label": "Target prefix",
-			"class_name": classof Input,
-			"field_name": "target_prefix",
-		};
-		
-		%render static::renderRow{
-			"label": "Nginx config",
-			"class_name": classof TextArea,
-			"field_name": "nginx_config",
-		};
+		<!-- Nginx config -->
+		%render static::renderRow(classof TextArea, model.fields["nginx_config"]);
 		
 	</div>
 </template>

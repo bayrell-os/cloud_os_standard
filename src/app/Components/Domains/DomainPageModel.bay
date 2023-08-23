@@ -22,8 +22,16 @@ use Runtime.Web.Crud.CrudPageModel;
 use Bayrell.CloudOS.Models.Domain;
 
 
-class DomainPageModel extends CrudPageModel
+struct DomainPageModel extends CrudPageModel
 {
+	Dict fields = {
+		"domain_name": new FieldInfo{
+			"label": "Domain name",
+			"field_name": "domain_name",
+		}
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +42,6 @@ class DomainPageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof Domain;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

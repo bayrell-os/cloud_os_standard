@@ -19,11 +19,32 @@
 namespace Bayrell.CloudOS.Components.NginxFiles;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.NginxFiles;
 
 
-class NginxFilePageModel extends CrudPageModel
+struct NginxFilePageModel extends CrudPageModel
 {
+	Dict fields = {
+		"name": new FieldInfo{
+			"label": "File name",
+			"field_name": "name",
+		},
+		"enable": new FieldInfo{
+			"label": "Enable",
+			"field_name": "enable",
+			"options": [
+				{"label": "No", "value": "0"},
+				{"label": "Yes", "value": "1"},
+			],
+		},
+		"content": new FieldInfo{
+			"label": "Content",
+			"field_name": "content",
+		},
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +55,6 @@ class NginxFilePageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof NginxFiles;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

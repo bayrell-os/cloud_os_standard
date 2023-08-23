@@ -38,19 +38,8 @@
 
 <template name="renderContent">
 	<div class="web_form__content">
-		
-		%render static::renderRow{
-			"label": "Workspace name",
-			"class_name": classof Input,
-			"field_name": "name",
-		};
-		
-		%render static::renderRow{
-			"label": "UID",
-			"class_name": classof Input,
-			"field_name": "uid",
-		};
-		
+		%render static::renderRow(classof Input, model.fields["name"]);
+		%render static::renderRow(classof Input, model.fields["uid"]);
 	</div>
 </template>
 

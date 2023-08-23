@@ -19,11 +19,24 @@
 namespace Bayrell.CloudOS.Components.SSLGroup;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.DomainSSLGroup;
 
 
-class SSLPageModel extends CrudPageModel
+struct SSLPageModel extends CrudPageModel
 {
+	Dict fields = {
+		"name": new FieldInfo{
+			"label": "name",
+			"field_name": "name",
+		},
+		"container_name": new FieldInfo{
+			"label": "Container name",
+			"field_name": "container_name",
+		},
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +47,6 @@ class SSLPageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof DomainSSLGroup;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

@@ -38,19 +38,8 @@
 
 <template name="renderContent">
 	<div class="web_form__content">
-		
-		%render static::renderRow{
-			"label": "name",
-			"class_name": classof Input,
-			"field_name": "name",
-		};
-		
-		%render static::renderRow{
-			"label": "Container name",
-			"class_name": classof Input,
-			"field_name": "container_name",
-		};
-		
+		%render static::renderRow(classof Input, model.fields["name"]);
+		%render static::renderRow(classof Input, model.fields["container_name"]);
 	</div>
 </template>
 

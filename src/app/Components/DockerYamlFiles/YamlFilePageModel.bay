@@ -19,11 +19,28 @@
 namespace Bayrell.CloudOS.Components.DockerYamlFiles;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.DockerYamlFile;
 
 
-class YamlFilePageModel extends CrudPageModel
+struct YamlFilePageModel extends CrudPageModel
 {
+	Dict fields = {
+		"stack_name": new FieldInfo{
+			"label": "Stack name",
+			"field_name": "stack_name",
+		},
+		"file_name": new FieldInfo{
+			"label": "File name",
+			"field_name": "file_name",
+		},
+		"content": new FieldInfo{
+			"label": "Content",
+			"field_name": "content",
+		},
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +51,6 @@ class YamlFilePageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof DockerYamlFile;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

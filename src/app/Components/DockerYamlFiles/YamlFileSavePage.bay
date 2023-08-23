@@ -39,21 +39,9 @@
 
 <template name="renderContent">
 	<div class="web_form__content">
-		%render static::renderRow{
-			"label": "Stack name",
-			"class_name": classof Input,
-			"field_name": "stack_name",
-		};
-		%render static::renderRow{
-			"label": "File name",
-			"class_name": classof Input,
-			"field_name": "file_name",
-		};
-		%render static::renderRow{
-			"label": "Content",
-			"class_name": classof TextArea,
-			"field_name": "content",
-		};
+		%render static::renderRow(classof Input, model.fields["stack_name"]);
+		%render static::renderRow(classof Input, model.fields["file_name"]);
+		%render static::renderRow(classof TextArea, model.fields["content"]);
 	</div>
 </template>
 

@@ -19,11 +19,24 @@
 namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.Workspace;
 
 
-class WorkspacePageModel extends CrudPageModel
+struct WorkspacePageModel extends CrudPageModel
 {
+	Dict fields = {
+		"name": new FieldInfo{
+			"label": "Workspace name",
+			"field_name": "name",
+		},
+		"uid": new FieldInfo{
+			"label": "UID",
+			"field_name": "uid",
+		},
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +47,6 @@ class WorkspacePageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof Workspace;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**

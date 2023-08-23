@@ -19,11 +19,65 @@
 namespace Bayrell.CloudOS.Components.Routes;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.Route;
 
 
-class RoutePageModel extends CrudPageModel
+struct RoutePageModel extends CrudPageModel
 {
+	Dict fields = {
+		"enable": new FieldInfo{
+			"label": "Enable",
+			"field_name": "enable",
+			"options": [
+				{"label": "No", "value": "0"},
+				{"label": "Yes", "value": "1"},
+			],
+		},
+		"protocol": new FieldInfo{
+			"label": "Protocol",
+			"field_name": "protocol",
+			"options": [
+				{"label": "HTTP", "value": "http"},
+			],
+		},
+		
+		/* Source */
+		"domain_name": new FieldInfo{
+			"label": "Domain name",
+			"field_name": "domain_name",
+		},
+		"source_port": new FieldInfo{
+			"label": "Source port",
+			"field_name": "source_port",
+		},
+		"route_prefix": new FieldInfo{
+			"label": "Route prefix",
+			"field_name": "route_prefix",
+		},
+		
+		/* Dest */
+		"docker_name": new FieldInfo{
+			"label": "Docker name",
+			"field_name": "docker_name",
+		},
+		"target_port": new FieldInfo{
+			"label": "Target port",
+			"field_name": "target_port",
+		},
+		"target_prefix": new FieldInfo{
+			"label": "Target prefix",
+			"field_name": "target_prefix",
+		},
+		
+		/* Nginx config */
+		"nginx_config": new FieldInfo{
+			"label": "Nginx config",
+			"field_name": "nginx_config",
+		},
+	};
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -34,15 +88,6 @@ class RoutePageModel extends CrudPageModel
 	 * Returns model name
 	 */
 	pure string getModelName() => classof Route;
-	
-	
-	/**
-	 * Init function
-	 */
-	protected void _init()
-	{
-		parent();
-	}
 	
 	
 	/**
