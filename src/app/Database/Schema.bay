@@ -48,6 +48,7 @@ use Bayrell.CloudOS.Models.NginxFile;
 use Bayrell.CloudOS.Models.Route;
 use Bayrell.CloudOS.Models.Template;
 use Bayrell.CloudOS.Models.User;
+use Bayrell.CloudOS.Models.Workspace;
 
 
 class Schema extends DatabaseSchema
@@ -266,7 +267,7 @@ class Schema extends DatabaseSchema
 		new BigIntType{"name": "id", "no_default": true},
 		new BigIntType{"name": "enable"},
 		new StringType{"name": "protocol"},
-		new DictType{"name": "protocol_data"},
+		new DictType{"name": "protocol_data", "default": {}},
 		new StringType{"name": "domain_name"},
 		new StringType{"name": "route_prefix", "default": "/"},
 		new StringType{"name": "docker_name"},
@@ -280,6 +281,26 @@ class Schema extends DatabaseSchema
 		/* Index */
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["name"]},
+	];
+	
+	
+	/**
+	 * Workspace
+	 */
+	@Table{ "name": "spaces", "model_name": classof Workspace }
+	pure memorize Collection<BaseStruct> spaces() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new StringType{"name": "uid"},
+		new StringType{"name": "name"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["uid"]},
 	];
 	
 	
@@ -405,6 +426,7 @@ class Schema extends DatabaseSchema
 			item.getTableName() == "domains_ssl_groups" or
 			item.getTableName() == "gmtime_updated" or
 			item.getTableName() == "routes" or
+			item.getTableName() == "spaces" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"
 		)
@@ -415,6 +437,16 @@ class Schema extends DatabaseSchema
 			}
 			item.set("gmtime_updated", DateTime::now());
 		}
+		
+		if (item.getTableName() == "spaces")
+		{
+			string uid = item.get("uid");
+			if (uid == "")
+			{
+				item.set("uid", rtl::uid());
+			}
+		}
+		
 		return d;
 	}
 }

@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,28 +14,28 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-namespace Bayrell.CloudOS.Models;
+<class name="Bayrell.CloudOS.Components.Workspace.WorkspaceDeletePage"
+	extends="Runtime.Web.Crud.DeletePage">
 
-use Runtime.BaseStruct;
-use Runtime.DateTime;
+<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
+<use name="Runtime.Web.Crud.Button" component="true" />
 
 
-struct Route extends BaseStruct
-{
-	int id;
-	int enable;
-	string protocol = "http";
-	Dict protocol_data = {};
-	string domain_name = "";
-	string route_prefix = "/";
-	string docker_name = "";
-	int source_port = 80;
-	int target_port = 80;
-	string target_prefix = "/";
-	string layer_uid;
-	string nginx_config = "";
-	DateTime gmtime_created;
-	DateTime gmtime_updated;
-}
+<style>
+</style>
+
+
+<template name="renderTop">
+	<div class="web_table__top">
+		<Button type="default" href={{ static::url("app:workspace:index") }}>Back</Button>
+	</div>
+</template>
+
+
+<script>
+</script>
+
+
+</class>

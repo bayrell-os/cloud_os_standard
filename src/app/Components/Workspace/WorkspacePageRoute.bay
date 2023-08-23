@@ -1,0 +1,99 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Workspace;
+
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.Workspace.WorkspaceDeletePage;
+use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
+use Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage;
+use Bayrell.CloudOS.Components.Workspace.WorkspaceTablePage;
+
+
+class WorkspacePageRoute extends CrudRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/workspace/",
+			"name": "app:workspace:index",
+			"method": "actionIndex",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/add/",
+			"name": "app:workspace:add",
+			"method": "actionAdd",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/",
+			"name": "app:workspace:edit",
+			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/delete/",
+			"name": "app:workspace:delete",
+			"method": "actionDelete",
+		},
+	];
+	
+	
+	/**
+	 * Returns id field name
+	 */
+	pure string getFieldNameId() => "id";
+	
+	
+	/**
+	 * Returns layout name
+	 */
+	string getLayoutName() => "default";
+	
+	
+	/**
+	 * Returns page model
+	 */
+	string getPageModelName() => classof WorkspacePageModel;
+	
+	
+	/**
+	 * Returns index page name
+	 */
+	string getIndexPageName() => classof WorkspaceTablePage;
+	
+	
+	/**
+	 * Returns save page name
+	 */
+	string getSavePageName() => classof WorkspaceSavePage;
+	
+	
+	/**
+	 * Returns delete page name
+	 */
+	string getDeletePageName() => classof WorkspaceDeletePage;
+	
+}

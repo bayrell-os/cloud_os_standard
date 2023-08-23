@@ -29,27 +29,27 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Route;
+use Bayrell.CloudOS.Models.Workspace;
 
 
-class RouteApi extends CrudPageApi
+class WorkspaceApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.route";
+	pure string getApiName() => "app.workspace";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof Route;
+	pure string getModelName() => classof Workspace;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "routes";
+	pure string getTableName() => "spaces";
 	
 	
 	/**
@@ -75,26 +75,15 @@ class RouteApi extends CrudPageApi
 		{
 			"fields":
 			[
-				"enable",
-				"protocol",
-				/*"protocol_data",*/
-				"domain_name",
-				"route_prefix",
-				"docker_name",
-				"source_port",
-				"target_port",
-				"target_prefix",
-				"nginx_config",
+				"name",
+				"uid",
 			]
 		},
-		new Purify{ "name": "docker_name" },
-		new Purify{ "name": "domain_name" },
-		new LowerCase{ "name": "docker_name" },
-		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "docker_name" },
-		new Required{ "name": "domain_name" },
-		new Required{ "name": "enable" },
-		new Required{ "name": "protocol" },
+		new Purify{ "name": "name" },
+		new Required{ "name": "name" },
+		new Purify{ "name": "uid" },
+		new LowerCase{ "name": "uid" },
+		new Unique{"keys": ["uid"]},
 	];
 	
 	

@@ -72,6 +72,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.Routes.RoutePageRoute"),
 		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
+		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
 		
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.DockerStackApi"),
@@ -81,6 +82,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Api.RouteApi"),
 		new Api("Bayrell.CloudOS.Api.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Api.UserApi"),
+		new Api("Bayrell.CloudOS.Api.WorkspaceApi"),
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		#endif

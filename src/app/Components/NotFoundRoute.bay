@@ -21,7 +21,7 @@ namespace Bayrell.CloudOS.Components;
 use Runtime.BaseStruct;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RenderContainer;
-use Bayrell.Components.NotFoundPage;
+use Bayrell.CloudOS.Components.NotFoundPage;
 use Bayrell.Helper;
 
 

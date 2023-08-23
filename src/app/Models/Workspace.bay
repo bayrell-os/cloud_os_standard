@@ -22,12 +22,14 @@ use Runtime.BaseStruct;
 use Runtime.DateTime;
 
 
-struct WorkSpaceRole extends BaseStruct
+struct Workspace extends BaseStruct
 {
 	int id;
-	int space_id;
+	string uid;
 	string name;
-	int is_deleted;
+	Collection<int> users;
+	Collection<Dict> users_roles;
+	Collection<int> roles;
 	DateTime gmtime_created;
 	DateTime gmtime_updated;
 }

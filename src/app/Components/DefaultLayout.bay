@@ -173,6 +173,10 @@ pure string getHostname() => "Hostname";
  */
 pure bool isMenuActive(LayoutModel layout, Dict item)
 {
+	if (layout.route == null)
+	{
+		return false;
+	}
 	if (layout.route.name == item["link"])
 	{
 		return true;
@@ -240,7 +244,7 @@ pure Collection getMenu()
 			[
 				{
 					"title": "Workspace",
-					"link": "app:spaces:index",
+					"link": "app:workspace:index",
 				},
 				{
 					"title": "Domains",
