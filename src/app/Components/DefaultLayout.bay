@@ -161,6 +161,32 @@
 
 <script>
 
+string route_name_old = "";
+
+
+/**
+ * Returns true if component is changed and need to repaint
+ */
+bool isChanged(var model, Dict params, var content)
+{
+	if (this.provider.layout.route.name == this.route_name_old)
+	{
+		return false;
+	}
+	return true;
+}
+
+
+/**
+ * Update params
+ */
+void updateParams(Collection model_path, Dict params, var content)
+{
+	parent::updateParams(model_path, params, content);
+	
+	this.route_name_old = this.provider.layout.route.name;
+}
+
 
 /**
  * Returns hostname
@@ -177,7 +203,11 @@ pure bool isMenuActive(LayoutModel layout, Dict item)
 	{
 		return false;
 	}
-	if (layout.route.name == item["link"])
+	if (item.has("link") and layout.route.name == item["link"])
+	{
+		return true;
+	}
+	if (item.has("links") and item["links"].indexOf(layout.route.name) > -1)
 	{
 		return true;
 	}
@@ -230,10 +260,22 @@ pure Collection getMenu()
 				{
 					"title": "Yaml files",
 					"link": "app:docker:yaml:index",
+					"links": [
+						"app:docker:yaml:index",
+						"app:docker:yaml:add",
+						"app:docker:yaml:edit",
+						"app:docker:yaml:delete",
+					],
 				},
 				{
 					"title": "Stacks",
 					"link": "app:docker:stack:index",
+					"links": [
+						"app:docker:stack:index",
+						"app:docker:stack:add",
+						"app:docker:stack:edit",
+						"app:docker:stack:delete",
+					],
 				},
 			]
 		},
@@ -245,26 +287,62 @@ pure Collection getMenu()
 				{
 					"title": "Workspace",
 					"link": "app:workspace:index",
+					"links": [
+						"app:workspace:index",
+						"app:workspace:add",
+						"app:workspace:edit",
+						"app:workspace:delete",
+					],
 				},
 				{
 					"title": "Domains",
 					"link": "app:domains:index",
+					"links": [
+						"app:domains:index",
+						"app:domains:add",
+						"app:domains:edit",
+						"app:domains:delete",
+					],
 				},
 				{
 					"title": "SSL Group",
 					"link": "app:ssl:index",
+					"links": [
+						"app:ssl:index",
+						"app:ssl:add",
+						"app:ssl:edit",
+						"app:ssl:delete",
+					],
 				},
 				{
 					"title": "Routes",
 					"link": "app:routes:index",
+					"links": [
+						"app:routes:index",
+						"app:routes:add",
+						"app:routes:edit",
+						"app:routes:delete",
+					],
 				},
 				{
 					"title": "Nginx files",
 					"link": "app:nginx_files:index",
+					"links": [
+						"app:nginx_files:index",
+						"app:nginx_files:add",
+						"app:nginx_files:edit",
+						"app:nginx_files:delete",
+					],
 				},
 				{
 					"title": "Users",
 					"link": "app:users:index",
+					"links": [
+						"app:users:index",
+						"app:users:add",
+						"app:users:edit",
+						"app:users:delete",
+					],
 				},
 				{
 					"title": "Settings",

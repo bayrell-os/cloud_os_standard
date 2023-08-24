@@ -71,6 +71,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.NginxFiles.NginxFilePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Routes.RoutePageRoute"),
 		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
+		new Route("Bayrell.CloudOS.Components.Settings.SettingsRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
 		
@@ -85,6 +86,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Api.WorkspaceApi"),
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
+		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),
 		#endif
 	];
 	

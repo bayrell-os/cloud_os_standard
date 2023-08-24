@@ -1,0 +1,68 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Adminer;
+
+use Runtime.Web.Response;
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudRoute;
+
+
+class AdminerRoute extends CrudRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/settings/database/adminer/",
+			"name": "app:adminer:index",
+			"method": "actionIndex",
+		},
+	];
+	
+	
+	/**
+	 * Action index
+	 */
+	async void actionIndex()
+	{
+        string content = "";
+        
+        #ifcode PHP then
+        
+        $file_path = BASE_PATH . "/app/Components/Adminer/adminer-sqlite.php";
+        
+        @ob_start();
+		$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
+		include $file_path;
+		$content = ob_get_contents();
+		@ob_end_clean();
+        
+        #endif
+        
+        /* Create response */
+		Response response = new Response();
+		response <= content <= content;        
+		this.container.setResponse(response);
+	}
+	
+}

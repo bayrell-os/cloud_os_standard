@@ -281,6 +281,14 @@ class Schema extends DatabaseSchema
 		/* Index */
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["name"]},
+		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"relation": "domains",
+			"primary_key": "id",
+			"foreign_key": "domain_id",
+		},
 	];
 	
 	

@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
 use Bayrell.CloudOS.Models.Domain;
 
 

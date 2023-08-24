@@ -1,0 +1,74 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Settings;
+
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.Settings.DatabasePage;
+use Bayrell.CloudOS.Components.Settings.SettingsPage;
+
+
+class SettingsRoute extends CrudRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/settings/",
+			"name": "app:settings:index",
+			"method": "actionIndex",
+		},
+		new RouteInfo
+		{
+			"uri": "/settings/database/",
+			"name": "app:settings:database",
+			"method": "actionDatabase",
+		},
+	];
+	
+	
+	/**
+	 * Action index
+	 */
+	async void actionIndex()
+	{
+		/* Set title */
+		this.setPageTitle("Settings");
+		
+		/* Render page */
+		this.render(classof SettingsPage);
+	}
+	
+	
+	/**
+	 * Action database
+	 */
+	async void actionDatabase()
+	{
+		/* Set title */
+		this.setPageTitle("Database");
+		
+		/* Render page */
+		this.render(classof DatabasePage);
+	}
+}
