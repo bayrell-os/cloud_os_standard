@@ -78,15 +78,11 @@ pure Dict<string> getLabels(Layout layout, RoutePageModel model) =>
 	}
 	%elseif (field_name == "source")
 	{
-		{{ item["domain_name"] ~
-			(item["source_port"] != 80 ? ":" ~ item["source_port"] : "") ~
-			(item["route_prefix"] != "/" ? item["route_prefix"] : "") }}
+		{{ model.getSourceColumn(item) }}
 	}
 	%elseif (field_name == "dest")
 	{
-		{{ item["docker_name"] ~
-			(item["target_port"] != 80 ? ":" ~ item["target_port"] : "") ~
-			(item["target_prefix"] != "/" ? item["target_prefix"] : "") }}
+		{{ model.getDestColumn(item) }}
 	}
 	%else
 	{

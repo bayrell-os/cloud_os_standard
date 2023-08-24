@@ -44,7 +44,7 @@
 		%render static::renderRow(classof Select, model.fields["protocol"]);
 		
 		<!-- Source -->
-		%render static::renderRow(classof Input, model.fields["domain_name"]);
+		%render static::renderRow(classof Select, model.fields["domain_id"]);
 		%render static::renderRow(classof Input, model.fields["source_port"]);
 		%render static::renderRow(classof Input, model.fields["route_prefix"]);
 		

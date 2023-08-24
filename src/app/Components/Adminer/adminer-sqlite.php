@@ -11,4 +11,4 @@ function adminer_object() {
 	));
 }
 
-include __DIR__ . '/adminer-4.7.1.php';
+include __DIR__ . '/adminer-4.8.1.php';

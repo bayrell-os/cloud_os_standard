@@ -169,6 +169,7 @@ string route_name_old = "";
  */
 bool isChanged(var model, Dict params, var content)
 {
+	return parent::isChanged(model, params, content);
 	if (this.provider.layout.route.name == this.route_name_old)
 	{
 		return false;

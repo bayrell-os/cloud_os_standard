@@ -18,8 +18,11 @@
 
 namespace Bayrell.CloudOS.Components.Routes;
 
+use Runtime.lib;
+use Runtime.Web.ApiResult;
 use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.FieldInfo;
+use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Models.Route;
 
 
@@ -43,6 +46,12 @@ struct RoutePageModel extends CrudPageModel
 		},
 		
 		/* Source */
+		"domain_id": new FieldInfo{
+			"label": "Domain name",
+			"field_name": "domain_id",
+			"options": [
+			],
+		},
 		"domain_name": new FieldInfo{
 			"label": "Domain name",
 			"field_name": "domain_name",
@@ -114,8 +123,7 @@ struct RoutePageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit route '" ~ this.save_form.item["domain_name"] ~
-				this.save_form.item["route_prefix"] ~ "'";
+			return "Edit route '" ~ this.getSourceColumn(this.save_form.item) ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -123,10 +131,98 @@ struct RoutePageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete route '" ~ this.delete_form.item["domain_name"] ~
-				this.save_form.item["route_prefix"] ~ "' ?";
+			return "Delete route '" ~ this.delete_form(this.save_form.item) ~ "' ?";
 		}
 		return "";
+	}
+	
+	
+	/**
+	 * Returns domain_name from dictionary
+	 */
+	string getDomainName(int domain_id)
+	{
+		Collection domains = this.dictionary["domains"]
+		if (domains == null) return "";
+		
+		Domain domain = domains.findItem( lib::equalAttr("id", domain_id) );
+		if (domain == null) return "";
+		
+		return domain.domain_name;
+	}
+	
+	
+	/**
+	 * Returns source
+	 */
+	string getSourceColumn(Route item)
+	{
+		string res = "";
+		string domain_name = "";
+		
+		res ~= this.getDomainName(item.domain_id);
+		
+		if (item["source_port"] != 80)
+		{
+			res ~= ":" ~ item["source_port"];
+		}
+		
+		if (item["route_prefix"] != "/")
+		{
+			res ~= item["route_prefix"];
+		}
+		
+		return res;
+	}
+	
+	
+	/**
+	 * Returns dest
+	 */
+	string getDestColumn(Route item)
+	{
+		string res = "";
+		
+		res ~= item["docker_name"];
+		
+		if (item["target_port"] != 80)
+		{
+			res ~= ":" ~ item["target_port"];
+		}
+		
+		if (item["target_prefix"] != "/")
+		{
+			res ~= item["target_prefix"];
+		}
+		
+		return res;
+	}
+	
+	
+	/**
+	 * Set api result
+	 */
+	CrudPageModel setApiResult(string event, ApiResult res)
+	{
+		CrudPageModel model = parent::setApiResult(event, res);
+		
+		if (res == null) return model;
+		if (not res.isSuccess()) return model;
+		
+		Collection<Domain> domains = model.dictionary["domains"];
+		if (domains)
+		{
+			model <= fields <= domain_id <= options <= domains
+				.map(
+					Dict (Domain item) => { "label": item.domain_name, "value": item.id }
+				)
+				.sort(
+					int (Dict a, Dict b) => a["label"] > b["label"]
+				)
+			;
+		}
+		
+		return model;
 	}
 	
 }

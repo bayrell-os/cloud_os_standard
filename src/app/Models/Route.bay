@@ -28,7 +28,7 @@ struct Route extends BaseStruct
 	int enable;
 	string protocol = "http";
 	Dict protocol_data = {};
-	string domain_name = "";
+	int domain_id = null;
 	string route_prefix = "/";
 	string docker_name = "";
 	int source_port = 80;

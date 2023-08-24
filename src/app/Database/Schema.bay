@@ -268,7 +268,7 @@ class Schema extends DatabaseSchema
 		new BigIntType{"name": "enable"},
 		new StringType{"name": "protocol"},
 		new DictType{"name": "protocol_data", "default": {}},
-		new StringType{"name": "domain_name"},
+		new StringType{"name": "domain_id"},
 		new StringType{"name": "route_prefix", "default": "/"},
 		new StringType{"name": "docker_name"},
 		new StringType{"name": "source_port", "default": "80"},
@@ -285,7 +285,8 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"relation": "domains",
+			"name": "routes_domain_id",
+			"table_name": "domains",
 			"primary_key": "id",
 			"foreign_key": "domain_id",
 		},
