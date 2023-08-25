@@ -23,6 +23,9 @@
 <use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
+<use name="Runtime.Web.Crud.TabItem" component="true" />
+<use name="Runtime.Web.Crud.Tabs" component="true" />
+<use name="Bayrell.CloudOS.Components.Domains.RouteTablePage" component="true" />
 
 
 <style>
@@ -40,6 +43,43 @@
 	<div class="web_form__content">
 		%render static::renderRow(classof Input, model.fields["domain_name"]);
 	</div>
+</template>
+
+
+<template name="render">
+	%render static::renderTop();
+	
+	%if (model.item_form.item != null)
+	{
+		<Tabs @model=["tabs"] style=["style1"] tabs=[
+			{
+				"name": "info",
+				"label": "Info",
+				"href": static::url("app:domains:edit", {"id": model.item_form.item.id}),
+			},
+			{
+				"name": "routes",
+				"label": "Routes",
+				"href": static::url("app:domains:routes", {"id": model.item_form.item.id}),
+			},
+		]>
+			<TabItem name="info" @model=["tabs"]>
+				%render static::renderForm();
+			</TabItem>
+			<TabItem name="routes" @model=["tabs"]>
+			
+				<RouteTablePage @model=["routes"] />
+				
+			</TabItem>
+		</Tabs>
+	}
+	%else
+	{
+		<div class="web_form__item_not_found">
+			Item not found
+		</div>
+	}
+	
 </template>
 
 

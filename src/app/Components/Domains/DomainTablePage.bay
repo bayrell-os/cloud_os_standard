@@ -69,8 +69,8 @@ pure Dict<string> getLabels(Layout layout, DomainPageModel model) =>
 </template>
 
 
-<template name="renderButtons">
-	<Button @event:MouseClickEvent="onSave">Save</Button>
+<template>
+	%render static::renderTable();
 </template>
 
 

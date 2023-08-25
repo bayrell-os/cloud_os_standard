@@ -18,8 +18,11 @@
 
 namespace Bayrell.CloudOS.Components.Domains;
 
+use Runtime.ModelProxy;
 use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Components.Domains.DomainDeletePage;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
 use Bayrell.CloudOS.Components.Domains.DomainSavePage;
@@ -58,6 +61,12 @@ class DomainPageRoute extends CrudRoute
 			"name": "app:domains:delete",
 			"method": "actionDelete",
 		},
+		new RouteInfo
+		{
+			"uri": "/domains/{id}/routes/",
+			"name": "app:domains:routes",
+			"method": "actionRoutes",
+		},
 	];
 	
 	
@@ -95,5 +104,53 @@ class DomainPageRoute extends CrudRoute
 	 * Returns delete page name
 	 */
 	string getDeletePageName() => classof DomainDeletePage;
+	
+	
+	/**
+	 * Crud route after
+	 */
+	async void crudRouteAfter()
+	{
+		await parent::crudRouteAfter();
+		
+		string route_name = this.container.route.name;
+		if (
+			route_name == "app:domains:add" or
+			route_name == "app:domains:edit" 
+		)
+		{
+			this.modelProxy("tabs").commit("setActive", "info");
+		}
+		else if (route_name == "app:domains:routes")
+		{
+			this.modelProxy("tabs").commit("setActive", "routes");
+		}
+	}
+	
+	
+	/**
+	 * Crud route after
+	 */
+	async void actionRoutes()
+	{
+		await parent::actionEdit();
+		
+		/* Set page title */
+		DomainPageModel model = this.model();
+		this.page_model_proxy.commit("setAction", "routes");
+		this.setPageTitle( model.getPageTitle( model.action ) );
+		
+		/* Get routes */
+		Domain item = model.item_form.item;
+		if (item != null)
+		{
+			ModelProxy routes = this.modelProxy("routes");
+			
+			routes.commit("setAction", CrudPageModel::ACTION_INDEX);
+			routes.commit("setPage", this.container.request.query.get("page", 1));
+			routes.commit("setDomainId", item.id);
+			await routes.commitAsync("callCrudSearch");
+		}
+	}
 	
 }

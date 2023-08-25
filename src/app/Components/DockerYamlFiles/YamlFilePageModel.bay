@@ -77,7 +77,7 @@ struct YamlFilePageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit yaml file '" ~ this.save_form.item["file_name"] ~ "'";
+			return "Edit yaml file '" ~ this.item_form.item["file_name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -85,7 +85,7 @@ struct YamlFilePageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete yaml file '" ~ this.delete_form.item["file_name"] ~ "' ?";
+			return "Delete yaml file '" ~ this.item_form.item["file_name"] ~ "' ?";
 		}
 		return "";
 	}

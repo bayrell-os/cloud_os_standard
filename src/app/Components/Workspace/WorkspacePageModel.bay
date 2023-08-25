@@ -73,7 +73,7 @@ struct WorkspacePageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit workspace '" ~ this.save_form.item["name"] ~ "'";
+			return "Edit workspace '" ~ this.item_form.item["name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -81,7 +81,7 @@ struct WorkspacePageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete workspace '" ~ this.delete_form.item["name"] ~ "' ?";
+			return "Delete workspace '" ~ this.item_form.item["name"] ~ "' ?";
 		}
 		return "";
 	}

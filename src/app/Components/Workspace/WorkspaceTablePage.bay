@@ -71,9 +71,4 @@ pure Dict<string> getLabels(Layout layout, WorkspacePageModel model) =>
 </template>
 
 
-<template name="renderButtons">
-	<Button @event:MouseClickEvent="onSave">Save</Button>
-</template>
-
-
 </class>

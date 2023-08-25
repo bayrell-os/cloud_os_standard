@@ -73,7 +73,7 @@ struct SSLPageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit ssl '" ~ this.save_form.item["name"] ~ "'";
+			return "Edit ssl '" ~ this.item_form.item["name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -81,7 +81,7 @@ struct SSLPageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete ssl '" ~ this.delete_form.item["name"] ~ "' ?";
+			return "Delete ssl '" ~ this.item_form.item["name"] ~ "' ?";
 		}
 		return "";
 	}

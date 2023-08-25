@@ -92,7 +92,7 @@ class DomainApi extends CrudPageApi
 	{
 		q = q
 			|> .orderBy("id", "asc")
-		;
+		;		
 		return q;
 	}
 	

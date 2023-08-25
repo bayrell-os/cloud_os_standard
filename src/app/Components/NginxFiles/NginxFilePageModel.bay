@@ -81,7 +81,7 @@ struct NginxFilePageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit stack '" ~ this.save_form.item["name"] ~ "'";
+			return "Edit stack '" ~ this.item_form.item["name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -89,7 +89,7 @@ struct NginxFilePageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete stack '" ~ this.delete_form.item["name"] ~ "' ?";
+			return "Delete stack '" ~ this.item_form.item["name"] ~ "' ?";
 		}
 		return "";
 	}

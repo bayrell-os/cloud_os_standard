@@ -123,7 +123,7 @@ struct RoutePageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit route '" ~ this.getSourceColumn(this.save_form.item) ~ "'";
+			return "Edit route '" ~ this.getSourceColumn(this.item_form.item) ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -131,7 +131,7 @@ struct RoutePageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete route '" ~ this.delete_form(this.save_form.item) ~ "' ?";
+			return "Delete route '" ~ this.getSourceColumn(this.item_form.item) ~ "' ?";
 		}
 		return "";
 	}

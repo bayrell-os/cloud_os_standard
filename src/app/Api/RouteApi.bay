@@ -110,9 +110,16 @@ class RouteApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
+		int domain_id = (int)this.post_data["domain_id"];
+		if (domain_id > 0)
+		{
+			q = q.where("domain_id", "=", domain_id)
+		}
+		
 		q = q
 			|> .orderBy("id", "asc")
 		;
+		
 		return q;
 	}
 	

@@ -81,7 +81,7 @@ struct UsersPageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit user '" ~ this.save_form.item["login"] ~ "'";
+			return "Edit user '" ~ this.item_form.item["login"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -89,7 +89,7 @@ struct UsersPageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete user '" ~ this.delete_form.item["login"] ~ "' ?";
+			return "Delete user '" ~ this.item_form.item["login"] ~ "' ?";
 		}
 		return "";
 	}

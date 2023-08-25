@@ -16,31 +16,38 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.NginxFiles.NginxFileTablePage"
+<class name="Bayrell.CloudOS.Components.Domains.RouteTablePage"
     extends="Runtime.Web.Crud.TablePage">
 
 
 <use name="Runtime.Web.Layout" />
-<use name="Bayrell.CloudOS.Components.NginxFiles.NginxFilePageModel" />
-<use name="Bayrell.CloudOS.Models.NginxFiles" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Crud.Button" component="true" />
+<use name="Runtime.Web.Crud.Dialog" component="true" />
+<use name="Bayrell.CloudOS.Components.Domains.RoutePageModel" />
+<use name="Bayrell.CloudOS.Components.Domains.RouteSaveForm" component="true" />
+<use name="Bayrell.CloudOS.Models.Routes" />
 
 
 <script>
 
-pure Collection<string> getColumns(Layout layout, NginxFilePageModel model) =>
+pure Collection<string> getColumns(Layout layout, RoutePageModel model) =>
 [
 	"row_number",
-	"name",
 	"enable",
+	"protocol",
+	"source",
+	"dest",
 	"row_buttons",
 ];
 
 
-pure Dict<string> getLabels(Layout layout, NginxFilePageModel model) =>
+pure Dict<string> getLabels(Layout layout, RoutePageModel model) =>
 {
-	"name": "File name",
 	"enable": "Enable",
+	"protocol": "Protocol",
+	"source": "Source",
+	"dest": "Dest",
 };
 
 </script>
@@ -48,31 +55,49 @@ pure Dict<string> getLabels(Layout layout, NginxFilePageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="success" href={{ static::url("app:nginx_files:add") }}>[+] Add</Button>
+		<Button type="success middle"
+			@event:MouseClickEvent="onAddClick"
+		>[+] Add</Button>
 	</div>
 </template>
 
 
-<template name="renderField" args="int row_number, string field_name, NginxFile item">
+<template name="renderField" args="int row_number, string field_name, Route item">
 	
 	%if (field_name == "row_buttons")
 	{
 		<Button type="small"
-			href={{ static::url("app:nginx_files:edit", {"id": item.id }) }}
-		>Edit</Button>
+			@event:MouseClickEvent="onEditClick" data-id={{ item.id }}>Edit</Button>
+		
 		<Button type="danger small"
-			href={{ static::url("app:nginx_files:delete", {"id": item.id }) }}
-		>Delete</Button>
+			@event:MouseClickEvent="onDeleteClick" data-id={{ item.id }}>Delete</Button>
 	}
 	%elseif (field_name == "enable")
 	{
 		{{ model.fields["enable"].getOptionLabel(item[field_name]) }}
+	}
+	%elseif (field_name == "protocol")
+	{
+		{{ model.fields["protocol"].getOptionLabel(item[field_name]) }}
+	}
+	%elseif (field_name == "source")
+	{
+		{{ model.getSourceColumn(item) }}
+	}
+	%elseif (field_name == "dest")
+	{
+		{{ model.getDestColumn(item) }}
 	}
 	%else
 	{
 		%render parent::renderField(row_number, field_name, item);
 	}
 	
+</template>
+
+
+<template name="renderSaveDialogContent">
+	<RouteSaveForm @model=[] />
 </template>
 
 
