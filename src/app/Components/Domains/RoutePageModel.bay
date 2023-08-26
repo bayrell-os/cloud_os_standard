@@ -41,6 +41,7 @@ struct RoutePageModel extends BaseRoutePageModel
 	DialogModel delete_dialog = new DialogModel{
 		"auto_hide": false,
 		"is_modal": true,
+		"width": "500px",
 		"style": DialogModel::STYLE_CONTENT,	
 	};
 	
