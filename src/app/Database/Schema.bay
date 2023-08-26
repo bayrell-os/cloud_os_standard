@@ -252,6 +252,7 @@ class Schema extends DatabaseSchema
 		new DateTimeType{"name": "gmtime_updated"},
 		
 		/* Index */
+		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["name"]},
 	];
@@ -279,6 +280,7 @@ class Schema extends DatabaseSchema
 		new DateTimeType{"name": "gmtime_updated"},
 		
 		/* Index */
+		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["name"]},
 		

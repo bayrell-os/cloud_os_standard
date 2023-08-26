@@ -38,6 +38,11 @@ struct RoutePageModel extends BaseRoutePageModel
 		"width": "800px",
 		"style": DialogModel::STYLE_CONTENT,
 	};
+	DialogModel delete_dialog = new DialogModel{
+		"auto_hide": false,
+		"is_modal": true,
+		"style": DialogModel::STYLE_CONTENT,	
+	};
 	
     
     /**
@@ -53,7 +58,7 @@ struct RoutePageModel extends BaseRoutePageModel
 	 */
 	async static Dict event(ModelProxy model, string event, Dict data)
 	{
-        data = parent::event(model, event, data);
+        data = await parent::event(model, event, data);
         
 		if (
 			event == "crudSearchBefore" or
@@ -62,12 +67,13 @@ struct RoutePageModel extends BaseRoutePageModel
 			event == "crudDeleteBefore"
 		)
 		{
-			int domain_id = model.data().domain_id;
+			int domain_id = model.data("domain_id");
 			if (domain_id > 0)
 			{
 				data <= post_data <= domain_id <= model.data().domain_id;
 			}
 		}
+		
 		return data;
 	}
 	

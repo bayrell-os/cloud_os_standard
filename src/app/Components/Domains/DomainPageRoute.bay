@@ -136,12 +136,11 @@ class DomainPageRoute extends CrudRoute
 		await parent::actionEdit();
 		
 		/* Set page title */
-		DomainPageModel model = this.model();
-		this.page_model_proxy.commit("setAction", "routes");
-		this.setPageTitle( model.getPageTitle( model.action ) );
+		this.page_model.commit("setAction", "routes");
+		this.setPageTitle( this.page_model.call("getPageTitle", "routes" ) );
 		
 		/* Get routes */
-		Domain item = model.item_form.item;
+		Domain item = this.page_model.model(["item_form", "item"]);
 		if (item != null)
 		{
 			ModelProxy routes = this.modelProxy("routes");

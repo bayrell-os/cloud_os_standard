@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Api;
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
@@ -116,11 +117,31 @@ class RouteApi extends CrudPageApi
 			q = q.where("domain_id", "=", domain_id)
 		}
 		
+		q.leftJoin("domains", [
+			"domains.id = domain_id",
+		]);
+		
 		q = q
-			|> .orderBy("id", "asc")
+			|> .orderBy("domains.domain_name", "asc")
+			|> .orderBy("route_prefix", "asc")
+			|> .orderBy("id", "desc")
 		;
 		
 		return q;
+	}
+	
+	
+	/**
+	 * Validate item
+	 */
+	async Dict validateItem(Dict update_data)
+	{
+		int domain_id = (int)this.post_data["domain_id"];
+		if (domain_id > 0)
+		{
+			update_data <= domain_id <= domain_id;
+		}
+		return await parent::validateItem(update_data);
 	}
 	
 }

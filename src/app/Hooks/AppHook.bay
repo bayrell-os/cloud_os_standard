@@ -121,8 +121,8 @@ class AppHook extends BaseAppHook
 		ModelProxy layout = container.layoutProxy();
 		ModelProxy seo = layout.proxy(["models", "seo"]);
 		
-		seo.setAttr("site_name", "Cloud OS");
-		seo.setAttr("title_ext", "Cloud OS");
+		seo.commit("setSiteName", "Cloud OS");
+		seo.commit("setTitleExt", "Cloud OS");
 		
 		return d;
 	}

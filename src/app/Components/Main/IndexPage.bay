@@ -25,11 +25,15 @@
 
 
 <template>
-	Cloud OS Version 0.5.0
+	<div @render="title">
+		Cloud OS Version 0.5.0
+	</div>
 </template>
 
 
 <script>
+
+var title;
 
 </script>
 
