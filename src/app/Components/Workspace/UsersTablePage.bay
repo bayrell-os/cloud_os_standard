@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Workspace.DomainTablePage"
+<class name="Bayrell.CloudOS.Components.Workspace.UsersTablePage"
     extends="Runtime.Web.Crud.TablePage">
 
 
@@ -24,24 +24,26 @@
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Dialog" component="true" />
-<use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Bayrell.CloudOS.Components.Workspace.DomainPageModel" />
+<use name="Runtime.Web.Crud.Input" component="true" />
+<use name="Bayrell.CloudOS.Components.Workspace.UsersPageModel" />
 <use name="Bayrell.CloudOS.Models.Routes" />
 
 
 <script>
 
-pure Collection<string> getColumns(Layout layout, DomainPageModel model) =>
+pure Collection<string> getColumns(Layout layout, UsersPageModel model) =>
 [
 	"row_number",
-	"domain_name",
+	"login",
+	"name",
 	"row_buttons",
 ];
 
 
-pure Dict<string> getLabels(Layout layout, DomainPageModel model) =>
+pure Dict<string> getLabels(Layout layout, UsersPageModel model) =>
 {
-	"domain_name": "Domain name",
+	"login": "Login",
+	"name": "Name",
 };
 
 </script>
@@ -73,8 +75,8 @@ pure Dict<string> getLabels(Layout layout, DomainPageModel model) =>
 
 <template name="renderSaveDialogContent">
 	<div class="web_form__row">
-		<div class="web_form__row_label">Domain name</div>
-		<Select @model="add_domain_id" options={{ model.add_domains_values }} />
+		<div class="web_form__row_label">User login</div>
+		<Input @model="user_login" />
 	</div>
 </template>
 

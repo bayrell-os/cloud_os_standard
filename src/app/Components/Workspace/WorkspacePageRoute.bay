@@ -134,10 +134,17 @@ class WorkspacePageRoute extends CrudRoute
 		Workspace space = this.page_model.attr(["item_form", "item"])	
 		if (space)
 		{
-		
 			/* Users tab */
 			if (this.container.layout.route.name == "app:workspace:users")
 			{
+				int page = (int)this.container.request.query.get("page");
+				ModelProxy<DomainPageModel> users = this.page_model.proxy("users");
+				
+				/* Search users */
+				users.commit("setSpaceId", space.id);
+				users.commit("setPage", page);
+				await users.commitAsync("callCrudSearch");
+				
 				this.page_model.proxy("tabs").commit("setTab", "users");
 			}
 			

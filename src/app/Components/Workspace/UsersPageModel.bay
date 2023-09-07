@@ -26,12 +26,12 @@ use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.DialogModel;
 use Runtime.Web.Crud.FieldInfo;
 use Runtime.Web.Crud.FormModel;
-use Bayrell.CloudOS.Components.Domains.DomainPageModel as BaseDomainPageModel;
+use Bayrell.CloudOS.Components.Users.UsersPageModel as BaseUsersPageModel;
 use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Models.Route;
 
 
-struct DomainPageModel extends BaseDomainPageModel
+struct UsersPageModel extends BaseUsersPageModel
 {
 	int space_id = 0;
 	DialogModel save_dialog = new DialogModel{
@@ -47,8 +47,7 @@ struct DomainPageModel extends BaseDomainPageModel
 		"style": DialogModel::STYLE_CONTENT,	
 	};
 	
-	int add_domain_id = 0;
-	Collection<Domain> add_domains_values = [];
+	string user_login = "";
 	
 	
 	/**
@@ -60,26 +59,18 @@ struct DomainPageModel extends BaseDomainPageModel
 	/**
 	 * Set workspace id
 	 */
-	DomainPageModel setSpaceId(int value) => this.copy{
+	UsersPageModel setSpaceId(int value) => this.copy{
 		"space_id": value
-	};
-	
-	
-	/**
-	 * Setup domains values
-	 */
-	DomainPageModel setDomainsValues(Collection items) => this.copy{
-		"add_domains_values": items,
 	};
 	
 	
 	/**
 	 * Clear item
 	 */
-	DomainPageModel clearItem()
+	UsersPageModel clearItem()
 	{
-		DomainPageModel item = parent::clearItem();
-		item <= add_domain_id <= 0;
+		UsersPageModel item = parent::clearItem();
+		item <= user_login <= "";
 		return item;
 	}
 	
@@ -105,39 +96,6 @@ struct DomainPageModel extends BaseDomainPageModel
 			}
 		}
 		
-		/* Add new item */
-		if (event == "crudItemBefore")
-		{
-			ModelProxy<FormModel> item_form = model.proxy("item_form");
-			Dict pk = item_form.call("getPrimaryKey");
-			if (pk == null)
-			{
-				ApiResult res = await Bus::callApi("app.domain::crud.search", {
-					"page_type": static::getPageType(),
-					"limit": 1000,
-				});
-				
-				if (res.isSuccess())
-				{
-					Collection items = res.data["items"];
-					
-					items = items
-						.filter(
-							bool (Domain item) use (space_id) => item.space_id != space_id
-						)
-						.map(
-							Dict (Domain item) => {
-								"label": item.domain_name,
-								"value": item.id,
-							},
-						)
-					;
-					
-					model.commit("setDomainsValues", items);
-				}
-			}
-		}
-		
 		return data;
 	}
 	
@@ -148,14 +106,14 @@ struct DomainPageModel extends BaseDomainPageModel
 	async static ApiResult callApiSave(ModelProxy model, Dict post_data)
 	{
 		int space_id = model.data().space_id;
-		int domain_id = model.data().add_domain_id;
+		int user_login = model.data().user_login;
 		
 		Dict new_post_data = {
 			"space_id": space_id,
-			"domain_id": domain_id,
+			"user_login": user_login,
 		};
 		
-		return await Bus::callApi("app.workspace::domain.add", new_post_data);
+		return await Bus::callApi("app.workspace::user.add", new_post_data);
 	}
 	
 	
@@ -164,13 +122,15 @@ struct DomainPageModel extends BaseDomainPageModel
 	 */
 	async static ApiResult callApiDelete(ModelProxy model, Dict post_data)
 	{
-		int domain_id = model.data(["item_form", "item", "id"]);
+		int space_id = model.data().space_id;
+		int user_id = model.data(["item_form", "item", "id"]);
 		
 		Dict new_post_data = {
-			"domain_id": domain_id,
+			"space_id": space_id,
+			"user_id": user_id,
 		};
 		
-		return await Bus::callApi("app.workspace::domain.delete", new_post_data);
+		return await Bus::callApi("app.workspace::user.delete", new_post_data);
 	}
 	
 }

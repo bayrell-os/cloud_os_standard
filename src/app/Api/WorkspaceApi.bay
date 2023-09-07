@@ -64,8 +64,10 @@ class WorkspaceApi extends CrudPageApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
-		if (api_name == "addDomain") return "actionAddDomain";
-		if (api_name == "deleteDomain") return "actionDeleteDomain";
+		if (api_name == "domain.add") return "actionAddDomain";
+		if (api_name == "domain.delete") return "actionDeleteDomain";
+		if (api_name == "user.add") return "actionAddUser";
+		if (api_name == "user.delete") return "actionDeleteUser";
 		return "";
 	}
 	
@@ -112,8 +114,8 @@ class WorkspaceApi extends CrudPageApi
 		int domain_id = this.post_data["domain_id"];
 		
 		Connection conn = this.getDatabaseConnection();
-		Relation space = Relation::findById("spaces", conn, space_id);
-		Relation domain = Relation::findById("domains", conn, domain_id);
+		Relation space = await Relation::findById("spaces", conn, space_id);
+		Relation domain = await Relation::findById("domains", conn, domain_id);
 		
 		if (space == null)
 		{
@@ -144,7 +146,7 @@ class WorkspaceApi extends CrudPageApi
 		int domain_id = this.post_data["domain_id"];
 		
 		Connection conn = this.getDatabaseConnection();
-		Relation domain = Relation::findById("domains", conn, domain_id);
+		Relation domain = await Relation::findById("domains", conn, domain_id);
 		
 		if (domain == null)
 		{
@@ -157,6 +159,91 @@ class WorkspaceApi extends CrudPageApi
 		
 		/* Set api result */
 		this.container.success();
+	}
+	
+	
+	/**
+	 * Add user
+	 */
+	async void actionAddUser()
+	{
+		int space_id = this.post_data["space_id"];
+		int user_login = this.post_data["user_login"];
+		
+		Connection conn = this.getDatabaseConnection();
+		Relation space = await Relation::findById("spaces", conn, space_id);
+		Relation user = await Relation::findItem("users", conn, {
+			"login": user_login,
+		});
+		
+		if (space == null)
+		{
+			this.container.fail( new ApiException("Space not found") );
+			return;
+		}
+		
+		if (user == null)
+		{
+			this.container.fail( new ApiException("User not found") );
+			return;
+		}
+		
+		Relation space_user = await Relation::findItem("spaces_users", conn, {
+			"space_id": space_id,
+			"user_id": user.get("id"),
+		});
+		if (space_user != null)
+		{
+			this.container.fail( new ApiException("User already exists") );
+			return;
+		}
+		
+		space_user = new Relation("spaces_users");
+		space_user.set("space_id", space_id);
+		space_user.set("user_id", user.get("id"));
+		space_user.save(conn);
+		
+		/* Set api result */
+		this.container.success();
+	}
+	
+	
+	/**
+	 * Delete user
+	 */
+	async void actionDeleteUser()
+	{
+		int space_id = this.post_data["space_id"];
+		int user_id = this.post_data["user_id"];
+		
+		Connection conn = this.getDatabaseConnection();
+		Relation space = await Relation::findById("spaces", conn, space_id);
+		Relation user = await Relation::findItem("users", conn, {
+			"id": user_id,
+		});
+		
+		if (space == null)
+		{
+			this.container.fail( new ApiException("Space not found") );
+			return;
+		}
+		
+		if (user == null)
+		{
+			this.container.fail( new ApiException("User not found") );
+			return;
+		}
+		
+		Relation space_user = await Relation::findItem("spaces_users", conn, {
+			"space_id": space_id,
+			"user_id": user.get("id"),
+		});
+		if (space_user != null)
+		{
+			space_user.delete(conn);
+		}
+		
+		this.container.success({});
 	}
 	
 }

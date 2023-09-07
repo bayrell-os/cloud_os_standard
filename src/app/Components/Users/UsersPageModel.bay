@@ -28,7 +28,7 @@ struct UsersPageModel extends CrudPageModel
 	Dict fields = {
 		"login": new FieldInfo{
 			"label": "Login",
-			"field_name": "name",
+			"field_name": "login",
 		},
 		"name": new FieldInfo{
 			"label": "Name",
@@ -37,6 +37,7 @@ struct UsersPageModel extends CrudPageModel
 		"banned": new FieldInfo{
 			"label": "Banned",
 			"field_name": "banned",
+			"default": "0",
 			"options": [
 				{"label": "No", "value": "0"},
 				{"label": "Yes", "value": "1"},

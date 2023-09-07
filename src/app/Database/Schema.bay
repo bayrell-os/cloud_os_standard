@@ -316,6 +316,26 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Workspace users
+	 */
+	@Table{ "name": "spaces_users" }
+	pure memorize Collection<BaseStruct> spaces_users() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "space_id"},
+		new BigIntType{"name": "user_id"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["space_id", "user_id"]},
+	];
+	
+	
+	/**
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
@@ -438,6 +458,7 @@ class Schema extends DatabaseSchema
 			item.getTableName() == "nginx_files" or
 			item.getTableName() == "routes" or
 			item.getTableName() == "spaces" or
+			item.getTableName() == "spaces_users" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"
 		)

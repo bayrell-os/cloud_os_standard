@@ -26,6 +26,7 @@
 <use name="Runtime.Web.Crud.TabItem" component="true" />
 <use name="Runtime.Web.Crud.Tabs" component="true" />
 <use name="Bayrell.CloudOS.Components.Workspace.DomainTablePage" component="true" />
+<use name="Bayrell.CloudOS.Components.Workspace.UsersTablePage" component="true" />
 
 
 <style>
@@ -78,7 +79,7 @@
 				<DomainTablePage @model=["domains"] />
 			</TabItem>
 			<TabItem name="users" @model=["tabs"]>
-				Users
+				<UsersTablePage @model=["users"] />
 			</TabItem>
 			<TabItem name="roles" @model=["tabs"]>
 				Roles

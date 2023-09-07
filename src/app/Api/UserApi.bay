@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Api;
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
@@ -94,9 +95,22 @@ class UserApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
+		int space_id = (int)this.post_data.get("space_id");
+		if (space_id > 0)
+		{
+			q.innerJoin(
+				"spaces_users",
+				[
+					"spaces_users.user_id=t.id",
+				],
+			)
+			q.where("spaces_users.space_id", "=", space_id);
+		}
+		
 		q = q
-			|> .orderBy("id", "desc")
+			|> .orderBy("t.id", "desc")
 		;
+		
 		return q;
 	}
 	
