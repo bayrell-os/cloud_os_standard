@@ -73,23 +73,23 @@ struct NginxFilePageModel extends CrudPageModel
 	{
 		if (action == "index")
 		{
-			return "Docker stack";
+			return "Nginx files";
 		}
 		else if (action == "add")
 		{
-			return "Add stack";
+			return "Add nginx file";
 		}
 		else if (action == "edit")
 		{
-			return "Edit stack '" ~ this.item_form.item["name"] ~ "'";
+			return "Edit nginx file '" ~ this.item_form.item["name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
-			return "Delete stack ?";
+			return "Delete nginx file ?";
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete stack '" ~ this.item_form.item["name"] ~ "' ?";
+			return "Delete nginx file '" ~ this.item_form.item["name"] ~ "' ?";
 		}
 		return "";
 	}

@@ -18,8 +18,11 @@
 
 namespace Bayrell.CloudOS.Components.Workspace;
 
+use Runtime.ModelProxy;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Models.Workspace;
+use Bayrell.CloudOS.Components.Workspace.DomainPageModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceDeletePage;
 use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage;
@@ -28,6 +31,9 @@ use Bayrell.CloudOS.Components.Workspace.WorkspaceTablePage;
 
 class WorkspacePageRoute extends CrudRoute
 {
+	
+	DomainPageModel domains = new DomainPageModel;
+	
 	
 	/**
 	 * Returns routes
@@ -57,6 +63,24 @@ class WorkspacePageRoute extends CrudRoute
 			"uri": "/workspace/{id}/delete/",
 			"name": "app:workspace:delete",
 			"method": "actionDelete",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/domains/",
+			"name": "app:workspace:domains",
+			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/users/",
+			"name": "app:workspace:users",
+			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/roles/",
+			"name": "app:workspace:roles",
+			"method": "actionEdit",
 		},
 	];
 	
@@ -96,4 +120,46 @@ class WorkspacePageRoute extends CrudRoute
 	 */
 	string getDeletePageName() => classof WorkspaceDeletePage;
 	
+	
+	/**
+	 * Action edit
+	 */
+	/**
+	 * Action edit
+	 */
+	async void actionEdit()
+	{
+		await parent::actionEdit();
+		
+		Workspace space = this.page_model.attr(["item_form", "item"])	
+		if (space)
+		{
+		
+			/* Users tab */
+			if (this.container.layout.route.name == "app:workspace:users")
+			{
+				this.page_model.proxy("tabs").commit("setTab", "users");
+			}
+			
+			/* Roles tab */
+			else if (this.container.layout.route.name == "app:workspace:roles")
+			{
+				this.page_model.proxy("tabs").commit("setTab", "roles");
+			}
+			
+			/* Domains tab */
+			else
+			{
+				int page = (int)this.container.request.query.get("page");
+				ModelProxy<DomainPageModel> domains = this.page_model.proxy("domains");
+				
+				/* Search domains */
+				domains.commit("setSpaceId", space.id);
+				domains.commit("setPage", page);
+				await domains.commitAsync("callCrudSearch");
+				
+				this.page_model.proxy("tabs").commit("setTab", "domains");
+			}
+		}
+	}
 }

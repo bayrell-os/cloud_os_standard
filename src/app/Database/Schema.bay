@@ -435,7 +435,7 @@ class Schema extends DatabaseSchema
 			item.getTableName() == "docker_yaml_files" or
 			item.getTableName() == "domains" or
 			item.getTableName() == "domains_ssl_groups" or
-			item.getTableName() == "gmtime_updated" or
+			item.getTableName() == "nginx_files" or
 			item.getTableName() == "routes" or
 			item.getTableName() == "spaces" or
 			item.getTableName() == "stacks" or

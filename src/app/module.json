@@ -47,6 +47,8 @@
 		"Components/Users/UsersPageRoute.bay",
 		"Components/Users/UsersSavePage.bay",
 		"Components/Users/UsersTablePage.bay",
+		"Components/Workspace/DomainPageModel.bay",
+		"Components/Workspace/DomainTablePage.bay",
 		"Components/Workspace/WorkspaceDeletePage.bay",
 		"Components/Workspace/WorkspacePageModel.bay",
 		"Components/Workspace/WorkspacePageRoute.bay",

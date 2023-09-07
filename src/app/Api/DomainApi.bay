@@ -24,6 +24,7 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
+use Runtime.Web.Crud.Rules.Filter;
 use Runtime.Web.Crud.Rules.LowerCase;
 use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
@@ -82,6 +83,7 @@ class DomainApi extends CrudPageApi
 		new LowerCase{ "name": "domain_name" },
 		new Required{ "name": "domain_name" },
 		new Unique{"keys": ["domain_name"]},
+		new Filter{"api_name": "space_id", "field_name": "space_id"},
 	];
 	
 	
@@ -90,9 +92,16 @@ class DomainApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
+		int space_id = (int)this.post_data.get("space_id");
+		if (space_id > 0)
+		{
+			q.where("space_id", "=", space_id);
+		}
+		
 		q = q
 			|> .orderBy("id", "asc")
-		;		
+		;
+		
 		return q;
 	}
 	

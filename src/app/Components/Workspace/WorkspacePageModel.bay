@@ -20,6 +20,8 @@ namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.FieldInfo;
+use Runtime.Web.Crud.TabModel;
+use Bayrell.CloudOS.Components.Workspace.DomainPageModel;
 use Bayrell.CloudOS.Models.Workspace;
 
 
@@ -35,6 +37,9 @@ struct WorkspacePageModel extends CrudPageModel
 			"field_name": "uid",
 		},
 	};
+	
+	TabModel tabs = new TabModel;
+	DomainPageModel domains = new DomainPageModel;
 	
 	
 	/**

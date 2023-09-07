@@ -20,6 +20,8 @@ namespace Bayrell.CloudOS.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.Exceptions.ApiException;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
@@ -62,6 +64,8 @@ class WorkspaceApi extends CrudPageApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "addDomain") return "actionAddDomain";
+		if (api_name == "deleteDomain") return "actionDeleteDomain";
 		return "";
 	}
 	
@@ -96,6 +100,63 @@ class WorkspaceApi extends CrudPageApi
 			|> .orderBy("id", "asc")
 		;
 		return q;
+	}
+	
+	
+	/**
+	 * Add domain
+	 */
+	async void actionAddDomain()
+	{
+		int space_id = this.post_data["space_id"];
+		int domain_id = this.post_data["domain_id"];
+		
+		Connection conn = this.getDatabaseConnection();
+		Relation space = Relation::findById("spaces", conn, space_id);
+		Relation domain = Relation::findById("domains", conn, domain_id);
+		
+		if (space == null)
+		{
+			this.container.fail( new ApiException("Space not found") );
+			return;
+		}
+		
+		if (domain == null)
+		{
+			this.container.fail( new ApiException("Domain not found") );
+			return;
+		}
+		
+		domain.set("space_id", space_id);
+		domain.save(conn);
+		
+		/* Set api result */
+		this.container.success();
+	}
+	
+	
+	/**
+	 * Delete domain
+	 */
+	async void actionDeleteDomain()
+	{
+		int space_id = this.post_data["space_id"];
+		int domain_id = this.post_data["domain_id"];
+		
+		Connection conn = this.getDatabaseConnection();
+		Relation domain = Relation::findById("domains", conn, domain_id);
+		
+		if (domain == null)
+		{
+			this.container.fail( new ApiException("Domain not found") );
+			return;
+		}
+		
+		domain.set("space_id", null);
+		domain.save(conn);
+		
+		/* Set api result */
+		this.container.success();
 	}
 	
 }
