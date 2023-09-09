@@ -106,7 +106,7 @@ struct DomainPageModel extends BaseDomainPageModel
 		}
 		
 		/* Add new item */
-		if (event == "crudItemBefore")
+		if (event == "crudItemAfter")
 		{
 			ModelProxy<FormModel> item_form = model.proxy("item_form");
 			Dict pk = item_form.call("getPrimaryKey");

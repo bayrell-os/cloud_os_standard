@@ -22,9 +22,12 @@ use Runtime.re;
 use Runtime.DateTime;
 use Runtime.Exceptions.ApiException;
 use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.Annotations.ForeignKey as ForeignKeyORM;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
+use Runtime.ORM.RelationArray;
+use Runtime.Web.ApiResult;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
 use Runtime.Web.Crud.Rules.LowerCase;
@@ -99,6 +102,45 @@ class WorkspaceRoleApi extends CrudPageApi
 			|> .orderBy("id", "asc")
 		;
 		return q;
+	}
+	
+	
+	/**
+	 * Search final event
+	 */
+	async void onSearchFinal()
+	{
+		Connection conn = this.getDatabaseConnection();
+		
+		await parent::onSearchFinal();
+		
+		/* Resolve foreign key */
+		if (this.action == "actionSearch" or this.action == "actionSearchOne")
+		{
+			Query q = this.items
+				.resolveReverseQuery(conn, "spaces_users_roles_role_id")
+				.fields([
+					"t.role_id",
+					"t.user_id",
+					"users.login",
+					"users.name",
+				])
+				.innerJoin(
+					"users",
+					[
+						"users.id=t.user_id"
+					]
+				)
+			;
+			
+			RelationArray result = await conn.fetchAll(q);
+			Collection users = result.toModel(classof Dict);
+			
+			/* Set api result */
+			ApiResult api_result = this.container.response;
+			api_result <= data <= dictionary <= users <= users;
+			this.container.response = api_result;
+		}
 	}
 	
 	

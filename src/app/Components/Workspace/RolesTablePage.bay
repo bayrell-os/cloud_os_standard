@@ -20,7 +20,9 @@
     extends="Runtime.Web.Crud.TablePage">
 
 
+<use name="Runtime.ModelProxy" />
 <use name="Runtime.Web.Layout" />
+<use name="Runtime.Web.Message" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Web.Crud.Button" component="true" />
 <use name="Runtime.Web.Crud.Dialog" component="true" />
@@ -28,7 +30,8 @@
 <use name="Runtime.Web.Crud.Input" component="true" />
 <use name="Runtime.Web.Crud.Select" component="true" />
 <use name="Bayrell.CloudOS.Components.Workspace.RolesPageModel" />
-<use name="Bayrell.CloudOS.Models.Routes" />
+<use name="Bayrell.CloudOS.Models.User" />
+<use name="Bayrell.CloudOS.Models.WorkspaceRole" />
 
 
 <script>
@@ -37,6 +40,7 @@ pure Collection<string> getColumns(Layout layout, RolesPageModel model) =>
 [
 	"row_number",
 	"name",
+	"users",
 	"row_buttons",
 ];
 
@@ -44,6 +48,7 @@ pure Collection<string> getColumns(Layout layout, RolesPageModel model) =>
 pure Dict<string> getLabels(Layout layout, RolesPageModel model) =>
 {
 	"name": "Role name",
+	"users": "Users",
 };
 
 </script>
@@ -58,12 +63,22 @@ pure Dict<string> getLabels(Layout layout, RolesPageModel model) =>
 </template>
 
 
-<template name="renderField" args="int row_number, string field_name, Route item">
+<template name="renderField" args="int row_number, string field_name, WorkspaceRole item">
 	
 	%if (field_name == "row_buttons")
 	{
+		<Button type="default small"
+			@event:MouseClickEvent="onEditClick" data-id={{ item.id }}>Edit</Button>
 		<Button type="danger small"
 			@event:MouseClickEvent="onDeleteClick" data-id={{ item.id }}>Delete</Button>
+	}
+	%if (field_name == "users")
+	{
+		%set Collection users = model.getUsersByRole(item.id);
+		%set users = users.map(
+			string (Dict user) => user["login"]
+		);
+		{{ rs::join(", ", users) }}
 	}
 	%else
 	{
@@ -73,9 +88,105 @@ pure Dict<string> getLabels(Layout layout, RolesPageModel model) =>
 </template>
 
 
+<style>
+.workspace_roles_users{
+	padding-top: 10px;
+}
+.workspace_roles_users_title{
+	font-weight: bold;
+	margin-bottom: 0.5em;
+}
+.workspace_roles_users_add{
+	margin-bottom: 0.5em;
+}
+.workspace_roles_users_add label{
+	font-weight: normal;
+}
+.workspace_roles_users_add label,
+.workspace_roles_users_add input,
+.workspace_roles_users_add button{
+	display: inline-block;
+	margin-bottom: 0;
+}
+.workspace_roles_users_add input{
+	width: 150px;
+	margin-left: 10px;
+}
+</style>
+
+
 <template name="renderSaveDialogContent">
 	%render Form::renderRow(classof Input, model.fields["name"]);
+	%if (model.item_form.item_pk != null)
+	{
+		<div class="workspace_roles_users">
+			<div class="workspace_roles_users_title">Users</div>
+			<div class="workspace_roles_users_add">
+				<label class="web_form__row_label">Login</label>
+				<Input @model=["add_user_name"] />
+				<Button type="success"
+					@event:MouseClickEvent="onAddUserClick">
+						Add user
+				</Button>
+			</div>
+			<div class="workspace_roles_users_list">
+				%if (model.users != null)
+				{
+					<table>
+					%for (int i=0; i<model.users.count(); i++)
+					{
+						%set User user = model.users[i];
+						<tr class="workspace_roles_users_item"
+							data-user-id={{ user.id }}
+							@key={{ user.id }}
+						>
+							<td>
+								{{ user.name ~ " <" ~ user.login ~ ">" }}
+							</td>
+							<td>
+								<Button type="danger small"
+									data-id={{ user.id }}
+									@event:MouseClickEvent="onDeleteUserClick">
+										Delete
+								</Button>
+							</td>
+						</tr>
+					}
+					</table>
+				}
+			</div>
+		</div>
+	}
 </template>
+
+
+<script>
+
+/**
+ * Add user button click
+ */
+async void onAddUserClick(Message<MouseClickEvent> msg)
+{
+	ModelProxy<RolesPageModel> model = this.proxy();
+	await model.commitAsync("callUserAdd");
+	await model.commitAsync("callUserSearch");
+	await model.commitAsync("callCrudSearch");
+}
+
+
+/**
+ * Delete user button click
+ */
+async void onDeleteUserClick(Message<MouseClickEvent> msg)
+{
+	int user_id = msg.sender.params.get("data-id");
+	ModelProxy<RolesPageModel> model = this.proxy();
+	await model.commitAsync("callUserDelete", user_id);
+	await model.commitAsync("callUserSearch");
+	await model.commitAsync("callCrudSearch");
+}
+
+</script>
 
 
 </class>

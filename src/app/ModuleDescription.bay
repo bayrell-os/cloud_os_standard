@@ -85,6 +85,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Api.UserApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceRoleApi"),
+		new Api("Bayrell.CloudOS.Api.WorkspaceRoleUserApi"),
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),

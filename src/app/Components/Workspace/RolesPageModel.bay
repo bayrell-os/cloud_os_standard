@@ -26,8 +26,10 @@ use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.DialogModel;
 use Runtime.Web.Crud.FieldInfo;
 use Runtime.Web.Crud.FormModel;
+use Bayrell.CloudOS.Components.Workspace.RolesPageModel;
 use Bayrell.CloudOS.Models.Domain;
 use Bayrell.CloudOS.Models.Route;
+use Bayrell.CloudOS.Models.User;
 use Bayrell.CloudOS.Models.WorkspaceRole;
 
 
@@ -54,12 +56,15 @@ struct RolesPageModel extends CrudPageModel
 		},
 	};
 	
-    
-    /**
+	string add_user_name = "";
+	Collection<User> users = [];
+	
+	
+	/**
 	 * Returns api name
 	 */
 	pure string getApiName() => "app.workspace.roles";
-    
+	
 	
 	/**
 	 * Returns page type
@@ -82,6 +87,14 @@ struct RolesPageModel extends CrudPageModel
 	
 	
 	/**
+	 * Setup users
+	 */
+	RolesPageModel setUsers(Collection users) => this.copy{
+		"users": users
+	};
+	
+	
+	/**
 	 * Event
 	 */
 	async static Dict event(ModelProxy model, string event, Dict data)
@@ -97,14 +110,114 @@ struct RolesPageModel extends CrudPageModel
 			event == "crudSearchBefore"
 		)
 		{
-			int space_id = model.data("space_id");
 			if (space_id > 0)
 			{
 				data <= post_data <= space_id <= space_id;
 			}
 		}
 		
+		/* Add new item */
+		if (event == "crudItemAfter")
+		{
+			ModelProxy<FormModel> item_form = model.proxy("item_form");
+			Dict pk = item_form.call("getPrimaryKey");
+			if (pk != null)
+			{
+				await model.commitAsync("callUserSearch");
+			}
+		}
+		
 		return data;
+	}
+	
+	
+	/**
+	 * Clear item
+	 */
+	RolesPageModel clearItem()
+	{
+		RolesPageModel item = parent::clearItem();
+		item <= add_user_name <= "";
+		item <= users <= [];
+		return item;
+	}
+	
+	
+	/**
+	 * Get users by role
+	 */
+	Collection getUsersByRole(int role_id)
+	{
+		Collection users = this.dictionary["users"];
+		return users.filter(
+			bool (Dict user) use (role_id) => user["role_id"] == role_id
+		)
+	}
+	
+	
+	/**
+	 * Search users
+	 */
+	async static void callUserSearch(ModelProxy<RolesPageModel> model)
+	{
+		ModelProxy<FormModel> item_form = model.proxy("item_form");
+		
+		ApiResult res = await Bus::callApi("app.workspace.roles.users::crud.search", {
+			"role_id": item_form.data(["item", "id"]),
+		});
+		
+		if (res.isSuccess())
+		{
+			Collection items = res.data["items"];
+			model.commit("setUsers", items);
+		}
+	}
+	
+	
+	/**
+	 * Add user
+	 */
+	async static void callUserAdd(ModelProxy<RolesPageModel> model)
+	{
+		string user_login = model.data("add_user_name");
+		int role_id = model.data(["item_form", "item", "id"]);
+		
+		model.proxy("save_dialog").commit("setWaitMessage");
+		
+		ApiResult res = await Bus::callApi(
+			"app.workspace.roles.users::crud.add",
+			{
+				"role_id": role_id,
+				"user_login": user_login,
+			}
+		);
+		
+		model.proxy("save_dialog").commit("setApiResult", "callUserAdd", res);
+	}
+	
+	
+	/**
+	 * Add delete
+	 */
+	async static void callUserDelete(ModelProxy<RolesPageModel> model, int user_id)
+	{
+		int role_id = model.data(["item_form", "item", "id"]);
+		
+		/* Remove users from list */
+		Collection<User> users = model.data("users");
+		users = users.filter(
+			bool (User item) use (user_id) => item.id != user_id
+		)
+		model.commit("setUsers", users);
+		
+		/* Send api */
+		ApiResult res = await Bus::callApi(
+			"app.workspace.roles.users::crud.delete",
+			{
+				"role_id": role_id,
+				"user_id": user_id,
+			}
+		);
 	}
 	
 }

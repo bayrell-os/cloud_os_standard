@@ -1,0 +1,222 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Api;
+
+use Runtime.re;
+use Runtime.DateTime;
+use Runtime.Exceptions.ApiException;
+use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Query;
+use Runtime.ORM.Relation;
+use Runtime.Web.Crud.CrudPageApi;
+use Runtime.Web.Crud.Rules.CrudRule;
+use Runtime.Web.Crud.Rules.LowerCase;
+use Runtime.Web.Crud.Rules.Purify;
+use Runtime.Web.Crud.Rules.Required;
+use Runtime.Web.Crud.Rules.SaveFields;
+use Runtime.Web.Crud.Rules.Unique;
+use Bayrell.CloudOS.Models.User;
+
+
+class WorkspaceRoleUserApi extends CrudPageApi
+{
+	Relation role = null;
+	Relation space = null;
+	
+	
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.workspace.roles.users";
+	
+	
+	/**
+	 * Returns model name
+	 */
+	pure string getModelName() => classof User;
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string getTableName() => "spaces_users_roles";
+	
+	
+	/**
+	 * Returns api methods
+	 */
+	pure string getApiMethod(string api_name)
+	{
+		if (api_name == "crud.search") return "actionSearch";
+		if (api_name == "crud.search_one") return "actionSearchOne";
+		if (api_name == "crud.item") return "actionItem";
+		if (api_name == "crud.add") return "actionAdd";
+		if (api_name == "crud.delete") return "actionDelete";
+		return "";
+	}
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Collection<CrudRule> getRules() =>
+	[
+		new SaveFields
+		{
+			"fields":
+			[
+				"user_id",
+				"role_id",
+			]
+		},
+		new Unique{"keys": ["user_id", "role_id"]},
+	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async Query buildSearchQuery(Query q)
+	{
+		int role_id = this.post_data["role_id"];
+		
+		q.fields([
+			"users.*",
+		]);
+		
+		q.innerJoin(
+			"spaces_users",
+			[
+				"spaces_users.user_id=t.user_id",
+			]
+		);
+		q.innerJoin(
+			"users",
+			[
+				"users.id=spaces_users.user_id",
+			]
+		);
+		
+		q.where("t.role_id", "=", role_id);
+		q.where("spaces_users.space_id", "=", this.space.get("id"));
+		
+		q.orderBy("users.name", "asc");
+		q.limit(-1);
+		
+		return q;
+	}
+	
+	
+	/**
+	 * Get role by id
+	 */
+	async void findRole()
+	{
+		Connection conn = this.getDatabaseConnection();
+		int role_id = this.post_data["role_id"];
+		
+		this.role = await Relation::findById("spaces_roles", conn, role_id);
+		if (this.role == null)
+		{
+			throw new ApiException("Role not found");
+		}
+		
+		this.space = await Relation::findById("spaces", conn, this.role.get("space_id"));
+		if (this.space == null)
+		{
+			throw new ApiException("Space not found");
+		}
+	}
+	
+	
+	/**
+	 * Search init event
+	 */	 
+	async void onSearchInit()
+	{
+		await parent::onSearchInit();
+		await this.findRole();
+	}
+	
+	
+	/**
+	 * Before save item
+	 */
+	async void actionAdd()
+	{
+		await this.findRole();
+		
+		Connection conn = this.getDatabaseConnection();
+		int user_login = this.post_data["user_login"];
+		
+		Relation user = await Relation::findItem("users", conn, {
+			"login": user_login,
+		});
+		
+		if (user == null)
+		{
+			throw new ApiException("User not found");
+		}
+		
+		Relation item = await Relation::findItem("spaces_users_roles", conn, {
+			"user_id": user.get("id"),
+			"role_id": this.role.get("id"),
+		});
+		
+		if (item != null)
+		{
+			throw new ApiException("User already exists");
+		}
+		
+		item = new Relation("spaces_users_roles");
+		item.set("user_id", user.get("id"));
+		item.set("role_id", this.role.get("id"));
+		await item.save(conn);
+		
+		this.container.success();
+	}
+	
+	
+	/**
+	 * Before delete item
+	 */
+	async void actionDelete()
+	{
+		await this.findRole();
+		
+		Connection conn = this.getDatabaseConnection();
+		int user_id = this.post_data["user_id"];
+		
+		Relation item = await Relation::findItem("spaces_users_roles", conn, {
+			"user_id": user_id,
+			"role_id": this.role.get("id"),
+		});
+		
+		if (item == null)
+		{
+			throw new ApiException("User does not exists");
+		}
+		
+		await item.delete(conn);
+		
+		this.container.success();
+	}
+	
+}

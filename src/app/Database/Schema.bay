@@ -236,6 +236,29 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Modificators
+	 */
+	@Table{ "name": "modificators" }
+	pure memorize Collection<BaseStruct> modificators() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "uid"},
+		new StringType{"name": "version"},
+		new StringType{"name": "name"},
+		new StringType{"name": "content"},
+		new BigIntType{"name": "priority"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["uid"]},
+	];
+	
+	
+	/**
 	 * Nginx files
 	 */
 	@Table{ "name": "nginx_files", "model_name": classof NginxFile }
@@ -316,6 +339,26 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Workspace roles
+	 */
+	@Table{ "name": "spaces_roles" }
+	pure memorize Collection<BaseStruct> spaces_roles() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "name"},
+		new TinyIntType{"name": "is_deleted"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["space_id", "name"]},
+	];
+	
+	
+	/**
 	 * Workspace users
 	 */
 	@Table{ "name": "spaces_users" }
@@ -336,45 +379,36 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
-	 * Workspace roles
+	 * Workspace users
 	 */
-	@Table{ "name": "spaces_roles" }
-	pure memorize Collection<BaseStruct> spaces_roles() =>
+	@Table{ "name": "spaces_users_roles" }
+	pure memorize Collection<BaseStruct> spaces_users_roles() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id"},
-		new StringType{"name": "name"},
-		new BigIntType{"name": "is_deleted"},
+		new BigIntType{"name": "user_id"},
+		new BigIntType{"name": "role_id"},
+		new TinyIntType{"name": "is_deleted"},
 		new DateTimeType{"name": "gmtime_created"},
 		new DateTimeType{"name": "gmtime_updated"},
 		
 		/* Index */
-		new AutoIncrement{"name": "id"},
-		new Primary{"keys": ["id"]},
-		new Unique{"keys": ["space_id", "name"]},
-	];
-	
-	
-	/**
-	 * Modificators
-	 */
-	@Table{ "name": "modificators" }
-	pure memorize Collection<BaseStruct> modificators() =>
-	[
-		/* Fields */
-		new BigIntType{"name": "id"},
-		new StringType{"name": "uid"},
-		new StringType{"name": "version"},
-		new StringType{"name": "name"},
-		new StringType{"name": "content"},
-		new BigIntType{"name": "priority"},
-		new DateTimeType{"name": "gmtime_created"},
-		new DateTimeType{"name": "gmtime_updated"},
+		new Primary{"keys": ["user_id", "role_id"]},
 		
-		/* Index */
-		new AutoIncrement{"name": "id"},
-		new Primary{"keys": ["id"]},
-		new Unique{"keys": ["uid"]},
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"name": "spaces_users_roles_role_id",
+			"table_name": "spaces_roles",
+			"primary_key": "id",
+			"foreign_key": "role_id",
+		},
+		new ForeignKey
+		{
+			"name": "spaces_users_roles_user_id",
+			"table_name": "users",
+			"primary_key": "id",
+			"foreign_key": "user_id",
+		},
 	];
 	
 	
@@ -480,6 +514,7 @@ class Schema extends DatabaseSchema
 			item.getTableName() == "spaces" or
 			item.getTableName() == "spaces_roles" or
 			item.getTableName() == "spaces_users" or
+			item.getTableName() == "spaces_users_roles" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"
 		)
