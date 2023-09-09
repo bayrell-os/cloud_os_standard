@@ -70,7 +70,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> applications() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "stack_name"},
 		new StringType{"name": "name"},
 		new BigIntType{"name": "template_version_id"},
@@ -171,7 +171,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> docker_yaml_files() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "file_name"},
 		new StringType{"name": "stack_name", "default": "app"},
 		new StringType{"name": "content"},
@@ -195,7 +195,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> domains() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new BigIntType{"name": "space_id"},
 		new BigIntType{"name": "ssl_id"},
 		new BigIntType{"name": "https_redirect"},
@@ -219,7 +219,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> domains_ssl_groups() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "name"},
 		new StringType{"name": "container_name"},
 		new DictType{"name": "cert_info"},
@@ -242,7 +242,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> nginx_files() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "name"},
 		new BigIntType{"name": "enable"},
 		new StringType{"name": "content"},
@@ -265,7 +265,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> routes() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new BigIntType{"name": "enable"},
 		new StringType{"name": "protocol"},
 		new DictType{"name": "protocol_data", "default": {}},
@@ -302,7 +302,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> spaces() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "uid"},
 		new StringType{"name": "name"},
 		new DateTimeType{"name": "gmtime_created"},
@@ -322,7 +322,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> spaces_users() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new BigIntType{"name": "space_id"},
 		new BigIntType{"name": "user_id"},
 		new DateTimeType{"name": "gmtime_created"},
@@ -336,13 +336,33 @@ class Schema extends DatabaseSchema
 	
 	
 	/**
+	 * Workspace roles
+	 */
+	@Table{ "name": "spaces_roles" }
+	pure memorize Collection<BaseStruct> spaces_roles() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "id"},
+		new StringType{"name": "name"},
+		new BigIntType{"name": "is_deleted"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new AutoIncrement{"name": "id"},
+		new Primary{"keys": ["id"]},
+		new Unique{"keys": ["space_id", "name"]},
+	];
+	
+	
+	/**
 	 * Modificators
 	 */
 	@Table{ "name": "modificators" }
 	pure memorize Collection<BaseStruct> modificators() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "uid"},
 		new StringType{"name": "version"},
 		new StringType{"name": "name"},
@@ -381,7 +401,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> templates() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "uid"},
 		new StringType{"name": "name"},
 		new DateTimeType{"name": "gmtime_created"},
@@ -401,7 +421,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> templates_versions() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new BigIntType{"name": "template_id"},
 		new StringType{"name": "version"},
 		new StringType{"name": "content"},
@@ -430,7 +450,7 @@ class Schema extends DatabaseSchema
 	pure memorize Collection<BaseStruct> users() =>
 	[
 		/* Fields */
-		new BigIntType{"name": "id", "no_default": true},
+		new BigIntType{"name": "id"},
 		new StringType{"name": "login"},
 		new StringType{"name": "name"},
 		new TinyIntType{"name": "banned"},
@@ -458,6 +478,7 @@ class Schema extends DatabaseSchema
 			item.getTableName() == "nginx_files" or
 			item.getTableName() == "routes" or
 			item.getTableName() == "spaces" or
+			item.getTableName() == "spaces_roles" or
 			item.getTableName() == "spaces_users" or
 			item.getTableName() == "stacks" or
 			item.getTableName() == "users"

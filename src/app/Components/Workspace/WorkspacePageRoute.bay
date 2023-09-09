@@ -23,6 +23,7 @@ use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Models.Workspace;
 use Bayrell.CloudOS.Components.Workspace.DomainPageModel;
+use Bayrell.CloudOS.Components.Workspace.RolesPageModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceDeletePage;
 use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage;
@@ -124,9 +125,6 @@ class WorkspacePageRoute extends CrudRoute
 	/**
 	 * Action edit
 	 */
-	/**
-	 * Action edit
-	 */
 	async void actionEdit()
 	{
 		await parent::actionEdit();
@@ -151,6 +149,14 @@ class WorkspacePageRoute extends CrudRoute
 			/* Roles tab */
 			else if (this.container.layout.route.name == "app:workspace:roles")
 			{
+				int page = (int)this.container.request.query.get("page");
+				ModelProxy<RolesPageModel> roles = this.page_model.proxy("roles");
+				
+				/* Search roles */
+				roles.commit("setSpaceId", space.id);
+				roles.commit("setPage", page);
+				await roles.commitAsync("callCrudSearch");
+				
 				this.page_model.proxy("tabs").commit("setTab", "roles");
 			}
 			

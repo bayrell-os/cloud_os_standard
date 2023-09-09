@@ -23,6 +23,7 @@ use Runtime.Web.Crud.FieldInfo;
 use Runtime.Web.Crud.TabModel;
 use Bayrell.CloudOS.Components.Workspace.DomainPageModel;
 use Bayrell.CloudOS.Components.Workspace.UsersPageModel;
+use Bayrell.CloudOS.Components.Workspace.RolesPageModel;
 use Bayrell.CloudOS.Models.Workspace;
 
 
@@ -42,6 +43,7 @@ struct WorkspacePageModel extends CrudPageModel
 	TabModel tabs = new TabModel;
 	DomainPageModel domains = new DomainPageModel;
 	UsersPageModel users = new UsersPageModel;
+	RolesPageModel roles = new RolesPageModel;
 	
 	
 	/**
