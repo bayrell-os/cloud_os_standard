@@ -114,17 +114,17 @@ class RouteApi extends CrudPageApi
 		int domain_id = (int)this.post_data["domain_id"];
 		if (domain_id > 0)
 		{
-			q = q.where("domain_id", "=", domain_id)
+			q = q.where("t.domain_id", "=", domain_id)
 		}
 		
 		q.leftJoin("domains", [
-			"domains.id = domain_id",
+			"domains.id = t.domain_id",
 		]);
 		
 		q = q
-			|> .orderBy("domains.domain_name", "asc")
-			|> .orderBy("route_prefix", "asc")
-			|> .orderBy("id", "desc")
+			.orderBy("domains.domain_name", "asc")
+			.orderBy("t.route_prefix", "asc")
+			.orderBy("t.id", "desc")
 		;
 		
 		return q;

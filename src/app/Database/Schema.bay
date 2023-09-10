@@ -346,6 +346,7 @@ class Schema extends DatabaseSchema
 	[
 		/* Fields */
 		new BigIntType{"name": "id"},
+		new BigIntType{"name": "space_id"},
 		new StringType{"name": "name"},
 		new TinyIntType{"name": "is_deleted"},
 		new DateTimeType{"name": "gmtime_created"},
@@ -375,6 +376,15 @@ class Schema extends DatabaseSchema
 		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},
 		new Unique{"keys": ["space_id", "user_id"]},
+		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"name": "spaces_users_user_id",
+			"table_name": "users",
+			"primary_key": "id",
+			"foreign_key": "user_id",
+		},
 	];
 	
 	

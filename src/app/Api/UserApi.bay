@@ -98,18 +98,11 @@ class UserApi extends CrudPageApi
 		int space_id = (int)this.post_data.get("space_id");
 		if (space_id > 0)
 		{
-			q.innerJoin(
-				"spaces_users",
-				[
-					"spaces_users.user_id=t.id",
-				],
-			)
+			q.reverseJoinKey("spaces_users_user_id");
 			q.where("spaces_users.space_id", "=", space_id);
 		}
 		
-		q = q
-			|> .orderBy("t.id", "desc")
-		;
+		q.orderBy("t.id", "desc");
 		
 		return q;
 	}
