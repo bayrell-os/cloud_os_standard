@@ -90,9 +90,7 @@ class DockerStackApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q
-			|> .orderBy("stack_name", "asc")
-		;
+		q = q.orderBy("stack_name", "asc");
 		return q;
 	}
 	

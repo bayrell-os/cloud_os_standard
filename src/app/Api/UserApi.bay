@@ -102,7 +102,7 @@ class UserApi extends CrudPageApi
 			q.where("spaces_users.space_id", "=", space_id);
 		}
 		
-		q.orderBy("t.id", "desc");
+		q.orderBy("users.id", "desc");
 		
 		return q;
 	}

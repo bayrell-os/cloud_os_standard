@@ -98,9 +98,7 @@ class WorkspaceRoleApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q
-			|> .orderBy("id", "asc")
-		;
+		q = q.orderBy("id", "asc");
 		return q;
 	}
 	
@@ -120,15 +118,15 @@ class WorkspaceRoleApi extends CrudPageApi
 			Query q = this.items
 				.resolveReverseQuery(conn, "spaces_users_roles_role_id")
 				.fields([
-					"t.role_id",
-					"t.user_id",
+					"spaces_users_roles.role_id",
+					"spaces_users_roles.user_id",
 					"users.login",
 					"users.name",
 				])
 				.innerJoin(
 					"users",
 					[
-						"users.id=t.user_id"
+						"users.id=spaces_users_roles.user_id"
 					]
 				)
 			;

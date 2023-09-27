@@ -1,0 +1,122 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Templates;
+
+use Runtime.ModelProxy;
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.Templates.TemplateDeletePage;
+use Bayrell.CloudOS.Components.Templates.TemplatePageModel;
+use Bayrell.CloudOS.Components.Templates.TemplateSavePage;
+use Bayrell.CloudOS.Components.Templates.TemplateTablePage;
+use Bayrell.CloudOS.Components.Templates.VersionPageModel;
+use Bayrell.CloudOS.Models.Template;
+use Bayrell.CloudOS.Models.TemplateVersion;
+
+
+class TemplatePageRoute extends CrudRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/templates/",
+			"name": "app:templates:index",
+			"method": "actionIndex",
+		},
+		new RouteInfo
+		{
+			"uri": "/templates/{id}/edit/",
+			"name": "app:templates:edit",
+			"method": "actionEdit",
+		},
+		new RouteInfo
+		{
+			"uri": "/templates/{id}/delete/",
+			"name": "app:templates:delete",
+			"method": "actionDelete",
+		},
+	];
+	
+	
+	/**
+	 * Returns layout name
+	 */
+	string getLayoutName() => "default";
+	
+	
+	/**
+	 * Returns page model
+	 */
+	string getPageModelName() => classof TemplatePageModel;
+	
+	
+	/**
+	 * Returns index page name
+	 */
+	string getIndexPageName() => classof TemplateTablePage;
+	
+	
+	/**
+	 * Returns save page name
+	 */
+	string getSavePageName() => classof TemplateSavePage;
+	
+	
+	/**
+	 * Returns delete page name
+	 */
+	string getDeletePageName() => classof TemplateDeletePage;
+	
+	
+	/**
+	 * Returns id location
+	 */
+	Dict getPrimaryKey() =>
+		this.container.route.matches.has("id") ? {
+			"id": this.container.route.matches.get("id")
+		} : null
+	;
+	
+	
+	/**
+	 * Action edit
+	 */
+	async void actionEdit()
+	{
+		await parent::actionEdit();
+		
+		Template template = this.page_model.attr(["item_form", "item"]);
+		if (template)
+		{
+			int page = (int)this.container.request.query.get("page");
+			ModelProxy<VersionPageModel> versions = this.page_model.proxy("versions");
+			
+			/* Search template versions */
+			versions.commit("setTemplateId", template.id);
+			versions.commit("setPage", page);
+			await versions.commitAsync("callCrudSearch");
+		}
+	}
+	
+}

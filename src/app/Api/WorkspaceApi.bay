@@ -98,9 +98,7 @@ class WorkspaceApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q
-			|> .orderBy("id", "asc")
-		;
+		q = q.orderBy("id", "asc");
 		return q;
 	}
 	

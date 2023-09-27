@@ -94,9 +94,7 @@ class NginxFileApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q
-			|> .orderBy("name", "asc")
-		;
+		q = q.orderBy("name", "asc");
 		return q;
 	}
 	

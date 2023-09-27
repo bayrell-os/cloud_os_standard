@@ -16,17 +16,17 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Modificators;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.DockerStack.StackDeletePage;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
-use Bayrell.CloudOS.Components.DockerStack.StackSavePage;
-use Bayrell.CloudOS.Components.DockerStack.StackTablePage;
+use Bayrell.CloudOS.Components.Modificators.ModificatorDeletePage;
+use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
+use Bayrell.CloudOS.Components.Modificators.ModificatorSavePage;
+use Bayrell.CloudOS.Components.Modificators.ModificatorTablePage;
 
 
-class StackPageRoute extends CrudRoute
+class ModificatorPageRoute extends CrudRoute
 {
 	
 	/**
@@ -36,35 +36,23 @@ class StackPageRoute extends CrudRoute
 	[
 		new RouteInfo
 		{
-			"uri": "/docker/stack/",
-			"name": "app:docker:stack:index",
+			"uri": "/modificators/",
+			"name": "app:modificators:index",
 			"method": "actionIndex",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/add/",
-			"name": "app:docker:stack:add",
-			"method": "actionAdd",
-		},
-		new RouteInfo
-		{
-			"uri": "/docker/stack/{id}/",
-			"name": "app:docker:stack:edit",
+			"uri": "/modificators/{id}/edit/",
+			"name": "app:modificators:edit",
 			"method": "actionEdit",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/delete/",
-			"name": "app:docker:stack:delete",
+			"uri": "/modificators/{id}/delete/",
+			"name": "app:modificators:delete",
 			"method": "actionDelete",
 		},
 	];
-	
-	
-	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "stack_name";
 	
 	
 	/**
@@ -76,25 +64,25 @@ class StackPageRoute extends CrudRoute
 	/**
 	 * Returns page model
 	 */
-	string getPageModelName() => classof StackPageModel;
+	string getPageModelName() => classof ModificatorPageModel;
 	
 	
 	/**
 	 * Returns index page name
 	 */
-	string getIndexPageName() => classof StackTablePage;
+	string getIndexPageName() => classof ModificatorTablePage;
 	
 	
 	/**
 	 * Returns save page name
 	 */
-	string getSavePageName() => classof StackSavePage;
+	string getSavePageName() => classof ModificatorSavePage;
 	
 	
 	/**
 	 * Returns delete page name
 	 */
-	string getDeletePageName() => classof StackDeletePage;
+	string getDeletePageName() => classof ModificatorDeletePage;
 	
 	
 	/**
@@ -102,7 +90,7 @@ class StackPageRoute extends CrudRoute
 	 */
 	Dict getPrimaryKey() =>
 		this.container.route.matches.has("id") ? {
-			"stack_name": this.container.route.matches.get("id")
+			"id": this.container.route.matches.get("id")
 		} : null
 	;
 	

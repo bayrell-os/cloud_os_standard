@@ -242,10 +242,22 @@ pure Collection getMenu()
 				{
 					"title": "Templates",
 					"link": "app:templates:index",
+					"links": [
+						"app:templates:index",
+						"app:templates:add",
+						"app:templates:edit",
+						"app:templates:delete",
+					],
 				},
 				{
 					"title": "Modificators",
 					"link": "app:modificators:index",
+					"links": [
+						"app:modificators:index",
+						"app:modificators:add",
+						"app:modificators:edit",
+						"app:modificators:delete",
+					],
 				},
 			]
 		},

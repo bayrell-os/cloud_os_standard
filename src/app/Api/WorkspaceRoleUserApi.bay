@@ -104,7 +104,7 @@ class WorkspaceRoleUserApi extends CrudPageApi
 		q.innerJoin(
 			"spaces_users",
 			[
-				"spaces_users.user_id=t.user_id",
+				"spaces_users.user_id=spaces_users_roles.user_id",
 			]
 		);
 		q.innerJoin(
@@ -114,7 +114,7 @@ class WorkspaceRoleUserApi extends CrudPageApi
 			]
 		);
 		
-		q.where("t.role_id", "=", role_id);
+		q.where("spaces_users_roles.role_id", "=", role_id);
 		q.where("spaces_users.space_id", "=", this.space.get("id"));
 		
 		q.orderBy("users.name", "asc");

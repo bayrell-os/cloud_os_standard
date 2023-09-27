@@ -24,33 +24,32 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
-use Runtime.Web.Crud.Rules.Filter;
 use Runtime.Web.Crud.Rules.LowerCase;
 use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Domain;
+use Bayrell.CloudOS.Models.Template;
 
 
-class DomainApi extends CrudPageApi
+class TemplateApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.domain";
+	pure string getApiName() => "app.template";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof Domain;
+	pure string getModelName() => classof Template;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains";
+	pure string getTableName() => "templates";
 	
 	
 	/**
@@ -76,14 +75,16 @@ class DomainApi extends CrudPageApi
 		{
 			"fields":
 			[
-				"domain_name",
+				"uid",
+				"name",
 			]
 		},
-		new Purify{ "name": "domain_name" },
-		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "domain_name" },
-		new Unique{"keys": ["domain_name"]},
-		new Filter{"api_name": "space_id", "field_name": "space_id"},
+		new Purify{ "name": "uid" },
+		new LowerCase{ "name": "uid" },
+		new Required{ "name": "uid" },
+		new Purify{ "name": "name" },
+		new Required{ "name": "name" },
+		new Unique{"keys": ["uid"]},
 	];
 	
 	
@@ -92,14 +93,7 @@ class DomainApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		int space_id = (int)this.post_data.get("space_id");
-		if (space_id > 0)
-		{
-			q.where("space_id", "=", space_id);
-		}
-		
-		q = q.orderBy("domains.id", "asc");
-		
+		q = q.orderBy("name", "asc");
 		return q;
 	}
 	

@@ -1,0 +1,101 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Modificators;
+
+use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.FieldInfo;
+use Bayrell.CloudOS.Models.Modificator;
+
+
+struct ModificatorPageModel extends CrudPageModel
+{
+	Dict fields = {
+		"uid": new FieldInfo{
+			"label": "UID",
+			"field_name": "uid",
+		},
+		"name": new FieldInfo{
+			"label": "Name",
+			"field_name": "name",
+		},
+		"version": new FieldInfo{
+			"label": "Version",
+			"field_name": "version",
+		},
+		"priority": new FieldInfo{
+			"label": "Priority",
+			"field_name": "priority",
+		},
+		"content": new FieldInfo{
+			"label": "Content",
+			"field_name": "content",
+		},
+	};
+	
+	
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.modificator";
+	
+	
+	/**
+	 * Returns model name
+	 */
+	pure string getModelName() => classof Modificator;
+	
+	
+	/**
+	 * Validate model
+	 */
+	public bool validateForm()
+	{
+		return true;
+	}
+	
+	
+	/**
+	 * Returns page title
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "index")
+		{
+			return "Modificators";
+		}
+		else if (action == "add")
+		{
+			return "Add modificator";
+		}
+		else if (action == "edit")
+		{
+			return "Edit modificator '" ~ this.item_form.item["name"] ~ "'";
+		}
+		else if (action == "delete")
+		{
+			return "Delete modificator ?";
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete modificator '" ~ this.item_form.item["name"] ~ "' ?";
+		}
+		return "";
+	}
+	
+}
