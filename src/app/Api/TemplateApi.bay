@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
@@ -29,6 +30,7 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
+use Bayrell.CloudOS.Lib.XML;
 use Bayrell.CloudOS.Models.Template;
 
 
@@ -62,6 +64,7 @@ class TemplateApi extends CrudPageApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "import") return "actionImport";
 		return "";
 	}
 	
@@ -95,6 +98,118 @@ class TemplateApi extends CrudPageApi
 	{
 		q = q.orderBy("name", "asc");
 		return q;
+	}
+	
+	
+	/**
+	 * Action import
+	 */
+	async void actionImport()
+	{
+		string content = this.post_data["content"];
+		
+		Collection r1 = XML::loadXml(content);
+		XML xml = r1[0];
+		Collection errors=r1[1];
+		
+		if (xml == null)
+		{
+			return this.container.fail({
+				"message": "XML is empty",
+			});
+		}
+		
+		if (errors.count() > 0)
+		{
+			string error_message = rs::join("\n", errors);
+			return this.container.fail({
+				"message": error_message,
+			});
+		}
+		
+		string type = xml.getName();
+		string name = xml.value("name");
+		string priority = xml.value("priority");
+		string uid = xml.value("uid");
+		string version = xml.value("version");
+		
+		if (uid == "" or version == "" or name == "")
+		{
+			return this.container.fail({
+				"message": "uid, name, version or type is empty",
+			});
+		}
+		
+		if (type != "template" and type != "modificator")
+		{
+			return this.container.fail({
+				"message": "XML must be template or modificator",
+			});
+		}
+		
+		Connection conn = this.getDatabaseConnection();
+		
+		if (type == "modificator")
+		{
+			Relation modificator = Relation::findItem("modificators", conn, {
+				"uid": uid,
+			});
+			
+			if (modificator == null)
+			{
+				modificator = new Relation("modificators");
+				modificator.set("uid", uid);
+			}
+			
+			modificator.set("content", content);
+			modificator.set("name", name);
+			modificator.set("priority", priority);
+			modificator.set("version", version);
+			modificator.save(conn);
+			modificator.refresh(conn);
+			
+			this.container.success({
+				"message": "Ok",
+			});
+			
+			return;
+		}
+		
+		Relation template_item = Relation::findItem("templates", conn, {
+			"uid": uid,
+		});
+		
+		if (template_item == null)
+		{
+			template_item = new Relation("templates");
+			template_item.set("uid", uid);
+			template_item.set("name", name);
+			template_item.save(conn);
+			template_item.refresh(conn);
+		}
+		
+		int template_id = template_item.get("id");
+		Relation version_item = Relation::findItem("templates_versions", conn, {
+			"template_id": template_id,
+			"version": version,
+		});
+		
+		if (version_item == null)
+		{
+			version_item = new Relation("templates_versions");
+			version_item.set("template_id", template_id);
+			version_item.set("version", version);
+		}
+		
+		version_item.set("content", content);
+		version_item.save(conn);
+		version_item.refresh(conn);
+		
+		template_item.save(conn);
+		
+		this.container.success({
+			"message": "Ok",
+		});
 	}
 	
 }

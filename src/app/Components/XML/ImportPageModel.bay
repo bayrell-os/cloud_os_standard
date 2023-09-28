@@ -1,0 +1,110 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.XML;
+
+use Runtime.re;
+use Runtime.BaseStruct;
+use Runtime.ModelProxy;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Cursor;
+use Runtime.ORM.Database;
+use Runtime.ORM.Query;
+use Runtime.Web.ApiResult;
+use Runtime.Web.BaseModel;
+use Runtime.Web.Bus;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Annotations.RemoteMethod;
+
+
+struct ImportPageModel extends BaseModel
+{
+	string content = "";
+	int error_code = 0;
+	string error_message = "";
+	
+	
+	/**
+	 * Returns form class
+	 */
+	string getErrorClass()
+	{
+		if (this.error_message == "") return "web_form__result--hide";
+		if (this.error_code > 0) return "web_form__result--success";
+		if (this.error_code < 0) return "web_form__result--error";
+		return "";
+	}
+	
+	
+	/**
+	 * Set wait message
+	 */
+	ImportPageModel setWaitMessage()
+	{
+		ImportPageModel model = this;
+		
+		model <= error_code <= 0;
+		model <= error_message <= "Wait please ...";
+		
+		return model;
+	}
+	
+	
+	/**
+	 * Set api result
+	 */
+	ImportPageModel setApiResult(string action, ApiResult res)
+	{
+		if (res == null) return this;
+		
+		ImportPageModel model = this;
+		
+		if (res.isSuccess())
+		{
+		}
+		
+		model <= error_message <= res.getErrorMessage();
+		model <= error_code <= res.getErrorCode();
+		
+		return model;
+	}
+	
+	
+	/**
+	 * Do import
+	 */
+	static async ApiResult callImport(ModelProxy<ImportPageModel> model)
+	{
+		/* Set wait mesage */
+		model.commit("setWaitMessage");
+		
+		/* Call api */
+		ApiResult res = await Bus::callApi(
+			"app.template::import",
+			{
+				"content": model.data().content,
+			}
+		);
+		
+		/* Set result */
+		model.commit("setApiResult", "import", res);
+		
+		return res;
+	}
+	
+}

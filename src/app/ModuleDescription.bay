@@ -76,6 +76,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.Templates.TemplatePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
+		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.DockerStackApi"),

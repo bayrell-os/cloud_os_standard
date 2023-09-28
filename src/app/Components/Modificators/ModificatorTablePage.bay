@@ -31,8 +31,8 @@
 pure Collection<string> getColumns(Layout layout, ModificatorPageModel model) =>
 [
 	"row_number",
-	"uid",
 	"name",
+	"uid",
 	"version",
 	"priority",
 	"row_buttons",
@@ -52,7 +52,7 @@ pure Dict<string> getLabels(Layout layout, ModificatorPageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="success middle" href={{ static::url("app:template:import") }}>[+] Add</Button>
+		<Button type="success middle" href={{ static::url("app:templates:import") }}>[+] Add</Button>
 	</div>
 </template>
 

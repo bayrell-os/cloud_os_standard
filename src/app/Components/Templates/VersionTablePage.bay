@@ -45,8 +45,6 @@ pure Collection<string> getColumns(Layout layout, VersionPageModel model) =>
 
 pure Dict<string> getLabels(Layout layout, VersionPageModel model) =>
 {
-	"uid": "UID",
-	"name": "Name",
 	"version": "Version",
 };
 
