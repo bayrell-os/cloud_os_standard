@@ -13,3 +13,9 @@
 [submodule "src/lib/Runtime.Web.Crud"]
 	path = src/lib/Runtime.Web.Crud
 	url = https://github.com/bayrell/Runtime.Web.Crud
+[submodule "src/lib/Runtime.Unit"]
+	path = src/lib/Runtime.Unit
+	url = https://github.com/bayrell/Runtime.Unit
+[submodule "src/lib/Runtime.Console"]
+	path = src/lib/Runtime.Console
+	url = https://github.com/bayrell/Runtime.Console

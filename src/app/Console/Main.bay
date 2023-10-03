@@ -16,14 +16,24 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Console;
 
 use Runtime.Context;
-use Runtime.Web.App;
+use Runtime.Console.App;
 
 
 class Main extends App
 {
+	/**
+	 * Modules
+	 */
+	async Context modules(Context c)
+	{
+		c <= modules <= c.modules.appendIm("Runtime.Console");
+		return c;
+	}
+	
+	
 	/**
 	 * Init app
 	 */

@@ -1,28 +1,18 @@
 #!/usr/bin/php
 <?php
 
-define ('ROOT_PATH', __DIR__);
 ini_set('display_errors', 'on');
 ini_set('html_errors', 'on');
-set_time_limit(600);
+set_time_limit(-1);
 
-// Include vendor
-// require ROOT_PATH . "/vendor/autoload.php";
+/* Setup entry point */
+define('ENTRY_POINT', 'Bayrell.CloudOS.Console.Main');
 
-/* Include loader */
-include ROOT_PATH . "/lib/Runtime/php/Loader.php";
+/* Init context */
+require_once __DIR__ . "/init.php";
 
-/* Include enviroments */
-$env = include ROOT_PATH . "/env.php";
+/* Run console app */
+$context = \Runtime\rtl::getContext();
+$context->run($context);
 
-/* Run app */
-$loader = ( new \Runtime\Loader() )
-	->addIncludePath( ROOT_PATH . "/app" )
-	->addIncludePath( ROOT_PATH . "/lib" )
-	->setArgs($argv)
-	->setEnv($env)
-	->setMainModule("Bayrell.CloudOS")
-	->setEntryPoint("Runtime.Task.Entry")
-	->run();
-
-exit($loader->exit_code);
+exit($context->exit_code);
