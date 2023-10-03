@@ -16,38 +16,25 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Test;
 
-use Runtime.Context;
-use Runtime.Web.App;
+use Runtime.Unit.Test;
 
 
-class Main extends App
+class ExampleTest
 {
-	/**
-	 * Init app
-	 */
-	async Context init(Context c)
-	{
-		c = await parent::init(c);
-		return c;
-	}
-	
-	
-	/**
-	 * Start app
-	 */
-	async void start()
-	{
-		await parent::start();
-	}
-	
-	
-	/**
-	 * Main entry point
-	 */
-	async int main()
-	{
-		return await parent::main();
-	}
+    
+    @Test{}
+    static void first()
+    {
+        rtl::assert(false, "The false");
+    }
+    
+    
+    @Test{}
+    static void second()
+    {
+        
+    }
+    
 }

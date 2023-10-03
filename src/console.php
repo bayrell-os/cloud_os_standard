@@ -13,6 +13,5 @@ require_once __DIR__ . "/init.php";
 
 /* Run console app */
 $context = \Runtime\rtl::getContext();
-$context->run($context);
-
-exit($context->exit_code);
+$exit_code = $context->run($context);
+exit($exit_code);

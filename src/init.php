@@ -9,10 +9,21 @@ set_exception_handler( function ($e){
 	
 	http_response_code(500);
 	
-	echo "<b>Fatal Error</b><br/>";
-	echo nl2br($e->getMessage()) . "<br/>\n";
-	echo "in file " . $e->getFile() . ":" . $e->getLine() . "<br>\n";
-	echo nl2br($e->getTraceAsString()) . "<br/>\n";
+	$message = "Fatal Error:\n";
+	$message .= $e->getMessage() . "\n";
+	$message .= "in file " . $e->getFile() . ":" . $e->getLine() . "\n";
+	$message .= $e->getTraceAsString() . "\n";
+	
+	if (php_sapi_name() === 'cli')
+	{
+		echo \Runtime\io::color("red", $message);
+	}
+	else
+	{
+		echo nl2br($message);
+	}
+	
+	exit (1);
 } );
 
 define( "BASE_PATH", __DIR__ );
@@ -39,6 +50,7 @@ $context = \Runtime\rtl::createContext([
 	"modules" => [
 		"Bayrell.CloudOS"
 	],
+	"cli_args" => \Runtime\Collection::from($argv),
 ]);
 
 /* Start context */

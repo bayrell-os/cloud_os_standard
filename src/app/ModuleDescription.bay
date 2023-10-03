@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS;
 
 use Runtime.Entity.Hook;
 use Runtime.ORM.Annotations.Database;
+use Runtime.Unit.UnitTest;
 use Runtime.Web.Annotations.Api;
 use Runtime.Web.Annotations.RemoteClass;
 use Runtime.Web.Annotations.Route;
@@ -95,6 +96,12 @@ static class ModuleDescription
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),
+		
+		/* Console commands */
+		
+		/* Unit test */
+		new UnitTest("Bayrell.CloudOS.Test.ExampleTest"),
+		
 		#endif
 	];
 	
