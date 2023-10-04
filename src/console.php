@@ -12,6 +12,11 @@ define('ENTRY_POINT', 'Bayrell.CloudOS.Console.Main');
 require_once __DIR__ . "/init.php";
 
 /* Run console app */
-$context = \Runtime\rtl::getContext();
-$exit_code = $context->run($context);
+$exit_code = \Runtime\rtl::runApp('Bayrell.CloudOS.Console.Main', [
+    'Bayrell.CloudOS',
+    'Bayrell.CloudOS.Console',
+],
+\Runtime\Dict::from([
+    'cli_args' => \Runtime\Collection::from($argv),
+]));
 exit($exit_code);

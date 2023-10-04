@@ -23,35 +23,6 @@ use Runtime.XMLElement;
 
 class XML extends XMLElement
 {
-	/**
-	 * Append XML
-	 */
-	void appendXml(XMLElement append)
-	{
-		XMLElement item = null;
-		string name = append.getName();
-		
-		if (append.children().count() == 0)
-		{
-			item = this.addChild(name, append.toString());
-		}
-		else
-		{
-			item = this.addChild(name);
-			item.appendChildsXml(append);
-		}
-		
-		if (item != null)
-		{
-			Dict<XMLElement> attrs = append.getAttributes();
-			Collection<string> keys = attrs.keys();
-			for (int i=0; i<keys.count(); i++)
-			{
-				string key = keys[i];
-				XMLElement value = attrs.get(key);
-				item.addAttribute(key, value);
-			}
-		}
-	}
+	
 	
 }

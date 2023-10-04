@@ -18,44 +18,45 @@
 
 namespace Bayrell.CloudOS.Console;
 
-use Runtime.Context;
-use Runtime.Console.App;
+use Runtime.Unit.UnitTest;
+use Bayrell.CloudOS.ModuleDescription as CloudOSModuleDescription;
 
 
-class Main extends App
+static class ModuleDescription
 {
 	/**
-	 * Modules
+	 * Returns module name
+	 * @return string
 	 */
-	async Context modules(Context c)
-	{
-		return c;
-	}
+	pure string getModuleName() => "Bayrell.CloudOS.Test";
 	
 	
 	/**
-	 * Init app
+	 * Returns module name
+	 * @return string
 	 */
-	async Context init(Context c)
-	{
-		return await parent::init(c);
-	}
+	pure string getModuleVersion() => CloudOSModuleDescription::getModuleVersion();
 	
 	
 	/**
-	 * Start app
+	 * Returns required modules
+	 * @return Dict<string>
 	 */
-	async void start()
+	pure Dict<string> requiredModules() =>
 	{
-		await parent::start();
-	}
+		"Runtime": ">=0.11",
+		"Runtime.Test": ">=0.11",
+		"Runtime.Console": ">=0.11",
+		"Runtime.Unit": ">=0.11",
+		"Bayrell.CloudOS": "*",
+	};
 	
 	
 	/**
-	 * Main entry point
+	 * Returns enities
 	 */
-	async int main()
-	{
-		return await parent::main();
-	}
+	pure Collection<Dict> entities() =>
+	[
+	];
+	
 }

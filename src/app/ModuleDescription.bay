@@ -96,12 +96,6 @@ static class ModuleDescription
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),
-		
-		/* Console commands */
-		
-		/* Unit test */
-		new UnitTest("Bayrell.CloudOS.Test.ExampleTest"),
-		
 		#endif
 	];
 	

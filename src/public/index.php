@@ -11,5 +11,6 @@ define('ENTRY_POINT', 'Bayrell.CloudOS.Main');
 require_once dirname(__DIR__) . "/init.php";
 
 /* Run web app */
-$context = \Runtime\rtl::getContext();
-$context->run($context);
+\Runtime\rtl::runApp('Bayrell.CloudOS.Main', [
+    'Bayrell.CloudOS'
+]);
