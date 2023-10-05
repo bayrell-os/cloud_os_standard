@@ -45,10 +45,8 @@ static class ModuleDescription
 	pure Dict<string> requiredModules() =>
 	{
 		"Runtime": ">=0.11",
-		"Runtime.Test": ">=0.11",
+		"Runtime.XML.Test": ">=0.11",
 		"Runtime.Console": ">=0.11",
-		"Runtime.Unit": ">=0.11",
-		"Bayrell.CloudOS": "*",
 	};
 	
 	

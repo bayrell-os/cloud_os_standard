@@ -16,6 +16,7 @@ $exit_code = \Runtime\rtl::runApp(
     
     /* Modules */
     [
+        'Bayrell.CloudOS',
         'Bayrell.CloudOS.Console',
     ],
     

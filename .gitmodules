@@ -19,3 +19,6 @@
 [submodule "src/lib/Runtime.Console"]
 	path = src/lib/Runtime.Console
 	url = https://github.com/bayrell/Runtime.Console
+[submodule "src/lib/Runtime.XML"]
+	path = src/lib/Runtime.XML
+	url = https://github.com/bayrell/Runtime.XML

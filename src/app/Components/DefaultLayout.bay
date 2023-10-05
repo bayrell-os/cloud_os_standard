@@ -294,7 +294,7 @@ pure Collection getMenu()
 		},
 		
 		{
-			"title": "Cloud OS",
+			"title": "Load balancing",
 			"items":
 			[
 				{
@@ -347,16 +347,12 @@ pure Collection getMenu()
 						"app:nginx_files:delete",
 					],
 				},
-				{
-					"title": "Users",
-					"link": "app:users:index",
-					"links": [
-						"app:users:index",
-						"app:users:add",
-						"app:users:edit",
-						"app:users:delete",
-					],
-				},
+			]
+		},
+		{
+			"title": "Other",
+			"items":
+			[
 				{
 					"title": "Settings",
 					"link": "app:settings:index",

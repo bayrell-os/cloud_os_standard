@@ -64,26 +64,10 @@
 				"name": "domains",
 				"label": "Domains",
 				"href": static::url("app:workspace:domains", {"id": model.item_form.item.id}),
-			},
-			{
-				"name": "users",
-				"label": "Users",
-				"href": static::url("app:workspace:users", {"id": model.item_form.item.id}),
-			},
-			{
-				"name": "roles",
-				"label": "Roles",
-				"href": static::url("app:workspace:roles", {"id": model.item_form.item.id}),
-			},
+			}
 		]>
 			<TabItem name="domains" @model=["tabs"]>
 				<DomainTablePage @model=["domains"] />
-			</TabItem>
-			<TabItem name="users" @model=["tabs"]>
-				<UsersTablePage @model=["users"] />
-			</TabItem>
-			<TabItem name="roles" @model=["tabs"]>
-				<RolesTablePage @model=["roles"] />
 			</TabItem>
 		</Tabs>
 	}

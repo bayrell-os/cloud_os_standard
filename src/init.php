@@ -14,6 +14,7 @@ $loader->addPsr4("Runtime\\ORM\\",  __DIR__ . "/lib/Runtime.ORM/php");
 $loader->addPsr4("Runtime\\Unit\\",  __DIR__ . "/lib/Runtime.Unit/php");
 $loader->addPsr4("Runtime\\Web\\",  __DIR__ . "/lib/Runtime.Web/php");
 $loader->addPsr4("Runtime\\Web\\Crud\\",  __DIR__ . "/lib/Runtime.Web.Crud/php");
+$loader->addPsr4("Runtime\\XML\\",  __DIR__ . "/lib/Runtime.XML/php");
 
 /* Setup default handler */
 \Runtime\rtl::set_default_exception_handler();
