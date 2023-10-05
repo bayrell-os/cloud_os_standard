@@ -54,6 +54,7 @@ static class ModuleDescription
 		
 		#ifdef BACKEND then
 		"Runtime.ORM": "*",
+		"Runtime.XML": "*",
 		#endif
 	};
 	
