@@ -30,7 +30,7 @@ use Runtime.Web.Crud.Rules.Purify;
 use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
 use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Lib.XML;
+use Runtime.XML.XML;
 use Bayrell.CloudOS.Models.Template;
 
 
@@ -108,30 +108,27 @@ class TemplateApi extends CrudPageApi
 	{
 		string content = this.post_data["content"];
 		
-		Collection r1 = XML::loadXml(content);
-		XML xml = r1[0];
-		Collection errors=r1[1];
+		XML xml = XML::loadXml(content);
 		
-		if (xml == null)
+		if (not xml.exists())
 		{
+			if (xml.errors.count() > 0)
+			{
+				string error_message = rs::join("\n", xml.errors);
+				return this.container.fail({
+					"message": error_message,
+				});
+			}
 			return this.container.fail({
 				"message": "XML is empty",
 			});
 		}
 		
-		if (errors.count() > 0)
-		{
-			string error_message = rs::join("\n", errors);
-			return this.container.fail({
-				"message": error_message,
-			});
-		}
-		
 		string type = xml.getName();
-		string name = xml.value("name");
-		string priority = xml.value("priority");
-		string uid = xml.value("uid");
-		string version = xml.value("version");
+		string name = xml.get("name").get(0) |> .value() |> default string "";
+		string priority = xml.get("priority").get(0) |> .value() |> default string "";
+		string uid = xml.get("uid").get(0) |> .value() |> default string "";
+		string version = xml.get("version").get(0) |> .value() |> default string "";
 		
 		if (uid == "" or version == "" or name == "")
 		{
