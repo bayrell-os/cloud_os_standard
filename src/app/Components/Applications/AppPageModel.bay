@@ -1,0 +1,115 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Applications;
+
+use Runtime.ModelProxy;
+use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.CrudRoute;
+use Runtime.Web.Crud.FieldInfo;
+use Runtime.Web.Crud.TabModel;
+use Bayrell.CloudOS.Models.Application;
+
+
+struct AppPageModel extends CrudPageModel
+{
+	Dict fields = {
+		"status": new FieldInfo{
+			"label": "Status",
+			"field_name": "status",
+			"options": [
+				{"label": "STOP", "value": "0"},
+				{"label": "RUN", "value": "1"},
+			],
+		},
+	};
+	
+	
+	TabModel tabs = new TabModel{
+		"active": "run",
+	};
+	
+	
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.application";
+	
+	
+	/**
+	 * Returns model name
+	 */
+	pure string getModelName() => classof Application;
+	
+	
+	/**
+	 * Validate model
+	 */
+	public bool validateForm()
+	{
+		return true;
+	}
+	
+	
+	/**
+	 * Returns page title
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "index")
+		{
+			return "Application";
+		}
+		else if (action == "add")
+		{
+			return "Add application";
+		}
+		else if (action == "edit")
+		{
+			return "Edit application '" ~ this.item_form.item["name"] ~ "'";
+		}
+		else if (action == "delete")
+		{
+			return "Delete application ?";
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete application '" ~ this.item_form.item["name"] ~ "' ?";
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * Route before
+	 */
+	async static void crudRouteBefore(ModelProxy model, CrudRoute crud_route, string action)
+	{
+		await parent::crudRouteBefore(model, crud_route, action);
+		
+		if (action == CrudPageModel::ACTION_INDEX)
+		{
+			string status = crud_route.container.request.query.get("status", "run");
+			model.commit("setSearchData", {
+				"status": status,
+			});
+			model.proxy("tabs").commit("setActive", status);
+		}
+	}
+	
+}

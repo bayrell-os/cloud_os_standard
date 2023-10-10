@@ -19,12 +19,14 @@
 namespace Bayrell.CloudOS.Api;
 
 use Runtime.re;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
 use Bayrell.CloudOS.Api.Rules.ApplicationModificator;
-use Bayrell.CloudOS.Models.User;
+use Bayrell.CloudOS.Models.Application;
 
 
 class ApplicationApi extends CrudPageApi
@@ -38,13 +40,13 @@ class ApplicationApi extends CrudPageApi
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof User;
+	pure string getModelName() => classof Application;
 	
 	
 	/**
-	 * Returns relation name
+	 * Returns table name
 	 */
-	pure string getRelationName() => "applications";
+	pure string getTableName() => "applications";
 	
 	
 	/**
@@ -66,22 +68,6 @@ class ApplicationApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new ForeignKeyResolver{
-			"relation": "applications",
-			"alias_name": "templates_versions",
-		},
-		new ForeignKeyResolver{
-			"relation": "applications",
-			"alias_name": "yaml_files",
-		},
-		new ForeignKeyResolver{
-			"relation": "applications",
-			"alias_name": "app_modificators",
-		},
-		new ForeignKeyResolver{
-			"relation": "templates_versions",
-			"alias_name": "templates",
-		},
 	];
 	
 	
@@ -90,8 +76,23 @@ class ApplicationApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
+		string status = this.post_data["status"];
+		
+		if (status == "run") q.where("applications.status", "=", 1);
+		else if (status == "stop") q.where("applications.status", "=", 0);
+		
 		q = q
-			|> .orderBy("id", "desc")
+			.orderBy("applications.stack_name", "asc")
+			.orderBy("applications.name", "asc")
+			
+			.innerJoinKey("templates_versions")
+			.innerJoinKey("templates")
+			
+			.addFields([
+				"templates_versions.version as template_version",
+				"templates.name as template_name",
+				"templates.uid as template_uid",
+			])
 		;
 		return q;
 	}
@@ -101,5 +102,17 @@ class ApplicationApi extends CrudPageApi
 	 * Returns database params
 	 */
 	Dict getDatabaseParams() => { "name": "default" };
+	
+	
+	/**
+	 * Search final event
+	 */
+	async void onSearchFinal()
+	{
+		Connection conn = this.getDatabaseConnection();
+		
+		await parent::onSearchFinal();
+		
+	}
 	
 }
