@@ -33,6 +33,7 @@ struct Application extends BaseStruct
 	string template_version;
 	string template_name;
 	string template_uid;
+	int template_id;
 	int status;
 	string content;
 	Collection<int> modificators;

@@ -58,6 +58,7 @@ pure Dict<string> getLabels(Layout layout, AppPageModel model) =>
 
 <template name="renderTop">
 	<div class="web_table__top">
+		<Button type="primary middle">Refresh</Button>
 		<Button type="success middle" href={{ static::url("app:applications:add") }}>[+] Add</Button>
 	</div>
 </template>

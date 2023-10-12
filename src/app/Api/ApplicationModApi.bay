@@ -19,40 +19,36 @@
 namespace Bayrell.CloudOS.Api;
 
 use Runtime.re;
-use Runtime.DateTime;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
-use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
 use Runtime.Web.Crud.Rules.Dictionary;
-use Runtime.Web.Crud.Rules.LowerCase;
-use Runtime.Web.Crud.Rules.Purify;
-use Runtime.Web.Crud.Rules.Required;
 use Runtime.Web.Crud.Rules.SaveFields;
-use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Domain;
-use Bayrell.CloudOS.Models.Route;
+use Bayrell.CloudOS.Models.Application;
+use Bayrell.CloudOS.Models.Modificator;
 
 
-class RouteApi extends CrudPageApi
+class ApplicationModApi extends CrudPageApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.route";
+	pure string getApiName() => "app.application.modificator";
 	
 	
 	/**
 	 * Returns model name
 	 */
-	pure string getModelName() => classof Route;
+	pure string getModelName() => classof Dict;
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "routes";
+	pure string getTableName() => "app_modificators";
 	
 	
 	/**
@@ -78,31 +74,9 @@ class RouteApi extends CrudPageApi
 		{
 			"fields":
 			[
-				"enable",
-				"protocol",
-				/*"protocol_data",*/
-				"domain_id",
-				"route_prefix",
-				"docker_name",
-				"source_port",
-				"target_port",
-				"target_prefix",
-				"nginx_config",
+				"modificator_id",
 			]
-		},
-		new Purify{ "name": "docker_name" },
-		new LowerCase{ "name": "docker_name" },
-		new Required{ "name": "docker_name" },
-		new Required{ "name": "domain_id" },
-		new Required{ "name": "enable" },
-		new Required{ "name": "protocol" },
-		
-		/* ForeignKey */
-		new Dictionary{
-			"foreign_key_name": "routes_domain_id",
-			"dictionary_name": "domains",
-			"model_name": classof Domain,
-		},
+		}
 	];
 	
 	
@@ -111,20 +85,25 @@ class RouteApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		int domain_id = (int)this.post_data["domain_id"];
-		if (domain_id > 0)
+		if (
+			this.action == 'actionSearch' or
+			this.action == 'actionSearchOne'
+		)
 		{
-			q = q.where("routes.domain_id", "=", domain_id)
+			int application_id = (int)this.post_data["application_id"];
+			q.where("app_modificators.app_id", "=", application_id);
 		}
 		
-		q.leftJoin("domains", [
-			"domains.id = routes.domain_id",
-		]);
-		
 		q = q
-			.orderBy("domains.domain_name", "asc")
-			.orderBy("routes.route_prefix", "asc")
-			.orderBy("routes.id", "desc")
+			.innerJoinKey("app_modificators__modificator")
+			
+			.orderBy("modificators.priority", "asc")
+			.orderBy("modificators.name", "asc")
+			
+			.addFields([
+				"modificators.name as modificator_name",
+				"modificators.priority as modificator_priority",
+			])
 		;
 		
 		return q;
@@ -132,16 +111,23 @@ class RouteApi extends CrudPageApi
 	
 	
 	/**
-	 * Validate item
+	 * Before update item event
 	 */
-	async Dict validateItem(Dict update_data)
+	async void onSaveBefore(Relation item, Dict update_data)
 	{
-		int domain_id = (int)this.post_data["domain_id"];
-		if (domain_id > 0)
+		parent::onSaveBefore(item, update_data);
+		
+		if (item.isNew())
 		{
-			update_data <= domain_id <= domain_id;
+			int application_id = (int)this.post_data["application_id"];
+			item.set("app_id", application_id);
 		}
-		return await parent::validateItem(update_data);
 	}
+	
+	
+	/**
+	 * Returns database params
+	 */
+	Dict getDatabaseParams() => { "name": "default" };
 	
 }

@@ -18,11 +18,13 @@
 
 namespace Bayrell.CloudOS.Components.Applications;
 
+use Runtime.lib;
 use Runtime.ModelProxy;
 use Runtime.Web.Crud.CrudPageModel;
 use Runtime.Web.Crud.CrudRoute;
 use Runtime.Web.Crud.FieldInfo;
 use Runtime.Web.Crud.TabModel;
+use Bayrell.CloudOS.Components.Applications.AppModificatorsModel;
 use Bayrell.CloudOS.Models.Application;
 
 
@@ -37,9 +39,31 @@ struct AppPageModel extends CrudPageModel
 				{"label": "RUN", "value": "1"},
 			],
 		},
+		"stack_name": new FieldInfo{
+			"label": "Stack name",
+			"field_name": "stack_name",
+			"options": [
+			],
+		},
+		"template_version_id": new FieldInfo{
+			"label": "Version",
+			"field_name": "template_version_id",
+			"options": [
+			],
+		},
+		"template_id": new FieldInfo{
+			"label": "Template",
+			"field_name": "template_id",
+			"options": [
+			],
+		},
+		"name": new FieldInfo{
+			"label": "Name",
+			"field_name": "name",
+		},
 	};
 	
-	
+	AppModificatorsModel modificators = new AppModificatorsModel;
 	TabModel tabs = new TabModel{
 		"active": "run",
 	};
@@ -81,7 +105,8 @@ struct AppPageModel extends CrudPageModel
 		}
 		else if (action == "edit")
 		{
-			return "Edit application '" ~ this.item_form.item["name"] ~ "'";
+			return "Edit application '" ~
+				this.item_form.item["stack_name"] ~ "_" ~ this.item_form.item["name"] ~ "'";
 		}
 		else if (action == "delete")
 		{
@@ -89,20 +114,27 @@ struct AppPageModel extends CrudPageModel
 		}
 		else if (action == "delete_content")
 		{
-			return "Delete application '" ~ this.item_form.item["name"] ~ "' ?";
+			return "Delete application '" ~
+				this.item_form.item["stack_name"] ~ "_" ~ this.item_form.item["name"] ~ "' ?";
 		}
 		return "";
 	}
 	
 	
 	/**
-	 * Route before
+	 * Search after
 	 */
-	async static void crudRouteBefore(ModelProxy model, CrudRoute crud_route, string action)
+	async static void event(ModelProxy model, string action, Dict obj)
 	{
-		await parent::crudRouteBefore(model, crud_route, action);
+		obj = await parent::event(model, action, obj);
 		
-		if (action == CrudPageModel::ACTION_INDEX)
+		Dict api_res = obj["api_res"];
+		Dict crud_route = obj["crud_route"];
+		Dict post_data = obj["post_data"];
+		
+		
+		/* RouteIndexBefore */
+		if (action == "crudRouteIndexBefore")
 		{
 			string status = crud_route.container.request.query.get("status", "run");
 			model.commit("setSearchData", {
@@ -110,6 +142,102 @@ struct AppPageModel extends CrudPageModel
 			});
 			model.proxy("tabs").commit("setActive", status);
 		}
+		
+		else if (action == "crudRouteEditAfter")
+		{
+			ModelProxy modificators = model.proxy("modificators");
+			
+			/* Setup application_id */
+			Application item = model.data(["item_form", "item"]);
+			modificators.commit("setApplicationId", item.id);
+			
+			/* call crud search */
+			await modificators.commitAsync("callCrudSearch");
+		}
+		
+		
+		/* ItemAfter */
+		else if (action == "crudItemAfter")
+		{
+			Collection values;
+			
+			/* Setup stack name */
+			values = api_res["data", "dictionary", "stack_name"]
+				|> .map(
+					Dict (DockerStack item) => {
+						"label": item.stack_name,
+						"value": item.stack_name,
+					}
+				)
+				|> .sort(
+					int (Dict a, Dict b) => a["label"] > b["label"]
+				)
+			;
+			model.commit("setFieldOptions", "stack_name", values);
+			
+			
+			/* Setup templates */
+			values = api_res["data", "dictionary", "templates"]
+				|> .map(
+					Dict (Template item) => {
+						"label": item.name,
+						"value": item.id,
+					}
+				)
+				|> .sort(
+					int (Dict a, Dict b) => a["label"] > b["label"]
+				)
+			;
+			model.commit("setFieldOptions", "template_id", values);
+			
+			
+			/* Setup template versions */
+			model.commit("updateTemplateVersion");
+			
+			
+			/* Setup modificators */
+			values = api_res["data", "dictionary", "modificators"]
+				|> .map(
+					Dict (Template item) => {
+						"label": item.name,
+						"value": item.id,
+					}
+				)
+				|> .sort(
+					int (Dict a, Dict b) => a["label"] > b["label"]
+				)
+			;
+			model.proxy("modificators").commit("setFieldOptions", "modificator_id", values);
+		}
+		
+		return obj;
+	}
+	
+	
+	/**
+	 * Update template version
+	 */
+	static void updateTemplateVersion(ModelProxy model)
+	{
+		Collection values;
+		Dict dictionary = model.data("dictionary");
+		Application item = model.data(["item_form", "item"]);
+		
+		
+		/* Setup templates versions */
+		values = dictionary["templates_versions"]
+			|> .filter( lib::equalAttr("template_id", item.template_id) )
+			|> .map(
+				Dict (TemplateVersion item) => {
+					"label": item.version,
+					"value": item.id,
+				}
+			)
+			|> .sort(
+				int (Dict a, Dict b) => a["label"] > b["label"]
+			)
+		;
+		model.commit("setFieldOptions", "template_version_id", values);
 	}
 	
 }

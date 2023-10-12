@@ -3,6 +3,8 @@
 	"assets":
 	[
 		"Components/Applications/AppDeletePage.bay",
+		"Components/Applications/AppModificatorsModel.bay",
+		"Components/Applications/AppModificatorsTablePage.bay",
 		"Components/Applications/AppPageModel.bay",
 		"Components/Applications/AppPageRoute.bay",
 		"Components/Applications/AppSavePage.bay",

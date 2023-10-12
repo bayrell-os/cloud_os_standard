@@ -91,14 +91,21 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"name": "templates_versions",
+			"name": "applications__docker_stack",
+			"table_name": "stacks",
+			"primary_key": "stack_name",
+			"foreign_key": "stack_name",
+		},
+		new ForeignKey
+		{
+			"name": "applications__templates_versions",
 			"table_name": "templates_versions",
 			"primary_key": "id",
 			"foreign_key": "template_version_id",
 		},
 		new ForeignKey
 		{
-			"name": "yaml_files",
+			"name": "applications__yaml_files",
 			"table_name": "yaml_files",
 			"primary_key": "id",
 			"foreign_key": "yaml_file_id",
@@ -117,8 +124,24 @@ class Schema extends DatabaseSchema
 		new BigIntType{"name": "modificator_id"},
 		
 		/* Index */
-		new Unique{"keys": ["app_id", "modificator_id"]},
+		new Primary{"keys": ["app_id", "modificator_id"]},
 		new Index{"keys": ["modificator_id"]},
+		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"name": "app_modificators__application",
+			"table_name": "applications",
+			"primary_key": "id",
+			"foreign_key": "app_id",
+		},
+		new ForeignKey
+		{
+			"name": "app_modificators__modificator",
+			"table_name": "modificators",
+			"primary_key": "id",
+			"foreign_key": "modificator_id",
+		},
 	];
 	
 	
@@ -268,7 +291,7 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"name": "routes_domain_id",
+			"name": "routes__domain_id",
 			"table_name": "domains",
 			"primary_key": "id",
 			"foreign_key": "domain_id",
@@ -338,7 +361,7 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"name": "spaces_users_user_id",
+			"name": "spaces_users__user_id",
 			"table_name": "users",
 			"primary_key": "id",
 			"foreign_key": "user_id",
@@ -365,14 +388,14 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"name": "spaces_users_roles_role_id",
+			"name": "spaces_users_roles__role_id",
 			"table_name": "spaces_roles",
 			"primary_key": "id",
 			"foreign_key": "role_id",
 		},
 		new ForeignKey
 		{
-			"name": "spaces_users_roles_user_id",
+			"name": "spaces_users_roles__user_id",
 			"table_name": "users",
 			"primary_key": "id",
 			"foreign_key": "user_id",
@@ -438,7 +461,7 @@ class Schema extends DatabaseSchema
 		/* ForeignKey */
 		new ForeignKey
 		{
-			"name": "templates",
+			"name": "templates_versions__templates",
 			"table_name": "templates",
 			"primary_key": "id",
 			"foreign_key": "template_id",

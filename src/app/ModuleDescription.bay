@@ -83,6 +83,7 @@ static class ModuleDescription
 		
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.ApplicationApi"),
+		new Api("Bayrell.CloudOS.Api.ApplicationModApi"),
 		new Api("Bayrell.CloudOS.Api.DockerStackApi"),
 		new Api("Bayrell.CloudOS.Api.DockerYamlFileApi"),
 		new Api("Bayrell.CloudOS.Api.DomainApi"),

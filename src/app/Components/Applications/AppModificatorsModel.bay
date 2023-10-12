@@ -1,0 +1,152 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Applications;
+
+use Runtime.ModelProxy;
+use Runtime.Web.Crud.CrudPageModel;
+use Runtime.Web.Crud.DialogModel;
+use Runtime.Web.Crud.FieldInfo;
+use Bayrell.CloudOS.Models.Modificator;
+
+
+struct AppModificatorsModel extends CrudPageModel
+{
+	int application_id = 0;
+	
+	Dict fields = {
+		"name": new FieldInfo{
+			"label": "Name",
+			"field_name": "name",
+		},
+		"priority": new FieldInfo{
+			"label": "Priority",
+			"field_name": "priority",
+		}
+		"modificator_id": new FieldInfo{
+			"label": "Modificator",
+			"field_name": "modificator_id",
+			"options": [],
+		},
+	};
+	
+	DialogModel save_dialog = new DialogModel{
+		"auto_hide": false,
+		"is_modal": true,
+		"width": "500px",
+		"style": DialogModel::STYLE_CONTENT,
+	};
+	
+	DialogModel delete_dialog = new DialogModel{
+		"auto_hide": false,
+		"is_modal": true,
+		"width": "500px",
+		"style": DialogModel::STYLE_CONTENT,	
+	};
+	
+	
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.application.modificator";
+	
+	
+	/**
+	 * Returns model name
+	 */
+	pure string getModelName() => classof Dict;
+	
+	
+	/**
+	 * Validate model
+	 */
+	public bool validateForm()
+	{
+		return true;
+	}
+	
+	
+	/**
+	 * Returns page title
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "index")
+		{
+			return "Modificators";
+		}
+		else if (action == "add")
+		{
+			return "Add modificator";
+		}
+		else if (action == "edit")
+		{
+			return "Edit modificator '" ~ this.item_form.item["modificator_name"] ~ "'";
+		}
+		else if (action == "delete")
+		{
+			return "Delete modificator ?";
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete modificator '" ~ this.item_form.item["modificator_name"] ~ "' ?";
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * Event
+	 */
+	async static Dict event(ModelProxy model, string event, Dict data)
+	{
+		data = await parent::event(model, event, data);
+		
+		if (
+			event == "crudItemBefore" or
+			event == "crudSaveBefore" or
+			event == "crudSearchBefore"
+		)
+		{
+			int application_id = model.data("application_id");
+			if (application_id > 0)
+			{
+				data <= post_data <= application_id <= application_id;
+			}
+		}
+		
+		return data;
+	}
+	
+	
+	/**
+	 * Setup application id
+	 */
+	AppModificatorsModel setApplicationId(int app_id) => this.clone{
+		"application_id": app_id,
+	};
+	
+	
+	/**
+	 * Setup modificators
+	 */
+	AppModificatorsModel setModificators(Collection modificators) => this.clone{
+		"modificators": modificators,
+	};
+	
+}

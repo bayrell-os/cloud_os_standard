@@ -1,0 +1,122 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.Applications.AppModificatorsTablePage"
+    extends="Runtime.Web.Crud.TablePage">
+
+
+<use name="Runtime.Web.Crud.Button" component="true" />
+<use name="Runtime.Web.Crud.Form" component="true" />
+<use name="Runtime.Web.Crud.Select" component="true" />
+<use name="Runtime.Web.Crud.TextArea" component="true" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Layout" />
+<use name="Runtime.Web.Message" />
+<use name="Bayrell.CloudOS.Components.Applications.AppModificatorsModel" />
+<use name="Bayrell.CloudOS.Models.Modificator" />
+
+
+<script>
+
+pure Collection<string> getColumns(Layout layout, AppModificatorsModel model) =>
+[
+	"row_number",
+	"modificator_name",
+	"modificator_priority",
+	"row_buttons",
+];
+
+
+pure Dict<string> getLabels(Layout layout, AppModificatorsModel model) =>
+{
+	"modificator_name": "Name",
+	"modificator_priority": "Priority",
+};
+
+</script>
+
+
+<template name="renderTop">
+	<div class="web_table__top">
+		<Button type="success small" @event:MouseClickEvent="onAddClick">[+] Add</Button>
+	</div>
+</template>
+
+
+<template name="renderSaveDialogContent">
+	<div class="web_form__row">
+		
+		%if (model.action == "add")
+		{
+			%render Form::renderRow(classof Select, model.fields["modificator_id"]);
+		}
+		
+	</div>
+</template>
+
+
+<template name="renderField" args="int row_number, string field_name, Modificator item">
+	
+	%if (field_name == "row_buttons")
+	{
+		<Button type="small"
+			@event:MouseClickEvent="onEditClick" data-id={{ item["modificator_id"] }}
+		>Edit</Button>
+		<Button type="danger small"
+			@event:MouseClickEvent="onDeleteClick" data-id={{ item["modificator_id"] }}
+		>Delete</Button>
+	}
+	%else
+	{
+		%render parent::renderField(row_number, field_name, item);
+	}
+	
+</template>
+
+
+<script>
+
+
+/**
+ * Returns primary key
+ */
+Dict getDialogPrimaryKey(Message<MouseClickEvent> msg)
+{
+	if (msg.sender.params.has("data-id"))
+	{
+		return {
+			"app_id": this.model("application_id"),
+			"modificator_id": msg.sender.params.get("data-id"),
+		};
+	}
+	
+	return null;
+}
+
+
+/**
+ * On change event
+ */
+async void onFieldChange(Message<MouseClickEvent> msg)
+{
+}
+
+</script>
+
+
+</class>

@@ -25,8 +25,13 @@ use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
 use Runtime.Web.Crud.CrudPageApi;
 use Runtime.Web.Crud.Rules.CrudRule;
-use Bayrell.CloudOS.Api.Rules.ApplicationModificator;
+use Runtime.Web.Crud.Rules.Dictionary;
+use Runtime.Web.Crud.Rules.SaveFields;
 use Bayrell.CloudOS.Models.Application;
+use Bayrell.CloudOS.Models.DockerStack;
+use Bayrell.CloudOS.Models.TemplateVersion;
+use Bayrell.CloudOS.Models.Template;
+use Bayrell.CloudOS.Models.Modificator;
 
 
 class ApplicationApi extends CrudPageApi
@@ -68,6 +73,40 @@ class ApplicationApi extends CrudPageApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new SaveFields
+		{
+			"fields":
+			[
+				"stack_name",
+				"name",
+				"template_version_id",
+				"status",
+			]
+		},
+		new Dictionary{
+			"dictionary_name": "stacks",
+			"table_name": "stacks",
+			"model_name": classof DockerStack,
+			"query": Query (ApplicationApi api, Query q) => q.orderBy("stack_name", "asc"),
+		},
+		new Dictionary{
+			"dictionary_name": "templates_versions",
+			"table_name": "templates_versions",
+			"model_name": classof TemplateVersion,
+			"query": Query (ApplicationApi api, Query q) => q.orderBy("version", "asc"),
+		},
+		new Dictionary{
+			"dictionary_name": "templates",
+			"table_name": "templates",
+			"model_name": classof Template,
+			"query": Query (ApplicationApi api, Query q) => q.orderBy("name", "asc"),
+		},
+		new Dictionary{
+			"dictionary_name": "modificators",
+			"table_name": "modificators",
+			"model_name": classof Modificator,
+			"query": Query (ApplicationApi api, Query q) => q.orderBy("name", "asc"),
+		},
 	];
 	
 	
@@ -85,15 +124,19 @@ class ApplicationApi extends CrudPageApi
 			.orderBy("applications.stack_name", "asc")
 			.orderBy("applications.name", "asc")
 			
-			.innerJoinKey("templates_versions")
-			.innerJoinKey("templates")
+			.innerJoinKey("applications__templates_versions")
+			.innerJoinKey("templates_versions__templates")
 			
 			.addFields([
 				"templates_versions.version as template_version",
 				"templates.name as template_name",
+				"templates.id as template_id",
 				"templates.uid as template_uid",
 			])
 		;
+		
+		/* q.debug(1); */
+		
 		return q;
 	}
 	
@@ -102,17 +145,5 @@ class ApplicationApi extends CrudPageApi
 	 * Returns database params
 	 */
 	Dict getDatabaseParams() => { "name": "default" };
-	
-	
-	/**
-	 * Search final event
-	 */
-	async void onSearchFinal()
-	{
-		Connection conn = this.getDatabaseConnection();
-		
-		await parent::onSearchFinal();
-		
-	}
 	
 }

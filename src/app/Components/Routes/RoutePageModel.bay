@@ -203,29 +203,30 @@ struct RoutePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Set api result
+	 * Search after
 	 */
-	static void setApiResult(ModelProxy model, string event, ApiResult res)
+	async static void event(ModelProxy model, string action, Dict obj)
 	{
-		parent::setApiResult(model, event, res);
+		obj = await parent::event(model, action, obj);
 		
-		if (res == null) return;
-		if (not res.isSuccess()) return;
+		Dict api_res = obj["api_res"];
+		Dict crud_route = obj["crud_route"];
+		Dict post_data = obj["post_data"];
 		
-		Collection<Domain> domains = model.data(["dictionary", "domains"]);
-		if (domains)
+		if (action == "crudItemAfter")
 		{
-			Dict fields = model.data("fields");
-			fields <= domain_id <= options <= domains
-				.map(
+			Collection domains = api_res["data", "dictionary", "stack_name"]
+				|> .map(
 					Dict (Domain item) => { "label": item.domain_name, "value": item.id }
 				)
-				.sort(
+				|> .sort(
 					int (Dict a, Dict b) => a["label"] > b["label"]
 				)
 			;
-			model.commit("setFields", fields);
+			model.commit("setFieldOptions", "domain_id", domains);
 		}
+		
+		return obj;
 	}
 	
 }
