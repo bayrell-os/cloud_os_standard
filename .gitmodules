@@ -22,3 +22,6 @@
 [submodule "src/lib/Runtime.XML"]
 	path = src/lib/Runtime.XML
 	url = https://github.com/bayrell/Runtime.XML
+[submodule "src/lib/Runtime.Widget"]
+	path = src/lib/Runtime.Widget
+	url = https://github.com/bayrell/Runtime.Widget

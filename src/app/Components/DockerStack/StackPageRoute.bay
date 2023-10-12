@@ -18,15 +18,16 @@
 
 namespace Bayrell.CloudOS.Components.DockerStack;
 
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.DockerStack.StackDeletePage;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
-use Bayrell.CloudOS.Components.DockerStack.StackSavePage;
-use Bayrell.CloudOS.Components.DockerStack.StackTablePage;
+use Runtime.Widget.Crud.CrudWidget;
+use Runtime.Widget.Crud.DeletePage;
+use Runtime.Widget.Crud.SavePage;
+use Runtime.Widget.Crud.TablePage;
 
 
-class StackPageRoute extends CrudRoute
+class StackPageRoute extends BaseRoute
 {
 	
 	/**
@@ -44,13 +45,13 @@ class StackPageRoute extends CrudRoute
 		{
 			"uri": "/docker/stack/add/",
 			"name": "app:docker:stack:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
 			"uri": "/docker/stack/{id}/",
 			"name": "app:docker:stack:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -62,12 +63,6 @@ class StackPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "stack_name";
-	
-	
-	/**
 	 * Returns layout name
 	 */
 	string getLayoutName() => "default";
@@ -76,34 +71,162 @@ class StackPageRoute extends CrudRoute
 	/**
 	 * Returns page model
 	 */
-	string getPageModelName() => classof StackPageModel;
+	string getPageModelName() => classof BaseModel;
 	
 	
 	/**
-	 * Returns index page name
+	 * Setup crud widget
 	 */
-	string getIndexPageName() => classof StackTablePage;
+	Dict setupWidget(ModelProxy<FormWidget> widget)
+	{
+		/* Api name */
+		widget.commit("setApiName", "app.docker.stack");
+		
+		/* Model name */
+		widget.commit("setModelName", classof DockerStack);
+		
+		/* Stack name */
+		widget.commit("addField", "stack_name", {
+			"label": "Stack name",
+			"field_name": "stack_name",
+		});
+		
+		/* Table fields */
+		widget.commit("setTableFields", [
+			"stack_name",
+		]);
+		
+		/* Form fields */
+		widget.commit("setFormFields", [
+			"stack_name",
+		]);
+		
+		/* Setup route class */
+		widget.commit("setRouteClass", static::getClassName());
+		
+		/* Setup primary key */
+		if (
+			this.container.route.matches.has("id") and
+			(
+				this.container.route.name == "app:docker:stack:add" or
+				this.container.route.name == "app:docker:stack:edit" or
+				this.container.route.name == "app:docker:stack:delete"
+			)
+		)
+		{
+			widget.commit("setPrimaryKey", {
+				"id": this.container.route.matches.get("id"),
+			});
+		}
+		
+		/* Setup page */
+		if (this.container.route.name == "app:docker:stack:index")
+		{
+			widget.commit("setPage", this.container.request.query.get("page", 1));
+		}
+		
+		/* Setup back page */
+		widget.commit("setBackPage", static::url("app:docker:stack:index"));
+		
+		return settings;
+	}
 	
 	
 	/**
-	 * Returns save page name
+	 * Returns page title
 	 */
-	string getSavePageName() => classof StackSavePage;
+	string getPageTitle(ModelProxy<Widget> widget, string action)
+	{
+		if (action == "name")
+		{
+			return "docker stack";
+		}
+		else if (action == "item")
+		{
+			return widget.data(["item", "stack_name"]);
+		}
+		else if (action == "save")
+		{
+			boolean is_new = widget.call("isNew");
+			if (is_new)
+			{
+				return widget.call("getPageTitle", "add");
+			}
+			return widget.call("getPageTitle", "edit");
+		}
+		return null;
+	}
 	
 	
 	/**
-	 * Returns delete page name
+	 * Action index
 	 */
-	string getDeletePageName() => classof StackDeletePage;
+	async void actionIndex()
+	{
+		Widget widget = this.page_model.proxy(["widgets", "crud"]);
+		
+		/* Add widgets */
+		this.page_model.commit("addWidget", new CrudWidget{ "action": "table" });
+		
+		/* Setup widgets */
+		this.setupWidget(widget);
+		
+		/* Init widgets */
+		await this.page_model.commitAsync("initWidgets");
+		
+		/* Set title */
+		this.setPageTitle( widget.call("getPageTitle", "index") );
+		
+		/* Render page */
+		this.container.render( classof TablePage );
+	}
 	
 	
 	/**
-	 * Returns id location
+	 * Action save
 	 */
-	Dict getPrimaryKey() =>
-		this.container.route.matches.has("id") ? {
-			"stack_name": this.container.route.matches.get("id")
-		} : null
-	;
+	async void actionSave()
+	{
+		Widget widget = this.page_model.proxy(["widgets", "crud"]);
+		
+		/* Add widgets */
+		this.page_model.commit("addWidget", new CrudWidget{ "action": "save" });
+		
+		/* Setup widgets */
+		this.setupWidget(widget);
+		
+		/* Init widgets */
+		await this.page_model.commitAsync("initWidgets");
+		
+		/* Set title */
+		this.setPageTitle( widget.call("getPageTitle", "save") );
+		
+		/* Render page */
+		this.container.render( classof SavePage );
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	async void actionDelete()
+	{
+		Widget widget = this.page_model.proxy(["widgets", "crud"]);
+		
+		/* Add widgets */
+		this.page_model.commit("addWidget", new CrudWidget{ "action": "delete" });
+		
+		/* Setup widgets */
+		this.setupWidget(widget);
+		
+		/* Init widgets */
+		await this.page_model.commitAsync("initWidgets");
+		
+		/* Set title */
+		this.setPageTitle( widget.call("getPageTitle", "delete") );
+		
+		/* Render page */
+		this.container.render( classof DeletePage );
+	}
 	
 }
