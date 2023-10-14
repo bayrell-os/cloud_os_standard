@@ -29,7 +29,8 @@
 			[
 				"Runtime",
 				"Runtime.Web",
-				"Runtime.Web.Crud"
+				"Runtime.Web.Crud",
+				"Runtime.Widget"
 			]
 		}
 	],

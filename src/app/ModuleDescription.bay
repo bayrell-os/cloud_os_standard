@@ -50,7 +50,7 @@ static class ModuleDescription
 	{
 		"Runtime": ">=0.3",
 		"Runtime.Web": "*",
-		"Runtime.Web.Crud": "*",
+		"Runtime.Widget": "*",
 		
 		#ifdef BACKEND then
 		"Runtime.ORM": "*",
@@ -84,7 +84,6 @@ static class ModuleDescription
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.ApplicationApi"),
 		new Api("Bayrell.CloudOS.Api.ApplicationModApi"),
-		new Api("Bayrell.CloudOS.Api.DockerStackApi"),
 		new Api("Bayrell.CloudOS.Api.DockerYamlFileApi"),
 		new Api("Bayrell.CloudOS.Api.DomainApi"),
 		new Api("Bayrell.CloudOS.Api.ModificatorApi"),
@@ -97,6 +96,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Api.WorkspaceApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceRoleApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceRoleUserApi"),
+		new Api("Bayrell.CloudOS.Components.DockerStack.DockerStackApi"),
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),

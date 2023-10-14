@@ -48,6 +48,7 @@ class Main extends App
 	 */
 	async int main()
 	{
-		return await parent::main();
+		int res = await parent::main();
+		return res;
 	}
 }

@@ -56,7 +56,7 @@ td, th{
 
 <template>
 	%set Collection css_class_names = layout.getCssClasses();
-	%set string css = App::getCss(css_class_names);
+	%set string css = layout::getCss(css_class_names);
 	<style>@raw{{ css }}</style>
 </template>
 
