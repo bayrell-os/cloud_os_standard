@@ -88,11 +88,11 @@ class StackPageRoute extends BaseRoute
 	 */
 	Dict setupWidget(ModelProxy<BaseWidget> widget)
 	{
+		/* Setup route class */
+		this.page_model.commit("setRouteClass", static::getClassName());
+		
 		/* Api name */
 		widget.commit("setApiName", "app.docker.stack");
-		
-		/* Setup route class */
-		widget.commit("setRouteClass", static::getClassName());
 		
 		/* Stack name */
 		widget.commit("addField", new FieldInfo{
@@ -187,7 +187,7 @@ class StackPageRoute extends BaseRoute
 	/**
 	 * Returns page title
 	 */
-	static string getPageTitle(BaseModel widget, string action)
+	static string getPageTitle(BaseModel page_model, string action)
 	{
 		if (action == "name")
 		{
@@ -199,16 +199,18 @@ class StackPageRoute extends BaseRoute
 		}
 		else if (action == "item")
 		{
+			FormCrudModel widget = page_model.getWidget("form");
 			return widget["item", "stack_name"];
 		}
 		else if (action == "save")
 		{
+			FormCrudModel widget = page_model.getWidget("form");
 			bool is_new = widget.isNew();
 			if (is_new)
 			{
-				return widget.getPageTitle("add");
+				return page_model.getPageTitle("add");
 			}
-			return widget.getPageTitle("edit");
+			return page_model.getPageTitle("edit");
 		}
 		return null;
 	}
@@ -228,7 +230,7 @@ class StackPageRoute extends BaseRoute
 		await this.setupWidget(widget);
 		
 		/* Set title */
-		this.setPageTitle( widget.call("getPageTitle", "index") );
+		this.setPageTitle( this.page_model.call("getPageTitle", "index") );
 		
 		/* Render page */
 		this.container.render( classof TablePage );
@@ -249,7 +251,7 @@ class StackPageRoute extends BaseRoute
 		await this.setupWidget(widget);
 		
 		/* Set title */
-		this.setPageTitle( widget.call("getPageTitle", "save") );
+		this.setPageTitle( this.page_model.call("getPageTitle", "save") );
 		
 		/* Render page */
 		this.container.render( classof SavePage );
@@ -270,7 +272,7 @@ class StackPageRoute extends BaseRoute
 		this.setupWidget(widget);
 		
 		/* Set title */
-		this.setPageTitle( widget.call("getPageTitle", "delete") );
+		this.setPageTitle( this.page_model.call("getPageTitle", "delete") );
 		
 		/* Render page */
 		this.container.render( classof DeletePage );
