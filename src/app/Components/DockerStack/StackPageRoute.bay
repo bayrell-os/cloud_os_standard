@@ -30,11 +30,11 @@ use Runtime.Widget.FieldComponent;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
+use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
 
 
 class StackPageRoute extends CrudRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -68,102 +68,8 @@ class StackPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Setup crud widget
+	 * Returns page model
 	 */
-	Dict setupWidget(ModelProxy<BaseWidget> widget)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.docker.stack");
-		
-		/* Stack name */
-		widget.commit("addField", new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
-		});
-		
-		/* Table */
-		if (widget.data() instanceof TableCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "row_number"},
-				new FieldComponent{"name": "stack_name", "component": classof Label},
-				new FieldComponent{"name": "row_buttons"},
-			]);
-			
-			/* Setup page */
-			widget.commit("setPage", this.container.request.query.get("page", 1));
-		}
-		
-		/* Form */
-		if (widget.data() instanceof FormCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "stack_name", "component": classof Input},
-			]);
-			
-			/* Setup primary key */
-			if (this.container.route.name != "app:docker:stack:add")
-			{
-				widget.commit("setPrimaryKey", {
-					"stack_name": this.container.route.matches.get("id"),
-				});
-			}
-			
-			/* Setup back page */
-			this.page_model.commit("setBackPage", static::url("app:docker:stack:index"));
-		}
-		
-		/* Add components */
-		ModelProxy layout = this.layoutProxy()
-		layout.commit("addComponent", classof Input);
-		layout.commit("addComponent", classof Label);
-		
-		/* Load widgets data */
-		await this.page_model.commitAsync("setupWidgets");
-		await this.page_model.commitAsync("loadWidgets");
-	}
-	
-	
-	/**
-	 * Returns href
-	 */
-	static string getHref(string name, Dict params = null)
-	{
-		if (name == "add")
-		{
-			return static::url("app:docker:stack:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:docker:stack:edit", {"id": params["item", "stack_name"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:docker:stack:delete", {"id": params["item", "stack_name"]});
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * Returns page title
-	 */
-	static string getPageTitle(BaseModel page_model, string action)
-	{
-		if (action == "name")
-		{
-			return "docker stack";
-		}
-		if (action == "names")
-		{
-			return "docker stacks";
-		}
-		else if (action == "item")
-		{
-			FormCrudModel widget = page_model.getWidget("form");
-			return widget["item", "stack_name"];
-		}
-		return null;
-	}
+	string getPageModelName() => classof StackPageModel;
 	
 }

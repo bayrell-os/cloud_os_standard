@@ -31,6 +31,7 @@ use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.SSLGroup.SSLPageModel;
 
 
 class SSLPageRoute extends CrudRoute
@@ -69,111 +70,8 @@ class SSLPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Setup crud widget
+	 * Returns page model
 	 */
-	Dict setupWidget(ModelProxy<BaseWidget> widget)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.ssl_group");
-		
-		/* SSL group name */
-		widget.commit("addField", new FieldInfo{
-			"label": "name",
-			"name": "name",
-		});
-		
-		/* Container name */
-		widget.commit("addField", new FieldInfo{
-			"label": "Container name",
-			"name": "container_name",
-		});
-		
-		/* Table */
-		if (widget.data() instanceof TableCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "row_number"},
-				new FieldComponent{"name": "name", "component": classof Label},
-				new FieldComponent{"name": "container_name", "component": classof Label},
-				new FieldComponent{"name": "row_buttons"},
-			]);
-			
-			/* Setup page */
-			widget.commit("setPage", this.container.request.query.get("page", 1));
-		}
-		
-		/* Form */
-		if (widget.data() instanceof FormCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "name", "component": classof Input},
-				new FieldComponent{"name": "container_name", "component": classof Input},
-			]);
-			
-			/* Setup primary key */
-			if (this.container.route.name != "app:ssl:add")
-			{
-				widget.commit("setPrimaryKey", {
-					"id": this.container.route.matches.get("id"),
-				});
-			}
-			
-			/* Setup back page */
-			this.page_model.commit("setBackPage", static::url("app:ssl:index"));
-		}
-		
-		/* Add components */
-		ModelProxy layout = this.layoutProxy()
-		layout.commit("addComponent", classof Input);
-		layout.commit("addComponent", classof Label);
-		layout.commit("addComponent", classof TextArea);
-		
-		/* Load widgets data */
-		await this.page_model.commitAsync("setupWidgets");
-		await this.page_model.commitAsync("loadWidgets");
-	}
-	
-	
-	/**
-	 * Returns href
-	 */
-	static string getHref(string name, Dict params = null)
-	{
-		if (name == "add")
-		{
-			return static::url("app:ssl:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:ssl:edit", {"id": params["item", "id"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:ssl:delete", {"id": params["item", "id"]});
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * Returns page title
-	 */
-	static string getPageTitle(BaseModel page_model, string action)
-	{
-		if (action == "name")
-		{
-			return "SSL group";
-		}
-		if (action == "names")
-		{
-			return "SSL groups";
-		}
-		else if (action == "item")
-		{
-			FormCrudModel widget = page_model.getWidget("form");
-			return widget["item", "name"];
-		}
-		return null;
-	}
+	string getPageModelName() => classof SSLPageModel;
 	
 }

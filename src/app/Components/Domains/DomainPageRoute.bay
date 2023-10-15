@@ -31,6 +31,7 @@ use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.Domains.DomainPageModel;
 
 
 class DomainPageRoute extends CrudRoute
@@ -69,103 +70,8 @@ class DomainPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Setup crud widget
+	 * Returns page model
 	 */
-	Dict setupWidget(ModelProxy<BaseWidget> widget)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.domain");
-		
-		/* Domain name */
-		widget.commit("addField", new FieldInfo{
-			"label": "Domain name",
-			"name": "domain_name",
-		});
-		
-		/* Table */
-		if (widget.data() instanceof TableCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "row_number"},
-				new FieldComponent{"name": "domain_name", "component": classof Label},
-				new FieldComponent{"name": "row_buttons"},
-			]);
-			
-			/* Setup page */
-			widget.commit("setPage", this.container.request.query.get("page", 1));
-		}
-		
-		/* Form */
-		if (widget.data() instanceof FormCrudModel)
-		{
-			widget.commit("setFieldsList", [
-				new FieldComponent{"name": "domain_name", "component": classof Input},
-			]);
-			
-			/* Setup primary key */
-			if (this.container.route.name != "app:domains:add")
-			{
-				widget.commit("setPrimaryKey", {
-					"id": this.container.route.matches.get("id"),
-				});
-			}
-			
-			/* Setup back page */
-			this.page_model.commit("setBackPage", static::url("app:domains:index"));
-		}
-		
-		/* Add components */
-		ModelProxy layout = this.layoutProxy()
-		layout.commit("addComponent", classof Input);
-		layout.commit("addComponent", classof Label);
-		layout.commit("addComponent", classof TextArea);
-		
-		/* Load widgets data */
-		await this.page_model.commitAsync("setupWidgets");
-		await this.page_model.commitAsync("loadWidgets");
-	}
-	
-	
-	/**
-	 * Returns href
-	 */
-	static string getHref(string name, Dict params = null)
-	{
-		if (name == "add")
-		{
-			return static::url("app:domains:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:domains:edit", {"id": params["item", "id"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:domains:delete", {"id": params["item", "id"]});
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * Returns page title
-	 */
-	static string getPageTitle(BaseModel page_model, string action)
-	{
-		if (action == "name")
-		{
-			return "domain";
-		}
-		if (action == "names")
-		{
-			return "domains";
-		}
-		else if (action == "item")
-		{
-			FormCrudModel widget = page_model.getWidget("form");
-			return widget["item", "stack_name"];
-		}
-		return null;
-	}
+	string getPageModelName() => classof DomainPageModel;
 	
 }

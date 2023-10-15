@@ -16,37 +16,28 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Api;
+namespace Bayrell.CloudOS.Components.Routes;
 
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
-use Runtime.Web.Crud.CrudPageApi;
-use Runtime.Web.Crud.Rules.CrudRule;
-use Runtime.Web.Crud.Rules.Dictionary;
-use Runtime.Web.Crud.Rules.LowerCase;
-use Runtime.Web.Crud.Rules.Purify;
-use Runtime.Web.Crud.Rules.Required;
-use Runtime.Web.Crud.Rules.SaveFields;
-use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Domain;
-use Bayrell.CloudOS.Models.Route;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
 
 
-class RouteApi extends CrudPageApi
+class RouteApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
 	pure string getApiName() => "app.route";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof Route;
 	
 	
 	/**
@@ -70,26 +61,46 @@ class RouteApi extends CrudPageApi
 	
 	
 	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"id",
+		"enable",
+		"protocol",
+		"domain_id",
+		"route_prefix",
+		"docker_name",
+		"source_port",
+		"target_port",
+		"target_prefix",
+		"nginx_config",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"enable",
+		"protocol",
+		/*"protocol_data",*/
+		"domain_id",
+		"route_prefix",
+		"docker_name",
+		"source_port",
+		"target_port",
+		"target_prefix",
+		"nginx_config",
+	];
+	
+	
+	/**
 	 * Returns rules
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new SaveFields
-		{
-			"fields":
-			[
-				"enable",
-				"protocol",
-				/*"protocol_data",*/
-				"domain_id",
-				"route_prefix",
-				"docker_name",
-				"source_port",
-				"target_port",
-				"target_prefix",
-				"nginx_config",
-			]
-		},
 		new Purify{ "name": "docker_name" },
 		new LowerCase{ "name": "docker_name" },
 		new Required{ "name": "docker_name" },
@@ -99,9 +110,8 @@ class RouteApi extends CrudPageApi
 		
 		/* ForeignKey */
 		new Dictionary{
-			"foreign_key_name": "routes_domain_id",
 			"dictionary_name": "domains",
-			"model_name": classof Domain,
+			"table_name": "domains",
 		},
 	];
 	
@@ -134,14 +144,15 @@ class RouteApi extends CrudPageApi
 	/**
 	 * Validate item
 	 */
-	async Dict validateItem(Dict update_data)
+	async Dict onSaveBefore(Relation item, Dict update_data)
 	{
+		await parent::onSaveBefore(item, update_data);
+		
 		int domain_id = (int)this.post_data["domain_id"];
 		if (domain_id > 0)
 		{
-			update_data <= domain_id <= domain_id;
+			item.set("domain_id", domain_id);
 		}
-		return await parent::validateItem(update_data);
 	}
 	
 }

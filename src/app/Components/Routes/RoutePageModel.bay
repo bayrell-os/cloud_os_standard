@@ -20,11 +20,19 @@ namespace Bayrell.CloudOS.Components.Routes;
 
 use Runtime.lib;
 use Runtime.ModelProxy;
-use Runtime.Web.ApiResult;
-use Runtime.Web.Crud.CrudPageModel;
-use Runtime.Web.Crud.FieldInfo;
-use Bayrell.CloudOS.Models.Domain;
-use Bayrell.CloudOS.Models.Route;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudPageModel;
+use Runtime.Widget.Form.FormCrudModel;
+use Runtime.Widget.Table.TableCrudModel;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldItem;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
+use Runtime.Widget.TextArea;
 
 
 struct RoutePageModel extends CrudPageModel
@@ -59,53 +67,144 @@ struct RoutePageModel extends CrudPageModel
 		},
 		"source_port": new FieldInfo{
 			"label": "Source port",
-			"field_name": "source_port",
+			"name": "source_port",
 		},
 		"route_prefix": new FieldInfo{
 			"label": "Route prefix",
-			"field_name": "route_prefix",
+			"name": "route_prefix",
 		},
 		
 		/* Dest */
 		"docker_name": new FieldInfo{
 			"label": "Docker name",
-			"field_name": "docker_name",
+			"name": "docker_name",
 		},
 		"target_port": new FieldInfo{
 			"label": "Target port",
-			"field_name": "target_port",
+			"name": "target_port",
 		},
 		"target_prefix": new FieldInfo{
 			"label": "Target prefix",
-			"field_name": "target_prefix",
+			"name": "target_prefix",
 		},
 		
 		/* Nginx config */
 		"nginx_config": new FieldInfo{
 			"label": "Nginx config",
-			"field_name": "nginx_config",
+			"name": "nginx_config",
 		},
 	};
 	
 	
 	/**
-	 * Returns api name
+	 * Setup crud widget
 	 */
-	pure string getApiName() => "app.route";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof Route;
-	
-	
-	/**
-	 * Validate model
-	 */
-	public bool validateForm()
+	async static void setupWidget(ModelProxy<BaseModel> widget, BaseRoute route)
 	{
-		return true;
+		if (widget.data() == null) return;
+		
+		/* Api name */
+		widget.commit("setApiName", "app.route");
+		
+		/* Stack name */
+		widget.commit("setFields", route.page_model.data("fields"));
+		
+		/* Table */
+		if (widget.data() instanceof TableCrudModel)
+		{
+			widget.commit("setFieldsList", [
+				new FieldItem{"name": "row_number"},
+				new FieldItem{"name": "enable", "component": classof SelectLabel},
+				new FieldItem{"name": "protocol", "component": classof SelectLabel},
+				new FieldItem{
+					"name": "source",
+					"value_method": [static::getClassName(), "getTableValue"],
+				},
+				new FieldItem{
+					"name": "dest",
+					"value_method": [static::getClassName(), "getTableValue"],
+				},
+				new FieldItem{"name": "row_buttons"},
+			]);
+			
+			/* Setup page */
+			widget.commit("setPage", route.container.request.query.get("page", 1));
+		}
+		
+		/* Form */
+		if (widget.data() instanceof FormCrudModel)
+		{
+			widget.commit("setFieldsList", [
+				new FieldItem{"enable": "domain_name", "component": classof Select},
+				new FieldItem{"enable": "protocol", "component": classof Select},
+				new FieldItem{"enable": "domain_id", "component": classof Select},
+				new FieldItem{"enable": "source_port", "component": classof Input},
+				new FieldItem{"enable": "route_prefix", "component": classof Input},
+				new FieldItem{"enable": "docker_name", "component": classof Input},
+				new FieldItem{"enable": "target_port", "component": classof Input},
+				new FieldItem{"enable": "target_prefix", "component": classof Input},
+				new FieldItem{"enable": "nginx_config", "component": classof Input},
+			]);
+			
+			/* Setup primary key */
+			if (route.container.route.name != "app:routes:add")
+			{
+				widget.commit("setPrimaryKey", {
+					"id": route.container.route.matches.get("id"),
+				});
+			}
+			
+			/* Setup back page */
+			route.page_model.commit("setBackPage", static::url("app:routes:index"));
+		}
+		
+		/* Add components */
+		route.layout.commit("addComponent", classof Input);
+		route.layout.commit("addComponent", classof Label);
+		route.layout.commit("addComponent", classof Select);
+		route.layout.commit("addComponent", classof SelectLabel);
+		route.layout.commit("addComponent", classof TextArea);
+	}
+	
+	
+	/**
+	 * Returns href
+	 */
+	string getHref(string name, Dict params = null)
+	{
+		if (name == "add")
+		{
+			return static::url("app:routes:add");
+		}
+		else if (name == "edit")
+		{
+			return static::url("app:routes:edit", {"id": params["item", "id"]});
+		}
+		else if (name == "delete")
+		{
+			return static::url("app:routes:delete", {"id": params["item", "id"]});
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * Returns table value
+	 */
+	static string getTableValue(
+		Layout layout, TableCrudModel model,
+		int row_number, FieldItem field, Dict item
+	)
+	{
+		if (field.name == "source")
+		{
+			return layout.getPageModel().getSourceColumn(item);
+		}
+		else if (field.name == "dest")
+		{
+			return layout.getPageModel().getDestColumn(item);
+		}
+		return "";
 	}
 	
 	
@@ -114,29 +213,27 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	string getPageTitle(string action)
 	{
-		if (action == "index")
+		if (action == "name")
 		{
-			return "Routes";
+			return "route";
 		}
-		else if (action == "add")
+		if (action == "names")
 		{
-			return "Add route";
+			return "routes";
 		}
-		else if (action == "edit")
+		else if (action == "item")
 		{
-			return "Edit route '" ~ this.getSourceColumn(this.item_form.item) ~ "'";
-		}
-		else if (action == "delete")
-		{
-			return "Delete route ?";
+			FormCrudModel widget = this.getWidget("form");
+			return this.getSourceColumn(widget.item);
 		}
 		else if (action == "delete_content")
 		{
+			FormCrudModel widget = this.getWidget("form");
 			return "Delete route '" ~
-				this.getSourceColumn(this.item_form.item) ~ "' => " ~
-				this.getDestColumn(this.item_form.item) ~ " ?";
+				this.getSourceColumn(widget.item) ~ "' => " ~
+				this.getDestColumn(widget.item) ~ " ?";
 		}
-		return "";
+		return parent::getPageTitle(action);
 	}
 	
 	
@@ -145,10 +242,13 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	string getDomainName(int domain_id)
 	{
-		Collection domains = this.dictionary["domains"]
+		FormCrudModel widget = this.getWidget("form");
+		if (widget == null) return "";
+		
+		Collection domains = widget.dictionary["domains"]
 		if (domains == null) return "";
 		
-		Domain domain = domains.findItem( lib::equalAttr("id", domain_id) );
+		Dict domain = domains.findItem( lib::equalAttr("id", domain_id) );
 		if (domain == null) return "";
 		
 		return domain.domain_name;
@@ -158,12 +258,12 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Returns source
 	 */
-	string getSourceColumn(Route item)
+	string getSourceColumn(Dict item)
 	{
 		string res = "";
 		string domain_name = "";
 		
-		res ~= this.getDomainName(item.domain_id);
+		res ~= this.getDomainName(item["domain_id"]);
 		
 		if (item["source_port"] != 80)
 		{
@@ -182,7 +282,7 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Returns dest
 	 */
-	string getDestColumn(Route item)
+	string getDestColumn(Dict item)
 	{
 		string res = "";
 		
@@ -199,34 +299,6 @@ struct RoutePageModel extends CrudPageModel
 		}
 		
 		return res;
-	}
-	
-	
-	/**
-	 * Search after
-	 */
-	async static void event(ModelProxy model, string action, Dict obj)
-	{
-		obj = await parent::event(model, action, obj);
-		
-		Dict api_res = obj["api_res"];
-		Dict crud_route = obj["crud_route"];
-		Dict post_data = obj["post_data"];
-		
-		if (action == "crudItemAfter")
-		{
-			Collection domains = api_res["data", "dictionary", "stack_name"]
-				|> .map(
-					Dict (Domain item) => { "label": item.domain_name, "value": item.id }
-				)
-				|> .sort(
-					int (Dict a, Dict b) => a["label"] > b["label"]
-				)
-			;
-			model.commit("setFieldOptions", "domain_id", domains);
-		}
-		
-		return obj;
 	}
 	
 }

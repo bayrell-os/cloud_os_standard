@@ -18,12 +18,24 @@
 
 namespace Bayrell.CloudOS.Components.Routes;
 
+use Runtime.lib;
+use Runtime.ModelProxy;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseWidget;
+use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Routes.RouteDeletePage;
+use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Table.TableCrudModel;
+use Runtime.Widget.Form.FormCrudModel;
+use Runtime.Widget.Button;
+use Runtime.Widget.FieldComponent;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
+use Runtime.Widget.TextArea;
 use Bayrell.CloudOS.Components.Routes.RoutePageModel;
-use Bayrell.CloudOS.Components.Routes.RouteSavePage;
-use Bayrell.CloudOS.Components.Routes.RouteTablePage;
 
 
 class RoutePageRoute extends CrudRoute
@@ -44,13 +56,13 @@ class RoutePageRoute extends CrudRoute
 		{
 			"uri": "/routes/add/",
 			"name": "app:routes:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
-			"uri": "/routes/{id}/",
+			"uri": "/routes/{id}/edit/",
 			"name": "app:routes:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -62,38 +74,8 @@ class RoutePageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "id";
-	
-	
-	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
 	 * Returns page model
 	 */
 	string getPageModelName() => classof RoutePageModel;
-	
-	
-	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof RouteTablePage;
-	
-	
-	/**
-	 * Returns save page name
-	 */
-	string getSavePageName() => classof RouteSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof RouteDeletePage;
 	
 }
