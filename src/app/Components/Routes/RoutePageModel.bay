@@ -37,7 +37,11 @@ use Runtime.Widget.TextArea;
 
 struct RoutePageModel extends CrudPageModel
 {
-	Dict fields = {
+	/**
+	 * Fields
+	 */
+	pure static Dict fields() =>
+	{
 		"enable": new FieldInfo{
 			"label": "Enable",
 			"field_name": "enable",
@@ -97,21 +101,27 @@ struct RoutePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup crud widget
+	 * Setup widget
 	 */
-	async static void setupWidget(ModelProxy<BaseModel> widget, BaseRoute route)
+	async static void setup
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		BaseRoute route
+	)
 	{
 		if (widget.data() == null) return;
-		
-		/* Api name */
-		widget.commit("setApiName", "app.route");
-		
-		/* Stack name */
-		widget.commit("setFields", route.page_model.data("fields"));
 		
 		/* Table */
 		if (widget.data() instanceof TableCrudModel)
 		{
+			/* Api name */
+			widget.commit("setApiName", "app.route");
+			
+			/* Stack name */
+			widget.commit("setFields", static::fields());
+			
+			/* Set table fields list */
 			widget.commit("setFieldsList", [
 				new FieldItem{"name": "row_number"},
 				new FieldItem{"name": "enable", "component": classof SelectLabel},
@@ -134,6 +144,13 @@ struct RoutePageModel extends CrudPageModel
 		/* Form */
 		if (widget.data() instanceof FormCrudModel)
 		{
+			/* Api name */
+			widget.commit("setApiName", "app.route");
+			
+			/* Stack name */
+			widget.commit("setFields", static::fields());
+			
+			/* Set form fields list */
 			widget.commit("setFieldsList", [
 				new FieldItem{"enable": "domain_name", "component": classof Select},
 				new FieldItem{"enable": "protocol", "component": classof Select},
@@ -159,11 +176,14 @@ struct RoutePageModel extends CrudPageModel
 		}
 		
 		/* Add components */
-		route.layout.commit("addComponent", classof Input);
-		route.layout.commit("addComponent", classof Label);
-		route.layout.commit("addComponent", classof Select);
-		route.layout.commit("addComponent", classof SelectLabel);
-		route.layout.commit("addComponent", classof TextArea);
+		if (widget.data() instanceof CrudPageModel)
+		{
+			route.layout.commit("addComponent", classof Input);
+			route.layout.commit("addComponent", classof Label);
+			route.layout.commit("addComponent", classof Select);
+			route.layout.commit("addComponent", classof SelectLabel);
+			route.layout.commit("addComponent", classof TextArea);
+		}
 	}
 	
 	

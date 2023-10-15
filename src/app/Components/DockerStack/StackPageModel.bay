@@ -33,7 +33,12 @@ use Runtime.Widget.Label;
 
 struct StackPageModel extends CrudPageModel
 {
-	Dict fields = {
+	
+	/**
+	 * Fields
+	 */
+	pure static Dict fields() =>
+	{
 		"stack_name": new FieldInfo{
 			"label": "Stack name",
 			"name": "stack_name",
@@ -42,21 +47,27 @@ struct StackPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup crud widget
+	 * Setup widget
 	 */
-	async static void setupWidget(ModelProxy<BaseModel> widget, BaseRoute route)
+	async static void setup
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		BaseRoute route
+	)
 	{
 		if (widget.data() == null) return;
-		
-		/* Api name */
-		widget.commit("setApiName", "app.docker.stack");
-		
-		/* Stack name */
-		widget.commit("setFields", route.page_model.data("fields"));
 		
 		/* Table */
 		if (widget.data() instanceof TableCrudModel)
 		{
+			/* Api name */
+			widget.commit("setApiName", "app.docker.stack");
+			
+			/* Stack name */
+			widget.commit("setFields", static::fields());
+			
+			/* Set table fields list */
 			widget.commit("setFieldsList", [
 				new FieldItem{"name": "row_number"},
 				new FieldItem{"name": "stack_name", "component": classof Label},
@@ -70,6 +81,13 @@ struct StackPageModel extends CrudPageModel
 		/* Form */
 		if (widget.data() instanceof FormCrudModel)
 		{
+			/* Api name */
+			widget.commit("setApiName", "app.docker.stack");
+			
+			/* Stack name */
+			widget.commit("setFields", static::fields());
+			
+			/* Set form fields list */
 			widget.commit("setFieldsList", [
 				new FieldItem{"name": "stack_name", "component": classof Input},
 			]);
@@ -87,8 +105,11 @@ struct StackPageModel extends CrudPageModel
 		}
 		
 		/* Add components */
-		route.layout.commit("addComponent", classof Input);
-		route.layout.commit("addComponent", classof Label);
+		if (widget.data() instanceof CrudPageModel)
+		{
+			route.layout.commit("addComponent", classof Input);
+			route.layout.commit("addComponent", classof Label);
+		}
 	}
 	
 	
