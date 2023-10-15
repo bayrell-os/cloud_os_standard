@@ -23,7 +23,7 @@ use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.BaseWidget;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudWidget;
+use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Crud.DeletePage;
 use Runtime.Widget.Crud.SavePage;
 use Runtime.Widget.Crud.TablePage;
@@ -58,7 +58,7 @@ class StackPageRoute extends BaseRoute
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/",
+			"uri": "/docker/stack/{id}/edit/",
 			"name": "app:docker:stack:edit",
 			"method": "actionSave",
 		},
@@ -80,7 +80,7 @@ class StackPageRoute extends BaseRoute
 	/**
 	 * Returns page model
 	 */
-	string getPageModelName() => classof BaseModel;
+	string getPageModelName() => classof CrudPageModel;
 	
 	
 	/**
@@ -122,12 +122,15 @@ class StackPageRoute extends BaseRoute
 			]);
 			
 			/* Setup primary key */
-			widget.commit("setPrimaryKey", {
-				"id": this.container.route.matches.get("id"),
-			});
+			if (this.container.route.name != "app:docker:stack:add")
+			{
+				widget.commit("setPrimaryKey", {
+					"stack_name": this.container.route.matches.get("id"),
+				});
+			}
 			
 			/* Setup back page */
-			widget.commit("setBackPage", static::url("app:docker:stack:index"));
+			this.page_model.commit("setBackPage", static::url("app:docker:stack:index"));
 		}
 		
 		/* Add components */
@@ -237,16 +240,13 @@ class StackPageRoute extends BaseRoute
 	 */
 	async void actionSave()
 	{
-		ModelProxy<FormCrudModel> widget = this.page_model.proxy(["widgets", "crud"]);
+		ModelProxy<FormCrudModel> widget = this.page_model.proxy(["widgets", "form"]);
 		
 		/* Add widgets */
 		this.page_model.commit("addWidget", new FormCrudModel{ "widget_name": "form" });
 		
 		/* Setup widgets */
 		await this.setupWidget(widget);
-		
-		/* Init widgets */
-		await this.page_model.commitAsync("initWidgets", this);
 		
 		/* Set title */
 		this.setPageTitle( widget.call("getPageTitle", "save") );
@@ -261,16 +261,13 @@ class StackPageRoute extends BaseRoute
 	 */
 	async void actionDelete()
 	{
-		ModelProxy<FormCrudModel> widget = this.page_model.proxy(["widgets", "crud"]);
+		ModelProxy<FormCrudModel> widget = this.page_model.proxy(["widgets", "form"]);
 		
 		/* Add widgets */
 		this.page_model.commit("addWidget", new FormCrudModel{ "widget_name": "form" });
 		
 		/* Setup widgets */
 		this.setupWidget(widget);
-		
-		/* Init widgets */
-		await this.page_model.commitAsync("initWidgets", this);
 		
 		/* Set title */
 		this.setPageTitle( widget.call("getPageTitle", "delete") );
