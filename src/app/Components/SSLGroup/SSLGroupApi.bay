@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.SSLGroup;
 
 use Runtime.re;
 use Runtime.DateTime;
@@ -27,16 +27,21 @@ use Runtime.Widget.Crud.Api.CrudRule;
 use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.SaveFields;
 use Runtime.Widget.Crud.Api.Unique;
 
 
-class DockerStackApi extends CrudApi
+class SSLGroupApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.ssl_group";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string getTableName() => "domains_ssl_groups";
 	
 	
 	/**
@@ -54,16 +59,12 @@ class DockerStackApi extends CrudApi
 	
 	
 	/**
-	 * Returns table name
-	 */
-	string getTableName() => "stacks";
-	
-	
-	/**
 	 * Returns item fields
 	 */
 	Collection getItemFields() => [
-		"stack_name",
+		"id",
+		"name",
+		"container_name",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -73,7 +74,8 @@ class DockerStackApi extends CrudApi
 	 * Returns save fields
 	 */
 	Collection getSaveFields() => [
-		"stack_name",
+		"name",
+		"container_name",
 	];
 	
 	
@@ -82,10 +84,11 @@ class DockerStackApi extends CrudApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new Purify{ "name": "stack_name" },
-		new LowerCase{ "name": "stack_name" },
-		new Required{ "name": "stack_name" },
-		new Unique{"keys": ["stack_name"]},
+		new Purify{ "name": "name" },
+		new LowerCase{ "name": "name" },
+		new Required{ "name": "name" },
+        new Purify{ "name": "container_name" },
+		new LowerCase{ "name": "container_name" },
 	];
 	
 	
@@ -94,7 +97,7 @@ class DockerStackApi extends CrudApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q.orderBy("stack_name", "asc");
+		q = q.orderBy("id", "asc");
 		return q;
 	}
 	

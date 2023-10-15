@@ -16,40 +16,33 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Api;
+namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Web.Crud.CrudPageApi;
-use Runtime.Web.Crud.Rules.CrudRule;
-use Runtime.Web.Crud.Rules.LowerCase;
-use Runtime.Web.Crud.Rules.Purify;
-use Runtime.Web.Crud.Rules.Required;
-use Runtime.Web.Crud.Rules.SaveFields;
-use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.DomainSSLGroup;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Filter;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
 
 
-class SSLGroupApi extends CrudPageApi
+class DomainApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.ssl_group";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof DomainSSLGroup;
+	pure string getApiName() => "app.domain";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains_ssl_groups";
+	pure string getTableName() => "domains";
 	
 	
 	/**
@@ -67,23 +60,34 @@ class SSLGroupApi extends CrudPageApi
 	
 	
 	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"id",
+		"domain_name",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"domain_name",
+	];
+	
+	
+	/**
 	 * Returns rules
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new SaveFields
-		{
-			"fields":
-			[
-				"name",
-				"container_name",
-			]
-		},
-		new Purify{ "name": "name" },
-		new LowerCase{ "name": "name" },
-		new Required{ "name": "name" },
-        new Purify{ "name": "container_name" },
-		new LowerCase{ "name": "container_name" },
+		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "domain_name" },
+		new Unique{"keys": ["domain_name"]},
+		new Filter{"api_name": "space_id", "field_name": "space_id"},
 	];
 	
 	
@@ -92,7 +96,14 @@ class SSLGroupApi extends CrudPageApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		q = q.orderBy("id", "asc");
+		int space_id = (int)this.post_data.get("space_id");
+		if (space_id > 0)
+		{
+			q.where("space_id", "=", space_id);
+		}
+		
+		q = q.orderBy("domains.id", "asc");
+		
 		return q;
 	}
 	

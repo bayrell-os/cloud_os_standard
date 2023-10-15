@@ -19,14 +19,18 @@
 namespace Bayrell.CloudOS.Components.Domains;
 
 use Runtime.ModelProxy;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseWidget;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudPageModel;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Models.Domain;
-use Bayrell.CloudOS.Components.Domains.DomainDeletePage;
-use Bayrell.CloudOS.Components.Domains.DomainPageModel;
-use Bayrell.CloudOS.Components.Domains.DomainSavePage;
-use Bayrell.CloudOS.Components.Domains.DomainTablePage;
+use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Table.TableCrudModel;
+use Runtime.Widget.Form.FormCrudModel;
+use Runtime.Widget.Button;
+use Runtime.Widget.FieldComponent;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.TextArea;
 
 
 class DomainPageRoute extends CrudRoute
@@ -47,13 +51,13 @@ class DomainPageRoute extends CrudRoute
 		{
 			"uri": "/domains/add/",
 			"name": "app:domains:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
-			"uri": "/domains/{id}/",
+			"uri": "/domains/{id}/edit/",
 			"name": "app:domains:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -61,95 +65,107 @@ class DomainPageRoute extends CrudRoute
 			"name": "app:domains:delete",
 			"method": "actionDelete",
 		},
-		new RouteInfo
-		{
-			"uri": "/domains/{id}/routes/",
-			"name": "app:domains:routes",
-			"method": "actionRoutes",
-		},
 	];
 	
 	
 	/**
-	 * Returns id field name
+	 * Setup crud widget
 	 */
-	pure string getFieldNameId() => "id";
-	
-	
-	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
-	 * Returns page model
-	 */
-	string getPageModelName() => classof DomainPageModel;
-	
-	
-	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof DomainTablePage;
-	
-	
-	/**
-	 * Returns save page name
-	 */
-	string getSavePageName() => classof DomainSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof DomainDeletePage;
-	
-	
-	/**
-	 * Crud route after
-	 */
-	async void crudRouteAfter()
+	Dict setupWidget(ModelProxy<BaseWidget> widget)
 	{
-		await parent::crudRouteAfter();
+		/* Api name */
+		widget.commit("setApiName", "app.domain");
 		
-		string route_name = this.container.route.name;
-		if (
-			route_name == "app:domains:add" or
-			route_name == "app:domains:edit" 
-		)
+		/* Domain name */
+		widget.commit("addField", new FieldInfo{
+			"label": "Domain name",
+			"name": "domain_name",
+		});
+		
+		/* Table */
+		if (widget.data() instanceof TableCrudModel)
 		{
-			this.modelProxy("tabs").commit("setActive", "info");
+			widget.commit("setFieldsList", [
+				new FieldComponent{"name": "row_number"},
+				new FieldComponent{"name": "domain_name", "component": classof Label},
+				new FieldComponent{"name": "row_buttons"},
+			]);
+			
+			/* Setup page */
+			widget.commit("setPage", this.container.request.query.get("page", 1));
 		}
-		else if (route_name == "app:domains:routes")
+		
+		/* Form */
+		if (widget.data() instanceof FormCrudModel)
 		{
-			this.modelProxy("tabs").commit("setActive", "routes");
+			widget.commit("setFieldsList", [
+				new FieldComponent{"name": "domain_name", "component": classof Input},
+			]);
+			
+			/* Setup primary key */
+			if (this.container.route.name != "app:domains:add")
+			{
+				widget.commit("setPrimaryKey", {
+					"id": this.container.route.matches.get("id"),
+				});
+			}
+			
+			/* Setup back page */
+			this.page_model.commit("setBackPage", static::url("app:domains:index"));
 		}
+		
+		/* Add components */
+		ModelProxy layout = this.layoutProxy()
+		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof TextArea);
+		
+		/* Load widgets data */
+		await this.page_model.commitAsync("setupWidgets");
+		await this.page_model.commitAsync("loadWidgets");
 	}
 	
 	
 	/**
-	 * Crud route after
+	 * Returns href
 	 */
-	async void actionRoutes()
+	static string getHref(string name, Dict params = null)
 	{
-		await parent::actionEdit();
-		
-		/* Set page title */
-		this.page_model.commit("setAction", "routes");
-		this.setPageTitle( this.page_model.call("getPageTitle", "routes" ) );
-		
-		/* Get routes */
-		Domain item = this.page_model.model(["item_form", "item"]);
-		if (item != null)
+		if (name == "add")
 		{
-			ModelProxy routes = this.modelProxy("routes");
-			
-			routes.commit("setAction", CrudPageModel::ACTION_INDEX);
-			routes.commit("setPage", this.container.request.query.get("page", 1));
-			routes.commit("setDomainId", item.id);
-			await routes.commitAsync("callCrudSearch");
+			return static::url("app:domains:add");
 		}
+		else if (name == "edit")
+		{
+			return static::url("app:domains:edit", {"id": params["item", "id"]});
+		}
+		else if (name == "delete")
+		{
+			return static::url("app:domains:delete", {"id": params["item", "id"]});
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * Returns page title
+	 */
+	static string getPageTitle(BaseModel page_model, string action)
+	{
+		if (action == "name")
+		{
+			return "domain";
+		}
+		if (action == "names")
+		{
+			return "domains";
+		}
+		else if (action == "item")
+		{
+			FormCrudModel widget = page_model.getWidget("form");
+			return widget["item", "stack_name"];
+		}
+		return null;
 	}
 	
 }

@@ -78,25 +78,27 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.Settings.SettingsRoute"),
 		new Route("Bayrell.CloudOS.Components.Templates.TemplatePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
-		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
+		/*new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),*/
 		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Api.ApplicationApi"),
 		new Api("Bayrell.CloudOS.Api.ApplicationModApi"),
-		new Api("Bayrell.CloudOS.Api.DockerYamlFileApi"),
-		new Api("Bayrell.CloudOS.Api.DomainApi"),
 		new Api("Bayrell.CloudOS.Api.ModificatorApi"),
 		new Api("Bayrell.CloudOS.Api.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Api.RouteApi"),
-		new Api("Bayrell.CloudOS.Api.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Api.TemplateApi"),
 		new Api("Bayrell.CloudOS.Api.TemplateVersionApi"),
 		new Api("Bayrell.CloudOS.Api.UserApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceRoleApi"),
 		new Api("Bayrell.CloudOS.Api.WorkspaceRoleUserApi"),
-		new Api("Bayrell.CloudOS.Components.DockerStack.DockerStackApi"),
+		
+		new Api("Bayrell.CloudOS.Components.DockerStack.StackApi"),
+		new Api("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileApi"),
+		new Api("Bayrell.CloudOS.Components.Domains.DomainApi"),
+		new Api("Bayrell.CloudOS.Components.SSLGroup.SSLGroupApi"),
+		
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),
 		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),
