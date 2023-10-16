@@ -68,6 +68,7 @@ class RouteApi extends CrudApi
 		"enable",
 		"protocol",
 		"domain_id",
+		"domain_name",
 		"route_prefix",
 		"docker_name",
 		"source_port",
@@ -132,6 +133,9 @@ class RouteApi extends CrudApi
 		]);
 		
 		q = q
+			.addFields([
+				"domains.domain_name as domain_name"
+			])
 			.orderBy("domains.domain_name", "asc")
 			.orderBy("routes.route_prefix", "asc")
 			.orderBy("routes.id", "desc")

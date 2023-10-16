@@ -25,6 +25,7 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormCrudModel;
+use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableCrudModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldItem;
@@ -152,15 +153,15 @@ struct RoutePageModel extends CrudPageModel
 			
 			/* Set form fields list */
 			widget.commit("setFieldsList", [
-				new FieldItem{"enable": "domain_name", "component": classof Select},
-				new FieldItem{"enable": "protocol", "component": classof Select},
-				new FieldItem{"enable": "domain_id", "component": classof Select},
-				new FieldItem{"enable": "source_port", "component": classof Input},
-				new FieldItem{"enable": "route_prefix", "component": classof Input},
-				new FieldItem{"enable": "docker_name", "component": classof Input},
-				new FieldItem{"enable": "target_port", "component": classof Input},
-				new FieldItem{"enable": "target_prefix", "component": classof Input},
-				new FieldItem{"enable": "nginx_config", "component": classof Input},
+				new FieldItem{"name": "enable", "component": classof Select},
+				new FieldItem{"name": "protocol", "component": classof Select},
+				new FieldItem{"name": "domain_id", "component": classof Select},
+				new FieldItem{"name": "source_port", "component": classof Input},
+				new FieldItem{"name": "route_prefix", "component": classof Input},
+				new FieldItem{"name": "docker_name", "component": classof Input},
+				new FieldItem{"name": "target_port", "component": classof Input},
+				new FieldItem{"name": "target_prefix", "component": classof Input},
+				new FieldItem{"name": "nginx_config", "component": classof TextArea},
 			]);
 			
 			/* Setup primary key */
@@ -188,6 +189,45 @@ struct RoutePageModel extends CrudPageModel
 	
 	
 	/**
+	 * Widget event
+	 */
+	async static Dict event
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		string action, Dict obj
+	)
+	{
+		obj = await parent::event(page_model, widget, action, obj);
+		
+		/* Form */
+		if (
+			widget.data() instanceof FormCrudModel and
+			action == FormModel::ON_LOAD_ITEM_AFTER and
+			obj["api"].isSuccess()
+		)
+		{
+			widget.commit
+			(
+				"setFieldOptionsFromApi",
+				{
+					"api": obj["api"],
+					"from": "domains",
+					"to": "domain_id",
+					"item": Dict (Dict item) =>
+					{
+						"label": item["domain_name"],
+						"value": item["id"]
+					},
+				}
+			);
+		}
+		
+		return obj;
+	}
+	
+	
+	/**
 	 * Returns href
 	 */
 	string getHref(string name, Dict params = null)
@@ -211,7 +251,8 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Returns table value
 	 */
-	static string getTableValue(
+	static string getTableValue
+	(
 		Layout layout, TableCrudModel model,
 		int row_number, FieldItem field, Dict item
 	)
@@ -262,16 +303,19 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	string getDomainName(int domain_id)
 	{
-		FormCrudModel widget = this.getWidget("form");
-		if (widget == null) return "";
+		FormCrudModel form = this.getWidget("form");
+		if (form != null)
+		{
+			Collection domains = form.dictionary["domains"]
+			if (domains == null) return "";
+			
+			Dict domain = domains.findItem( lib::equalAttr("id", domain_id) );
+			if (domain == null) return "";
+			
+			return domain["domain_name"];
+		}
 		
-		Collection domains = widget.dictionary["domains"]
-		if (domains == null) return "";
-		
-		Dict domain = domains.findItem( lib::equalAttr("id", domain_id) );
-		if (domain == null) return "";
-		
-		return domain.domain_name;
+		return "";
 	}
 	
 	
@@ -283,7 +327,15 @@ struct RoutePageModel extends CrudPageModel
 		string res = "";
 		string domain_name = "";
 		
-		res ~= this.getDomainName(item["domain_id"]);
+		FormCrudModel form = this.getWidget("form");
+		if (form != null)
+		{
+			res ~= this.getDomainName(item["domain_id"]);
+		}
+		else
+		{
+			res ~= item["domain_name"];
+		}
 		
 		if (item["source_port"] != 80)
 		{
