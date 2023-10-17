@@ -25,7 +25,7 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Table.ForeignTableModel;
+use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldItem;
@@ -129,7 +129,10 @@ struct DomainPageModel extends CrudPageModel
 		]);
 		
 		/* Setup primary key */
-		if (route.container.route.name != "app:domains:add")
+		if (
+			widget.data("widget_path") == "form" and
+			route.container.route.name != "app:domains:add"
+		)
 		{
 			widget.commit("setPrimaryKey", {
 				"id": route.container.route.matches.get("id"),
@@ -142,8 +145,8 @@ struct DomainPageModel extends CrudPageModel
 			not widget.call("isNew")
 		)
 		{
-			ForeignTableModel routes =
-				await route.addWidget(new ForeignTableModel{ "widget_name": "routes" });
+			TableDialogModel routes =
+				await route.addWidget(new TableDialogModel{ "widget_name": "routes" });
 			await static::setupWidgetRoutes(page_model, routes, route);
 		}
 		
@@ -166,12 +169,13 @@ struct DomainPageModel extends CrudPageModel
 		await RoutePageModel::setupWidgetTable(page_model, widget, route);
 		
 		/* Setup widget route */
-		/*ModelProxy<BaseModel> form = widget.proxy(["widgets", "form"]);
-		await RoutePageModel::setupWidgetForm(page_model, form, route);*/
+		ModelProxy<BaseModel> form = widget.proxy(["widgets", "form"]);
+		await RoutePageModel::setupWidgetForm(page_model, form, route);
 		
-		/* Set routes foreign key */
+		/* Set foreign key */
 		int domain_id = (int)page_model.data(["widgets", "form", "item_pk", "id"]);
 		widget.commit("setForeignKey", "domain_id", domain_id);
+		form.commit("setForeignKey", "domain_id", domain_id);
 	}
 	
 	

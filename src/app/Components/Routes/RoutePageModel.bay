@@ -202,7 +202,10 @@ struct RoutePageModel extends CrudPageModel
 		]);
 		
 		/* Setup primary key */
-		if (route.container.route.name != "app:routes:add")
+		if (
+			widget.data("widget_path") == "form" and
+			route.container.route.name != "app:routes:add"
+		)
 		{
 			widget.commit("setPrimaryKey", {
 				"id": route.container.route.matches.get("id"),

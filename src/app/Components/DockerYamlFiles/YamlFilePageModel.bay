@@ -137,7 +137,10 @@ struct YamlFilePageModel extends CrudPageModel
 		]);
 		
 		/* Setup primary key */
-		if (route.container.route.name != "app:docker:yaml:add")
+		if (
+			widget.data("widget_path") == "form" and
+			route.container.route.name != "app:docker:yaml:add"
+		)
 		{
 			widget.commit("setPrimaryKey", {
 				"id": route.container.route.matches.get("id"),

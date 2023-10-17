@@ -132,7 +132,10 @@ struct SSLPageModel extends CrudPageModel
 		]);
 		
 		/* Setup primary key */
-		if (route.container.route.name != "app:ssl:add")
+		if (
+			widget.data("widget_path") == "form" and
+			route.container.route.name != "app:ssl:add"
+		)
 		{
 			widget.commit("setPrimaryKey", {
 				"id": route.container.route.matches.get("id"),

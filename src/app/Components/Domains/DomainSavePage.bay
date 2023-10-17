@@ -33,8 +33,7 @@
 .table_routes{
 	padding-top: 1.5em;
 }
-.table_routes > label{
-	display: block;
+.table_routes__label{
 	font-size: 1.2em;
 	font-weight: bold;
 	margin-bottom: 1em;
@@ -60,7 +59,7 @@
 	%if (routes != null)
 	{
 		<div class="table_routes">
-			<label>Routes</label>
+			<div class="table_routes__label">Routes</div>
 			<TableDialog @model=["widgets", "routes"] />
 		</div>
 	}
