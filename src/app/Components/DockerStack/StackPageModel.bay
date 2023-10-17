@@ -18,13 +18,14 @@
 
 namespace Bayrell.CloudOS.Components.DockerStack;
 
+use Runtime.Callback;
 use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Widget.Crud.CrudPageModel;
-use Runtime.Widget.Form.FormCrudModel;
-use Runtime.Widget.Table.TableCrudModel;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldItem;
 use Runtime.Widget.Input;
@@ -47,76 +48,99 @@ struct StackPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget
+	 * Init widget
 	 */
-	async static void setup
+	async static void initWidgets(ModelProxy<BaseModel> model, BaseRoute route)
+	{
+		await parent::initWidgets(model, route);
+		
+		ModelProxy form = model.proxy(["widgets", "form"]);
+		ModelProxy table = model.proxy(["widgets", "table"]);
+		
+		if (table.data() instanceof TableModel)
+		{
+			await static::setupWidgetTable(model, table, route);
+		}
+		
+		if (form.data() instanceof FormModel)
+		{
+			await static::setupWidgetForm(model, form, route);
+		}
+		
+		route.layout.commit("addComponent", classof Input);
+		route.layout.commit("addComponent", classof Label);
+	}
+	
+	
+	/**
+	 * Setup widget routes
+	 */
+	async static void setupWidgetTable
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
 		BaseRoute route
 	)
 	{
-		if (widget.data() == null) return;
+		/* Api name */
+		widget.commit("setApiName", "app.docker.stack");
 		
-		/* Table */
-		if (widget.data() instanceof TableCrudModel)
+		/* Set fields */
+		widget.commit("setFields", static::fields());
+		
+		/* Set href */
+		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
+		
+		/* Set table fields list */
+		widget.commit("setFieldsList", [
+			new FieldItem{"name": "row_number"},
+			new FieldItem{"name": "stack_name", "component": classof Label},
+			new FieldItem{"name": "row_buttons"},
+		]);
+		
+		/* Setup page */
+		widget.commit("setPage", route.container.request.query.get("page", 1));
+	}
+	
+	
+	/**
+	 * Setup widget routes
+	 */
+	async static void setupWidgetForm
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		BaseRoute route
+	)
+	{
+		/* Api name */
+		widget.commit("setApiName", "app.docker.stack");
+		
+		/* Set fields */
+		widget.commit("setFields", static::fields());
+		
+		/* Set form fields list */
+		widget.commit("setFieldsList", [
+			new FieldItem{"name": "stack_name", "component": classof Input},
+		]);
+		
+		/* Setup primary key */
+		if (route.container.route.name != "app:docker:stack:add")
 		{
-			/* Api name */
-			widget.commit("setApiName", "app.docker.stack");
-			
-			/* Stack name */
-			widget.commit("setFields", static::fields());
-			
-			/* Set table fields list */
-			widget.commit("setFieldsList", [
-				new FieldItem{"name": "row_number"},
-				new FieldItem{"name": "stack_name", "component": classof Label},
-				new FieldItem{"name": "row_buttons"},
-			]);
-			
-			/* Setup page */
-			widget.commit("setPage", route.container.request.query.get("page", 1));
+			widget.commit("setPrimaryKey", {
+				"stack_name": route.container.route.matches.get("id"),
+			});
 		}
 		
-		/* Form */
-		if (widget.data() instanceof FormCrudModel)
-		{
-			/* Api name */
-			widget.commit("setApiName", "app.docker.stack");
-			
-			/* Stack name */
-			widget.commit("setFields", static::fields());
-			
-			/* Set form fields list */
-			widget.commit("setFieldsList", [
-				new FieldItem{"name": "stack_name", "component": classof Input},
-			]);
-			
-			/* Setup primary key */
-			if (route.container.route.name != "app:docker:stack:add")
-			{
-				widget.commit("setPrimaryKey", {
-					"stack_name": route.container.route.matches.get("id"),
-				});
-			}
-			
-			/* Setup back page */
-			route.page_model.commit("setBackPage", static::url("app:docker:stack:index"));
-		}
-		
-		/* Add components */
-		if (widget.data() instanceof CrudPageModel)
-		{
-			route.layout.commit("addComponent", classof Input);
-			route.layout.commit("addComponent", classof Label);
-		}
+		/* Setup back page */
+		route.page_model.commit("setBackPage", static::url("app:docker:stack:index"));
 	}
 	
 	
 	/**
 	 * Returns href
 	 */
-	string getHref(string name, Dict params = null)
+	static string getHref(string name, Dict params = null)
 	{
 		if (name == "add")
 		{
@@ -149,7 +173,7 @@ struct StackPageModel extends CrudPageModel
 		}
 		else if (action == "item")
 		{
-			FormCrudModel widget = this.getWidget("form");
+			FormModel widget = this.getWidget("form");
 			return widget["item", "stack_name"];
 		}
 		return parent::getPageTitle(action);

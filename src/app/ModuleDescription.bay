@@ -77,7 +77,6 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Settings.SettingsRoute"),
 		new Route("Bayrell.CloudOS.Components.Templates.TemplatePageRoute"),
-		new Route("Bayrell.CloudOS.Components.Users.UsersPageRoute"),
 		/*new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),*/
 		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
@@ -85,6 +84,8 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Components.DockerStack.StackApi"),
 		new Api("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileApi"),
 		new Api("Bayrell.CloudOS.Components.Domains.DomainApi"),
+		new Api("Bayrell.CloudOS.Components.Modificators.ModificatorApi"),
+		new Api("Bayrell.CloudOS.Components.NginxFiles.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Components.Routes.RouteApi"),
 		new Api("Bayrell.CloudOS.Components.SSLGroup.SSLGroupApi"),
 		

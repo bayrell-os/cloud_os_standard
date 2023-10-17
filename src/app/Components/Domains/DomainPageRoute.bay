@@ -18,20 +18,10 @@
 
 namespace Bayrell.CloudOS.Components.Domains;
 
-use Runtime.ModelProxy;
-use Runtime.Web.BaseModel;
-use Runtime.Web.BaseWidget;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Runtime.Widget.Table.TableCrudModel;
-use Runtime.Widget.Form.FormCrudModel;
-use Runtime.Widget.Button;
-use Runtime.Widget.FieldComponent;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.TextArea;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
+use Bayrell.CloudOS.Components.Domains.DomainSavePage;
 
 
 class DomainPageRoute extends CrudRoute
@@ -73,5 +63,12 @@ class DomainPageRoute extends CrudRoute
 	 * Returns page model
 	 */
 	string getPageModelName() => classof DomainPageModel;
+	
+	
+	/**
+	 * Returns save page name
+	 */
+	string getSavePageName() => classof DomainSavePage;
+	
 	
 }

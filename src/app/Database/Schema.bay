@@ -494,7 +494,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Save item
 	 */
-	static Dict onBeforeSave(Dict d)
+	Dict onBeforeSave(Dict d)
 	{
 		Relation item = d["item"];
 		if (

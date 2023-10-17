@@ -19,11 +19,8 @@
 namespace Bayrell.CloudOS.Components.Modificators;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Modificators.ModificatorDeletePage;
+use Runtime.Widget.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
-use Bayrell.CloudOS.Components.Modificators.ModificatorSavePage;
-use Bayrell.CloudOS.Components.Modificators.ModificatorTablePage;
 
 
 class ModificatorPageRoute extends CrudRoute
@@ -42,9 +39,9 @@ class ModificatorPageRoute extends CrudRoute
 		},
 		new RouteInfo
 		{
-			"uri": "/modificators/{id}/edit/",
+			"uri": "/modificators/{id}/",
 			"name": "app:modificators:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -56,42 +53,7 @@ class ModificatorPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
 	 * Returns page model
 	 */
 	string getPageModelName() => classof ModificatorPageModel;
-	
-	
-	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof ModificatorTablePage;
-	
-	
-	/**
-	 * Returns save page name
-	 */
-	string getSavePageName() => classof ModificatorSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof ModificatorDeletePage;
-	
-	
-	/**
-	 * Returns id location
-	 */
-	Dict getPrimaryKey() =>
-		this.container.route.matches.has("id") ? {
-			"id": this.container.route.matches.get("id")
-		} : null
-	;
-	
 }

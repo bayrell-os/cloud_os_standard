@@ -19,16 +19,11 @@
 namespace Bayrell.CloudOS.Components.NginxFiles;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFileDeletePage;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFilePageModel;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFileSavePage;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFileTablePage;
+use Runtime.Widget.Crud.CrudRoute;
 
 
 class NginxFilePageRoute extends CrudRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -44,13 +39,13 @@ class NginxFilePageRoute extends CrudRoute
 		{
 			"uri": "/nginx_files/add/",
 			"name": "app:nginx_files:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
-			"uri": "/nginx_files/{id}/",
+			"uri": "/nginx_files/{id}/edit/",
 			"name": "app:nginx_files:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -62,38 +57,7 @@ class NginxFilePageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "id";
-	
-	
-	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
 	 * Returns page model
 	 */
 	string getPageModelName() => classof NginxFilePageModel;
-	
-	
-	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof NginxFileTablePage;
-	
-	
-	/**
-	 * Returns save page name
-	 */
-	string getSavePageName() => classof NginxFileSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof NginxFileDeletePage;
-	
 }

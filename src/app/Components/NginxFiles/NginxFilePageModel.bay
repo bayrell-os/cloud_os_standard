@@ -18,21 +18,37 @@
 
 namespace Bayrell.CloudOS.Components.NginxFiles;
 
-use Runtime.Web.Crud.CrudPageModel;
-use Runtime.Web.Crud.FieldInfo;
-use Bayrell.CloudOS.Models.NginxFile;
+use Runtime.Callback;
+use Runtime.ModelProxy;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudPageModel;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldItem;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
+use Runtime.Widget.TextArea;
 
 
 struct NginxFilePageModel extends CrudPageModel
 {
-	Dict fields = {
+	/**
+	 * Fields
+	 */
+	pure static Dict fields() =>
+	{
 		"name": new FieldInfo{
 			"label": "File name",
-			"field_name": "name",
+			"name": "name",
 		},
 		"enable": new FieldInfo{
 			"label": "Enable",
-			"field_name": "enable",
+			"name": "enable",
 			"options": [
 				{"label": "No", "value": "0"},
 				{"label": "Yes", "value": "1"},
@@ -40,29 +56,125 @@ struct NginxFilePageModel extends CrudPageModel
 		},
 		"content": new FieldInfo{
 			"label": "Content",
-			"field_name": "content",
+			"name": "content",
 		},
 	};
 	
 	
 	/**
-	 * Returns api name
+	 * Init widget
 	 */
-	pure string getApiName() => "app.nginx_file";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof NginxFile;
-	
-	
-	/**
-	 * Validate model
-	 */
-	public bool validateForm()
+	async static void initWidgets(ModelProxy<BaseModel> model, BaseRoute route)
 	{
-		return true;
+		await parent::initWidgets(model, route);
+		
+		ModelProxy form = model.proxy(["widgets", "form"]);
+		ModelProxy table = model.proxy(["widgets", "table"]);
+		
+		if (table.data() instanceof TableModel)
+		{
+			await static::setupWidgetTable(model, table, route);
+		}
+		
+		if (form.data() instanceof FormModel)
+		{
+			await static::setupWidgetForm(model, form, route);
+		}
+		
+		route.layout.commit("addComponent", classof Input);
+		route.layout.commit("addComponent", classof Label);
+		route.layout.commit("addComponent", classof Select);
+		route.layout.commit("addComponent", classof SelectLabel);
+		route.layout.commit("addComponent", classof TextArea);
+	}
+	
+	
+	/**
+	 * Setup widget routes
+	 */
+	async static void setupWidgetTable
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		BaseRoute route
+	)
+	{
+		/* Api name */
+		widget.commit("setApiName", "app.nginx_file");
+		
+		/* Set fields */
+		widget.commit("setFields", static::fields());
+		
+		/* Set href */
+		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
+		
+		/* Set table fields list */
+		widget.commit("setFieldsList", [
+			new FieldItem{"name": "row_number"},
+			new FieldItem{"name": "name", "component": classof Label},
+			new FieldItem{"name": "enable", "component": classof SelectLabel},
+			new FieldItem{"name": "row_buttons"},
+		]);
+		
+		/* Setup page */
+		widget.commit("setPage", route.container.request.query.get("page", 1));
+	}
+	
+	
+	/**
+	 * Setup widget routes
+	 */
+	async static void setupWidgetForm
+	(
+		ModelProxy<BaseModel> page_model,
+		ModelProxy<BaseModel> widget,
+		BaseRoute route
+	)
+	{
+		/* Api name */
+		widget.commit("setApiName", "app.nginx_file");
+		
+		/* Set fields */
+		widget.commit("setFields", static::fields());
+		
+		/* Set form fields list */
+		widget.commit("setFieldsList", [
+			new FieldItem{"name": "name", "component": classof Input},
+			new FieldItem{"name": "enable", "component": classof Select},
+			new FieldItem{"name": "content", "component": classof TextArea},
+		]);
+		
+		/* Setup primary key */
+		if (route.container.route.name != "app:nginx_files:add")
+		{
+			widget.commit("setPrimaryKey", {
+				"id": route.container.route.matches.get("id"),
+			});
+		}
+		
+		/* Setup back page */
+		route.page_model.commit("setBackPage", static::url("app:nginx_files:index"));
+	}
+	
+	
+	/**
+	 * Returns href
+	 */
+	static string getHref(string name, Dict params = null)
+	{
+		if (name == "add")
+		{
+			return static::url("app:nginx_files:add");
+		}
+		else if (name == "edit")
+		{
+			return static::url("app:nginx_files:edit", {"id": params["item", "id"]});
+		}
+		else if (name == "delete")
+		{
+			return static::url("app:nginx_files:delete", {"id": params["item", "id"]});
+		}
+		return "";
 	}
 	
 	
@@ -71,27 +183,20 @@ struct NginxFilePageModel extends CrudPageModel
 	 */
 	string getPageTitle(string action)
 	{
-		if (action == "index")
+		if (action == "name")
 		{
-			return "Nginx files";
+			return "nginx file";
 		}
-		else if (action == "add")
+		if (action == "names")
 		{
-			return "Add nginx file";
+			return "nginx files";
 		}
-		else if (action == "edit")
+		else if (action == "item")
 		{
-			return "Edit nginx file '" ~ this.item_form.item["name"] ~ "'";
+			FormModel widget = this.getWidget("form");
+			return widget["item", "name"];
 		}
-		else if (action == "delete")
-		{
-			return "Delete nginx file ?";
-		}
-		else if (action == "delete_content")
-		{
-			return "Delete nginx file '" ~ this.item_form.item["name"] ~ "' ?";
-		}
-		return "";
+		return parent::getPageTitle(action);
 	}
 	
 }
