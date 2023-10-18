@@ -53,23 +53,32 @@ struct DomainPageModel extends CrudPageModel
 	/**
 	 * Init widget
 	 */
-	async static void initWidgets(ModelProxy<BaseModel> model, BaseRoute route)
+	async static void initWidget(ModelProxy<BaseModel> model, BaseRoute route)
 	{
-		await parent::initWidgets(model, route);
+		await parent::initWidget(model, route);
 		
 		ModelProxy form = model.proxy(["widgets", "form"]);
 		ModelProxy table = model.proxy(["widgets", "table"]);
 		
 		if (table.data() instanceof TableModel)
 		{
-			await static::setupWidgetTable(model, table, route);
+			await static::initWidgetTable(model, table, route);
 		}
 		
 		if (form.data() instanceof FormModel)
 		{
-			await static::setupWidgetForm(model, form, route);
+			await static::initWidgetForm(model, form, route);
 		}
 		
+		await static::initComponents(model,  route);
+	}
+	
+	
+	/**
+	 * Init components
+	 */
+	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
+	{
 		route.layout.commit("addComponent", classof Input);
 		route.layout.commit("addComponent", classof Label);
 		route.layout.commit("addComponent", classof SelectLabel);
@@ -77,9 +86,9 @@ struct DomainPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget table
 	 */
-	async static void setupWidgetTable
+	async static void initWidgetTable
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
@@ -108,9 +117,9 @@ struct DomainPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget form
 	 */
-	async static void setupWidgetForm
+	async static void initWidgetForm
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
@@ -147,7 +156,7 @@ struct DomainPageModel extends CrudPageModel
 		{
 			TableDialogModel routes =
 				await route.addWidget(new TableDialogModel{ "widget_name": "routes" });
-			await static::setupWidgetRoutes(page_model, routes, route);
+			await static::initWidgetRoutes(page_model, routes, route);
 		}
 		
 		/* Setup back page */
@@ -158,24 +167,30 @@ struct DomainPageModel extends CrudPageModel
 	/**
 	 * Setup widget routes
 	 */
-	async static void setupWidgetRoutes
+	async static void initWidgetRoutes
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
 		BaseRoute route
 	)
 	{
+		/* Add components */
+		await RoutePageModel::initComponents(page_model, route);
+		
 		/* Setup widget route */
-		await RoutePageModel::setupWidgetTable(page_model, widget, route);
+		await RoutePageModel::initWidgetTable(page_model, widget, route);
 		
 		/* Setup widget route */
 		ModelProxy<BaseModel> form = widget.proxy(["widgets", "form"]);
-		await RoutePageModel::setupWidgetForm(page_model, form, route);
+		await RoutePageModel::initWidgetForm(page_model, form, route);
 		
 		/* Set foreign key */
 		int domain_id = (int)page_model.data(["widgets", "form", "item_pk", "id"]);
 		widget.commit("setForeignKey", "domain_id", domain_id);
 		form.commit("setForeignKey", "domain_id", domain_id);
+		
+		/* Set width */
+		widget.commit("setDialogWidth", "save", "800px");
 	}
 	
 	

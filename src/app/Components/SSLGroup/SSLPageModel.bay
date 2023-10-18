@@ -54,23 +54,32 @@ struct SSLPageModel extends CrudPageModel
 	/**
 	 * Init widget
 	 */
-	async static void initWidgets(ModelProxy<BaseModel> model, BaseRoute route)
+	async static void initWidget(ModelProxy<BaseModel> model, BaseRoute route)
 	{
-		await parent::initWidgets(model, route);
+		await parent::initWidget(model, route);
 		
 		ModelProxy form = model.proxy(["widgets", "form"]);
 		ModelProxy table = model.proxy(["widgets", "table"]);
 		
 		if (table.data() instanceof TableModel)
 		{
-			await static::setupWidgetTable(model, table, route);
+			await static::initWidgetTable(model, table, route);
 		}
 		
 		if (form.data() instanceof FormModel)
 		{
-			await static::setupWidgetForm(model, form, route);
+			await static::initWidgetForm(model, form, route);
 		}
 		
+		await static::initComponents(model,  route);
+	}
+	
+	
+	/**
+	 * Init components
+	 */
+	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
+	{
 		route.layout.commit("addComponent", classof Input);
 		route.layout.commit("addComponent", classof Label);
 		route.layout.commit("addComponent", classof TextArea);
@@ -78,9 +87,9 @@ struct SSLPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget table
 	 */
-	async static void setupWidgetTable
+	async static void initWidgetTable
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
@@ -110,9 +119,9 @@ struct SSLPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget form
 	 */
-	async static void setupWidgetForm
+	async static void initWidgetForm
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
