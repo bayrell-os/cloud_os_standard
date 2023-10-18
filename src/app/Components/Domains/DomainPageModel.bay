@@ -189,6 +189,9 @@ struct DomainPageModel extends CrudPageModel
 		widget.commit("setForeignKey", "domain_id", domain_id);
 		form.commit("setForeignKey", "domain_id", domain_id);
 		
+		/* Remove domain_id */
+		form.commit("removeFieldFromList", "domain_id");
+		
 		/* Set width */
 		widget.commit("setDialogWidth", "save", "800px");
 	}

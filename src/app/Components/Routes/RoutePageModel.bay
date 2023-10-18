@@ -158,6 +158,9 @@ struct RoutePageModel extends CrudPageModel
 		/* Set href */
 		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
 		
+		/* Set href */
+		widget.commit("setGetItemPk", new Callback(static::getClassName(), "getItemPrimaryKey"));
+		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
 			new FieldItem{"name": "row_number"},
@@ -197,6 +200,19 @@ struct RoutePageModel extends CrudPageModel
 		/* Set fields */
 		widget.commit("setFields", static::fields());
 		
+		/* Set get names  */
+		widget.commit("setGetNames", new Callback(static::getClassName(), "getNames"));
+		
+		/* Set default item */
+		widget.commit("setDefaultItem", {
+			"enable": 1,
+			"protocol": "http",
+			"source_port": "80",
+			"route_prefix": "/",
+			"target_port": "80",
+			"target_prefix": "/",
+		});
+		
 		/* Set form fields list */
 		widget.commit("setFieldsList", [
 			new FieldItem{"name": "enable", "component": classof Select},
@@ -221,26 +237,26 @@ struct RoutePageModel extends CrudPageModel
 			});
 		}
 		
+		/* Add event */
+		widget.commit("addEvent",
+			new Callback{ "obj": static::getClassName(), "name": "formWidgetEvent" }
+		);
+		
 		/* Setup back page */
 		route.page_model.commit("setBackPage", static::url("app:routes:index"));
 	}
 	
 	
 	/**
-	 * Widget event
+	 * Form widget event
 	 */
-	async static Dict event
+	async static Dict formWidgetEvent
 	(
-		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
-		string action, Dict obj
+		string action, Dict obj, var tag = null
 	)
 	{
-		obj = await parent::event(page_model, widget, action, obj);
-		
-		/* Form */
 		if (
-			widget.data() instanceof FormModel and
 			action == FormModel::ON_LOAD_ITEM_AFTER and
 			obj["api"].isSuccess()
 		)
@@ -266,6 +282,14 @@ struct RoutePageModel extends CrudPageModel
 	
 	
 	/**
+	 * Returns primary key
+	 */
+	static string getItemPrimaryKey(Dict item) => {
+		"id": item["id"],
+	};
+	
+	
+	/**
 	 * Returns href
 	 */
 	static string getHref(string name, Dict params = null)
@@ -283,6 +307,32 @@ struct RoutePageModel extends CrudPageModel
 			return static::url("app:routes:delete", {"id": params["item", "id"]});
 		}
 		return "";
+	}
+	
+	
+	/**
+	 * Get names
+	 */
+	static string getNames(string action, Dict obj)
+	{
+		if (action == "name")
+		{
+			return "route";
+		}
+		if (action == "names")
+		{
+			return "routes";
+		}
+		else if (action == "item")
+		{
+			return static::getSourceColumn(obj["item"]);
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete route '" ~
+				static::getSourceColumn(obj["item"]) ~ "' => " ~
+				static::getDestColumn(obj["item"]) ~ " ?";
+		}
 	}
 	
 	
