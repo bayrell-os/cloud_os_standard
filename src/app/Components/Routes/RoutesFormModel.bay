@@ -132,6 +132,7 @@ struct RoutesFormModel extends FormModel
 			"domain_id",
 			"source_port",
 			"route_prefix",
+			"docker_name",
 			"target_port",
 			"target_prefix",
 			"nginx_config",
@@ -140,7 +141,7 @@ struct RoutesFormModel extends FormModel
         /* Set get names  */
 		widget.commit("setGetNames", new Callback(classof RoutesTableModel, "getNames"));
         
-        /* Add domain dictionary  */
+        /* Add domain dictionary */
 		widget.commit("addDictionaryField", {
 			"from": "domains",
 			"to": "domain_id",
