@@ -313,7 +313,7 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Get names
 	 */
-	static string getNames(string action, Dict obj)
+	static string getNames(string action, Dict obj = null)
 	{
 		if (action == "name")
 		{
@@ -323,7 +323,7 @@ struct RoutePageModel extends CrudPageModel
 		{
 			return "routes";
 		}
-		else if (action == "item")
+		else if (action == "item_name")
 		{
 			return static::getSourceColumn(obj["item"]);
 		}
@@ -362,20 +362,7 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	string getPageTitle(string action)
 	{
-		if (action == "name")
-		{
-			return "route";
-		}
-		if (action == "names")
-		{
-			return "routes";
-		}
-		else if (action == "item")
-		{
-			FormModel form = this.getWidget("form");
-			return static::getSourceColumn(form.item);
-		}
-		else if (action == "delete_content")
+		if (action == "delete_content")
 		{
 			FormModel form = this.getWidget("form");
 			return "Delete route '" ~

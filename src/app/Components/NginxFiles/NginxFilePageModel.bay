@@ -191,24 +191,22 @@ struct NginxFilePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Returns page title
+	 * Get names
 	 */
-	string getPageTitle(string action)
+	static string getNames(string action, Dict obj = null)
 	{
 		if (action == "name")
 		{
 			return "nginx file";
 		}
-		if (action == "names")
+		if (action == "nginx files")
 		{
-			return "nginx files";
+			return "domains";
 		}
-		else if (action == "item")
+		else if (action == "item_name")
 		{
-			FormModel widget = this.getWidget("form");
-			return widget["item", "name"];
+			return obj["item", "name"];
 		}
-		return parent::getPageTitle(action);
 	}
 	
 }

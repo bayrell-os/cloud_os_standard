@@ -51,30 +51,6 @@ struct DomainPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Init widget
-	 */
-	async static void initWidget(ModelProxy<BaseModel> model, BaseRoute route)
-	{
-		await parent::initWidget(model, route);
-		
-		ModelProxy form = model.proxy(["widgets", "form"]);
-		ModelProxy table = model.proxy(["widgets", "table"]);
-		
-		if (table.data() instanceof TableModel)
-		{
-			await static::initWidgetTable(model, table, route);
-		}
-		
-		if (form.data() instanceof FormModel)
-		{
-			await static::initWidgetForm(model, form, route);
-		}
-		
-		await static::initComponents(model,  route);
-	}
-	
-	
-	/**
 	 * Init components
 	 */
 	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
@@ -148,19 +124,20 @@ struct DomainPageModel extends CrudPageModel
 			});
 		}
 		
+		/* Setup back page */
+		page_model.commit("setBackPage", static::url("app:domains:index"));
+		
 		/* Add widget routes */
 		if (
 			page_model.data("action") == "save" and
 			not widget.call("isNew")
 		)
 		{
-			TableDialogModel routes =
-				await route.addWidget(new TableDialogModel{ "widget_name": "routes" });
+			TableDialogModel routes = await route.addWidget(
+				new TableDialogModel{ "widget_name": "routes" }
+			);
 			await static::initWidgetRoutes(page_model, routes, route);
 		}
-		
-		/* Setup back page */
-		page_model.commit("setBackPage", static::url("app:domains:index"));
 	}
 	
 	
@@ -177,10 +154,10 @@ struct DomainPageModel extends CrudPageModel
 		/* Add components */
 		await RoutePageModel::initComponents(page_model, route);
 		
-		/* Setup widget route */
+		/* Init table */
 		await RoutePageModel::initWidgetTable(page_model, widget, route);
 		
-		/* Setup widget route */
+		/* Init form */
 		ModelProxy<BaseModel> form = widget.proxy(["widgets", "form"]);
 		await RoutePageModel::initWidgetForm(page_model, form, route);
 		
@@ -219,9 +196,9 @@ struct DomainPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Returns page title
+	 * Get names
 	 */
-	string getPageTitle(string action)
+	static string getNames(string action, Dict obj = null)
 	{
 		if (action == "name")
 		{
@@ -231,12 +208,10 @@ struct DomainPageModel extends CrudPageModel
 		{
 			return "domains";
 		}
-		else if (action == "item")
+		else if (action == "item_name")
 		{
-			FormModel widget = this.getWidget("form");
-			return widget["item", "domain_name"];
+			return obj["item", "domain_name"];
 		}
-		return parent::getPageTitle(action);
 	}
 	
 }

@@ -1,7 +1,7 @@
 <!--
- *  Bayrell Cloud OS
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,46 +16,55 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Templates.TemplateSavePage"
-	extends="Runtime.Web.Crud.SavePage">
+<class name="Bayrell.CloudOS.Components.Templates.TemplateSavePage">
 
-<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
-<use name="Runtime.Web.Crud.Button" component="true" />
-<use name="Runtime.Web.Crud.Input" component="true" />
-<use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Bayrell.CloudOS.Components.Templates.VersionTablePage" component="true" />
+<use name="Runtime.ModelProxy" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Form.Form" component="true" />
+<use name="Runtime.Widget.Form.FormModel" />
+<use name="Runtime.Widget.Table.TableDialog" component="true" />
+<use name="Runtime.Widget.Table.TableModel" />
 
 
 <style>
+.table_versions{
+	padding-top: 1.5em;
+}
+.table_versions__label{
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
 </style>
 
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default" href={{ static::url("app:templates:index") }}>Back</Button>
-	</div>
-</template>
-
-
-<template name="renderContent">
-	<div class="web_form__content">
-		%render static::renderRow(classof Input, model.fields["uid"]);
-		%render static::renderRow(classof Input, model.fields["name"]);
+		<Button type="default" href={{ model.back_page_url }}>Back</Button>
 	</div>
 </template>
 
 
 <template name="render">
-	%render static::renderTop();
-	%render static::renderForm();
 	
-	<VersionTablePage @model=["versions"] />
+	%set FormModel form = model.getWidget("form");
+	%set TableModel versions = model.getWidget("versions");
+	
+	%render static::renderTop();
+	<Form @model=["widgets", "form"] />
+	
+	%if (versions != null)
+	{
+		<div class="table_versions">
+			<div class="table_versions__label">Versions</div>
+			<TableDialog @model=["widgets", "versions"] />
+		</div>
+	}
 	
 </template>
-
-
-<script>
-</script>
 
 
 </class>

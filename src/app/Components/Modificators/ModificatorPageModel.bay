@@ -66,25 +66,10 @@ struct ModificatorPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Init widget
+	 * Init components
 	 */
-	async static void initWidgets(ModelProxy<BaseModel> model, BaseRoute route)
+	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
 	{
-		await parent::initWidgets(model, route);
-		
-		ModelProxy form = model.proxy(["widgets", "form"]);
-		ModelProxy table = model.proxy(["widgets", "table"]);
-		
-		if (table.data() instanceof TableModel)
-		{
-			await static::setupWidgetTable(model, table, route);
-		}
-		
-		if (form.data() instanceof FormModel)
-		{
-			await static::setupWidgetForm(model, form, route);
-		}
-		
 		route.layout.commit("addComponent", classof Input);
 		route.layout.commit("addComponent", classof Label);
 		route.layout.commit("addComponent", classof Select);
@@ -168,7 +153,7 @@ struct ModificatorPageModel extends CrudPageModel
 	{
 		if (name == "add")
 		{
-			return static::url("app:modificators:add");
+			return static::url("app:templates:import");
 		}
 		else if (name == "edit")
 		{
@@ -183,9 +168,9 @@ struct ModificatorPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Returns page title
+	 * Get names
 	 */
-	string getPageTitle(string action)
+	static string getNames(string action, Dict obj = null)
 	{
 		if (action == "name")
 		{
@@ -195,12 +180,10 @@ struct ModificatorPageModel extends CrudPageModel
 		{
 			return "modificators";
 		}
-		else if (action == "item")
+		else if (action == "item_name")
 		{
-			FormModel widget = this.getWidget("form");
-			return widget["item", "name"] ~ "<" ~ widget["item", "uid"]  ~ ">";
+			return obj["item", "name"] ~ "<" ~ obj["item", "uid"]  ~ ">";
 		}
-		return parent::getPageTitle(action);
 	}
 	
 }

@@ -16,35 +16,27 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Api;
+namespace Bayrell.CloudOS.Components.Templates;
 
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Web.Crud.CrudPageApi;
-use Runtime.Web.Crud.Rules.CrudRule;
-use Runtime.Web.Crud.Rules.LowerCase;
-use Runtime.Web.Crud.Rules.Purify;
-use Runtime.Web.Crud.Rules.Required;
-use Runtime.Web.Crud.Rules.SaveFields;
-use Runtime.Web.Crud.Rules.Unique;
-use Bayrell.CloudOS.Models.Template;
-use Bayrell.CloudOS.Models.TemplateVersion;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
 
 
-class TemplateVersionApi extends CrudPageApi
+class VersionApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
 	pure string getApiName() => "app.template.version";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof TemplateVersion;
 	
 	
 	/**
@@ -68,17 +60,22 @@ class TemplateVersionApi extends CrudPageApi
 	
 	
 	/**
-	 * Returns rules
+	 * Returns item fields
 	 */
-	Collection<CrudRule> getRules() =>
-	[
-		new SaveFields
-		{
-			"fields":
-			[
-				"content",
-			]
-		},
+	Collection getItemFields() => [
+		"id",
+		"version",
+		"content",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"content",
 	];
 	
 	

@@ -171,9 +171,9 @@ struct StackPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Returns page title
+	 * Get names
 	 */
-	string getPageTitle(string action)
+	static string getNames(string action, Dict obj = null)
 	{
 		if (action == "name")
 		{
@@ -183,12 +183,10 @@ struct StackPageModel extends CrudPageModel
 		{
 			return "docker stacks";
 		}
-		else if (action == "item")
+		else if (action == "item_name")
 		{
-			FormModel widget = this.getWidget("form");
-			return widget["item", "stack_name"];
+			return obj["item", "stack_name"];
 		}
-		return parent::getPageTitle(action);
 	}
 	
 }

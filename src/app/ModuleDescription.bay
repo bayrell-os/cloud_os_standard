@@ -88,6 +88,8 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Components.NginxFiles.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Components.Routes.RouteApi"),
 		new Api("Bayrell.CloudOS.Components.SSLGroup.SSLGroupApi"),
+		new Api("Bayrell.CloudOS.Components.Templates.TemplateApi"),
+		new Api("Bayrell.CloudOS.Components.Templates.VersionApi"),
 		
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),

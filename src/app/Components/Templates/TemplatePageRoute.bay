@@ -18,16 +18,10 @@
 
 namespace Bayrell.CloudOS.Components.Templates;
 
-use Runtime.ModelProxy;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Templates.TemplateDeletePage;
+use Runtime.Widget.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Templates.TemplatePageModel;
 use Bayrell.CloudOS.Components.Templates.TemplateSavePage;
-use Bayrell.CloudOS.Components.Templates.TemplateTablePage;
-use Bayrell.CloudOS.Components.Templates.VersionPageModel;
-use Bayrell.CloudOS.Models.Template;
-use Bayrell.CloudOS.Models.TemplateVersion;
 
 
 class TemplatePageRoute extends CrudRoute
@@ -48,7 +42,7 @@ class TemplatePageRoute extends CrudRoute
 		{
 			"uri": "/templates/{id}/edit/",
 			"name": "app:templates:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -60,63 +54,14 @@ class TemplatePageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
 	 * Returns page model
 	 */
 	string getPageModelName() => classof TemplatePageModel;
 	
 	
 	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof TemplateTablePage;
-	
-	
-	/**
 	 * Returns save page name
 	 */
 	string getSavePageName() => classof TemplateSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof TemplateDeletePage;
-	
-	
-	/**
-	 * Returns id location
-	 */
-	Dict getPrimaryKey() =>
-		this.container.route.matches.has("id") ? {
-			"id": this.container.route.matches.get("id")
-		} : null
-	;
-	
-	
-	/**
-	 * Action edit
-	 */
-	async void actionEdit()
-	{
-		await parent::actionEdit();
-		
-		Template template = this.page_model.attr(["item_form", "item"]);
-		if (template)
-		{
-			int page = (int)this.container.request.query.get("page");
-			ModelProxy<VersionPageModel> versions = this.page_model.proxy("versions");
-			
-			/* Search template versions */
-			versions.commit("setTemplateId", template.id);
-			versions.commit("setPage", page);
-			await versions.commitAsync("callCrudSearch");
-		}
-	}
 	
 }
