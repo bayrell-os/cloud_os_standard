@@ -28,6 +28,8 @@
 		"Components/NginxFiles/NginxFilePageRoute.bay",
 		"Components/Routes/RoutePageModel.bay",
 		"Components/Routes/RoutePageRoute.bay",
+		"Components/Routes/RoutesFormModel.bay",
+		"Components/Routes/RoutesTableModel.bay",
 		"Components/Domains/RoutePageModel.bay",
 		"Components/Settings/DatabasePage.bay",
 		"Components/Settings/SettingsPage.bay",

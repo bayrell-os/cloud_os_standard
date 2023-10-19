@@ -54,13 +54,13 @@ class StackPageRoute extends CrudRoute
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/edit/",
+			"uri": "/docker/stack/{stack_name}/edit/",
 			"name": "app:docker:stack:edit",
 			"method": "actionSave",
 		},
 		new RouteInfo
 		{
-			"uri": "/docker/stack/{id}/delete/",
+			"uri": "/docker/stack/{stack_name}/delete/",
 			"name": "app:docker:stack:delete",
 			"method": "actionDelete",
 		},

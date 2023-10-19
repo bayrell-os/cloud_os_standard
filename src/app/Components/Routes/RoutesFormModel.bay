@@ -1,0 +1,166 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Routes;
+
+use Runtime.Callback;
+use Runtime.ModelProxy;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.Layout;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.Input;
+use Runtime.Widget.Select;
+use Runtime.Widget.TextArea;
+use Runtime.Widget.Form.FormModel;
+use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
+
+
+struct RoutesFormModel extends FormModel
+{
+	/**
+	 * Fields
+	 */
+	pure static Dict fields() =>
+	{
+		"enable": new FieldInfo{
+			"label": "Enable",
+			"name": "enable",
+            "component": classof Select,
+			"options": [
+				{"label": "No", "value": "0"},
+				{"label": "Yes", "value": "1"},
+			],
+		},
+		"protocol": new FieldInfo{
+			"label": "Protocol",
+			"name": "protocol",
+            "component": classof Select,
+			"options": [
+				{"label": "HTTP", "value": "http"},
+			],
+		},
+		
+		/* Source */
+		"domain_id": new FieldInfo{
+			"label": "Domain name",
+			"name": "domain_id",
+            "component": classof Select,
+			"options": [
+			],
+		},
+		"source_port": new FieldInfo{
+			"label": "Source port",
+			"name": "source_port",
+            "component": classof Input,
+		},
+		"route_prefix": new FieldInfo{
+			"label": "Route prefix",
+			"name": "route_prefix",
+            "component": classof Input,
+		},
+		
+		/* Dest */
+		"docker_name": new FieldInfo{
+			"label": "Docker name",
+			"name": "docker_name",
+            "component": classof Input,
+		},
+		"target_port": new FieldInfo{
+			"label": "Target port",
+			"name": "target_port",
+            "component": classof Input,
+		},
+		"target_prefix": new FieldInfo{
+			"label": "Target prefix",
+			"name": "target_prefix",
+            "component": classof Input,
+		},
+		
+		/* Nginx config */
+		"nginx_config": new FieldInfo{
+			"label": "Nginx config",
+			"name": "nginx_config",
+            "component": classof TextArea,
+		},
+	};
+	
+	
+	/**
+	 * Init widget
+	 */
+	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
+	{
+		await parent::initWidget(widget, layout);
+		
+		/* Api name */
+		widget.commit("setApiName", "app.route");
+		
+		/* Set fields */
+		widget.commit("setFields", static::fields());
+		widget.commit("setPrimaryKeys", ["id"]);
+		
+        /* Set default item */
+		widget.commit("setDefaultItem", {
+			"enable": 1,
+			"protocol": "http",
+			"source_port": "80",
+			"route_prefix": "/",
+			"target_port": "80",
+			"target_prefix": "/",
+		});
+        
+		/* Set table fields list */
+		widget.commit("setFieldsList", [
+			"enable",
+			"protocol",
+			"domain_id",
+			"source_port",
+			"route_prefix",
+			"target_port",
+			"target_prefix",
+			"nginx_config",
+		]);
+		
+        /* Set get names  */
+		widget.commit("setGetNames", new Callback(classof RoutesTableModel, "getNames"));
+        
+        /* Add domain dictionary  */
+		widget.commit("addDictionaryField", {
+			"from": "domains",
+			"to": "domain_id",
+			"option": new Callback(static::getClassName(), "getOptionDomain"),
+		});
+        
+		/* Add components */
+		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Select);
+		layout.commit("addComponent", classof TextArea);
+	}
+	
+    
+    /**
+	 * Dictionary domain
+	 */
+	static Dict getOptionDomain(Dict item) =>
+	{
+		"label": item["domain_name"],
+		"value": item["id"]
+	};
+    
+}

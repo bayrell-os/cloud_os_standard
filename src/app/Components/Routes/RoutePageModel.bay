@@ -18,248 +18,37 @@
 
 namespace Bayrell.CloudOS.Components.Routes;
 
-use Runtime.lib;
 use Runtime.Callback;
 use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableModel;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.FieldItem;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.Select;
-use Runtime.Widget.SelectLabel;
-use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.Routes.RoutesFormModel;
+use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
 
 
 struct RoutePageModel extends CrudPageModel
 {
 	/**
-	 * Fields
+	 * Factory
 	 */
-	pure static Dict fields() =>
-	{
-		"enable": new FieldInfo{
-			"label": "Enable",
-			"field_name": "enable",
-			"options": [
-				{"label": "No", "value": "0"},
-				{"label": "Yes", "value": "1"},
-			],
-		},
-		"protocol": new FieldInfo{
-			"label": "Protocol",
-			"field_name": "protocol",
-			"options": [
-				{"label": "HTTP", "value": "http"},
-			],
-		},
-		
-		/* Source */
-		"domain_id": new FieldInfo{
-			"label": "Domain name",
-			"field_name": "domain_id",
-			"options": [
-			],
-		},
-		"domain_name": new FieldInfo{
-			"label": "Domain name",
-			"field_name": "domain_name",
-		},
-		"source_port": new FieldInfo{
-			"label": "Source port",
-			"name": "source_port",
-		},
-		"route_prefix": new FieldInfo{
-			"label": "Route prefix",
-			"name": "route_prefix",
-		},
-		
-		/* Dest */
-		"docker_name": new FieldInfo{
-			"label": "Docker name",
-			"name": "docker_name",
-		},
-		"target_port": new FieldInfo{
-			"label": "Target port",
-			"name": "target_port",
-		},
-		"target_prefix": new FieldInfo{
-			"label": "Target prefix",
-			"name": "target_prefix",
-		},
-		
-		/* Nginx config */
-		"nginx_config": new FieldInfo{
-			"label": "Nginx config",
-			"name": "nginx_config",
-		},
-	};
+	static TableModel createTableModel() => new RoutesTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new RoutesFormModel{"widget_name": "form"};
 	
 	
 	/**
-	 * Init components
+	 * Returns route names
 	 */
-	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
+	static string getRouteName(string name)
 	{
-		route.layout.commit("addComponent", classof Input);
-		route.layout.commit("addComponent", classof Label);
-		route.layout.commit("addComponent", classof Select);
-		route.layout.commit("addComponent", classof SelectLabel);
-		route.layout.commit("addComponent", classof TextArea);
-	}
-	
-	
-	/**
-	 * Init widget table
-	 */
-	async static void initWidgetTable
-	(
-		ModelProxy<BaseModel> page_model,
-		ModelProxy<BaseModel> widget,
-		BaseRoute route
-	)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.route");
-		
-		/* Set fields */
-		widget.commit("setFields", static::fields());
-		
-		/* Set href */
-		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
-		
-		/* Set href */
-		widget.commit("setGetItemPk", new Callback(static::getClassName(), "getItemPrimaryKey"));
-		
-		/* Set table fields list */
-		widget.commit("setFieldsList", [
-			new FieldItem{"name": "row_number"},
-			new FieldItem{"name": "enable", "component": classof SelectLabel},
-			new FieldItem{"name": "protocol", "component": classof SelectLabel},
-			new FieldItem{
-				"name": "source",
-				"label": "Source",
-				"value_method": new Callback(static::getClassName(), "getTableValue"),
-			},
-			new FieldItem{
-				"name": "dest",
-				"label": "Dest",
-				"value_method": new Callback(static::getClassName(), "getTableValue"),
-			},
-			new FieldItem{"name": "row_buttons"},
-		]);
-		
-		/* Setup page */
-		widget.commit("setPage", route.container.request.query.get("page", 1));
-	}
-	
-	
-	/**
-	 * Init widget form
-	 */
-	async static void initWidgetForm
-	(
-		ModelProxy<BaseModel> page_model,
-		ModelProxy<BaseModel> widget,
-		BaseRoute route
-	)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.route");
-		
-		/* Set fields */
-		widget.commit("setFields", static::fields());
-		
-		/* Set get names  */
-		widget.commit("setGetNames", new Callback(static::getClassName(), "getNames"));
-		
-		/* Add domain dictionary  */
-		widget.commit("addDictionaryField", {
-			"from": "domains",
-			"to": "domain_id",
-			"option": new Callback(static::getClassName(), "getOptionDomain"),
-		});
-		
-		/* Set default item */
-		widget.commit("setDefaultItem", {
-			"enable": 1,
-			"protocol": "http",
-			"source_port": "80",
-			"route_prefix": "/",
-			"target_port": "80",
-			"target_prefix": "/",
-		});
-		
-		/* Set form fields list */
-		widget.commit("setFieldsList", [
-			new FieldItem{"name": "enable", "component": classof Select},
-			new FieldItem{"name": "protocol", "component": classof Select},
-			new FieldItem{"name": "domain_id", "component": classof Select},
-			new FieldItem{"name": "source_port", "component": classof Input},
-			new FieldItem{"name": "route_prefix", "component": classof Input},
-			new FieldItem{"name": "docker_name", "component": classof Input},
-			new FieldItem{"name": "target_port", "component": classof Input},
-			new FieldItem{"name": "target_prefix", "component": classof Input},
-			new FieldItem{"name": "nginx_config", "component": classof TextArea},
-		]);
-		
-		/* Setup primary key */
-		if (
-			widget.data("widget_path") == "form" and
-			route.container.route.name != "app:routes:add"
-		)
-		{
-			widget.commit("setPrimaryKey", {
-				"id": route.container.route.matches.get("id"),
-			});
-		}
-		
-		/* Setup back page */
-		route.page_model.commit("setBackPage", static::url("app:routes:index"));
-	}
-	
-	
-	/**
-	 * Dictionary domain
-	 */
-	static Dict getOptionDomain(Dict item) =>
-	{
-		"label": item["domain_name"],
-		"value": item["id"]
-	};
-	
-	
-	/**
-	 * Returns primary key
-	 */
-	static string getItemPrimaryKey(Dict item) => {
-		"id": item["id"],
-	};
-	
-	
-	/**
-	 * Returns href
-	 */
-	static string getHref(string name, Dict params = null)
-	{
-		if (name == "add")
-		{
-			return static::url("app:routes:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:routes:edit", {"id": params["item", "id"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:routes:delete", {"id": params["item", "id"]});
-		}
+		if (name == "index") return "app:routes:index";
+		if (name == "add") return "app:routes:add";
+		if (name == "edit") return "app:routes:edit";
+		if (name == "delete") return "app:routes:delete";
 		return "";
 	}
 	
@@ -269,108 +58,8 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	static string getNames(string action, Dict obj = null)
 	{
-		if (action == "name")
-		{
-			return "route";
-		}
-		if (action == "names")
-		{
-			return "routes";
-		}
-		else if (action == "item_name")
-		{
-			return static::getSourceColumn(obj["item"]);
-		}
-		else if (action == "delete_content")
-		{
-			return "Delete route '" ~
-				static::getSourceColumn(obj["item"]) ~ "' => " ~
-				static::getDestColumn(obj["item"]) ~ " ?";
-		}
+		return RoutesTableModel::getNames(action, obj);
 	}
 	
-	
-	/**
-	 * Returns table value
-	 */
-	static string getTableValue
-	(
-		Layout layout, TableModel model,
-		int row_number, FieldItem field, Dict item
-	)
-	{
-		if (field.name == "source")
-		{
-			return static::getSourceColumn(item);
-		}
-		else if (field.name == "dest")
-		{
-			return static::getDestColumn(item);
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * Returns page title
-	 */
-	string getPageTitle(string action)
-	{
-		if (action == "delete_content")
-		{
-			FormModel form = this.getWidget("form");
-			return "Delete route '" ~
-				static::getSourceColumn(form.item) ~ "' => " ~
-				static::getDestColumn(form.item) ~ " ?";
-		}
-		return parent::getPageTitle(action);
-	}
-	
-	
-	/**
-	 * Returns source
-	 */
-	static string getSourceColumn(Dict item)
-	{
-		string res = "";
-		string domain_name = "";
-		
-		res ~= item["domain_name"];
-		
-		if (item["source_port"] != 80)
-		{
-			res ~= ":" ~ item["source_port"];
-		}
-		
-		if (item["route_prefix"] != "/")
-		{
-			res ~= item["route_prefix"];
-		}
-		
-		return res;
-	}
-	
-	
-	/**
-	 * Returns dest
-	 */
-	static string getDestColumn(Dict item)
-	{
-		string res = "";
-		
-		res ~= item["docker_name"];
-		
-		if (item["target_port"] != 80)
-		{
-			res ~= ":" ~ item["target_port"];
-		}
-		
-		if (item["target_prefix"] != "/")
-		{
-			res ~= item["target_prefix"];
-		}
-		
-		return res;
-	}
 	
 }

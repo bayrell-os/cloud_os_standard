@@ -34,73 +34,21 @@ use Bayrell.CloudOS.Components.DockerStack.StackTableModel;
 struct StackPageModel extends CrudPageModel
 {
 	/**
-	 * Init widget
+	 * Factory
 	 */
-	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
-	{
-		/* Add widgets */
-		string action = widget.data("action");
-		if (action == "index")
-		{
-			widget.commit("addWidget", new StackTableModel{"widget_name": "table"});
-		}
-		else if (action == "save" or action == "delete")
-		{
-			widget.commit("addWidget", new StackFormModel{"widget_name": "form"});
-		}
-		
-		await parent::initWidget(widget, layout);
-		
-		RouteInfo route = layout.data("route");
-		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
-		ModelProxy<TableModel> table = widget.proxy(["widgets", "table"]);
-		
-		/* Setup table page */
-		if (route.name == "app:docker:stack:index")
-		{
-			Dict request_query = layout.data("request_query");
-			table.commit("setPage", request_query.get("page", 1));
-		}
-		
-		/* Setup form page */
-		if (
-			route.name == "app:docker:stack:add" or
-			route.name == "app:docker:stack:edit" or
-			route.name == "app:docker:stack:delete"
-		)
-		{
-			/* Set primary key */
-			if (route.name != "app:docker:stack:add")
-			{
-				form.commit("setPrimaryKey", {
-					"stack_name": route.matches.get("id"),
-				});
-			}
-			
-			/* Setup back page */
-			ModelProxy page_model = layout.proxy(layout.call("getPageModelPath"));
-			page_model.commit("setBackPage", static::url("app:docker:stack:index"));
-		}
-	}
+	static TableModel createTableModel() => new StackTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new StackFormModel{"widget_name": "form"};
 	
 	
 	/**
-	 * Returns href
+	 * Returns route names
 	 */
-	static string getHref(string name, Dict params = null)
+	static string getRouteName(string name)
 	{
-		if (name == "add")
-		{
-			return static::url("app:docker:stack:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:docker:stack:edit", {"id": params["item", "stack_name"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:docker:stack:delete", {"id": params["item", "stack_name"]});
-		}
+		if (name == "index") return "app:docker:stack:index";
+		if (name == "add") return "app:docker:stack:add";
+		if (name == "edit") return "app:docker:stack:edit";
+		if (name == "delete") return "app:docker:stack:delete";
 		return "";
 	}
 	

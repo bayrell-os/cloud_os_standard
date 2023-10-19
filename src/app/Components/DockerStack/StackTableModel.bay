@@ -62,9 +62,10 @@ struct StackTableModel extends TableModel
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
+		widget.commit("setPrimaryKeys", ["stack_name"]);
 		
-		/* Set href */
-		widget.commit("setGetHref", new Callback(classof StackPageModel, "getHref"));
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof StackPageModel, "getRouteName"));
 		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [

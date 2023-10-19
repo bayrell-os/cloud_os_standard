@@ -55,6 +55,7 @@ struct StackFormModel extends FormModel
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
+		widget.commit("setPrimaryKeys", ["stack_name"]);
 		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
