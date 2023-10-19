@@ -20,30 +20,30 @@ namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
-use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
 use Runtime.Widget.Crud.Api.CrudApi;
 use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.Filter;
 use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 
 
-class WorkspaceApi extends CrudApi
+class DomainApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.route";
+	pure string getApiName() => "app.workspace.domain";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "routes";
+	pure string getTableName() => "domains";
 	
 	
 	/**
@@ -52,9 +52,6 @@ class WorkspaceApi extends CrudApi
 	pure string getApiMethod(string api_name)
 	{
 		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
 		return "";
 	}
@@ -65,16 +62,7 @@ class WorkspaceApi extends CrudApi
 	 */
 	Collection getItemFields() => [
 		"id",
-		"enable",
-		"protocol",
-		"domain_id",
 		"domain_name",
-		"route_prefix",
-		"docker_name",
-		"source_port",
-		"target_port",
-		"target_prefix",
-		"nginx_config",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -84,16 +72,7 @@ class WorkspaceApi extends CrudApi
 	 * Returns save fields
 	 */
 	Collection getSaveFields() => [
-		"enable",
-		"protocol",
-		/*"protocol_data",*/
-		"domain_id",
-		"route_prefix",
-		"docker_name",
-		"source_port",
-		"target_port",
-		"target_prefix",
-		"nginx_config",
+		"domain_name",
 	];
 	
 	
@@ -102,18 +81,11 @@ class WorkspaceApi extends CrudApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new Purify{ "name": "docker_name" },
-		new LowerCase{ "name": "docker_name" },
-		new Required{ "name": "docker_name" },
-		new Required{ "name": "domain_id" },
-		new Required{ "name": "enable" },
-		new Required{ "name": "protocol" },
-		
-		/* ForeignKey */
-		new Dictionary{
-			"dictionary_name": "domains",
-			"table_name": "domains",
-		},
+		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "domain_name" },
+		new Unique{"keys": ["domain_name"]},
+		new Filter{"api_name": "space_id", "field_name": "space_id"},
 	];
 	
 	
@@ -122,41 +94,23 @@ class WorkspaceApi extends CrudApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		int domain_id = (int)this.post_data["domain_id"];
-		if (domain_id > 0)
-		{
-			q = q.where("routes.domain_id", "=", domain_id)
-		}
+		int space_id = (int)this.post_data.get("space_id");
 		
-		q.leftJoin("domains", [
-			"domains.id = routes.domain_id",
-		]);
-		
-		q = q
-			.addFields([
-				"domains.domain_name as domain_name"
-			])
-			.orderBy("domains.domain_name", "asc")
-			.orderBy("routes.route_prefix", "asc")
-			.orderBy("routes.id", "desc")
-		;
+		q.where("space_id", "=", space_id);
+		q.orderBy("domains.id", "asc");
 		
 		return q;
 	}
 	
 	
 	/**
-	 * Validate item
+	 * Delete item
 	 */
-	async Dict onSaveBefore(Relation item, Dict update_data)
+	async void deleteItem(Relation item)
 	{
-		await parent::onSaveBefore(item, update_data);
-		
-		int domain_id = (int)this.post_data["domain_id"];
-		if (domain_id > 0)
-		{
-			item.set("domain_id", domain_id);
-		}
+		Connection conn = this.getDatabaseConnection();
+		item.set("space_id", null);
+		item.save(conn);
 	}
 	
 }

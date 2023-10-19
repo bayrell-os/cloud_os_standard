@@ -80,6 +80,9 @@ struct DomainPageModel extends CrudPageModel
 		/* Setup get href */
 		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
 		
+		/* Set href */
+		widget.commit("setGetItemPk", new Callback(static::getClassName(), "getItemPrimaryKey"));
+		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
 			new FieldItem{"name": "row_number"},
@@ -107,6 +110,9 @@ struct DomainPageModel extends CrudPageModel
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
+		
+		/* Set get names  */
+		widget.commit("setGetNames", new Callback(static::getClassName(), "getNames"));
 		
 		/* Set form fields list */
 		widget.commit("setFieldsList", [
@@ -175,6 +181,14 @@ struct DomainPageModel extends CrudPageModel
 	
 	
 	/**
+	 * Returns primary key
+	 */
+	static string getItemPrimaryKey(Dict item) => {
+		"id": item["id"],
+	};
+	
+	
+	/**
 	 * Returns href
 	 */
 	static string getHref(string name, Dict params = null)
@@ -211,6 +225,10 @@ struct DomainPageModel extends CrudPageModel
 		else if (action == "item_name")
 		{
 			return obj["item", "domain_name"];
+		}
+		else if (action == "delete_content")
+		{
+			return "Delete '" ~ obj["item", "domain_name"] ~ "' ?";
 		}
 	}
 	

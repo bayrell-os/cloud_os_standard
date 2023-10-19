@@ -79,9 +79,9 @@ struct ModificatorPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget table
 	 */
-	async static void setupWidgetTable
+	async static void initWidgetTable
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
@@ -113,9 +113,9 @@ struct ModificatorPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget form
 	 */
-	async static void setupWidgetForm
+	async static void initWidgetForm
 	(
 		ModelProxy<BaseModel> page_model,
 		ModelProxy<BaseModel> widget,
@@ -182,7 +182,7 @@ struct ModificatorPageModel extends CrudPageModel
 		}
 		else if (action == "item_name")
 		{
-			return obj["item", "name"] ~ "<" ~ obj["item", "uid"]  ~ ">";
+			return obj["item", "name"] ~ " <" ~ obj["item", "uid"]  ~ ">";
 		}
 	}
 	

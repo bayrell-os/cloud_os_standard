@@ -48,30 +48,6 @@ struct StackPageModel extends CrudPageModel
 	
 	
 	/**
-	 * Init widget
-	 */
-	async static void initWidget(ModelProxy<BaseModel> model, BaseRoute route)
-	{
-		await parent::initWidget(model, route);
-		
-		ModelProxy form = model.proxy(["widgets", "form"]);
-		ModelProxy table = model.proxy(["widgets", "table"]);
-		
-		if (table.data() instanceof TableModel)
-		{
-			await static::initWidgetTable(model, table, route);
-		}
-		
-		if (form.data() instanceof FormModel)
-		{
-			await static::initWidgetForm(model, form, route);
-		}
-		
-		await static::initComponents(model,  route);
-	}
-	
-	
-	/**
 	 * Init components
 	 */
 	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)

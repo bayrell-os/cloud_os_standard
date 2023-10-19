@@ -18,23 +18,14 @@
 
 namespace Bayrell.CloudOS.Components.Workspace;
 
-use Runtime.ModelProxy;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Models.Workspace;
-use Bayrell.CloudOS.Components.Workspace.DomainPageModel;
-use Bayrell.CloudOS.Components.Workspace.RolesPageModel;
-use Bayrell.CloudOS.Components.Workspace.WorkspaceDeletePage;
+use Runtime.Widget.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage;
-use Bayrell.CloudOS.Components.Workspace.WorkspaceTablePage;
 
 
 class WorkspacePageRoute extends CrudRoute
 {
-	
-	DomainPageModel domains = new DomainPageModel;
-	
 	
 	/**
 	 * Returns routes
@@ -51,13 +42,13 @@ class WorkspacePageRoute extends CrudRoute
 		{
 			"uri": "/workspace/add/",
 			"name": "app:workspace:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
-			"uri": "/workspace/{id}/",
+			"uri": "/workspace/{id}/edit/",
 			"name": "app:workspace:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -65,37 +56,7 @@ class WorkspacePageRoute extends CrudRoute
 			"name": "app:workspace:delete",
 			"method": "actionDelete",
 		},
-		new RouteInfo
-		{
-			"uri": "/workspace/{id}/domains/",
-			"name": "app:workspace:domains",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/workspace/{id}/users/",
-			"name": "app:workspace:users",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/workspace/{id}/roles/",
-			"name": "app:workspace:roles",
-			"method": "actionEdit",
-		},
 	];
-	
-	
-	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "id";
-	
-	
-	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
 	
 	
 	/**
@@ -105,74 +66,7 @@ class WorkspacePageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof WorkspaceTablePage;
-	
-	
-	/**
 	 * Returns save page name
 	 */
 	string getSavePageName() => classof WorkspaceSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof WorkspaceDeletePage;
-	
-	
-	/**
-	 * Action edit
-	 */
-	async void actionEdit()
-	{
-		await parent::actionEdit();
-		
-		Workspace space = this.page_model.attr(["item_form", "item"])	
-		if (space)
-		{
-			/* Users tab */
-			if (this.container.layout.route.name == "app:workspace:users")
-			{
-				int page = (int)this.container.request.query.get("page");
-				ModelProxy<DomainPageModel> users = this.page_model.proxy("users");
-				
-				/* Search users */
-				users.commit("setSpaceId", space.id);
-				users.commit("setPage", page);
-				await users.commitAsync("callCrudSearch");
-				
-				this.page_model.proxy("tabs").commit("setTab", "users");
-			}
-			
-			/* Roles tab */
-			else if (this.container.layout.route.name == "app:workspace:roles")
-			{
-				int page = (int)this.container.request.query.get("page");
-				ModelProxy<RolesPageModel> roles = this.page_model.proxy("roles");
-				
-				/* Search roles */
-				roles.commit("setSpaceId", space.id);
-				roles.commit("setPage", page);
-				await roles.commitAsync("callCrudSearch");
-				
-				this.page_model.proxy("tabs").commit("setTab", "roles");
-			}
-			
-			/* Domains tab */
-			else
-			{
-				int page = (int)this.container.request.query.get("page");
-				ModelProxy<DomainPageModel> domains = this.page_model.proxy("domains");
-				
-				/* Search domains */
-				domains.commit("setSpaceId", space.id);
-				domains.commit("setPage", page);
-				await domains.commitAsync("callCrudSearch");
-				
-				this.page_model.proxy("tabs").commit("setTab", "domains");
-			}
-		}
-	}
 }

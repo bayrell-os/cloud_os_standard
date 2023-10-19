@@ -77,7 +77,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
 		new Route("Bayrell.CloudOS.Components.Settings.SettingsRoute"),
 		new Route("Bayrell.CloudOS.Components.Templates.TemplatePageRoute"),
-		/*new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),*/
+		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
 		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
 		#ifdef BACKEND then
@@ -90,6 +90,8 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Components.SSLGroup.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Components.Templates.TemplateApi"),
 		new Api("Bayrell.CloudOS.Components.Templates.VersionApi"),
+		new Api("Bayrell.CloudOS.Components.Workspace.DomainApi"),
+		new Api("Bayrell.CloudOS.Components.Workspace.WorkspaceApi"),
 		
 		new Hook("Bayrell.CloudOS.Database.Schema"),
 		new Database("Bayrell.CloudOS.Database.Schema"),

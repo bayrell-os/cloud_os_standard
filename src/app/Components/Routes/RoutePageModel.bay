@@ -103,30 +103,6 @@ struct RoutePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Init widget
-	 */
-	async static void initWidget(ModelProxy<BaseModel> model, BaseRoute route)
-	{
-		await parent::initWidget(model, route);
-		
-		ModelProxy form = model.proxy(["widgets", "form"]);
-		ModelProxy table = model.proxy(["widgets", "table"]);
-		
-		if (table.data() instanceof TableModel)
-		{
-			await static::initWidgetTable(model, table, route);
-		}
-		
-		if (form.data() instanceof FormModel)
-		{
-			await static::initWidgetForm(model, form, route);
-		}
-		
-		await static::initComponents(model,  route);
-	}
-	
-	
-	/**
 	 * Init components
 	 */
 	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
@@ -203,6 +179,13 @@ struct RoutePageModel extends CrudPageModel
 		/* Set get names  */
 		widget.commit("setGetNames", new Callback(static::getClassName(), "getNames"));
 		
+		/* Add domain dictionary  */
+		widget.commit("addDictionaryField", {
+			"from": "domains",
+			"to": "domain_id",
+			"option": new Callback(static::getClassName(), "getOptionDomain"),
+		});
+		
 		/* Set default item */
 		widget.commit("setDefaultItem", {
 			"enable": 1,
@@ -237,48 +220,19 @@ struct RoutePageModel extends CrudPageModel
 			});
 		}
 		
-		/* Add event */
-		widget.commit("addEvent",
-			new Callback{ "obj": static::getClassName(), "name": "formWidgetEvent" }
-		);
-		
 		/* Setup back page */
 		route.page_model.commit("setBackPage", static::url("app:routes:index"));
 	}
 	
 	
 	/**
-	 * Form widget event
+	 * Dictionary domain
 	 */
-	async static Dict formWidgetEvent
-	(
-		ModelProxy<BaseModel> widget,
-		string action, Dict obj, var tag = null
-	)
+	static Dict getOptionDomain(Dict item) =>
 	{
-		if (
-			action == FormModel::ON_LOAD_ITEM_AFTER and
-			obj["api"].isSuccess()
-		)
-		{
-			widget.commit
-			(
-				"setFieldOptionsFromApi",
-				{
-					"api": obj["api"],
-					"from": "domains",
-					"to": "domain_id",
-					"item": Dict (Dict item) =>
-					{
-						"label": item["domain_name"],
-						"value": item["id"]
-					},
-				}
-			);
-		}
-		
-		return obj;
-	}
+		"label": item["domain_name"],
+		"value": item["id"]
+	};
 	
 	
 	/**

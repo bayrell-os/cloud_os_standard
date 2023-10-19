@@ -1,7 +1,7 @@
 <!--
- *  Bayrell Cloud OS
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,66 +16,55 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage"
-	extends="Runtime.Web.Crud.SavePage">
+<class name="Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage">
 
-<use name="Runtime.Web.Events.MouseClickEvent" component="true" />
-<use name="Runtime.Web.Crud.Button" component="true" />
-<use name="Runtime.Web.Crud.Input" component="true" />
-<use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Runtime.Web.Crud.TabItem" component="true" />
-<use name="Runtime.Web.Crud.Tabs" component="true" />
-<use name="Bayrell.CloudOS.Components.Workspace.DomainTablePage" component="true" />
-<use name="Bayrell.CloudOS.Components.Workspace.UsersTablePage" component="true" />
-<use name="Bayrell.CloudOS.Components.Workspace.RolesTablePage" component="true" />
+<use name="Runtime.ModelProxy" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Form.Form" component="true" />
+<use name="Runtime.Widget.Form.FormModel" />
+<use name="Runtime.Widget.Table.TableDialog" component="true" />
+<use name="Runtime.Widget.Table.TableModel" />
 
 
 <style>
+.table_domains{
+	padding-top: 1.5em;
+}
+.table_domains__label{
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
 </style>
 
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default" href={{ static::url("app:workspace:index") }}>Back</Button>
-	</div>
-</template>
-
-
-<template name="renderContent">
-	<div class="web_form__content">
-		%render static::renderRow(classof Input, model.fields["name"]);
-		%render static::renderRow(classof Input, model.fields["uid"]);
+		<Button type="default" href={{ model.back_page_url }}>Back</Button>
 	</div>
 </template>
 
 
 <template name="render">
+	
+	%set FormModel form = model.getWidget("form");
+	%set TableModel domains = model.getWidget("domains");
+	
 	%render static::renderTop();
-	%render static::renderForm();
-	%render static::renderTabs();
-</template>
-
-
-<template name="renderTabs">
-	%if (model.action == "edit" and model.item_form.item != null)
+	<Form @model=["widgets", "form"] />
+	
+	%if (domains != null)
 	{
-		<Tabs @model=["tabs"] style=["style1"] tabs=[
-			{
-				"name": "domains",
-				"label": "Domains",
-				"href": static::url("app:workspace:domains", {"id": model.item_form.item.id}),
-			}
-		]>
-			<TabItem name="domains" @model=["tabs"]>
-				<DomainTablePage @model=["domains"] />
-			</TabItem>
-		</Tabs>
+		<div class="table_domains">
+			<div class="table_domains__label">Domains</div>
+			<TableDialog @model=["widgets", "domains"] />
+		</div>
 	}
+	
 </template>
-
-
-<script>
-</script>
 
 
 </class>
