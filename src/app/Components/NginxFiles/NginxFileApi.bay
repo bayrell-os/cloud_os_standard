@@ -93,7 +93,6 @@ class NginxFileApi extends CrudApi
 		new LowerCase{ "name": "name" },
 		new Required{ "name": "name" },
 		new Required{ "name": "enable" },
-		new Required{ "name": "content" },
 		new Unique{"keys": ["name"]},
 	];
 	

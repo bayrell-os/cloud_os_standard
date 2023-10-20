@@ -29,8 +29,8 @@ use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Components.Domains.DomainsFormModel;
-use Bayrell.CloudOS.Components.Domains.DomainsTableModel;
+use Bayrell.CloudOS.Components.Domains.DomainFormModel;
+use Bayrell.CloudOS.Components.Domains.DomainTableModel;
 use Bayrell.CloudOS.Components.Routes.RoutePageModel;
 use Bayrell.CloudOS.Components.Routes.RoutesFormModel;
 use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
@@ -41,8 +41,8 @@ struct DomainPageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new DomainsFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new DomainsTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new DomainFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new DomainTableModel{"widget_name": "table"};
 	
 	
 	/**

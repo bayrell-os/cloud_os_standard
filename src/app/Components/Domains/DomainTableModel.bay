@@ -23,23 +23,30 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
-use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
-use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Bayrell.CloudOS.Components.Domains.DomainPageModel;
 
 
-struct DomainsFormModel extends FormModel
+struct DomainTableModel extends TableModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
+		"row_number": new FieldInfo{
+			"name": "row_number",
+		},
 		"domain_name": new FieldInfo{
 			"label": "Domain name",
 			"name": "domain_name",
-			"component": classof Input,
+			"component": classof Label,
 		}
+		"row_buttons": new FieldInfo{
+			"name": "row_buttons",
+		},
 	};
 	
 	
@@ -57,6 +64,9 @@ struct DomainsFormModel extends FormModel
 		widget.commit("setFields", static::fields());
 		widget.commit("setPrimaryKeys", ["id"]);
 		
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof DomainPageModel, "getRouteName"));
+		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
 			"row_number",
@@ -65,7 +75,7 @@ struct DomainsFormModel extends FormModel
 		]);
 		
 		/* Add components */
-		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Label);
 	}
 	
 }
