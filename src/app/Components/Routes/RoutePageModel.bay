@@ -36,8 +36,8 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static TableModel createTableModel() => new RoutesTableModel{"widget_name": "table"};
 	static FormModel createFormModel() => new RoutesFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new RoutesTableModel{"widget_name": "table"};
 	
 	
 	/**

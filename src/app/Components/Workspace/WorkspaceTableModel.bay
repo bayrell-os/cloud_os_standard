@@ -16,30 +16,42 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
-use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
-use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
 
 
-struct StackFormModel extends FormModel
+struct WorkspaceTableModel extends TableModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
-			"component": classof Input,
+		"row_number": new FieldInfo{
+			"name": "row_number",
+		},
+		"uid": new FieldInfo{
+			"label": "UID",
+			"name": "uid",
+			"component": classof Label,
 		}
+		"name": new FieldInfo{
+			"label": "Name",
+			"name": "name",
+			"component": classof Label,
+		},
+		"row_buttons": new FieldInfo{
+			"name": "row_buttons",
+		},
 	};
 	
 	
@@ -51,19 +63,25 @@ struct StackFormModel extends FormModel
 		await parent::initWidget(widget, layout);
 		
 		/* Api name */
-		widget.commit("setApiName", "app.docker.stack");
+		widget.commit("setApiName", "app.workspace");
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["stack_name"]);
+		widget.commit("setPrimaryKeys", ["id"]);
+		
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof WorkspacePageModel, "getRouteName"));
 		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
-			"stack_name",
+			"row_number",
+			"name",
+			"uid",
+			"row_buttons",
 		]);
 		
 		/* Add components */
-		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Label);
 	}
 	
 }

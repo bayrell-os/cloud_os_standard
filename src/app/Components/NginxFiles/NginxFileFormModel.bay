@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.NginxFiles;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -26,20 +26,37 @@ use Runtime.Web.Layout;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
+use Runtime.Widget.Select;
+use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.NginxFiles.NginxFilePageModel;
 
 
-struct StackFormModel extends FormModel
+struct NginxFileFormModel extends FormModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
+		"name": new FieldInfo{
+			"label": "File name",
+			"name": "name",
 			"component": classof Input,
-		}
+		},
+		"enable": new FieldInfo{
+			"label": "Enable",
+			"name": "enable",
+			"options": [
+				{"label": "No", "value": "0"},
+				{"label": "Yes", "value": "1"},
+			],
+			"component": classof Select,
+		},
+		"content": new FieldInfo{
+			"label": "Content",
+			"name": "content",
+			"component": classof TextArea,
+		},
 	};
 	
 	
@@ -51,19 +68,23 @@ struct StackFormModel extends FormModel
 		await parent::initWidget(widget, layout);
 		
 		/* Api name */
-		widget.commit("setApiName", "app.docker.stack");
+		widget.commit("setApiName", "app.nginx_file");
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["stack_name"]);
+		widget.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
-			"stack_name",
+			"name",
+			"enable",
+			"content",
 		]);
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Select);
+		layout.commit("addComponent", classof TextArea);
 	}
 	
 }

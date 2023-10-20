@@ -20,220 +20,110 @@ namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
-use Runtime.Web.ApiResult;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Web.RouteInfo;
 use Runtime.Web.Events.MouseClickEvent;
+use Runtime.Widget.Button;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
-use Runtime.Widget.Button;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.FieldItem;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.Select;
-use Runtime.Widget.SelectLabel;
-use Runtime.Widget.TextArea;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
+use Bayrell.CloudOS.Components.Domains.DomainsFormModel;
+use Bayrell.CloudOS.Components.Domains.DomainsTableModel;
+use Bayrell.CloudOS.Components.Workspace.WorkspaceFormModel;
+use Bayrell.CloudOS.Components.Workspace.WorkspaceTableModel;
 
 
 struct WorkspacePageModel extends CrudPageModel
 {
 	/**
-	 * Fields
+	 * Factory
 	 */
-	pure static Dict fields() =>
-	{
-		"uid": new FieldInfo{
-			"label": "UID",
-			"field_name": "uid",
-		}
-		"name": new FieldInfo{
-			"label": "Name",
-			"field_name": "name",
-		},
-		"content": new FieldInfo{
-			"label": "Content",
-			"name": "content",
-		},
-	};
+	static FormModel createFormModel() => new WorkspaceFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new WorkspaceTableModel{"widget_name": "table"};
 	
 	
 	/**
-	 * Init components
+	 * Init widget
 	 */
-	async static void initComponents(ModelProxy<BaseModel> model, BaseRoute route)
+	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
 	{
-		route.layout.commit("addComponent", classof Button);
-		route.layout.commit("addComponent", classof Input);
-		route.layout.commit("addComponent", classof Label);
-		route.layout.commit("addComponent", classof Select);
-		route.layout.commit("addComponent", classof SelectLabel);
-		route.layout.commit("addComponent", classof TextArea);
-	}
-	
-	
-	/**
-	 * Init widget table
-	 */
-	async static void initWidgetTable
-	(
-		ModelProxy<BaseModel> page_model,
-		ModelProxy<BaseModel> widget,
-		BaseRoute route
-	)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.workspace");
+		await parent::initWidget(widget, layout);
 		
-		/* Set fields */
-		widget.commit("setFields", static::fields());
+		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
-		/* Setup get href */
-		widget.commit("setGetHref", new Callback(static::getClassName(), "getHref"));
-		
-		/* Set table fields list */
-		widget.commit("setFieldsList", [
-			new FieldItem{"name": "row_number"},
-			new FieldItem{"name": "name", "component": classof Label},
-			new FieldItem{"name": "uid", "component": classof Label},
-			new FieldItem{"name": "row_buttons"},
-		]);
-		
-		/* Setup page */
-		widget.commit("setPage", route.container.request.query.get("page", 1));
-	}
-	
-	
-	/**
-	 * Init widget form
-	 */
-	async static void initWidgetForm
-	(
-		ModelProxy<BaseModel> page_model,
-		ModelProxy<BaseModel> widget,
-		BaseRoute route
-	)
-	{
-		/* Api name */
-		widget.commit("setApiName", "app.workspace");
-		
-		/* Set fields */
-		widget.commit("setFields", static::fields());
-		
-		/* Set form fields list */
-		widget.commit("setFieldsList", [
-			new FieldItem{"name": "name", "component": classof Input},
-			new FieldItem{"name": "uid", "component": classof Input},
-		]);
-		
-		/* Setup primary key */
-		if (route.container.route.name != "app:workspace:add")
+		/* Add widget domains */
+		if (form.data() != null and widget.data("action") == "save" and not form.call("isNew"))
 		{
-			widget.commit("setPrimaryKey", {
-				"id": route.container.route.matches.get("id"),
-			});
-		}
-		
-		/* Setup back page */
-		route.page_model.commit("setBackPage", static::url("app:workspace:index"));
-		
-		/* Add widget versions */
-		if (
-			page_model.data("action") == "save" and
-			not widget.call("isNew")
-		)
-		{
-			TableDialogModel domains = await route.addWidget(
+			TableDialogModel domains = await widget.call("addWidget",
 				new TableDialogModel{ "widget_name": "domains" }
 			);
-			await static::initWidgetDomains(page_model, domains, route);
+			await widget.commitAsync("initWidgetDomains", domains, layout);
 		}
 	}
 	
 	
 	/**
-	 * Setup widget routes
+	 * Init widget domains
 	 */
-	async static void initWidgetDomains
-	(
-		ModelProxy<BaseModel> page_model,
-		ModelProxy<BaseModel> widget,
-		BaseRoute route
+	async static void initWidgetDomains(
+		ModelProxy<BaseModel> widget, ModelProxy<BaseModel> domains, ModelProxy<Layout> layout
 	)
 	{
-		/* Add components */
-		await DomainPageModel::initComponents(page_model, route);
+		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
 		/* Init table */
-		await DomainPageModel::initWidgetTable(page_model, widget, route);
-		
-		/* Set table fields list */
-		widget.commit("setFieldsList", [
-			new FieldItem{"name": "row_number"},
-			new FieldItem{"name": "domain_name", "component": classof Label},
-			new FieldItem{"name": "row_buttons",
-				"render_method": new Callback{
-					"obj": static::getClassName(), "name": "renderRowButtons"
-				},
-			},
-		]);
+		await DomainsTableModel::initWidget(domains, layout);
 		
 		/* Init form */
-		ModelProxy<BaseModel> form = widget.proxy(["widgets", "form"]);
+		ModelProxy<BaseModel> domains_form = domains.proxy(["widgets", "form"]);
 		
-		/* Set fields */
-		form.commit("setFields", {
+		/* Set table fields list */
+		domains.commit("editField", new FieldInfo{
+			"name": "row_buttons",
+			"render_method": new Callback{
+				"obj": static::getClassName(), "name": "renderRowButtons"
+			},
+		});
+		
+		/* Set fields list */
+		domains_form.commit("setFields", {
 			"domain_id": new FieldInfo{
 				"label": "Domain",
 				"field_name": "domain_id",
+				"component": classof Select,
 			},
 		});
-		form.commit("setFieldsList", [
-			new FieldItem{"name": "domain_id", "component": classof Select},
+		domains_form.commit("setFieldsList", [
+			"domain_id",
 		]);
 		
-		/* Add domain dictionary  */
-		form.commit("addDictionaryField", {
-			"from": "domains",
-			"to": "domain_id",
-			"option": new Callback(static::getClassName(), "getOptionDomain"),
-		});
-		
-		/* Set get names  */
-		form.commit("setGetNames", new Callback(classof DomainPageModel, "getNames"));
-		
 		/* Set api name */
-		widget.commit("setApiName", "app.workspace.domain");
-		form.commit("setApiName", "app.workspace.domain");
+		domains.commit("setApiName", "app.workspace.domain");
+		domains_form.commit("setApiName", "app.workspace.domain");
+		
+		/* Set get route name */
+		domains_form.commit("setGetNames", new Callback(classof DomainPageModel, "getNames"));
 		
 		/* Set foreign key */
-		int space_id = (int)page_model.data(["widgets", "form", "item_pk", "id"]);
-		widget.commit("setForeignKey", "space_id", space_id);
-		form.commit("setForeignKey", "space_id", space_id);
+		int space_id = (int)form.data(["item_pk", "id"]);
+		domains.commit("setForeignKey", "space_id", space_id);
+		domains_form.commit("setForeignKey", "space_id", space_id);
 		
-		/* Remove space_id */
-		form.commit("removeFieldFromList", "space_id");
+		/* Add components */
+		layout.commit("addComponent", classof Select);
 	}
-	
-	
-	/**
-	 * Dictionary domain
-	 */
-	static Dict getOptionDomain(Dict item) =>
-	{
-		"label": item["domain_name"],
-		"value": item["id"]
-	};
 	
 	
 	/**
 	 * Render row buttons
 	 */
-	static html renderRowButtons(int row_number, FieldItem field, Dict item)
+	static html renderRowButtons(int row_number, FieldInfo field, Dict item)
 	{
 		<div class="web_table__td_row_buttons">
 			<Button type="danger small"
@@ -243,22 +133,14 @@ struct WorkspacePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Returns href
+	 * Returns route names
 	 */
-	static string getHref(string name, Dict params = null)
+	static string getRouteName(string name)
 	{
-		if (name == "add")
-		{
-			return static::url("app:workspace:add");
-		}
-		else if (name == "edit")
-		{
-			return static::url("app:workspace:edit", {"id": params["item", "id"]});
-		}
-		else if (name == "delete")
-		{
-			return static::url("app:workspace:delete", {"id": params["item", "id"]});
-		}
+		if (name == "index") return "app:workspace:index";
+		if (name == "add") return "app:workspace:add";
+		if (name == "edit") return "app:workspace:edit";
+		if (name == "delete") return "app:workspace:delete";
 		return "";
 	}
 	
@@ -281,5 +163,4 @@ struct WorkspacePageModel extends CrudPageModel
 			return obj["item", "name"] ~ " <" ~ obj["item", "uid"]  ~ ">";
 		}
 	}
-	
 }

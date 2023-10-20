@@ -36,8 +36,8 @@ struct StackPageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static TableModel createTableModel() => new StackTableModel{"widget_name": "table"};
 	static FormModel createFormModel() => new StackFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new StackTableModel{"widget_name": "table"};
 	
 	
 	/**

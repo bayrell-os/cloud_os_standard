@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.DockerYamlFiles;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -26,9 +26,11 @@ use Runtime.Web.Layout;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
+use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageModel;
 
 
-struct StackFormModel extends FormModel
+struct YamlFileFormModel extends FormModel
 {
 	/**
 	 * Fields
@@ -39,7 +41,17 @@ struct StackFormModel extends FormModel
 			"label": "Stack name",
 			"name": "stack_name",
 			"component": classof Input,
-		}
+		},
+		"file_name": new FieldInfo{
+			"label": "File name",
+			"name": "file_name",
+			"component": classof Input,
+		},
+		"content": new FieldInfo{
+			"label": "Content",
+			"name": "content",
+			"component": classof TextArea,
+		},
 	};
 	
 	
@@ -51,19 +63,22 @@ struct StackFormModel extends FormModel
 		await parent::initWidget(widget, layout);
 		
 		/* Api name */
-		widget.commit("setApiName", "app.docker.stack");
+		widget.commit("setApiName", "app.docker.yaml");
 		
 		/* Set fields */
 		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["stack_name"]);
+		widget.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
 		widget.commit("setFieldsList", [
 			"stack_name",
+			"file_name",
+			"content",
 		]);
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof TextArea);
 	}
 	
 }

@@ -41,8 +41,8 @@ struct DomainPageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static TableModel createTableModel() => new DomainsTableModel{"widget_name": "table"};
 	static FormModel createFormModel() => new DomainsFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new DomainsTableModel{"widget_name": "table"};
 	
 	
 	/**
@@ -60,25 +60,37 @@ struct DomainPageModel extends CrudPageModel
 			TableDialogModel routes = await widget.call("addWidget",
 				new TableDialogModel{ "widget_name": "routes" }
 			);
-			
-			/* Init table */
-			await RoutesTableModel::initWidget(routes, layout);
-			
-			/* Init form */
-			ModelProxy<BaseModel> routes_form = routes.proxy(["widgets", "form"]);
-			await RoutesFormModel::initWidget(routes_form, layout);
-			
-			/* Set foreign key */
-			int domain_id = (int)form.data(["item_pk", "id"]);
-			routes.commit("setForeignKey", "domain_id", domain_id);
-			routes_form.commit("setForeignKey", "domain_id", domain_id);
-			
-			/* Remove domain_id */
-			routes_form.commit("removeFieldFromList", "domain_id");
-			
-			/* Set width */
-			routes.commit("setDialogWidth", "save", "800px");
+			await widget.commitAsync("initWidgetRoutes", routes, layout);
 		}
+	}
+	
+	
+	/**
+	 * Init widget routes
+	 */
+	async static void initWidgetRoutes(
+		ModelProxy<BaseModel> widget, ModelProxy<BaseModel> routes, ModelProxy<Layout> layout
+	)
+	{
+		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
+		
+		/* Init table */
+		await RoutesTableModel::initWidget(routes, layout);
+		
+		/* Init form */
+		ModelProxy<BaseModel> routes_form = routes.proxy(["widgets", "form"]);
+		await RoutesFormModel::initWidget(routes_form, layout);
+		
+		/* Set foreign key */
+		int domain_id = (int)form.data(["item_pk", "id"]);
+		routes.commit("setForeignKey", "domain_id", domain_id);
+		routes_form.commit("setForeignKey", "domain_id", domain_id);
+		
+		/* Remove domain_id */
+		routes_form.commit("removeFieldFromList", "domain_id");
+		
+		/* Set width */
+		routes.commit("setDialogWidth", "save", "800px");
 	}
 	
 	
