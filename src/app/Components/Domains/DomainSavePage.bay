@@ -60,7 +60,7 @@
 	{
 		<div class="table_routes">
 			<div class="table_routes__label">Routes</div>
-			<TableDialog @model=["widgets", "routes"] />
+			<TableDialog @model=["widgets", "routes", "widgets", "table"] />
 		</div>
 	}
 	

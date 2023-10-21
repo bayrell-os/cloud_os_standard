@@ -25,15 +25,16 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.FieldInfo;
+use Runtime.Widget.Crud.CrudDialogModel;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Components.Domains.DomainFormModel;
 use Bayrell.CloudOS.Components.Domains.DomainTableModel;
+use Bayrell.CloudOS.Components.Routes.RouteFormModel;
 use Bayrell.CloudOS.Components.Routes.RoutePageModel;
-use Bayrell.CloudOS.Components.Routes.RoutesFormModel;
-use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
+use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
 struct DomainPageModel extends CrudPageModel
@@ -41,8 +42,8 @@ struct DomainPageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new DomainFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new DomainTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new DomainFormModel{};
+	static TableModel createTableModel() => new DomainTableModel{};
 	
 	
 	/**
@@ -52,49 +53,23 @@ struct DomainPageModel extends CrudPageModel
 	{
 		await parent::initWidget(widget, layout);
 		
-		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
+		/* Add routes */
+		await widget.commitAsync("addForeignModel", layout, {
+			"widget_name": "routes",
+			"form_model": method RoutePageModel::createFormModel,
+			"form_model_init": method RouteFormModel::initWidget,
+			"table_model_name": classof TableDialogModel,
+			"table_model_init": method RouteTableModel::initWidget,
+			"foreign_key": "domain_id",
+		});
 		
-		/* Add widget routes */
-		if (
-			form.data() != null and
-			widget.data("action") == "save" and
-			not form.proxy("data").call("isNew")
-		)
+		/* Setup routes */
+		ModelProxy<FormModel> table = widget.proxy(["widgets", "routes", "widgets", "table"]);
+		if (table.data() != null)
 		{
-			TableDialogModel routes = await widget.call("addWidget",
-				new TableDialogModel{ "widget_name": "routes" }
-			);
-			await widget.commitAsync("initWidgetRoutes", routes, layout);
+			/* Set width */
+			table.commit("setDialogWidth", "save", "800px");
 		}
-	}
-	
-	
-	/**
-	 * Init widget routes
-	 */
-	async static void initWidgetRoutes(
-		ModelProxy<BaseModel> widget, ModelProxy<BaseModel> routes, ModelProxy<Layout> layout
-	)
-	{
-		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
-		
-		/* Init table */
-		await RoutesTableModel::initWidget(routes, layout);
-		
-		/* Init form */
-		ModelProxy<BaseModel> routes_form = routes.proxy(["widgets", "form"]);
-		await RoutesFormModel::initWidget(routes_form, layout);
-		
-		/* Set foreign key */
-		int domain_id = (int)form.data(["data", "item_pk", "id"]);
-		routes.proxy("data").commit("setForeignKey", "domain_id", domain_id);
-		routes_form.proxy("data").commit("setForeignKey", "domain_id", domain_id);
-		
-		/* Remove domain_id */
-		routes_form.proxy("fields").commit("removeFieldFromList", "domain_id");
-		
-		/* Set width */
-		routes.commit("setDialogWidth", "save", "800px");
 	}
 	
 	

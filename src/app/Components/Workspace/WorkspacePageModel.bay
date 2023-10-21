@@ -56,7 +56,7 @@ struct WorkspacePageModel extends CrudPageModel
 		await parent::initWidget(widget, layout);
 		
 		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
-		
+				
 		/* Add widget domains */
 		if (
 			form.data() != null and
