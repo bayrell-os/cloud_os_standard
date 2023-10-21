@@ -36,8 +36,8 @@ struct NginxFilePageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new NginxFileFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new NginxFileTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new NginxFileFormModel{};
+	static TableModel createTableModel() => new NginxFileTableModel{};
 	
 	
 	/**

@@ -25,6 +25,7 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Label;

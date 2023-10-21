@@ -36,8 +36,8 @@ struct SSLPageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new SSLPageFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new SSLPageTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new SSLPageFormModel{};
+	static TableModel createTableModel() => new SSLPageTableModel{};
 	
 	
 	/**

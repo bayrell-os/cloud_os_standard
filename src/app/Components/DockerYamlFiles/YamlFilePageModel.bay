@@ -36,8 +36,8 @@ struct YamlFilePageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new YamlFileFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new YamlFileTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new YamlFileFormModel{};
+	static TableModel createTableModel() => new YamlFileTableModel{};
 	
 	
 	/**

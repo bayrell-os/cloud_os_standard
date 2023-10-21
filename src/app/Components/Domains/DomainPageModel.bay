@@ -57,13 +57,12 @@ struct DomainPageModel extends CrudPageModel
 		await widget.commitAsync("addForeignModel", layout, {
 			"widget_name": "routes",
 			"form_model": method RoutePageModel::createFormModel,
-			"form_model_init": method RouteFormModel::initWidget,
 			"table_model_name": classof TableDialogModel,
 			"table_model_init": method RouteTableModel::initWidget,
 			"foreign_key": "domain_id",
 		});
 		
-		/* Setup routes */
+		/* Setup table routes */
 		ModelProxy<FormModel> table = widget.proxy(["widgets", "routes", "widgets", "table"]);
 		if (table.data() != null)
 		{

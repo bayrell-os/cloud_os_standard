@@ -28,6 +28,7 @@ use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
+use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
 
 
 struct StackFormModel extends FormModel

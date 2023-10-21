@@ -44,8 +44,8 @@ struct WorkspacePageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new WorkspaceFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new WorkspaceTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new WorkspaceFormModel{};
+	static TableModel createTableModel() => new WorkspaceTableModel{};
 	
 	
 	/**

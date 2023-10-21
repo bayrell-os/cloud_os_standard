@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Components.NginxFiles;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
+use Bayrell.CloudOS.Components.NginxFiles.NginxFilePageModel;
 
 
 class NginxFilePageRoute extends CrudRoute

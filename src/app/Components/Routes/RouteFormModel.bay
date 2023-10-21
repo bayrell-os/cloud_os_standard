@@ -151,7 +151,7 @@ struct RouteFormModel extends FormModel
 			"target_prefix": "/",
 		});
 		
-		/* Set get names  */
+		/* Set get names */
 		widget.commit("setGetNames", new Callback(classof RouteTableModel, "getNames"));
 		
 		/* Add components */
