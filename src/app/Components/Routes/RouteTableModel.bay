@@ -23,14 +23,16 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudDataStorage;
+use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
 use Runtime.Widget.Label;
 use Runtime.Widget.SelectLabel;
-use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Components.Routes.RoutePageModel;
 
 
-struct RoutesTableModel extends TableModel
+struct RouteTableModel extends TableModel
 {
 	/**
 	 * Fields
@@ -80,18 +82,19 @@ struct RoutesTableModel extends TableModel
 	{
 		await parent::initWidget(widget, layout);
 		
+		/* Get storage */
+		ModelProxy<CrudDataStorage> data = widget.proxy("data");
+		ModelProxy<FieldList> fields = widget.proxy("fields");
+		
 		/* Api name */
-		widget.commit("setApiName", "app.route");
+		data.commit("setApiName", "app.route");
 		
 		/* Set fields */
-		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["id"]);
-		
-		/* Set get route name */
-		widget.commit("setGetRouteName", new Callback(classof RoutePageModel, "getRouteName"));
+		fields.commit("setFields", static::fields());
+		fields.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
-		widget.commit("setFieldsList", [
+		fields.commit("setFieldsList", [
 			"row_number",
 			"enable",
 			"protocol",
@@ -99,6 +102,9 @@ struct RoutesTableModel extends TableModel
 			"dest",
 			"row_buttons",
 		]);
+		
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof RoutePageModel, "getRouteName"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);

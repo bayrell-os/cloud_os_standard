@@ -32,9 +32,9 @@ use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
+use Bayrell.CloudOS.Components.Domains.DomainFormModel;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
-use Bayrell.CloudOS.Components.Domains.DomainsFormModel;
-use Bayrell.CloudOS.Components.Domains.DomainsTableModel;
+use Bayrell.CloudOS.Components.Domains.DomainTableModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceFormModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceTableModel;
 
@@ -58,7 +58,11 @@ struct WorkspacePageModel extends CrudPageModel
 		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
 		/* Add widget domains */
-		if (form.data() != null and widget.data("action") == "save" and not form.call("isNew"))
+		if (
+			form.data() != null and
+			widget.data("action") == "save" and
+			not form.proxy("data").call("isNew")
+		)
 		{
 			TableDialogModel domains = await widget.call("addWidget",
 				new TableDialogModel{ "widget_name": "domains" }
@@ -78,13 +82,13 @@ struct WorkspacePageModel extends CrudPageModel
 		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
 		/* Init table */
-		await DomainsTableModel::initWidget(domains, layout);
+		await DomainTableModel::initWidget(domains, layout);
 		
 		/* Init form */
 		ModelProxy<BaseModel> domains_form = domains.proxy(["widgets", "form"]);
 		
 		/* Set table fields list */
-		domains.commit("editField", new FieldInfo{
+		domains.proxy("fields").commit("editField", new FieldInfo{
 			"name": "row_buttons",
 			"render_method": new Callback{
 				"obj": static::getClassName(), "name": "renderRowButtons"
@@ -92,28 +96,28 @@ struct WorkspacePageModel extends CrudPageModel
 		});
 		
 		/* Set fields list */
-		domains_form.commit("setFields", {
+		domains_form.proxy("fields").commit("setFields", {
 			"domain_id": new FieldInfo{
 				"label": "Domain",
 				"field_name": "domain_id",
 				"component": classof Select,
 			},
 		});
-		domains_form.commit("setFieldsList", [
+		domains_form.proxy("fields").commit("setFieldsList", [
 			"domain_id",
 		]);
 		
 		/* Set api name */
-		domains.commit("setApiName", "app.workspace.domain");
-		domains_form.commit("setApiName", "app.workspace.domain");
+		domains.proxy("data").commit("setApiName", "app.workspace.domain");
+		domains_form.proxy("data").commit("setApiName", "app.workspace.domain");
 		
 		/* Set get route name */
 		domains_form.commit("setGetNames", new Callback(classof DomainPageModel, "getNames"));
 		
 		/* Set foreign key */
-		int space_id = (int)form.data(["item_pk", "id"]);
-		domains.commit("setForeignKey", "space_id", space_id);
-		domains_form.commit("setForeignKey", "space_id", space_id);
+		int space_id = (int)form.data(["data", "item_pk", "id"]);
+		domains.proxy("data").commit("setForeignKey", "space_id", space_id);
+		domains_form.proxy("data").commit("setForeignKey", "space_id", space_id);
 		
 		/* Add components */
 		layout.commit("addComponent", classof Select);

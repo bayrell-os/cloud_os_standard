@@ -55,7 +55,11 @@ struct DomainPageModel extends CrudPageModel
 		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
 		/* Add widget routes */
-		if (form.data() != null and widget.data("action") == "save" and not form.call("isNew"))
+		if (
+			form.data() != null and
+			widget.data("action") == "save" and
+			not form.proxy("data").call("isNew")
+		)
 		{
 			TableDialogModel routes = await widget.call("addWidget",
 				new TableDialogModel{ "widget_name": "routes" }
@@ -82,12 +86,12 @@ struct DomainPageModel extends CrudPageModel
 		await RoutesFormModel::initWidget(routes_form, layout);
 		
 		/* Set foreign key */
-		int domain_id = (int)form.data(["item_pk", "id"]);
-		routes.commit("setForeignKey", "domain_id", domain_id);
-		routes_form.commit("setForeignKey", "domain_id", domain_id);
+		int domain_id = (int)form.data(["data", "item_pk", "id"]);
+		routes.proxy("data").commit("setForeignKey", "domain_id", domain_id);
+		routes_form.proxy("data").commit("setForeignKey", "domain_id", domain_id);
 		
 		/* Remove domain_id */
-		routes_form.commit("removeFieldFromList", "domain_id");
+		routes_form.proxy("fields").commit("removeFieldFromList", "domain_id");
 		
 		/* Set width */
 		routes.commit("setDialogWidth", "save", "800px");

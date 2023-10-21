@@ -27,8 +27,8 @@ use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Components.Routes.RoutesFormModel;
-use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
+use Bayrell.CloudOS.Components.Routes.RouteFormModel;
+use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
 struct RoutePageModel extends CrudPageModel
@@ -36,8 +36,8 @@ struct RoutePageModel extends CrudPageModel
 	/**
 	 * Factory
 	 */
-	static FormModel createFormModel() => new RoutesFormModel{"widget_name": "form"};
-	static TableModel createTableModel() => new RoutesTableModel{"widget_name": "table"};
+	static FormModel createFormModel() => new RouteFormModel{"widget_name": "form"};
+	static TableModel createTableModel() => new RouteTableModel{"widget_name": "table"};
 	
 	
 	/**
@@ -58,7 +58,7 @@ struct RoutePageModel extends CrudPageModel
 	 */
 	static string getNames(string action, Dict obj = null)
 	{
-		return RoutesTableModel::getNames(action, obj);
+		return RouteTableModel::getNames(action, obj);
 	}
 	
 	

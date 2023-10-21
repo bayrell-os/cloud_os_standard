@@ -23,15 +23,17 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudDataStorage;
+use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
-use Runtime.Widget.Form.FormModel;
-use Bayrell.CloudOS.Components.Routes.RoutesTableModel;
+use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
-struct RoutesFormModel extends FormModel
+struct RouteFormModel extends FormModel
 {
 	/**
 	 * Fields
@@ -41,7 +43,7 @@ struct RoutesFormModel extends FormModel
 		"enable": new FieldInfo{
 			"label": "Enable",
 			"name": "enable",
-            "component": classof Select,
+			"component": classof Select,
 			"options": [
 				{"label": "No", "value": "0"},
 				{"label": "Yes", "value": "1"},
@@ -50,7 +52,7 @@ struct RoutesFormModel extends FormModel
 		"protocol": new FieldInfo{
 			"label": "Protocol",
 			"name": "protocol",
-            "component": classof Select,
+			"component": classof Select,
 			"options": [
 				{"label": "HTTP", "value": "http"},
 			],
@@ -60,43 +62,43 @@ struct RoutesFormModel extends FormModel
 		"domain_id": new FieldInfo{
 			"label": "Domain name",
 			"name": "domain_id",
-            "component": classof Select,
+			"component": classof Select,
 			"options": [
 			],
 		},
 		"source_port": new FieldInfo{
 			"label": "Source port",
 			"name": "source_port",
-            "component": classof Input,
+			"component": classof Input,
 		},
 		"route_prefix": new FieldInfo{
 			"label": "Route prefix",
 			"name": "route_prefix",
-            "component": classof Input,
+			"component": classof Input,
 		},
 		
 		/* Dest */
 		"docker_name": new FieldInfo{
 			"label": "Docker name",
 			"name": "docker_name",
-            "component": classof Input,
+			"component": classof Input,
 		},
 		"target_port": new FieldInfo{
 			"label": "Target port",
 			"name": "target_port",
-            "component": classof Input,
+			"component": classof Input,
 		},
 		"target_prefix": new FieldInfo{
 			"label": "Target prefix",
 			"name": "target_prefix",
-            "component": classof Input,
+			"component": classof Input,
 		},
 		
 		/* Nginx config */
 		"nginx_config": new FieldInfo{
 			"label": "Nginx config",
 			"name": "nginx_config",
-            "component": classof TextArea,
+			"component": classof TextArea,
 		},
 	};
 	
@@ -108,25 +110,19 @@ struct RoutesFormModel extends FormModel
 	{
 		await parent::initWidget(widget, layout);
 		
+		/* Get storage */
+		ModelProxy<CrudDataStorage> data = widget.proxy("data");
+		ModelProxy<FieldList> fields = widget.proxy("fields");
+		
 		/* Api name */
-		widget.commit("setApiName", "app.route");
+		data.commit("setApiName", "app.route");
 		
 		/* Set fields */
-		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["id"]);
+		fields.commit("setFields", static::fields());
+		fields.commit("setPrimaryKeys", ["id"]);
 		
-        /* Set default item */
-		widget.commit("setDefaultItem", {
-			"enable": 1,
-			"protocol": "http",
-			"source_port": "80",
-			"route_prefix": "/",
-			"target_port": "80",
-			"target_prefix": "/",
-		});
-        
 		/* Set table fields list */
-		widget.commit("setFieldsList", [
+		fields.commit("setFieldsList", [
 			"enable",
 			"protocol",
 			"domain_id",
@@ -138,24 +134,34 @@ struct RoutesFormModel extends FormModel
 			"nginx_config",
 		]);
 		
-        /* Set get names  */
-		widget.commit("setGetNames", new Callback(classof RoutesTableModel, "getNames"));
-        
-        /* Add domain dictionary */
-		widget.commit("addDictionaryField", {
+		/* Add domain dictionary */
+		fields.commit("addDictionaryField", {
 			"from": "domains",
 			"to": "domain_id",
 			"option": new Callback(static::getClassName(), "getOptionDomain"),
 		});
-        
+		
+		/* Set default item */
+		data.commit("setDefaultItem", {
+			"enable": 1,
+			"protocol": "http",
+			"source_port": "80",
+			"route_prefix": "/",
+			"target_port": "80",
+			"target_prefix": "/",
+		});
+		
+		/* Set get names  */
+		widget.commit("setGetNames", new Callback(classof RouteTableModel, "getNames"));
+		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
 		layout.commit("addComponent", classof TextArea);
 	}
 	
-    
-    /**
+	
+	/**
 	 * Dictionary domain
 	 */
 	static Dict getOptionDomain(Dict item) =>
@@ -163,5 +169,5 @@ struct RoutesFormModel extends FormModel
 		"label": item["domain_name"],
 		"value": item["id"]
 	};
-    
+	
 }

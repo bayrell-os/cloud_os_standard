@@ -23,8 +23,10 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
 use Runtime.Widget.Label;
 use Runtime.Widget.SelectLabel;
 use Bayrell.CloudOS.Components.NginxFiles.NginxFilePageModel;
@@ -67,23 +69,27 @@ struct NginxFileTableModel extends TableModel
 	{
 		await parent::initWidget(widget, layout);
 		
+		/* Get storage */
+		ModelProxy<CrudDataStorage> data = widget.proxy("data");
+		ModelProxy<FieldList> fields = widget.proxy("fields");
+		
 		/* Api name */
-		widget.commit("setApiName", "app.nginx_file");
+		data.commit("setApiName", "app.nginx_file");
 		
 		/* Set fields */
-		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["id"]);
-		
-		/* Set get route name */
-		widget.commit("setGetRouteName", new Callback(classof NginxFilePageModel, "getRouteName"));
+		fields.commit("setFields", static::fields());
+		fields.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
-		widget.commit("setFieldsList", [
+		fields.commit("setFieldsList", [
 			"row_number",
 			"name",
 			"enable",
 			"row_buttons",
 		]);
+		
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof NginxFilePageModel, "getRouteName"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);

@@ -23,8 +23,10 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
 use Runtime.Widget.Label;
 use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageModel;
 
@@ -62,23 +64,27 @@ struct YamlFileTableModel extends TableModel
 	{
 		await parent::initWidget(widget, layout);
 		
+		/* Get storage */
+		ModelProxy<CrudDataStorage> data = widget.proxy("data");
+		ModelProxy<FieldList> fields = widget.proxy("fields");
+		
 		/* Api name */
-		widget.commit("setApiName", "app.docker.yaml");
+		data.commit("setApiName", "app.docker.yaml");
 		
 		/* Set fields */
-		widget.commit("setFields", static::fields());
-		widget.commit("setPrimaryKeys", ["id"]);
-		
-		/* Set get route name */
-		widget.commit("setGetRouteName", new Callback(classof YamlFilePageModel, "getRouteName"));
+		fields.commit("setFields", static::fields());
+		fields.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
-		widget.commit("setFieldsList", [
+		fields.commit("setFieldsList", [
 			"row_number",
 			"stack_name",
 			"file_name",
 			"row_buttons",
 		]);
+		
+		/* Set get route name */
+		widget.commit("setGetRouteName", new Callback(classof YamlFilePageModel, "getRouteName"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);
