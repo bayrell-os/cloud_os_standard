@@ -41,6 +41,16 @@ struct StackPageModel extends CrudPageModel
 	
 	
 	/**
+	 * Init widget
+	 */
+	async static void initWidget(ModelProxy<CrudPageModel> model, ModelProxy<Layout> layout)
+	{
+		model.commit("setAction", "dialog");
+		await parent::initWidget(model, layout);
+	}
+	
+	
+	/**
 	 * Returns route names
 	 */
 	static string getRouteName(string name)

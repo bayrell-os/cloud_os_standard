@@ -28,6 +28,7 @@ use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
+use Bayrell.CloudOS.Components.Domains.DomainPageModel;
 
 
 struct DomainFormModel extends FormModel
@@ -69,6 +70,9 @@ struct DomainFormModel extends FormModel
 			"domain_name",
 			"row_buttons",
 		]);
+		
+		/* Set get names */
+		widget.commit("setGetNames", new Callback(classof DomainPageModel, "getNames"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);

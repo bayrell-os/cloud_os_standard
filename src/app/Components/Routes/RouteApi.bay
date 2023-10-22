@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Workspace;
+namespace Bayrell.CloudOS.Components.Routes;
 
 use Runtime.re;
 use Runtime.DateTime;
@@ -32,7 +32,7 @@ use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 
 
-class WorkspaceApi extends CrudApi
+class RouteApi extends CrudApi
 {
 	/**
 	 * Returns api name
@@ -53,6 +53,7 @@ class WorkspaceApi extends CrudApi
 	{
 		if (api_name == "crud.search") return "actionSearch";
 		if (api_name == "crud.search_one") return "actionSearchOne";
+		if (api_name == "crud.dictionary") return "actionDictionary";
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";

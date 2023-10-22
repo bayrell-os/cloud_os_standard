@@ -177,8 +177,8 @@ class Schema extends DatabaseSchema
 	[
 		/* Fields */
 		new BigIntType{"name": "id"},
-		new BigIntType{"name": "space_id"},
-		new BigIntType{"name": "ssl_id"},
+		new BigIntType{"name": "space_id", "nullable": true},
+		new BigIntType{"name": "ssl_id", "nullable": true},
 		new BigIntType{"name": "https_redirect"},
 		new StringType{"name": "domain_name"},
 		new StringType{"name": "nginx_template"},

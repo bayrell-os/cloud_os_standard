@@ -20,11 +20,13 @@ namespace Bayrell.CloudOS.Components.Workspace;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Widget.Crud.Api.CrudApi;
 use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
 use Runtime.Widget.Crud.Api.Filter;
 use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
@@ -52,6 +54,8 @@ class DomainApi extends CrudApi
 	pure string getApiMethod(string api_name)
 	{
 		if (api_name == "crud.search") return "actionSearch";
+		if (api_name == "crud.dictionary") return "actionDictionary";
+		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
 		return "";
 	}
@@ -72,7 +76,7 @@ class DomainApi extends CrudApi
 	 * Returns save fields
 	 */
 	Collection getSaveFields() => [
-		"domain_name",
+		"domain_id",
 	];
 	
 	
@@ -81,11 +85,26 @@ class DomainApi extends CrudApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new Purify{ "name": "domain_name" },
-		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "domain_name" },
-		new Unique{"keys": ["domain_name"]},
-		new Filter{"api_name": "space_id", "field_name": "space_id"},
+		new Purify{ "name": "domain_id" },
+		new LowerCase{ "name": "domain_id" },
+		new Required{ "name": "domain_id" },
+		
+		/* ForeignKey */
+		new Dictionary{
+			"dictionary_name": "domains",
+			"table_name": "domains",
+			"fields": [
+				"id",
+				"space_id",
+				"is_deleted",
+				"domain_name",
+			],
+			"query": Query (DomainApi api, Dictionary d, Query q)
+			{
+				q.where("space_id", "=", null);
+				return q;
+			},
+		},
 	];
 	
 	
@@ -100,6 +119,37 @@ class DomainApi extends CrudApi
 		q.orderBy("domains.id", "asc");
 		
 		return q;
+	}
+	
+	
+	/**
+	 * Update item
+	 */
+	async void updateItem(Relation item, Dict update_data)
+	{
+		Connection conn = this.getDatabaseConnection();
+		
+		int space_id = update_data["space_id"];
+		int domain_id = update_data["domain_id"];
+		
+		Relation space = Relation::findById("spaces", conn, space_id);
+		if (!space)
+		{
+			throw new ApiException("Space not found");
+		}
+		
+		Relation domain = Relation::findById("domains", conn, domain_id);
+		if (!domain)
+		{
+			throw new ApiException("Domain not found");
+		}
+		if (domain.get("space_id") != 0)
+		{
+			throw new ApiException("Domain not found");
+		}
+		
+		domain.set("space_id", space_id);
+		domain.save(conn);
 	}
 	
 	

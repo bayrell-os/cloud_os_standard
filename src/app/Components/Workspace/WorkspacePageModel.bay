@@ -51,77 +51,72 @@ struct WorkspacePageModel extends CrudPageModel
 	/**
 	 * Init widget
 	 */
-	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
+	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
-		await parent::initWidget(widget, layout);
+		await parent::initWidget(model, layout);
 		
-		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
-				
-		/* Add widget domains */
-		if (
-			form.data() != null and
-			widget.data("action") == "save" and
-			not form.proxy("data").call("isNew")
-		)
+		/* Add domains */
+		await model.commitAsync("addForeignModel", layout, {
+			"widget_name": "domains",
+			"form_model": method DomainPageModel::createFormModel,
+			"table_model_name": classof TableDialogModel,
+			"table_model_init": method DomainTableModel::initWidget,
+			"foreign_key": "space_id",
+		});
+		
+		/* Setup table domains */
+		ModelProxy<FormModel> domains_table = model
+			.proxy(["widgets", "domains", "widgets", "table"])
+		;
+		if (domains_table.data() != null)
 		{
-			TableDialogModel domains = await widget.call("addWidget",
-				new TableDialogModel{ "widget_name": "domains" }
-			);
-			await widget.commitAsync("initWidgetDomains", domains, layout);
+			domains_table.proxy("data").commit("setApiName", "app.workspace.domain");
+			domains_table.proxy("fields").commit("editField", new FieldInfo{
+				"name": "row_buttons",
+				"render_method": new Callback{
+					"obj": static::getClassName(), "name": "renderRowButtons"
+				},
+			});
 		}
-	}
-	
-	
-	/**
-	 * Init widget domains
-	 */
-	async static void initWidgetDomains(
-		ModelProxy<BaseModel> widget, ModelProxy<BaseModel> domains, ModelProxy<Layout> layout
-	)
-	{
-		ModelProxy<FormModel> form = widget.proxy(["widgets", "form"]);
 		
-		/* Init table */
-		await DomainTableModel::initWidget(domains, layout);
-		
-		/* Init form */
-		ModelProxy<BaseModel> domains_form = domains.proxy(["widgets", "form"]);
-		
-		/* Set table fields list */
-		domains.proxy("fields").commit("editField", new FieldInfo{
-			"name": "row_buttons",
-			"render_method": new Callback{
-				"obj": static::getClassName(), "name": "renderRowButtons"
-			},
-		});
-		
-		/* Set fields list */
-		domains_form.proxy("fields").commit("setFields", {
-			"domain_id": new FieldInfo{
-				"label": "Domain",
-				"field_name": "domain_id",
-				"component": classof Select,
-			},
-		});
-		domains_form.proxy("fields").commit("setFieldsList", [
-			"domain_id",
-		]);
-		
-		/* Set api name */
-		domains.proxy("data").commit("setApiName", "app.workspace.domain");
-		domains_form.proxy("data").commit("setApiName", "app.workspace.domain");
-		
-		/* Set get route name */
-		domains_form.commit("setGetNames", new Callback(classof DomainPageModel, "getNames"));
-		
-		/* Set foreign key */
-		int space_id = (int)form.data(["data", "item_pk", "id"]);
-		domains.proxy("data").commit("setForeignKey", "space_id", space_id);
-		domains_form.proxy("data").commit("setForeignKey", "space_id", space_id);
+		/* Setup form domains */
+		ModelProxy<FormModel> domains_form = model
+			.proxy(["widgets", "domains", "widgets", "form"])
+		;
+		if (domains_form.data() != null)
+		{
+			domains_form.proxy("data").commit("setApiName", "app.workspace.domain");
+			domains_form.proxy("fields").commit("setFields", {
+				"domain_id": new FieldInfo{
+					"label": "Domain",
+					"name": "domain_id",
+					"component": classof Select,
+				},
+			});
+			/* Add domain dictionary */
+			domains_form.proxy("fields").commit("addDictionaryField", {
+				"from": "domains",
+				"to": "domain_id",
+				"option": new Callback(static::getClassName(), "getOptionDomain"),
+			});
+			domains_form.proxy("fields").commit("setFieldsList", [
+				"domain_id",
+			]);
+		}
 		
 		/* Add components */
 		layout.commit("addComponent", classof Select);
 	}
+	
+	
+	/**
+	 * Dictionary domain
+	 */
+	static Dict getOptionDomain(Dict item) =>
+	{
+		"label": item["domain_name"],
+		"value": item["id"]
+	};
 	
 	
 	/**
