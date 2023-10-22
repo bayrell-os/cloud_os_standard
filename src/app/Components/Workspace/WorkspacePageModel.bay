@@ -77,6 +77,11 @@ struct WorkspacePageModel extends CrudPageModel
 					"obj": static::getClassName(), "name": "renderRowButtons"
 				},
 			});
+			domains_table.proxy("fields").commit("setFieldsList", [
+				"row_number",
+				"domain_name",
+				"row_buttons",
+			]);
 		}
 		
 		/* Setup form domains */
