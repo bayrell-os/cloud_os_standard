@@ -186,6 +186,15 @@ class Schema extends DatabaseSchema
 		new DateTimeType{"name": "gmtime_created"},
 		new DateTimeType{"name": "gmtime_updated"},
 		
+		/* ForeignKey */
+		new ForeignKey
+		{
+			"name": "domains__spaces",
+			"table_name": "spaces",
+			"primary_key": "id",
+			"foreign_key": "space_id",
+		},
+		
 		/* Index */
 		new AutoIncrement{"name": "id"},
 		new Primary{"keys": ["id"]},

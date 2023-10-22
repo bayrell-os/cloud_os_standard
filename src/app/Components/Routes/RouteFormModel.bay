@@ -106,13 +106,13 @@ struct RouteFormModel extends FormModel
 	/**
 	 * Init widget
 	 */
-	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
+	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
-		await parent::initWidget(widget, layout);
+		await parent::initWidget(model, layout);
 		
 		/* Get storage */
-		ModelProxy<CrudDataStorage> data = widget.proxy("data");
-		ModelProxy<FieldList> fields = widget.proxy("fields");
+		ModelProxy<CrudDataStorage> data = model.proxy("data");
+		ModelProxy<FieldList> fields = model.proxy("fields");
 		
 		/* Api name */
 		data.commit("setApiName", "app.route");
@@ -152,7 +152,7 @@ struct RouteFormModel extends FormModel
 		});
 		
 		/* Set get names */
-		widget.commit("setGetNames", new Callback(classof RouteTableModel, "getNames"));
+		model.commit("setGetNames", new Callback(classof RouteTableModel, "getNames"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);

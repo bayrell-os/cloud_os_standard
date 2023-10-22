@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Templates;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -28,21 +28,26 @@ use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
+use Bayrell.CloudOS.Components.Templates.TemplatePageModel;
 
 
-struct StackFormModel extends FormModel
+struct TemplateFormModel extends FormModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
+        "uid": new FieldInfo{
+			"label": "UID",
+			"name": "uid",
 			"component": classof Input,
-		}
+		},
+		"name": new FieldInfo{
+			"label": "Name",
+			"name": "name",
+			"component": classof Input,
+		},
 	};
 	
 	
@@ -58,16 +63,22 @@ struct StackFormModel extends FormModel
 		ModelProxy<FieldList> fields = model.proxy("fields");
 		
 		/* Api name */
-		data.commit("setApiName", "app.docker.stack");
+		data.commit("setApiName", "app.template");
 		
 		/* Set fields */
 		fields.commit("setFields", static::fields());
-		fields.commit("setPrimaryKeys", ["stack_name"]);
+		fields.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
 		fields.commit("setFieldsList", [
-			"stack_name",
+			"row_number",
+			"uid",
+			"name",
+			"row_buttons",
 		]);
+		
+		/* Set get names */
+		model.commit("setGetNames", new Callback(classof TemplatePageModel, "getNames"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);

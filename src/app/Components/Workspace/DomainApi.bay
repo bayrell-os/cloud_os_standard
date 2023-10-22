@@ -116,7 +116,7 @@ class DomainApi extends CrudApi
 		int space_id = (int)this.post_data.get("space_id");
 		
 		q.where("space_id", "=", space_id);
-		q.orderBy("domains.id", "asc");
+		q.orderBy("domains.domain_name", "asc");
 		
 		return q;
 	}

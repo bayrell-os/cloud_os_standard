@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Components.Modificators;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -27,22 +27,22 @@ use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
-use Runtime.Widget.Input;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
+use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
 
 
-struct StackFormModel extends FormModel
+struct ModificatorFormModel extends FormModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
-			"component": classof Input,
-		}
+		"content": new FieldInfo{
+			"label": "Content",
+			"name": "content",
+			"component": classof TextArea,
+		},
 	};
 	
 	
@@ -58,19 +58,24 @@ struct StackFormModel extends FormModel
 		ModelProxy<FieldList> fields = model.proxy("fields");
 		
 		/* Api name */
-		data.commit("setApiName", "app.docker.stack");
+		data.commit("setApiName", "app.modificator");
 		
 		/* Set fields */
 		fields.commit("setFields", static::fields());
-		fields.commit("setPrimaryKeys", ["stack_name"]);
+		fields.commit("setPrimaryKeys", ["id"]);
 		
 		/* Set table fields list */
 		fields.commit("setFieldsList", [
-			"stack_name",
+			"row_number",
+			"content",
+			"row_buttons",
 		]);
 		
+		/* Set get names */
+		model.commit("setGetNames", new Callback(classof ModificatorPageModel, "getNames"));
+		
 		/* Add components */
-		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof TextArea);
 	}
 	
 }

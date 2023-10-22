@@ -45,7 +45,12 @@ struct DomainTableModel extends TableModel
 			"label": "Domain name",
 			"name": "domain_name",
 			"component": classof Label,
-		}
+		},
+		"space_name": new FieldInfo{
+			"label": "Space name",
+			"name": "space_name",
+			"component": classof Label,
+		},
 		"row_buttons": new FieldInfo{
 			"name": "row_buttons",
 		},
@@ -55,13 +60,13 @@ struct DomainTableModel extends TableModel
 	/**
 	 * Init widget
 	 */
-	async static void initWidget(ModelProxy<BaseModel> widget, ModelProxy<Layout> layout)
+	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
-		await parent::initWidget(widget, layout);
+		await parent::initWidget(model, layout);
 		
 		/* Get storage */
-		ModelProxy<CrudDataStorage> data = widget.proxy("data");
-		ModelProxy<FieldList> fields = widget.proxy("fields");
+		ModelProxy<CrudDataStorage> data = model.proxy("data");
+		ModelProxy<FieldList> fields = model.proxy("fields");
 		
 		/* Api name */
 		data.commit("setApiName", "app.domain");
@@ -74,11 +79,12 @@ struct DomainTableModel extends TableModel
 		fields.commit("setFieldsList", [
 			"row_number",
 			"domain_name",
+			"space_name",
 			"row_buttons",
 		]);
 		
 		/* Set get route name */
-		widget.commit("setGetRouteName", new Callback(classof DomainPageModel, "getRouteName"));
+		model.commit("setGetRouteName", new Callback(classof DomainPageModel, "getRouteName"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);

@@ -65,6 +65,7 @@ class DomainApi extends CrudApi
 	Collection getItemFields() => [
 		"id",
 		"domain_name",
+		"space_name",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -102,7 +103,9 @@ class DomainApi extends CrudApi
 			q.where("space_id", "=", space_id);
 		}
 		
-		q = q.orderBy("domains.id", "asc");
+		q.addField("spaces.name as space_name");
+		q.orderBy("domains.id", "asc");
+		q.leftJoinKey("domains__spaces");
 		
 		return q;
 	}
