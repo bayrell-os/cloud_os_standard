@@ -42,13 +42,13 @@ class WorkspacePageRoute extends CrudRoute
 		{
 			"uri": "/workspace/add/",
 			"name": "app:workspace:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/workspace/{id}/edit/",
 			"name": "app:workspace:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

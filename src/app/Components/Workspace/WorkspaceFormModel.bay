@@ -88,12 +88,12 @@ struct WorkspaceFormModel extends FormModel
 	
 	
 	/**
-	 * Init foreign models
+	 * Init sub widgets
 	 */
-	async static void initForeignModels(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	static void initSubWidgets(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
 		/* Add domains */
-		await model.commitAsync("addForeignModel", layout, {
+		await model.commitAsync("addForeignWidget", layout, {
 			"widget_name": "domains",
 			"form_model": method DomainPageModel::createFormModel,
 			"table_model_name": classof TableDialogModel,

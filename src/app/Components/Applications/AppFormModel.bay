@@ -136,12 +136,14 @@ struct AppFormModel extends FormModel
 	
 	
 	/**
-	 * Init foreign models
+	 * Init sub widgets
 	 */
-	static void initForeignModels(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	static void initSubWidgets(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
+		await parent::initSubWidgets(model, layout);
+		
 		/* Add modificators */
-		await model.commitAsync("addForeignModel", layout, {
+		await model.commitAsync("addForeignWidget", layout, {
 			"widget_name": "modificators",
 			"form_model_name": classof AppModificatorFormModel,
 			"table_model_name": classof AppModificatorTableModel,

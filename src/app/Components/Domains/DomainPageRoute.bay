@@ -42,13 +42,13 @@ class DomainPageRoute extends CrudRoute
 		{
 			"uri": "/domains/add/",
 			"name": "app:domains:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/domains/{id}/edit/",
 			"name": "app:domains:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

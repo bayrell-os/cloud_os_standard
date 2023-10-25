@@ -42,13 +42,13 @@ class AppPageRoute extends CrudRoute
 		{
 			"uri": "/applications/add/",
 			"name": "app:applications:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/applications/{id}/",
 			"name": "app:applications:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

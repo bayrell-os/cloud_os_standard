@@ -52,13 +52,13 @@ class YamlFilePageRoute extends CrudRoute
 		{
 			"uri": "/docker/yaml/add/",
 			"name": "app:docker:yaml:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/docker/yaml/{id}/edit/",
 			"name": "app:docker:yaml:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

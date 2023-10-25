@@ -41,7 +41,7 @@ class ModificatorPageRoute extends CrudRoute
 		{
 			"uri": "/modificators/{id}/",
 			"name": "app:modificators:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

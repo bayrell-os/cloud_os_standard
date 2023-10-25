@@ -40,13 +40,13 @@ class NginxFilePageRoute extends CrudRoute
 		{
 			"uri": "/nginx_files/add/",
 			"name": "app:nginx_files:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/nginx_files/{id}/edit/",
 			"name": "app:nginx_files:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

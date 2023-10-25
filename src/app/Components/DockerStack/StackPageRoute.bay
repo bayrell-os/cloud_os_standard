@@ -40,13 +40,13 @@ class StackPageRoute extends CrudRoute
 		{
 			"uri": "/docker/stack/add/",
 			"name": "app:docker:stack:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/docker/stack/{stack_name}/edit/",
 			"name": "app:docker:stack:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

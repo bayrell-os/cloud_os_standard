@@ -42,7 +42,7 @@ class TemplatePageRoute extends CrudRoute
 		{
 			"uri": "/templates/{id}/edit/",
 			"name": "app:templates:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

@@ -85,12 +85,12 @@ struct DomainFormModel extends FormModel
 	
 	
 	/**
-	 * Init foreign models
+	 * Init sub widgets
 	 */
-	async static void initForeignModels(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	static void initSubWidgets(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
 		/* Add routes */
-		await model.commitAsync("addForeignModel", layout, {
+		await model.commitAsync("addForeignWidget", layout, {
 			"widget_name": "routes",
 			"form_model": method RoutePageModel::createFormModel,
 			"table_model_name": classof TableDialogModel,

@@ -52,13 +52,13 @@ class SSLPageRoute extends CrudRoute
 		{
 			"uri": "/ssl/add/",
 			"name": "app:ssl:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/ssl/{id}/edit/",
 			"name": "app:ssl:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{

@@ -56,13 +56,13 @@ class RoutePageRoute extends CrudRoute
 		{
 			"uri": "/routes/add/",
 			"name": "app:routes:add",
-			"method": "actionSave",
+			"method": "actionAdd",
 		},
 		new RouteInfo
 		{
 			"uri": "/routes/{id}/edit/",
 			"name": "app:routes:edit",
-			"method": "actionSave",
+			"method": "actionEdit",
 		},
 		new RouteInfo
 		{
