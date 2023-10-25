@@ -65,6 +65,7 @@ class YamlFileApi extends CrudApi
 		"id",
 		"stack_name",
 		"file_name",
+		"content",
 		"gmtime_created",
 		"gmtime_updated",
 	];
