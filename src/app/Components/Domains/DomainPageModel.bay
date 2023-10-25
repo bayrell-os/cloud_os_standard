@@ -32,9 +32,6 @@ use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Components.Domains.DomainFormModel;
 use Bayrell.CloudOS.Components.Domains.DomainTableModel;
-use Bayrell.CloudOS.Components.Routes.RouteFormModel;
-use Bayrell.CloudOS.Components.Routes.RoutePageModel;
-use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
 struct DomainPageModel extends CrudPageModel
@@ -52,23 +49,6 @@ struct DomainPageModel extends CrudPageModel
 	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
 		await parent::initWidget(model, layout);
-		
-		/* Add routes */
-		await model.commitAsync("addForeignModel", layout, {
-			"widget_name": "routes",
-			"form_model": method RoutePageModel::createFormModel,
-			"table_model_name": classof TableDialogModel,
-			"table_model_init": method RouteTableModel::initWidget,
-			"foreign_key": "domain_id",
-		});
-		
-		/* Setup table routes */
-		ModelProxy<FormModel> table = model.proxy(["widgets", "routes", "widgets", "table"]);
-		if (table.data() != null)
-		{
-			/* Set width */
-			table.commit("setDialogWidth", "save", "800px");
-		}
 	}
 	
 	

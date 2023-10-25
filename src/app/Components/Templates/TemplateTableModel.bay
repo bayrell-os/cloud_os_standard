@@ -75,7 +75,7 @@ struct TemplateTableModel extends TableModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["id"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"row_number",
 			"name",

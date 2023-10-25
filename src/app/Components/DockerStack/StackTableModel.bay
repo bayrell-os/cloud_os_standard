@@ -71,7 +71,7 @@ struct StackTableModel extends TableDialogModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["stack_name"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"row_number",
 			"stack_name",

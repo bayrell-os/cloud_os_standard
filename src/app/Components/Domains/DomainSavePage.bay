@@ -51,7 +51,7 @@
 <template name="render">
 	
 	%set FormModel form = model.getWidget("form");
-	%set TableModel routes = model.getWidget("routes");
+	%set TableModel routes = form.getWidget("routes");
 	
 	%render static::renderTop();
 	<Form @model=["widgets", "form"] />
@@ -60,7 +60,7 @@
 	{
 		<div class="table_routes">
 			<div class="table_routes__label">Routes</div>
-			<TableDialog @model=["widgets", "routes", "widgets", "table"] />
+			<TableDialog @model=["widgets", "form", "widgets", "routes", "widgets", "table"] />
 		</div>
 	}
 	

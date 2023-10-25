@@ -16,36 +16,28 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Api;
+namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.re;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
-use Runtime.Web.Crud.CrudPageApi;
-use Runtime.Web.Crud.Rules.CrudRule;
-use Runtime.Web.Crud.Rules.Dictionary;
-use Runtime.Web.Crud.Rules.SaveFields;
-use Bayrell.CloudOS.Models.Application;
-use Bayrell.CloudOS.Models.DockerStack;
-use Bayrell.CloudOS.Models.TemplateVersion;
-use Bayrell.CloudOS.Models.Template;
-use Bayrell.CloudOS.Models.Modificator;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
 
 
-class ApplicationApi extends CrudPageApi
+class AppApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
 	pure string getApiName() => "app.application";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof Application;
 	
 	
 	/**
@@ -69,43 +61,55 @@ class ApplicationApi extends CrudPageApi
 	
 	
 	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"id",
+		"stack_name",
+		"name",
+		"template_id",
+		"template_version_id",
+		"status",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"stack_name",
+		"name",
+		"template_version_id",
+		"status",
+	];
+	
+	
+	/**
 	 * Returns rules
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new SaveFields
-		{
-			"fields":
-			[
-				"stack_name",
-				"name",
-				"template_version_id",
-				"status",
-			]
-		},
 		new Dictionary{
 			"dictionary_name": "stacks",
 			"table_name": "stacks",
-			"model_name": classof DockerStack,
-			"query": Query (ApplicationApi api, Query q) => q.orderBy("stack_name", "asc"),
+			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("stack_name", "asc"),
 		},
 		new Dictionary{
 			"dictionary_name": "templates_versions",
 			"table_name": "templates_versions",
-			"model_name": classof TemplateVersion,
-			"query": Query (ApplicationApi api, Query q) => q.orderBy("version", "asc"),
+			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("version", "asc"),
 		},
 		new Dictionary{
 			"dictionary_name": "templates",
 			"table_name": "templates",
-			"model_name": classof Template,
-			"query": Query (ApplicationApi api, Query q) => q.orderBy("name", "asc"),
+			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("name", "asc"),
 		},
 		new Dictionary{
 			"dictionary_name": "modificators",
 			"table_name": "modificators",
-			"model_name": classof Modificator,
-			"query": Query (ApplicationApi api, Query q) => q.orderBy("name", "asc"),
+			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("name", "asc"),
 		},
 	];
 	
@@ -139,11 +143,5 @@ class ApplicationApi extends CrudPageApi
 		
 		return q;
 	}
-	
-	
-	/**
-	 * Returns database params
-	 */
-	Dict getDatabaseParams() => { "name": "default" };
 	
 }

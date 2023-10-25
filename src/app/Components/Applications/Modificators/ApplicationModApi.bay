@@ -1,0 +1,203 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Applications.Modificators;
+
+use Runtime.re;
+use Runtime.Exceptions.ApiException;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
+use Runtime.ORM.Relation;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
+
+
+class ApplicationModApi extends CrudApi
+{
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.application.modificator";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string getTableName() => "app_modificators";
+	
+	
+	/**
+	 * Returns api methods
+	 */
+	pure string getApiMethod(string api_name)
+	{
+		if (api_name == "crud.search") return "actionSearch";
+		if (api_name == "crud.search_one") return "actionSearchOne";
+		if (api_name == "crud.dictionary") return "actionDictionary";
+		if (api_name == "crud.item") return "actionItem";
+		if (api_name == "crud.save") return "actionSave";
+		if (api_name == "crud.delete") return "actionDelete";
+		return "";
+	}
+	
+	
+	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"app_id",
+		"modificator_id",
+		"modificator_name",
+		"modificator_priority",
+		"modificator_uid",
+		"modificator_version",
+		"priority",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"stack_name",
+		"modificator_id",
+		"status",
+	];
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Collection<CrudRule> getRules() =>
+	[
+		/* ForeignKey */
+		new Dictionary{
+			"dictionary_name": "modificators",
+			"table_name": "modificators",
+			"fields": [
+				"id",
+				"name",
+				"app_id",
+			],
+			"query": Query (ApplicationModApi api, Dictionary d, Query q)
+			{
+				int app_id = (int)this.post_data["app_id"];
+				q.fields([
+					"modificators.id as id",
+					"modificators.name as name",
+					"app_modificators.app_id as app_id",
+				]);
+				q.leftJoin(
+					"app_modificators",
+					[
+						"app_modificators.modificator_id=modificators.id",
+						new QueryFilter("app_modificators.app_id", "=", app_id),
+					]
+				);
+				q.orderBy("name", "asc");
+				q.where("app_id", "=", null);
+				return q;
+			},
+		},
+	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async Query buildSearchQuery(Query q)
+	{
+		if (
+			this.action == 'actionSearch' or
+			this.action == 'actionSearchOne'
+		)
+		{
+			int app_id = (int)this.post_data["app_id"];
+			q.where("app_modificators.app_id", "=", app_id);
+		}
+		
+		q = q
+			.innerJoinKey("app_modificators__modificator")
+			
+			.orderBy("modificators.priority", "asc")
+			.orderBy("modificators.name", "asc")
+			
+			.addFields([
+				"modificators.name as modificator_name",
+				"modificators.priority as modificator_priority",
+				"modificators.uid as modificator_uid",
+				"modificators.version as modificator_version",
+			])
+		;
+		
+		return q;
+	}
+	
+	
+	/**
+	 * Update item
+	 */
+	async void updateItem(Relation item, Dict update_data)
+	{
+		return ;
+		
+		Connection conn = this.getDatabaseConnection();
+		
+		int space_id = update_data["space_id"];
+		int domain_id = update_data["domain_id"];
+		
+		Relation space = Relation::findById("spaces", conn, space_id);
+		if (!space)
+		{
+			throw new ApiException("Space not found");
+		}
+		
+		Relation domain = Relation::findById("domains", conn, domain_id);
+		if (!domain)
+		{
+			throw new ApiException("Domain not found");
+		}
+		if (domain.get("space_id") != 0)
+		{
+			throw new ApiException("Domain not found");
+		}
+		
+		domain.set("space_id", space_id);
+		domain.save(conn);
+	}
+	
+	
+	/**
+	 * Delete item
+	 */
+	async void deleteItem(Relation item)
+	{
+		return ;
+		Connection conn = this.getDatabaseConnection();
+		item.set("space_id", null);
+		item.save(conn);
+	}
+	
+}

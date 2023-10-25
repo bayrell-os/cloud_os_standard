@@ -234,6 +234,12 @@ pure Collection getMenu()
 				{
 					"title": "Applications",
 					"link": "app:applications:index",
+					"links": [
+						"app:applications:index",
+						"app:applications:add",
+						"app:applications:edit",
+						"app:applications:delete",
+					],
 				},
 				{
 					"title": "Import XML",

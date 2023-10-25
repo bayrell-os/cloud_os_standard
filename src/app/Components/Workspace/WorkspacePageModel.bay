@@ -24,17 +24,12 @@ use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Events.MouseClickEvent;
-use Runtime.Widget.Button;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Components.Domains.DomainFormModel;
-use Bayrell.CloudOS.Components.Domains.DomainPageModel;
-use Bayrell.CloudOS.Components.Domains.DomainTableModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceFormModel;
 use Bayrell.CloudOS.Components.Workspace.WorkspaceTableModel;
 
@@ -54,85 +49,6 @@ struct WorkspacePageModel extends CrudPageModel
 	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
 		await parent::initWidget(model, layout);
-		
-		/* Add domains */
-		await model.commitAsync("addForeignModel", layout, {
-			"widget_name": "domains",
-			"form_model": method DomainPageModel::createFormModel,
-			"table_model_name": classof TableDialogModel,
-			"table_model_init": method DomainTableModel::initWidget,
-			"foreign_key": "space_id",
-		});
-		
-		/* Setup table domains */
-		ModelProxy<FormModel> domains_table = model
-			.proxy(["widgets", "domains", "widgets", "table"])
-		;
-		if (domains_table.data() != null)
-		{
-			domains_table.proxy("data").commit("setApiName", "app.workspace.domain");
-			domains_table.proxy("fields").commit("editField", new FieldInfo{
-				"name": "row_buttons",
-				"render_method": new Callback{
-					"obj": static::getClassName(), "name": "renderRowButtons"
-				},
-			});
-			domains_table.proxy("fields").commit("setFieldsList", [
-				"row_number",
-				"domain_name",
-				"row_buttons",
-			]);
-		}
-		
-		/* Setup form domains */
-		ModelProxy<FormModel> domains_form = model
-			.proxy(["widgets", "domains", "widgets", "form"])
-		;
-		if (domains_form.data() != null)
-		{
-			domains_form.proxy("data").commit("setApiName", "app.workspace.domain");
-			domains_form.proxy("fields").commit("setFields", {
-				"domain_id": new FieldInfo{
-					"label": "Domain",
-					"name": "domain_id",
-					"component": classof Select,
-				},
-			});
-			/* Add domain dictionary */
-			domains_form.proxy("fields").commit("addDictionaryField", {
-				"from": "domains",
-				"to": "domain_id",
-				"option": new Callback(static::getClassName(), "getOptionDomain"),
-			});
-			domains_form.proxy("fields").commit("setFieldsList", [
-				"domain_id",
-			]);
-		}
-		
-		/* Add components */
-		layout.commit("addComponent", classof Select);
-	}
-	
-	
-	/**
-	 * Dictionary domain
-	 */
-	static Dict getOptionDomain(Dict item) =>
-	{
-		"label": item["domain_name"],
-		"value": item["id"]
-	};
-	
-	
-	/**
-	 * Render row buttons
-	 */
-	static html renderRowButtons(int row_number, FieldInfo field, Dict item)
-	{
-		<div class="web_table__td_row_buttons">
-			<Button type="danger small"
-				@event:MouseClickEvent="onDeleteClick" data-item={{ item }}>Delete</Button>
-		</div>
 	}
 	
 	

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Templates;
+namespace Bayrell.CloudOS.Components.Applications.Modificators;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -27,26 +27,22 @@ use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
-use Runtime.Widget.Input;
-use Bayrell.CloudOS.Components.Templates.TemplatePageModel;
+use Runtime.Widget.Select;
+use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
 
 
-struct TemplateFormModel extends FormModel
+struct AppModificatorFormModel extends FormModel
 {
 	/**
 	 * Fields
 	 */
 	pure static Dict fields() =>
 	{
-        "uid": new FieldInfo{
-			"label": "UID",
-			"name": "uid",
-			"component": classof Input,
-		},
-		"name": new FieldInfo{
-			"label": "Name",
-			"name": "name",
-			"component": classof Input,
+		"modificator_name": new FieldInfo{
+			"label": "Modificator name",
+			"name": "modificator_name",
+			"component": classof Select,
 		},
 	};
 	
@@ -63,7 +59,7 @@ struct TemplateFormModel extends FormModel
 		ModelProxy<FieldList> fields = model.proxy("fields");
 		
 		/* Api name */
-		data.commit("setApiName", "app.template");
+		data.commit("setApiName", "app.application.modificator");
 		
 		/* Set fields */
 		fields.commit("setFields", static::fields());
@@ -71,17 +67,53 @@ struct TemplateFormModel extends FormModel
 		
 		/* Set fields list */
 		fields.commit("setFieldsList", [
-			"row_number",
-			"uid",
-			"name",
-			"row_buttons",
+			"modificator_name",
 		]);
 		
+		/* Add modificator dictionary */
+		fields.commit("addDictionaryField", {
+			"from": "modificators",
+			"to": "modificator_name",
+			"option": new Callback(static::getClassName(), "getModificatorOption"),
+		});
+		
 		/* Set get names */
-		model.commit("setGetNames", new Callback(classof TemplatePageModel, "getNames"));
+		model.commit("setGetNames", new Callback(static::getClassName(), "getNames"));
 		
 		/* Add components */
-		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof TextArea);
+	}
+	
+	
+	/**
+	 * Dictionary modificator
+	 */
+	static Dict getModificatorOption(ModelProxy model, Dict item) =>
+	{
+		"label": item["name"],
+		"value": item["id"]
+	};
+	
+	
+	/**
+	 * Get names
+	 */
+	static string getNames(string action, Dict obj = null)
+	{
+		if (action == "name")
+		{
+			return "modificator";
+		}
+		if (action == "names")
+		{
+			return "modificators";
+		}
+		else if (action == "item_name")
+		{
+			return obj["item", "modificator_name"] ~
+				" <" ~ obj["item", "modificator_uid"]  ~ ">"
+			;
+		}
 	}
 	
 }

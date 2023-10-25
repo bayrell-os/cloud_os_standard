@@ -18,226 +18,67 @@
 
 namespace Bayrell.CloudOS.Components.Applications;
 
-use Runtime.lib;
+use Runtime.Callback;
 use Runtime.ModelProxy;
-use Runtime.Web.Crud.CrudPageModel;
-use Runtime.Web.Crud.CrudRoute;
-use Runtime.Web.Crud.FieldInfo;
-use Runtime.Web.Crud.TabModel;
-use Bayrell.CloudOS.Components.Applications.AppModificatorsModel;
-use Bayrell.CloudOS.Models.Application;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.Layout;
+use Runtime.Web.RouteInfo;
+use Runtime.Widget.Crud.CrudPageModel;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableModel;
+use Bayrell.CloudOS.Components.Applications.AppFormModel;
+use Bayrell.CloudOS.Components.Applications.AppTableModel;
 
 
 struct AppPageModel extends CrudPageModel
 {
-	Dict fields = {
-		"status": new FieldInfo{
-			"label": "Status",
-			"field_name": "status",
-			"options": [
-				{"label": "STOP", "value": "0"},
-				{"label": "RUN", "value": "1"},
-			],
-		},
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"field_name": "stack_name",
-			"options": [
-			],
-		},
-		"template_version_id": new FieldInfo{
-			"label": "Version",
-			"field_name": "template_version_id",
-			"options": [
-			],
-		},
-		"template_id": new FieldInfo{
-			"label": "Template",
-			"field_name": "template_id",
-			"options": [
-			],
-		},
-		"name": new FieldInfo{
-			"label": "Name",
-			"field_name": "name",
-		},
-	};
-	
-	AppModificatorsModel modificators = new AppModificatorsModel;
-	TabModel tabs = new TabModel{
-		"active": "run",
-	};
+	/**
+	 * Factory
+	 */
+	static FormModel createFormModel() => new AppFormModel{};
+	static TableModel createTableModel() => new AppTableModel{};
 	
 	
 	/**
-	 * Returns api name
+	 * Init widget
 	 */
-	pure string getApiName() => "app.application";
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string getModelName() => classof Application;
-	
-	
-	/**
-	 * Validate model
-	 */
-	public bool validateForm()
+	async static void initWidget(ModelProxy<CrudPageModel> model, ModelProxy<Layout> layout)
 	{
-		return true;
+		await parent::initWidget(model, layout);
 	}
 	
 	
 	/**
-	 * Returns page title
+	 * Returns route names
 	 */
-	string getPageTitle(string action)
+	static string getRouteName(string name)
 	{
-		if (action == "index")
-		{
-			return "Application";
-		}
-		else if (action == "add")
-		{
-			return "Add application";
-		}
-		else if (action == "edit")
-		{
-			return "Edit application '" ~
-				this.item_form.item["stack_name"] ~ "_" ~ this.item_form.item["name"] ~ "'";
-		}
-		else if (action == "delete")
-		{
-			return "Delete application ?";
-		}
-		else if (action == "delete_content")
-		{
-			return "Delete application '" ~
-				this.item_form.item["stack_name"] ~ "_" ~ this.item_form.item["name"] ~ "' ?";
-		}
+		if (name == "index") return "app:applications:index";
+		if (name == "add") return "app:applications:add";
+		if (name == "edit") return "app:applications:edit";
+		if (name == "delete") return "app:applications:delete";
 		return "";
 	}
 	
 	
 	/**
-	 * Search after
+	 * Get names
 	 */
-	async static void event(ModelProxy model, string action, Dict obj)
+	static string getNames(string action, Dict obj = null)
 	{
-		obj = await parent::event(model, action, obj);
-		
-		Dict api_res = obj["api_res"];
-		Dict crud_route = obj["crud_route"];
-		Dict post_data = obj["post_data"];
-		
-		
-		/* RouteIndexBefore */
-		if (action == "crudRouteIndexBefore")
+		if (action == "name")
 		{
-			string status = crud_route.container.request.query.get("status", "run");
-			model.commit("setSearchData", {
-				"status": status,
-			});
-			model.proxy("tabs").commit("setActive", status);
+			return "application";
 		}
-		
-		else if (action == "crudRouteEditAfter")
+		if (action == "names")
 		{
-			ModelProxy modificators = model.proxy("modificators");
-			
-			/* Setup application_id */
-			Application item = model.data(["item_form", "item"]);
-			modificators.commit("setApplicationId", item.id);
-			
-			/* call crud search */
-			await modificators.commitAsync("callCrudSearch");
+			return "applications";
 		}
-		
-		
-		/* ItemAfter */
-		else if (action == "crudItemAfter")
+		else if (action == "item_name")
 		{
-			Collection values;
-			
-			/* Setup stack name */
-			values = api_res["data", "dictionary", "stack_name"]
-				|> .map(
-					Dict (DockerStack item) => {
-						"label": item.stack_name,
-						"value": item.stack_name,
-					}
-				)
-				|> .sort(
-					int (Dict a, Dict b) => a["label"] > b["label"]
-				)
-			;
-			model.commit("setFieldOptions", "stack_name", values);
-			
-			
-			/* Setup templates */
-			values = api_res["data", "dictionary", "templates"]
-				|> .map(
-					Dict (Template item) => {
-						"label": item.name,
-						"value": item.id,
-					}
-				)
-				|> .sort(
-					int (Dict a, Dict b) => a["label"] > b["label"]
-				)
-			;
-			model.commit("setFieldOptions", "template_id", values);
-			
-			
-			/* Setup template versions */
-			model.commit("updateTemplateVersion");
-			
-			
-			/* Setup modificators */
-			values = api_res["data", "dictionary", "modificators"]
-				|> .map(
-					Dict (Template item) => {
-						"label": item.name,
-						"value": item.id,
-					}
-				)
-				|> .sort(
-					int (Dict a, Dict b) => a["label"] > b["label"]
-				)
-			;
-			model.proxy("modificators").commit("setFieldOptions", "modificator_id", values);
+			return obj["item", "stack_name"] ~ "_" ~ obj["item", "name"];
 		}
-		
-		return obj;
+		return "";
 	}
-	
-	
-	/**
-	 * Update template version
-	 */
-	static void updateTemplateVersion(ModelProxy model)
-	{
-		Collection values;
-		Dict dictionary = model.data("dictionary");
-		Application item = model.data(["item_form", "item"]);
-		
-		
-		/* Setup templates versions */
-		values = dictionary["templates_versions"]
-			|> .filter( lib::equalAttr("template_id", item.template_id) )
-			|> .map(
-				Dict (TemplateVersion item) => {
-					"label": item.version,
-					"value": item.id,
-				}
-			)
-			|> .sort(
-				int (Dict a, Dict b) => a["label"] > b["label"]
-			)
-		;
-		model.commit("setFieldOptions", "template_version_id", values);
-	}
-	
 }

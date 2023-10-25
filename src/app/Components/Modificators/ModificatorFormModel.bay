@@ -64,7 +64,7 @@ struct ModificatorFormModel extends FormModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["id"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"row_number",
 			"content",

@@ -81,6 +81,8 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
 		#ifdef BACKEND then
+		new Api("Bayrell.CloudOS.Components.Applications.AppApi"),
+		new Api("Bayrell.CloudOS.Components.Applications.Modificators.ApplicationModApi"),
 		new Api("Bayrell.CloudOS.Components.DockerStack.StackApi"),
 		new Api("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileApi"),
 		new Api("Bayrell.CloudOS.Components.Domains.DomainApi"),

@@ -16,64 +16,56 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Applications.AppSavePage"
-	extends="Runtime.Web.Crud.SavePage">
+<class name="Bayrell.CloudOS.Components.Applications.AppSavePage">
+
 
 <use name="Runtime.ModelProxy" />
+<use name="Runtime.Web.LayoutModel" />
 <use name="Runtime.Web.Message" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Web.Crud.Button" component="true" />
-<use name="Runtime.Web.Crud.Input" component="true" />
-<use name="Runtime.Web.Crud.Select" component="true" />
-<use name="Bayrell.CloudOS.Components.Applications.AppModificatorsTablePage"
-	component="true" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Form.Form" component="true" />
+<use name="Runtime.Widget.Form.FormModel" />
+<use name="Runtime.Widget.Table.TableDialog" component="true" />
+<use name="Runtime.Widget.Table.TableModel" />
 
 
 <style>
+.table_modificators{
+	padding-top: 1.5em;
+}
+.table_modificators__label{
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
 </style>
 
 
 <template name="renderTop">
 	<div class="web_table__top">
-		<Button type="default" href={{ static::url("app:applications:index") }}>Back</Button>
-	</div>
-</template>
-
-
-<template name="renderContent">
-	<div class="web_form__content">
-		%render static::renderRow(classof Select, model.fields["status"]);
-		%render static::renderRow(classof Select, model.fields["stack_name"]);
-		%render static::renderRow(classof Input, model.fields["name"]);
-		%render static::renderRow(classof Select, model.fields["template_id"]);
-		%render static::renderRow(classof Select, model.fields["template_version_id"]);
+		<Button type="default" href={{ model.back_page_url }}>Back</Button>
 	</div>
 </template>
 
 
 <template name="render">
-	%render static::renderForm();
-	<AppModificatorsTablePage @model="modificators" />
-</template>
-
-
-<script>
-
-/**
- * On change event
- */
-async void onFieldChange(Message<MouseClickEvent> msg)
-{
-	ModelProxy model = this.modelProxy();
 	
-	string field_name = msg.sender.params["name"];
-	if (field_name == "template_id")
+	%set FormModel form = model.getWidget("form");
+	%set TableModel modificators = form.getWidget("modificators");
+	
+	%render static::renderTop();
+	<Form @model=["widgets", "form"] />
+	
+	%if (modificators != null)
 	{
-		model.commit("updateTemplateVersion");
+		<div class="table_modificators">
+			<div class="table_modificators__label">Modificators</div>
+			<TableDialog @model=["widgets", "form", "widgets", "modificators", "widgets", "table"] />
+		</div>
 	}
-}
-
-</script>
+	
+</template>
 
 
 </class>

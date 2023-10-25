@@ -121,7 +121,7 @@ struct RouteFormModel extends FormModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["id"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"enable",
 			"protocol",
@@ -164,7 +164,7 @@ struct RouteFormModel extends FormModel
 	/**
 	 * Dictionary domain
 	 */
-	static Dict getOptionDomain(Dict item) =>
+	static Dict getOptionDomain(ModelProxy<FieldList> model, Dict item) =>
 	{
 		"label": item["domain_name"],
 		"value": item["id"]

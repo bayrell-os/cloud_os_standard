@@ -51,7 +51,7 @@
 <template name="render">
 	
 	%set FormModel form = model.getWidget("form");
-	%set TableModel domains = model.getWidget("domains");
+	%set TableModel domains = form.getWidget("domains");
 	
 	%render static::renderTop();
 	<Form @model=["widgets", "form"] />
@@ -60,7 +60,7 @@
 	{
 		<div class="table_domains">
 			<div class="table_domains__label">Domains</div>
-			<TableDialog @model=["widgets", "domains", "widgets", "table"] />
+			<TableDialog @model=["widgets", "form", "widgets", "domains", "widgets", "table"] />
 		</div>
 	}
 	

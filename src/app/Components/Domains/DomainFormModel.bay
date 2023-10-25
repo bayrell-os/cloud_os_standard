@@ -25,10 +25,15 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Bayrell.CloudOS.Components.Domains.DomainPageModel;
+use Bayrell.CloudOS.Components.Routes.RouteFormModel;
+use Bayrell.CloudOS.Components.Routes.RoutePageModel;
+use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
 struct DomainFormModel extends FormModel
@@ -64,7 +69,7 @@ struct DomainFormModel extends FormModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["id"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"row_number",
 			"domain_name",
@@ -76,6 +81,30 @@ struct DomainFormModel extends FormModel
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
+	}
+	
+	
+	/**
+	 * Init foreign models
+	 */
+	async static void initForeignModels(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	{
+		/* Add routes */
+		await model.commitAsync("addForeignModel", layout, {
+			"widget_name": "routes",
+			"form_model": method RoutePageModel::createFormModel,
+			"table_model_name": classof TableDialogModel,
+			"table_model_init": method RouteTableModel::initWidget,
+			"foreign_key": "domain_id",
+		});
+		
+		/* Setup table routes */
+		ModelProxy<FormModel> routes_table = model.proxy(["widgets", "routes", "widgets", "table"]);
+		if (routes_table.data() != null)
+		{
+			/* Set width */
+			routes_table.commit("setDialogWidth", "save", "800px");
+		}
 	}
 	
 }

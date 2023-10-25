@@ -19,12 +19,9 @@
 namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudPageModel;
-use Runtime.Web.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Applications.AppDeletePage;
+use Runtime.Widget.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Applications.AppPageModel;
 use Bayrell.CloudOS.Components.Applications.AppSavePage;
-use Bayrell.CloudOS.Components.Applications.AppTablePage;
 
 
 class AppPageRoute extends CrudRoute
@@ -45,13 +42,13 @@ class AppPageRoute extends CrudRoute
 		{
 			"uri": "/applications/add/",
 			"name": "app:applications:add",
-			"method": "actionAdd",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
 			"uri": "/applications/{id}/",
 			"name": "app:applications:edit",
-			"method": "actionEdit",
+			"method": "actionSave",
 		},
 		new RouteInfo
 		{
@@ -63,39 +60,14 @@ class AppPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns id field name
-	 */
-	pure string getFieldNameId() => "stack_name";
-	
-	
-	/**
-	 * Returns layout name
-	 */
-	string getLayoutName() => "default";
-	
-	
-	/**
 	 * Returns page model
 	 */
 	string getPageModelName() => classof AppPageModel;
 	
 	
 	/**
-	 * Returns index page name
-	 */
-	string getIndexPageName() => classof AppTablePage;
-	
-	
-	/**
 	 * Returns save page name
 	 */
 	string getSavePageName() => classof AppSavePage;
-	
-	
-	/**
-	 * Returns delete page name
-	 */
-	string getDeletePageName() => classof AppDeletePage;
-	
 	
 }

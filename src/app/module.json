@@ -2,13 +2,14 @@
 	"name": "Bayrell.CloudOS",
 	"assets":
 	[
-		"Components/Applications/AppDeletePage.bay",
-		"Components/Applications/AppModificatorsModel.bay",
-		"Components/Applications/AppModificatorsTablePage.bay",
+		"Components/Applications/AppFormModel.bay",
 		"Components/Applications/AppPageModel.bay",
 		"Components/Applications/AppPageRoute.bay",
 		"Components/Applications/AppSavePage.bay",
-		"Components/Applications/AppTablePage.bay",
+		"Components/Applications/AppTable.bay",
+		"Components/Applications/AppTableModel.bay",
+		"Components/Applications/Modificators/AppModificatorFormModel.bay",
+		"Components/Applications/Modificators/AppModificatorTableModel.bay",
 		"Components/DockerStack/StackFormModel.bay",
 		"Components/DockerStack/StackPageModel.bay",
 		"Components/DockerStack/StackPageRoute.bay",

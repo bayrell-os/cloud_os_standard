@@ -80,7 +80,7 @@ struct NginxFileTableModel extends TableModel
 		fields.commit("setFields", static::fields());
 		fields.commit("setPrimaryKeys", ["id"]);
 		
-		/* Set table fields list */
+		/* Set fields list */
 		fields.commit("setFieldsList", [
 			"row_number",
 			"name",
@@ -89,7 +89,7 @@ struct NginxFileTableModel extends TableModel
 		]);
 		
 		/* Set get route name */
-		widget.commit("setGetRouteName", new Callback(classof NginxFilePageModel, "getRouteName"));
+		model.commit("setGetRouteName", new Callback(classof NginxFilePageModel, "getRouteName"));
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);
