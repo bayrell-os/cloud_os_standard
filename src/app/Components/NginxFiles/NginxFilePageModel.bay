@@ -34,8 +34,6 @@ use Runtime.Widget.Label;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
 use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFileFormModel;
-use Bayrell.CloudOS.Components.NginxFiles.NginxFileTableModel;
 
 
 struct NginxFilePageModel extends CrudPageModel

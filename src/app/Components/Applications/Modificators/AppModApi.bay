@@ -34,7 +34,7 @@ use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 
 
-class ApplicationModApi extends CrudApi
+class AppModApi extends CrudApi
 {
 	/**
 	 * Returns api name
@@ -101,7 +101,7 @@ class ApplicationModApi extends CrudApi
 				"name",
 				"app_id",
 			],
-			"query": Query (ApplicationModApi api, Dictionary d, Query q)
+			"query": Query (AppModApi api, Dictionary d, Query q)
 			{
 				int app_id = (int)this.post_data["app_id"];
 				q.fields([

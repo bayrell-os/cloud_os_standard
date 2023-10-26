@@ -22,6 +22,7 @@
 
 <use name="Runtime.Web.Layout" />
 <use name="Runtime.Widget.Button" />
+<use name="Runtime.Widget.Crud.CrudWidget" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
 <use name="Bayrell.CloudOS.Components.Applications.AppTableModel" />
@@ -57,7 +58,11 @@
 
 <template name="renderTable">
 	
-	<Tabs @model=["tabs"] style=["style1"] tabs=[
+	%set CrudWidget parent_model = model.getParentWidget(layout);
+	%set Collection parent_model_path = layout.getWidgetGlobalPath(parent_model.widget_path);
+	%set Collection tabs_model_path = parent_model_path.concat(["tabs"]);
+	
+	<Tabs @global={{ tabs_model_path }} style=["style1"] tabs=[
 		{
 			"name": "run",
 			"label": "Run",
@@ -69,10 +74,10 @@
 			"href": static::url("app:applications:index", {"status": "stop"}),
 		},
 	]>
-		<TabItem name="run" @model=["tabs"]>
+		<TabItem name="run" @global={{ tabs_model_path }}>
 			%render parent::renderTable();
 		</TabItem>
-		<TabItem name="stop" @model=["tabs"]>
+		<TabItem name="stop" @global={{ tabs_model_path }}>
 			%render parent::renderTable();
 		</TabItem>
 	</Tabs>

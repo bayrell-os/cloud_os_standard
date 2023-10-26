@@ -24,12 +24,12 @@ use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Crud.CrudDialogModel;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
@@ -197,5 +197,4 @@ struct DomainPageModel extends CrudPageModel
 		}
 		return parent::getPageTitle(action);
 	}
-	
 }

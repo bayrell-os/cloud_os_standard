@@ -23,22 +23,27 @@ use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
+use Runtime.Web.RouteInfo;
 use Runtime.Web.Events.MouseClickEvent;
-use Runtime.Widget.Button;
-use Runtime.Widget.Crud.CrudDataStorage;
+use Runtime.Widget.Crud.CrudDialogModel;
+use Runtime.Widget.Crud.CrudWidget;
+use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
+use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Button;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Label;
-use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
 
 
-struct AppModificatorTableModel extends TableDialogModel
+struct AppModCrudModel extends CrudWidget
 {
 	/**
 	 * Fields
 	 */
-	pure static Dict fields() =>
+	pure static Dict fields(string type) =>
 	{
 		"row_number": new FieldInfo{
 			"name": "row_number",
@@ -51,7 +56,8 @@ struct AppModificatorTableModel extends TableDialogModel
 		"modificator_name": new FieldInfo{
 			"label": "name",
 			"name": "modificator_name",
-			"component": classof Label,
+			"options": [],
+			"component": type == "form" ? classof Select : classof Label,
 		},
 		"modificator_version": new FieldInfo{
 			"label": "Version",
@@ -70,24 +76,41 @@ struct AppModificatorTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Api name
+	 */
+	pure static Dict getApiName(string type) => "app.application.modificator";
+	
+	
+	/**
+	 * Factory table
+	 */
+	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new TableDialogModel{};
+	
+	
+	/**
 	 * Init widget
 	 */
-	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	async static void initWidget(ModelProxy<CrudWidget> model, ModelProxy<Layout> layout)
 	{
+		model.commit("setAction", "dialog");
 		await parent::initWidget(model, layout);
-		
-		/* Get storage */
-		ModelProxy<CrudDataStorage> data = model.proxy("data");
-		ModelProxy<FieldList> fields = model.proxy("fields");
-		
-		/* Api name */
-		data.commit("setApiName", "app.application.modificator");
-		
-		/* Set fields */
-		fields.commit("setFields", static::fields());
-		fields.commit("setPrimaryKeys", ["id"]);
+	}
+	
+	
+	/**
+	 * Init table
+	 */
+	async static void initTableWidget(
+		ModelProxy<CrudWidget> model,
+		ModelProxy<TableModel> table,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initTableWidget(model, table, layout);
 		
 		/* Set fields list */
+		ModelProxy<FieldList> fields = table.proxy("fields");
 		fields.commit("setFieldsList", [
 			"row_number",
 			"modificator_name",
@@ -103,12 +126,49 @@ struct AppModificatorTableModel extends TableDialogModel
 			},
 		});
 		
-		/* Set get route name */
-		model.commit("setGetRouteName", new Callback(classof ModificatorPageModel, "getRouteName"));
-		
 		/* Add components */
 		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof SelectLabel);
 	}
+	
+	
+	/**
+	 * Init form
+	 */
+	async static void initFormWidget(
+		ModelProxy<CrudWidget> model,
+		ModelProxy<FormModel> form,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initFormWidget(model, form, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = form.proxy("fields");
+		fields.commit("setFieldsList", [
+			"modificator_name",
+		]);
+		
+		/* Add modificator dictionary */
+		fields.commit("addDictionaryField", {
+			"from": "modificators",
+			"to": "modificator_name",
+			"option": new Callback(static::getClassName(), "getModificatorOption"),
+		});
+		
+		/* Add components */
+		layout.commit("addComponent", classof Select);
+	}
+	
+	
+	/**
+	 * Dictionary modificator
+	 */
+	static Dict getModificatorOption(ModelProxy model, Dict item) =>
+	{
+		"label": item["name"],
+		"value": item["id"]
+	};
 	
 	
 	/**
@@ -121,5 +181,4 @@ struct AppModificatorTableModel extends TableDialogModel
 				@event:MouseClickEvent="onDeleteClick" data-item={{ item }}>Delete</Button>
 		</div>
 	}
-	
 }

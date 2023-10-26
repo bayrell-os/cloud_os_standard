@@ -31,8 +31,6 @@ use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
-use Bayrell.CloudOS.Components.SSLGroup.SSLPageFormModel;
-use Bayrell.CloudOS.Components.SSLGroup.SSLPageTableModel;
 
 
 struct SSLPageModel extends CrudPageModel

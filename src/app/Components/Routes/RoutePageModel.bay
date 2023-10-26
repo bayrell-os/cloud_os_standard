@@ -35,8 +35,6 @@ use Runtime.Widget.Label;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
 use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.Routes.RouteFormModel;
-use Bayrell.CloudOS.Components.Routes.RouteTableModel;
 
 
 struct RoutePageModel extends CrudPageModel

@@ -26,38 +26,265 @@ use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Tab.TabModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Components.Applications.AppFormModel;
-use Bayrell.CloudOS.Components.Applications.AppTableModel;
+use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
+use Bayrell.CloudOS.Components.Applications.AppTable;
+use Bayrell.CloudOS.Components.Applications.Modificators.AppModCrudModel;
 
 
 struct AppPageModel extends CrudPageModel
 {
 	/**
-	 * Factory
+	 * Fields
 	 */
-	static FormModel createFormModel() => new AppFormModel{};
-	static TableModel createTableModel() => new AppTableModel{};
+	pure static Dict fields(string type) =>
+	{
+		"row_number": new FieldInfo{
+			"name": "row_number",
+		},
+		"status": new FieldInfo{
+			"label": "Status",
+			"name": "status",
+			"options": [
+				{"label": "STOP", "value": "0"},
+				{"label": "RUN", "value": "1"},
+			],
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"stack_name": new FieldInfo{
+			"label": "Stack name",
+			"name": "stack_name",
+			"options": [
+			],
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"name": new FieldInfo{
+			"label": "Name",
+			"name": "name",
+			"component": type == "form" ? classof Input : classof Label,
+		},
+		"template_id": new FieldInfo{
+			"label": "Template",
+			"name": "template_id",
+			"options": [
+			],
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"template_version_id": new FieldInfo{
+			"label": "Version",
+			"name": "template_version_id",
+			"options": [
+			],
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"service_name": new FieldInfo{
+			"label": "Service name",
+			"name": "service_name",
+			"component": classof Label,
+		},
+		"replicas": new FieldInfo{
+			"label": "Replicas",
+			"name": "replicas",
+			"component": classof Label,
+		},
+		"row_buttons": new FieldInfo{
+			"name": "row_buttons",
+		},
+	};
+	
+	
+	TabModel tabs = new TabModel{
+		"active": "run",
+	};
+	
+	
+	/**
+	 * Primary keys
+	 */
+	pure static Collection getPrimaryKeys() => ["id"];
+	
+	
+	/**
+	 * Api name
+	 */
+	pure static Dict getApiName(string type) => "app.application";
 	
 	
 	/**
 	 * Init widget
 	 */
-	async static void initWidget(ModelProxy<CrudPageModel> model, ModelProxy<Layout> layout)
+	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
 		await parent::initWidget(model, layout);
 	}
 	
 	
 	/**
-	 * Returns route names
+	 * Init table
 	 */
-	static string getRouteName(string name)
+	async static void initTableWidget(
+		ModelProxy<CrudPageModel> model,
+		ModelProxy<TableModel> table,
+		ModelProxy<Layout> layout
+	)
 	{
-		if (name == "index") return "app:applications:index";
-		if (name == "add") return "app:applications:add";
-		if (name == "edit") return "app:applications:edit";
-		if (name == "delete") return "app:applications:delete";
+		await parent::initTableWidget(model, table, layout);
+		
+		/* Set component name */
+		table.commit("setComponentName", classof AppTable);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = table.proxy("fields");
+		fields.commit("setFieldsList", [
+			"row_number",
+			"service_name",
+			"status",
+			"replicas",
+			"row_buttons",
+		]);
+		
+		/* Set tab status */
+		string status = layout.data("request_query").get("status", "run");
+		table.commit("setSearchData", {
+			"status": status,
+		});
+		model.proxy("tabs").commit("setActive", status);
+		
+		/* Add components */
+		layout.commit("addComponent", classof AppTable);
+		layout.commit("addComponent", classof Label);
+	}
+	
+	
+	/**
+	 * Init form
+	 */
+	async static void initFormWidget(
+		ModelProxy<CrudPageModel> model,
+		ModelProxy<FormModel> form,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initFormWidget(model, form, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = form.proxy("fields");
+		fields.commit("setFieldsList", [
+			"status",
+			"stack_name",
+			"name",
+			"template_id",
+			"template_version_id",
+		]);
+		
+		/* Add domain dictionary */
+		fields.commit("addDictionaryField", {
+			"from": "stacks",
+			"to": "stack_name",
+			"option": new Callback(static::getClassName(), "getStackOption"),
+		});
+		
+		/* Add template dictionary */
+		fields.commit("addDictionaryField", {
+			"from": "templates",
+			"to": "template_id",
+			"option": new Callback(static::getClassName(), "getTemplateOption"),
+		});
+		
+		/* Add template version dictionary */
+		fields.commit("addDictionaryField", {
+			"auto": true,
+			"from": "templates_versions",
+			"to": "template_version_id",
+			"filter": new Callback(static::getClassName(), "getTemplateVersionFilter"),
+			"option": new Callback(static::getClassName(), "getTemplateVersionOption"),
+		});
+		
+		/* Add components */
+		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Select);
+		
+		/* Add routes */
+		if (not form.proxy("data").call("isNew"))
+		{
+			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
+				"widget_name": "modificators",
+				"crud_model_name": classof AppModCrudModel,
+				"foreign_key": "app_id",
+			});
+		}
+	}
+	
+	
+	/**
+	 * Dictionary stack
+	 */
+	static Dict getStackOption(ModelProxy<FieldList> model, Dict item) =>
+	{
+		"label": item["stack_name"],
+		"value": item["stack_name"]
+	};
+	
+	
+	/**
+	 * Dictionary template
+	 */
+	static Dict getTemplateOption(ModelProxy<FieldList> model, Dict item) =>
+	{
+		"label": item["name"],
+		"value": item["id"]
+	};
+	
+	
+	/**
+	 * Dictionary template version
+	 */
+	static Dict getTemplateVersionOption(ModelProxy<FieldList> model, Dict item) =>
+	{
+		"label": item["version"],
+		"value": item["id"]
+	};
+	
+	
+	/**
+	 * Dictionary template version filter
+	 */
+	static bool getTemplateVersionFilter(ModelProxy<FieldList> model, Dict item)
+	{
+		ModelProxy<FieldList> model_data = model.parentProxy().proxy("data");
+		int template_id = (int)model_data.data(["item", "template_id"]);
+		return item["template_id"] == template_id;
+	}
+	
+	
+	/**
+	 * Returns route href
+	 */
+	string getRouteHref(string name, Dict obj = null)
+	{
+		if (name == "index")
+		{
+			return static::url("app:applications:index");
+		}
+		if (name == "add")
+		{
+			return static::url("app:applications:add");
+		}
+		if (name == "edit")
+		{
+			return static::url("app:applications:edit", {"id": obj["item", "id"]});
+		}
+		if (name == "delete")
+		{
+			return static::url("app:applications:delete", {"id": obj["item", "id"]});
+		}
 		return "";
 	}
 	
@@ -65,7 +292,7 @@ struct AppPageModel extends CrudPageModel
 	/**
 	 * Get names
 	 */
-	static string getNames(string action, Dict obj = null)
+	string getPageTitle(string action)
 	{
 		if (action == "name")
 		{
@@ -77,8 +304,9 @@ struct AppPageModel extends CrudPageModel
 		}
 		else if (action == "item_name")
 		{
-			return obj["item", "stack_name"] ~ "_" ~ obj["item", "name"];
+			Dict item = this.getWidget("form").data.item;
+			return item["stack_name"] ~ "_" ~ item["name"];
 		}
-		return "";
+		return parent::getPageTitle(action);
 	}
 }
