@@ -81,9 +81,8 @@ class AppModApi extends CrudApi
 	 * Returns save fields
 	 */
 	Collection getSaveFields() => [
-		"stack_name",
+		"app_id",
 		"modificator_id",
-		"status",
 	];
 	
 	
@@ -92,6 +91,10 @@ class AppModApi extends CrudApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
+		new Purify{ "name": "modificator_id" },
+		new LowerCase{ "name": "modificator_id" },
+		new Required{ "name": "modificator_id" },
+		
 		/* ForeignKey */
 		new Dictionary{
 			"dictionary_name": "modificators",
@@ -154,50 +157,4 @@ class AppModApi extends CrudApi
 		
 		return q;
 	}
-	
-	
-	/**
-	 * Update item
-	 */
-	async void updateItem(Relation item, Dict update_data)
-	{
-		return ;
-		
-		Connection conn = this.getDatabaseConnection();
-		
-		int space_id = update_data["space_id"];
-		int domain_id = update_data["domain_id"];
-		
-		Relation space = Relation::findById("spaces", conn, space_id);
-		if (!space)
-		{
-			throw new ApiException("Space not found");
-		}
-		
-		Relation domain = Relation::findById("domains", conn, domain_id);
-		if (!domain)
-		{
-			throw new ApiException("Domain not found");
-		}
-		if (domain.get("space_id") != 0)
-		{
-			throw new ApiException("Domain not found");
-		}
-		
-		domain.set("space_id", space_id);
-		domain.save(conn);
-	}
-	
-	
-	/**
-	 * Delete item
-	 */
-	async void deleteItem(Relation item)
-	{
-		return ;
-		Connection conn = this.getDatabaseConnection();
-		item.set("space_id", null);
-		item.save(conn);
-	}
-	
 }

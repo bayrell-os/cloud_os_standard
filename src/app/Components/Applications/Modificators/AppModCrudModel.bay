@@ -53,11 +53,16 @@ struct AppModCrudModel extends CrudWidget
 			"name": "modificator_uid",
 			"component": classof Label,
 		},
-		"modificator_name": new FieldInfo{
-			"label": "name",
-			"name": "modificator_name",
+		"modificator_id": new FieldInfo{
+			"label": "Name",
+			"name": "modificator_id",
 			"options": [],
-			"component": type == "form" ? classof Select : classof Label,
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"modificator_name": new FieldInfo{
+			"label": "Name",
+			"name": "modificator_name",
+			"component": classof Label,
 		},
 		"modificator_version": new FieldInfo{
 			"label": "Version",
@@ -79,6 +84,12 @@ struct AppModCrudModel extends CrudWidget
 	 * Api name
 	 */
 	pure static Dict getApiName(string type) => "app.application.modificator";
+	
+	
+	/**
+	 * Primary keys
+	 */
+	pure static Collection getPrimaryKeys() => ["app_id", "modificator_id"];
 	
 	
 	/**
@@ -146,13 +157,13 @@ struct AppModCrudModel extends CrudWidget
 		/* Set fields list */
 		ModelProxy<FieldList> fields = form.proxy("fields");
 		fields.commit("setFieldsList", [
-			"modificator_name",
+			"modificator_id",
 		]);
 		
 		/* Add modificator dictionary */
 		fields.commit("addDictionaryField", {
 			"from": "modificators",
-			"to": "modificator_name",
+			"to": "modificator_id",
 			"option": new Callback(static::getClassName(), "getModificatorOption"),
 		});
 		
@@ -180,5 +191,27 @@ struct AppModCrudModel extends CrudWidget
 			<Button type="danger small"
 				@event:MouseClickEvent="onDeleteClick" data-item={{ item }}>Delete</Button>
 		</div>
+	}
+	
+	
+	/**
+	 * Get names
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "name")
+		{
+			return "modificator";
+		}
+		if (action == "names")
+		{
+			return "modificators";
+		}
+		else if (action == "item_name")
+		{
+			Dict item = this.getWidget("form").data.item;
+			return item["modificator_name"];
+		}
+		return parent::getPageTitle(action);
 	}
 }

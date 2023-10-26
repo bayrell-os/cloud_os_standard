@@ -18,13 +18,13 @@
 
 namespace Bayrell.CloudOS.Components.Settings;
 
+use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
 use Bayrell.CloudOS.Components.Settings.DatabasePage;
 use Bayrell.CloudOS.Components.Settings.SettingsPage;
 
 
-class SettingsRoute extends CrudRoute
+class SettingsRoute extends BaseRoute
 {
 	
 	/**

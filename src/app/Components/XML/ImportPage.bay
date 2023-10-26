@@ -24,8 +24,8 @@
 <use name="Runtime.Web.LayoutModel" />
 <use name="Runtime.Web.Message" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Web.Crud.Button" component="true" />
-<use name="Runtime.Web.Crud.TextArea" component="true" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.TextArea" component="true" />
 <use name="Bayrell.Admin.Components.CloudOS.ImportPageModel" />
 
 

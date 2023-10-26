@@ -18,12 +18,12 @@
 
 namespace Bayrell.CloudOS.Components.Adminer;
 
+use Runtime.Web.BaseRoute;
 use Runtime.Web.Response;
 use Runtime.Web.RouteInfo;
-use Runtime.Web.Crud.CrudRoute;
 
 
-class AdminerRoute extends CrudRoute
+class AdminerRoute extends BaseRoute
 {
 	
 	/**
