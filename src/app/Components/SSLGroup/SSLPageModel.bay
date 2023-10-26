@@ -27,6 +27,10 @@ use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
 use Bayrell.CloudOS.Components.SSLGroup.SSLPageFormModel;
 use Bayrell.CloudOS.Components.SSLGroup.SSLPageTableModel;
 
@@ -34,21 +38,119 @@ use Bayrell.CloudOS.Components.SSLGroup.SSLPageTableModel;
 struct SSLPageModel extends CrudPageModel
 {
 	/**
-	 * Factory
+	 * Fields
 	 */
-	static FormModel createFormModel() => new SSLPageFormModel{};
-	static TableModel createTableModel() => new SSLPageTableModel{};
+	pure static Dict fields(string type) =>
+	{
+		"row_number": new FieldInfo{
+			"name": "row_number",
+		},
+		"name": new FieldInfo{
+			"label": "name",
+			"name": "name",
+			"component": type == "form" ? classof Input : classof Label,
+		},
+		"container_name": new FieldInfo{
+			"label": "Container name",
+			"name": "container_name",
+			"component": type == "form" ? classof Input : classof Label,
+		},
+		"row_buttons": new FieldInfo{
+			"name": "row_buttons",
+		},
+	};
 	
 	
 	/**
-	 * Returns route names
+	 * Primary keys
 	 */
-	static string getRouteName(string name)
+	pure static Collection getPrimaryKeys() => ["id"];
+	
+	
+	/**
+	 * Api name
+	 */
+	pure static Dict getApiName(string type) => "app.ssl_group";
+	
+	
+	/**
+	 * Init widget
+	 */
+	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
-		if (name == "index") return "app:ssl:index";
-		if (name == "add") return "app:ssl:add";
-		if (name == "edit") return "app:ssl:edit";
-		if (name == "delete") return "app:ssl:delete";
+		await parent::initWidget(model, layout);
+	}
+	
+	
+	/**
+	 * Init table
+	 */
+	async static void initTableWidget(
+		ModelProxy<CrudPageModel> model,
+		ModelProxy<TableModel> table,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initTableWidget(model, table, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = table.proxy("fields");
+		fields.commit("setFieldsList", [
+			"row_number",
+			"name",
+			"container_name",
+			"row_buttons",
+		]);
+		
+		/* Add components */
+		layout.commit("addComponent", classof Label);
+	}
+	
+	
+	/**
+	 * Init form
+	 */
+	async static void initFormWidget(
+		ModelProxy<CrudPageModel> model,
+		ModelProxy<FormModel> form,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initFormWidget(model, form, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = form.proxy("fields");
+		fields.commit("setFieldsList", [
+			"name",
+			"container_name",
+		]);
+		
+		/* Add components */
+		layout.commit("addComponent", classof Input);
+	}
+	
+	
+	/**
+	 * Returns route href
+	 */
+	string getRouteHref(string name, Dict obj = null)
+	{
+		if (name == "index")
+		{
+			return static::url("app:ssl:index");
+		}
+		if (name == "add")
+		{
+			return static::url("app:ssl:add");
+		}
+		if (name == "edit")
+		{
+			return static::url("app:ssl:edit", {"id": obj["item", "id"]});
+		}
+		if (name == "delete")
+		{
+			return static::url("app:ssl:delete", {"id": obj["item", "id"]});
+		}
 		return "";
 	}
 	
@@ -56,7 +158,7 @@ struct SSLPageModel extends CrudPageModel
 	/**
 	 * Get names
 	 */
-	static string getNames(string action, Dict obj = null)
+	string getPageTitle(string action)
 	{
 		if (action == "name")
 		{
@@ -68,7 +170,9 @@ struct SSLPageModel extends CrudPageModel
 		}
 		else if (action == "item_name")
 		{
-			return obj["item", "name"];
+			Dict item = this.getWidget("form").data.item;
+			return item["name"];
 		}
+		return parent::getPageTitle(action);
 	}
 }
