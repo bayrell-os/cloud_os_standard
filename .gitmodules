@@ -10,9 +10,6 @@
 [submodule "src/lib/Runtime.Web"]
 	path = src/lib/Runtime.Web
 	url = https://github.com/bayrell/Runtime.Web
-[submodule "src/lib/Runtime.Web.Crud"]
-	path = src/lib/Runtime.Web.Crud
-	url = https://github.com/bayrell/Runtime.Web.Crud
 [submodule "src/lib/Runtime.Unit"]
 	path = src/lib/Runtime.Unit
 	url = https://github.com/bayrell/Runtime.Unit
