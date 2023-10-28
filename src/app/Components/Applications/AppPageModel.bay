@@ -24,6 +24,7 @@ use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
+use Runtime.Widget.Crud.CrudModelStorage;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Tab.TabModel;
@@ -35,8 +36,10 @@ use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
+use Bayrell.CloudOS.Components.Applications.AppEnvironmentsCrudModel;
+use Bayrell.CloudOS.Components.Applications.AppModCrudModel;
+use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
 use Bayrell.CloudOS.Components.Applications.AppTable;
-use Bayrell.CloudOS.Components.Applications.Modificators.AppModCrudModel;
 
 
 struct AppPageModel extends CrudPageModel
@@ -211,12 +214,42 @@ struct AppPageModel extends CrudPageModel
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
 		
-		/* Add routes */
+		/* Add modificators */
 		if (not form.proxy("data").call("isNew"))
 		{
 			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
 				"widget_name": "modificators",
 				"crud_model_name": classof AppModCrudModel,
+				"foreign_key": "app_id",
+			});
+		}
+		
+		/* Add environments */
+		if (not form.proxy("data").call("isNew"))
+		{
+			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
+				"widget_name": "environments",
+				"crud_model_name": classof AppEnvironmentsCrudModel,
+				"crud_model_params": {
+					"data_path": model.path.concat([
+						"widgets", "form", "data", "item", "environments"
+					]),
+				},
+				"foreign_key": "app_id",
+			});
+		}
+		
+		/* Add volumes */
+		if (not form.proxy("data").call("isNew"))
+		{
+			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
+				"widget_name": "volumes",
+				"crud_model_name": classof AppVolumesCrudModel,
+				"crud_model_params": {
+					"data_path": model.path.concat([
+						"widgets", "form", "data", "item", "volumes"
+					]),
+				},
 				"foreign_key": "app_id",
 			});
 		}

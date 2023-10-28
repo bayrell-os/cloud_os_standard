@@ -1,0 +1,201 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Components.Applications;
+
+use Runtime.Callback;
+use Runtime.ModelProxy;
+use Runtime.Web.BaseModel;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.Layout;
+use Runtime.Web.RouteInfo;
+use Runtime.Web.Events.MouseClickEvent;
+use Runtime.Widget.Crud.CrudDataStorage;
+use Runtime.Widget.Crud.CrudDialogModel;
+use Runtime.Widget.Crud.CrudModelStorage;
+use Runtime.Widget.Crud.CrudWidget;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Button;
+use Runtime.Widget.FieldInfo;
+use Runtime.Widget.FieldList;
+use Runtime.Widget.Input;
+use Runtime.Widget.Label;
+use Runtime.Widget.Select;
+use Runtime.Widget.SelectLabel;
+
+
+struct AppVolumesCrudModel extends CrudWidget
+{
+	Collection data_path = [];
+	
+	
+	/**
+	 * Fields
+	 */
+	pure static Dict fields(string type) =>
+	{
+		"row_number": new FieldInfo{
+			"name": "row_number",
+		},
+		"key": new FieldInfo{
+			"label": "Source",
+			"name": "key",
+			"component": type == "form" ? classof Input : classof Label,
+		},
+		"value": new FieldInfo{
+			"label": "Mount point",
+			"name": "value",
+			"component": type == "form" ? classof Input : classof Label,
+		},
+		"enable": new FieldInfo{
+			"label": "Enale",
+			"name": "enable",
+			"options": [
+				{ "label": "Off", "value": "0" },
+				{ "label": "On", "value": "1" },
+			],
+			"component": type == "form" ? classof Select : classof SelectLabel,
+		},
+		"row_buttons": new FieldInfo{
+			"name": "row_buttons",
+		},
+	};
+	
+	
+	/**
+	 * Primary keys
+	 */
+	pure static Collection getPrimaryKeys() => null;
+	
+	
+	/**
+	 * Factory form
+	 */
+	static FormModel createFormModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+	{
+		return new FormModel{
+			"data": new CrudModelStorage{
+				"data_path": model.data("data_path"),
+			},
+		}
+	}
+	
+	
+	/**
+	 * Factory table
+	 */
+	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new TableDialogModel{
+			"data": new CrudModelStorage{
+				"data_path": model.data("data_path"),
+			},
+		}
+	;
+	
+	
+	/**
+	 * Init widget
+	 */
+	async static void initWidget(ModelProxy<CrudWidget> model, ModelProxy<Layout> layout)
+	{
+		model.commit("setAction", "dialog");
+		await parent::initWidget(model, layout);
+	}
+	
+	
+	/**
+	 * Init table
+	 */
+	async static void initTableWidget(
+		ModelProxy<CrudWidget> model,
+		ModelProxy<TableModel> table,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initTableWidget(model, table, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = table.proxy("fields");
+		fields.commit("setFieldsList", [
+			"row_number",
+			"key",
+			"value",
+			"enable",
+			"row_buttons",
+		]);
+		
+		/* Add components */
+		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof SelectLabel);
+	}
+	
+	
+	/**
+	 * Init form
+	 */
+	async static void initFormWidget(
+		ModelProxy<CrudWidget> model,
+		ModelProxy<FormModel> form,
+		ModelProxy<Layout> layout
+	)
+	{
+		await parent::initFormWidget(model, form, layout);
+		
+		/* Set fields list */
+		ModelProxy<FieldList> fields = form.proxy("fields");
+		fields.commit("setFieldsList", [
+			"key",
+			"value",
+			"enable",
+		]);
+		
+		/* Set default item */
+		ModelProxy<CrudDataStorage> data = form.proxy("data");
+		data.commit("setDefaultItem", {
+			"enable": "1",
+		});
+		
+		/* Add components */
+		layout.commit("addComponent", classof Input);
+		layout.commit("addComponent", classof Select);
+	}
+	
+	
+	/**
+	 * Get names
+	 */
+	string getPageTitle(string action)
+	{
+		if (action == "name")
+		{
+			return "environment";
+		}
+		if (action == "names")
+		{
+			return "environments";
+		}
+		else if (action == "item_name")
+		{
+			Dict item = this.getWidget("form").data.item;
+			return item["key"];
+		}
+		return parent::getPageTitle(action);
+	}
+}

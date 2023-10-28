@@ -31,10 +31,16 @@
 
 
 <style>
-.table_modificators{
+.table_widget{
 	padding-top: 1.5em;
 }
-.table_modificators__label{
+.table_widget--environments{
+	margin-right: 20px;
+}
+.table_widget__row{
+	display: flex;
+}
+.table_widget__label{
 	font-size: 1.2em;
 	font-weight: bold;
 	margin-bottom: 1em;
@@ -53,17 +59,37 @@
 	
 	%set FormModel form = model.getWidget("form");
 	%set TableModel modificators = form.getWidget("modificators");
+	%set TableModel environments = form.getWidget("environments");
+	%set TableModel volumes = form.getWidget("volumes");
 	
 	%render static::renderTop();
 	<Form @model=["widgets", "form"] />
 	
 	%if (modificators != null)
 	{
-		<div class="table_modificators">
-			<div class="table_modificators__label">Modificators</div>
+		<div class="table_widget table_widget--modificators">
+			<div class="table_widget__label">Modificators</div>
 			<TableDialog @model=["widgets", "form", "widgets", "modificators", "widgets", "table"] />
 		</div>
 	}
+	
+	<div class="table_widget__row">
+	%if (environments != null)
+	{
+		<div class="table_widget table_widget--environments">
+			<div class="table_widget__label">Environments</div>
+			<TableDialog @model=["widgets", "form", "widgets", "environments", "widgets", "table"] />
+		</div>
+	}
+	
+	%if (volumes != null)
+	{
+		<div class="table_widget table_widget--volumes">
+			<div class="table_widget__label">Volumes</div>
+			<TableDialog @model=["widgets", "form", "widgets", "volumes", "widgets", "table"] />
+		</div>
+	}
+	</div>
 	
 </template>
 

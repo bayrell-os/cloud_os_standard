@@ -70,6 +70,8 @@ class AppApi extends CrudApi
 		"template_id",
 		"template_version_id",
 		"status",
+		"environments",
+		"volumes",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -83,6 +85,8 @@ class AppApi extends CrudApi
 		"name",
 		"template_version_id",
 		"status",
+		"environments",
+		"volumes",
 	];
 	
 	

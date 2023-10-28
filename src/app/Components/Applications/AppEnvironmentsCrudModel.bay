@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications.Modificators;
+namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -25,7 +25,9 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
 use Runtime.Web.RouteInfo;
 use Runtime.Web.Events.MouseClickEvent;
+use Runtime.Widget.Crud.CrudDataStorage;
 use Runtime.Widget.Crud.CrudDialogModel;
+use Runtime.Widget.Crud.CrudModelStorage;
 use Runtime.Widget.Crud.CrudWidget;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
@@ -33,13 +35,17 @@ use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.Button;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
+use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
 
 
-struct AppModCrudModel extends CrudWidget
+struct AppEnvironmentsCrudModel extends CrudWidget
 {
+	Collection data_path = [];
+	
+	
 	/**
 	 * Fields
 	 */
@@ -48,31 +54,24 @@ struct AppModCrudModel extends CrudWidget
 		"row_number": new FieldInfo{
 			"name": "row_number",
 		},
-		"modificator_uid": new FieldInfo{
-			"label": "UID",
-			"name": "modificator_uid",
-			"component": classof Label,
+		"key": new FieldInfo{
+			"label": "Key",
+			"name": "key",
+			"component": type == "form" ? classof Input : classof Label,
 		},
-		"modificator_id": new FieldInfo{
-			"label": "Name",
-			"name": "modificator_id",
-			"options": [],
-			"component": type == "form" ? classof Select : classof SelectLabel,
+        "value": new FieldInfo{
+			"label": "Value",
+			"name": "value",
+			"component": type == "form" ? classof Input : classof Label,
 		},
-		"modificator_name": new FieldInfo{
-			"label": "Name",
-			"name": "modificator_name",
-			"component": classof Label,
-		},
-		"modificator_version": new FieldInfo{
-			"label": "Version",
-			"name": "modificator_version",
-			"component": classof Label,
-		},
-		"modificator_priority": new FieldInfo{
-			"label": "Priority",
-			"name": "modificator_priority",
-			"component": classof Label,
+		"enable": new FieldInfo{
+			"label": "Enale",
+			"name": "enable",
+            "options": [
+                { "label": "Off", "value": "0" },
+                { "label": "On", "value": "1" },
+            ],
+            "component": type == "form" ? classof Select : classof SelectLabel,
 		},
 		"row_buttons": new FieldInfo{
 			"name": "row_buttons",
@@ -81,22 +80,33 @@ struct AppModCrudModel extends CrudWidget
 	
 	
 	/**
-	 * Api name
+	 * Primary keys
 	 */
-	pure static Dict getApiName(string type) => "app.application.modificator";
+	pure static Collection getPrimaryKeys() => null;
 	
 	
 	/**
-	 * Primary keys
+	 * Factory form
 	 */
-	pure static Collection getPrimaryKeys() => ["app_id", "modificator_id"];
+	static FormModel createFormModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new FormModel{
+			"data": new CrudModelStorage{
+				"data_path": model.data("data_path"),
+			},
+		}
+	;
 	
 	
 	/**
 	 * Factory table
 	 */
 	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
-		=> new TableDialogModel{};
+		=> new TableDialogModel{
+			"data": new CrudModelStorage{
+				"data_path": model.data("data_path"),
+			},
+		}
+	;
 	
 	
 	/**
@@ -124,18 +134,11 @@ struct AppModCrudModel extends CrudWidget
 		ModelProxy<FieldList> fields = table.proxy("fields");
 		fields.commit("setFieldsList", [
 			"row_number",
-			"modificator_name",
-			"modificator_priority",
+			"key",
+			"value",
+			"enable",
 			"row_buttons",
 		]);
-		
-		/* Row buttons */
-		fields.commit("editField", new FieldInfo{
-			"name": "row_buttons",
-			"render_method": new Callback{
-				"obj": static::getClassName(), "name": "renderRowButtons"
-			},
-		});
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);
@@ -157,40 +160,20 @@ struct AppModCrudModel extends CrudWidget
 		/* Set fields list */
 		ModelProxy<FieldList> fields = form.proxy("fields");
 		fields.commit("setFieldsList", [
-			"modificator_id",
+			"key",
+			"value",
+			"enable",
 		]);
 		
-		/* Add modificator dictionary */
-		fields.commit("addDictionaryField", {
-			"from": "modificators",
-			"to": "modificator_id",
-			"option": new Callback(static::getClassName(), "getModificatorOption"),
+        /* Set default item */
+		ModelProxy<CrudDataStorage> data = form.proxy("data");
+		data.commit("setDefaultItem", {
+			"enable": "1",
 		});
-		
+        
 		/* Add components */
+		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
-	}
-	
-	
-	/**
-	 * Dictionary modificator
-	 */
-	static Dict getModificatorOption(ModelProxy model, Dict item) =>
-	{
-		"label": item["name"],
-		"value": item["id"]
-	};
-	
-	
-	/**
-	 * Render row buttons
-	 */
-	static html renderRowButtons(int row_number, FieldInfo field, Dict item)
-	{
-		<div class="web_table__td_row_buttons">
-			<Button type="danger small"
-				@event:MouseClickEvent="onDeleteClick" data-item={{ item }}>Delete</Button>
-		</div>
 	}
 	
 	
@@ -201,16 +184,16 @@ struct AppModCrudModel extends CrudWidget
 	{
 		if (action == "name")
 		{
-			return "modificator";
+			return "environment";
 		}
 		if (action == "names")
 		{
-			return "modificators";
+			return "environments";
 		}
 		else if (action == "item_name")
 		{
 			Dict item = this.getWidget("form").data.item;
-			return item["modificator_name"];
+			return item["key"];
 		}
 		return parent::getPageTitle(action);
 	}

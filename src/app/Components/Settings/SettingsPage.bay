@@ -18,7 +18,7 @@
 
 <class name="Bayrell.CloudOS.Components.Settings.SettingsPage">
 
-<use name="Runtime.Web.Crud.Button" component="true" />
+<use name="Runtime.Widget.Button" component="true" />
 
 
 <style>
