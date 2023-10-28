@@ -133,7 +133,7 @@ struct TemplatePageModel extends CrudPageModel
 		/* Add routes */
 		await form.commitAsync("addCrudWidget", layout, {
 			"widget_name": "versions",
-			"crud_model": classof VersionPageModel,
+			"crud_model_name": classof VersionPageModel,
 			"foreign_key": "template_id",
 		});
 	}

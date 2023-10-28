@@ -103,7 +103,7 @@ struct VersionPageModel extends CrudWidget
 		await parent::initTableWidget(model, table, layout);
 		
         /* Settings */
-		table.commit("setShowTableTop", false);
+		table.commit("setShowTopButtons", false);
         
         /* Set width */
 		table.commit("setDialogWidth", "save", "800px");

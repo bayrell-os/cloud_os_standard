@@ -27,8 +27,9 @@ use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudModelStorage;
 use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.TopButtonModel;
+use Runtime.Widget.Form.TopSaveButton;
 use Runtime.Widget.Tab.TabModel;
-use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.Table.TableModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
@@ -210,9 +211,18 @@ struct AppPageModel extends CrudPageModel
 			"option": new Callback(static::getClassName(), "getTemplateVersionOption"),
 		});
 		
+		/* Hide form buttons */
+		form.commit("setShowFormButtons", false);
+		
+		/* Add save top button */
+		form.commit("addTopButton",
+			new TopButtonModel{ "name": "save", "component_name": classof TopSaveButton }
+		);
+		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
+		layout.commit("addComponent", classof TopSaveButton);
 		
 		/* Add modificators */
 		if (not form.proxy("data").call("isNew"))
