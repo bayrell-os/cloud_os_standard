@@ -30,6 +30,7 @@ use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
+use Bayrell.CloudOS.Lib.AppXml;
 
 
 class AppApi extends CrudApi
@@ -146,6 +147,52 @@ class AppApi extends CrudApi
 		/* q.debug(1); */
 		
 		return q;
+	}
+	
+	
+	/**
+	 * Before update item event
+	 */
+	async void onSaveBefore(Relation item, Dict update_data)
+	{
+		await parent::onSaveBefore(item, update_data);
+	}
+	
+	
+	/**
+	 * Search final
+	 */
+	async void onSearchFinal()
+	{
+		await parent::onSearchFinal();
+		
+		if (this.action == "actionItem")
+		{
+			await this.buildVariables();
+		}
+	}
+	
+	
+	/**
+	 * Save final
+	 */
+	async void onSaveFinal()
+	{
+		await parent::onSaveFinal();
+		await this.buildVariables();
+	}
+	
+	
+	/**
+	 * Build values
+	 */
+	async void buildVariables()
+	{
+		AppXml xml = new AppXml();
+		xml.item = this.item;
+		xml.conn = this.getDatabaseConnection();
+		
+		await xml.buildContent();
 	}
 	
 }

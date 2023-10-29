@@ -1,0 +1,258 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Lib;
+
+use Runtime.re;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryResult;
+use Runtime.ORM.Relation;
+use Runtime.XML.XML;
+use Runtime.XML.YamlConverter;
+
+
+class AppXml
+{
+	Connection conn = null;
+	Relation item = null;
+	XML template = null;
+	string template_content = "";
+	string xml_content = "";
+	string yaml_content = "";
+	Vector<XML> modificators = null;
+	Vector<XML> operations = null;
+	Vector<Dict> variables = null;
+	
+	
+	/**
+	 * Build content
+	 */
+	async void buildContent()
+	{
+		/* Load operations */
+		await this.loadModificators();
+		this.sortOperations();
+		
+		/* Load template */
+		await this.loadTemplateContent();
+		this.patchTemplate();
+		this.buildVariables();
+		
+		/* Get yaml result */
+		this.buildYamlContent();
+	}
+	
+	
+	/**
+	 * Load template content
+	 */
+	async void loadTemplateContent()
+	{
+		int template_version_id = (int)this.item.get("template_version_id");
+		Relation template_version = await Relation::findById(
+			"templates_versions", this.conn, template_version_id
+		);
+		
+		if (template_version)
+		{
+			this.template_content = template_version.get("content");
+			this.template = XML::loadXml(this.template_content);
+		}
+	}
+	
+	
+	/**
+	 * Patch template
+	 */
+	void patchTemplate()
+	{
+		if (not this.template) return;
+		
+		for (int i=0; i<this.operations.count(); i++)
+		{
+			XML operation = this.operations.get(i);
+			this.template.patch(operation);
+		}
+		
+		this.xml_content = this.template.toString();
+	}
+	
+	
+	/**
+	 * Build variables
+	 */
+	void buildVariables()
+	{
+		if (not this.template) return;
+		
+		Collection<XML> xml_variables = this.template
+			|> .get("variables")
+			|> .get(0)
+			|> .get("variable")
+		;
+		
+		if (xml_variables == null) return;
+		
+		this.variables = new Vector();
+		Dict item_variables_values = this.item.get("variables");
+		
+		for (int i=0; i<xml_variables.count(); i++)
+		{
+			XML xml_variable = xml_variables.get(i);
+			string name = xml_variable.get("name")
+				|> .get(0) |> .value() |> default string ""
+			;
+			string label = xml_variable.get("label")
+				|> .get(0) |> .value() |> default string ""
+			;
+			string default_value = xml_variable.get("default")
+				|> .get(0) |> .value() |> default string ""
+			;
+			
+			if (name == "") continue;
+			
+			if (item_variables_values.has(name))
+			{
+				this.variables.pushValue({
+					"name": name,
+					"label": label,
+					"value": item_variables_values.get(name),
+				});
+			}
+			else
+			{
+				this.variables.pushValue({
+					"name": name,
+					"label": label,
+					"value": default_value,
+				});
+			}
+		}
+	}
+	
+	
+	/**
+	 * Build yaml result
+	 */
+	void buildYamlContent()
+	{
+		if (not this.template) return;
+		
+		XML yaml = this.template.get("yaml").get(0);
+		if (not yaml) return;
+		
+		/* Get variables */
+		Map variables = new Map();
+		for (int i=0; i<this.variables.count(); i++)
+		{
+			Dict variable = this.variables.get(i);
+			variables.setValue(
+				variable.get("name"),
+				variable.get("value"),
+			)
+		}
+		
+		YamlConverter converter = new YamlConverter(yaml, variables);
+		this.yaml_content = converter.convert();
+	}
+	
+	
+	/**
+	 * Load modificators
+	 */
+	async void loadModificators()
+	{
+		this.modificators = new Vector();
+		this.operations = new Vector();
+		
+		Query q = new Query()
+			.select("app_modificators")
+			.where("app_id", "=", this.item.get("id"))
+			.innerJoinKey("app_modificators__modificator")
+			.fields([
+				"modificators.*"
+			])
+		;
+		
+		QueryResult modificators = await this.conn.fetchAll(q);
+		for (int i=0; i<modificators.count(); i++)
+		{
+			Relation modificator = modificators.get(i);
+			string xml_content = modificator.get("content");
+			XML xml = XML::loadXml(xml_content);
+			this.addModificator(xml)
+		}
+	}
+	
+	
+	/**
+	 * Add modificator
+	 */
+	void addModificator(XML xml)
+	{
+		this.addOperations(xml);
+		this.modificators.pushValue(xml);
+	}
+	
+	
+	/**
+	 * Add operations
+	 */
+	void addOperations(XML xml)
+	{
+		if (xml == null) return;
+		
+		int priority = 100;
+		string xml_priority = xml.get("priority").get(0);
+		if (xml_priority)
+		{
+			priority = (int)xml_priority.value();
+		}
+		
+		XML xml_operations = xml.get("operations").get(0);
+		if (xml_operations == null) return;
+		
+		Collection<XML> operations = xml_operations.get("operation");
+		
+		for (int i=0; i<operations.count(); i++)
+		{
+			XML operation = operations.get(i);
+			operation.removeAttribute("priority");
+			operation.addAttribute("priority", priority);
+			this.operations.pushValue(operation);
+		}
+	}
+	
+	
+	/**
+	 * Sort operations
+	 */
+	void sortOperations()
+	{
+		this.operations.sort(
+			int (XML a, XML b)
+			{
+				int priority_a = a.get("priority").get(0) |> .value() |> default int 100;
+				int priority_b = b.get("priority").get(0) |> .value() |> default int 100;
+				return priority_a - priority_b;
+			}
+		)
+	}
+	
+}

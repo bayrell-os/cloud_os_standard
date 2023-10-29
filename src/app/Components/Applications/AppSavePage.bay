@@ -32,18 +32,21 @@
 
 <style>
 .table_widget{
-	padding-top: 1.5em;
+	margin-top: 1.5em;
 }
-.table_widget--environments{
+.table_widget--environments, .table_widget--modificator_values{
 	margin-right: 20px;
 }
-.table_widget__row{
+.table_widget__items{
 	display: flex;
 }
 .table_widget__label{
 	font-size: 1.2em;
 	font-weight: bold;
 	margin-bottom: 1em;
+}
+.table_widget__label--no_margin{
+	margin-bottom: 0em;
 }
 </style>
 
@@ -57,30 +60,39 @@
 	
 	<Form @model=["widgets", "form"] />
 	
-	%if (modificators != null)
-	{
-		<div class="table_widget table_widget--modificators">
-			<div class="table_widget__label">Modificators</div>
-			<TableDialog @model=["widgets", "form", "widgets", "modificators", "widgets", "table"] />
-		</div>
-	}
-	
 	<div class="table_widget__row">
-	%if (environments != null)
-	{
-		<div class="table_widget table_widget--environments">
-			<div class="table_widget__label">Environments</div>
-			<TableDialog @model=["widgets", "form", "widgets", "environments", "widgets", "table"] />
+		<div class="table_widget__label table_widget__label--no_margin">Modificators</div>
+		
+		<div class="table_widget__items">
+			<div class="table_widget table_widget--modificator_values">
+				Values
+			</div>
+			
+			%if (modificators != null)
+			{
+				<div class="table_widget table_widget--modificators">
+					<TableDialog
+						@model=["widgets", "form", "widgets", "modificators", "widgets", "table"] />
+				</div>
+			}
 		</div>
-	}
+	</div>
 	
-	%if (volumes != null)
-	{
-		<div class="table_widget table_widget--volumes">
-			<div class="table_widget__label">Volumes</div>
-			<TableDialog @model=["widgets", "form", "widgets", "volumes", "widgets", "table"] />
-		</div>
-	}
+	<div class="table_widget__row table_widget__items">
+		%if (environments != null)
+		{
+			<div class="table_widget table_widget--environments">
+				<div class="table_widget__label">Environments</div>
+				<TableDialog @model=["widgets", "form", "widgets", "environments", "widgets", "table"] />
+			</div>
+		}
+		%if (volumes != null)
+		{
+			<div class="table_widget table_widget--volumes">
+				<div class="table_widget__label">Volumes</div>
+				<TableDialog @model=["widgets", "form", "widgets", "volumes", "widgets", "table"] />
+			</div>
+		}
 	</div>
 	
 </template>
