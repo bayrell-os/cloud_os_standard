@@ -39,8 +39,9 @@ use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
 use Bayrell.CloudOS.Components.Applications.AppEnvironmentsCrudModel;
 use Bayrell.CloudOS.Components.Applications.AppModCrudModel;
-use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
 use Bayrell.CloudOS.Components.Applications.AppTable;
+use Bayrell.CloudOS.Components.Applications.AppTotalPatchesModel;
+use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
 
 
 struct AppPageModel extends CrudPageModel
@@ -212,6 +213,7 @@ struct AppPageModel extends CrudPageModel
 		});
 		
 		/* Hide form buttons */
+		form.commit("setShowTopButtons", false);
 		form.commit("setShowFormButtons", false);
 		
 		/* Add save top button */
@@ -223,6 +225,13 @@ struct AppPageModel extends CrudPageModel
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
 		layout.commit("addComponent", classof TopSaveButton);
+		
+		/* Add tabs */
+		form.commit("addWidget", new TabModel{ "widget_name": "tabs", "active": "info" });
+		
+		/* Add total patches */
+		form.commit("addWidget", new AppTotalPatchesModel{ "widget_name": "total_patches" });
+		form.commit("addEventCallback", new Callback(static::getClassName(), "formEvent"));
 		
 		/* Add modificators */
 		if (not form.proxy("data").call("isNew"))
@@ -263,6 +272,20 @@ struct AppPageModel extends CrudPageModel
 				"foreign_key": "app_id",
 			});
 		}
+	}
+	
+	
+	/**
+	 * Form event
+	 */
+	static void formEvent(ModelProxy<BaseModel> form, string action, Dict obj, var tag = null)
+	{
+		if (action == FormModel::ON_LOAD_ITEM_AFTER)
+		{
+			Collection patches = obj["api", "data", "patches"];
+			form.proxy(["widgets", "total_patches"]).commit("setItems", patches);
+		}
+		return obj;
 	}
 	
 	

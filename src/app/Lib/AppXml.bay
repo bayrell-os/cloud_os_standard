@@ -83,6 +83,7 @@ class AppXml
 	void patchTemplate()
 	{
 		if (not this.template) return;
+		if (not this.template.exists()) return;
 		
 		for (int i=0; i<this.operations.count(); i++)
 		{
@@ -95,11 +96,33 @@ class AppXml
 	
 	
 	/**
+	 * Returns list of patches
+	 */
+	Collection getPatches()
+	{
+		Vector patches = new Vector();
+		
+		for (int i=0; i<this.modificators.count(); i++)
+		{
+			XML modificator = this.modificators.get(i);
+			string name = modificator.get("name") |> .get(0) |> .value() |> default string "";
+			patches.pushValue({
+				"name": name,
+				"content": modificator.toString(),
+			});
+		}
+		
+		return patches.toCollection();
+	}
+	
+	
+	/**
 	 * Build variables
 	 */
 	void buildVariables()
 	{
 		if (not this.template) return;
+		if (not this.template.exists()) return;
 		
 		Collection<XML> xml_variables = this.template
 			|> .get("variables")
@@ -153,6 +176,7 @@ class AppXml
 	void buildYamlContent()
 	{
 		if (not this.template) return;
+		if (not this.template.exists()) return;
 		
 		XML yaml = this.template.get("yaml").get(0);
 		if (not yaml) return;
@@ -217,6 +241,7 @@ class AppXml
 	void addOperations(XML xml)
 	{
 		if (xml == null) return;
+		if (not xml.exists()) return;
 		
 		int priority = 100;
 		string xml_priority = xml.get("priority").get(0);
@@ -229,7 +254,6 @@ class AppXml
 		if (xml_operations == null) return;
 		
 		Collection<XML> operations = xml_operations.get("operation");
-		
 		for (int i=0; i<operations.count(); i++)
 		{
 			XML operation = operations.get(i);

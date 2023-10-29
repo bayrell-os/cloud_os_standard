@@ -1,0 +1,84 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.Applications.AppTotalPatches">
+
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Widget.TextArea" component="true" />
+
+
+<style>
+.app_total_patches
+{
+	display: flex;
+}
+.app_total_patches__items{
+	width: 200px;
+	padding-right: 20px;
+}
+.app_total_patches__item{
+	padding: 5px 10px;
+	cursor: pointer;
+}
+.app_total_patches__item--active{
+    background-color: #337ab7;
+    color: #fff;
+}
+.app_total_patches__content{
+	width: calc(100% - 200px);
+}
+</style>
+
+
+<template>
+	<div class="app_total_patches">
+		<div class="app_total_patches__items">
+			%for (int i=0; i<model.items.count(); i++)
+			{
+				%set Dict item = model.items.get(i);
+				<div class="app_total_patches__item" @key={{ i }} data-index={{ i }}
+					class={{ model.active == i ? "app_total_patches__item--active" : "" }}
+					@event:MouseClickEvent="onClick"
+				>
+					{{ item.get("name") }}
+				</div>
+			}
+		</div>
+		<div class="app_total_patches__content">
+			<TextArea value={{ model.items.get(model.active).get("content") }} readonly="true" />
+		</div>
+	</div>
+</template>
+
+
+<script>
+
+/**
+ * Item click
+ */
+async void onClick(Message<MouseClickEvent> message)
+{
+	int index = message.sender.params.get("data-index");
+	this.proxy().commit("setActive", index);
+}
+
+</script>
+
+
+</class>

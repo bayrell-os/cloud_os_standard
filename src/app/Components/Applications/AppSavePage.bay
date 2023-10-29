@@ -23,11 +23,17 @@
 <use name="Runtime.Web.LayoutModel" />
 <use name="Runtime.Web.Message" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.Form.Form" component="true" />
 <use name="Runtime.Widget.Form.FormModel" />
+<use name="Runtime.Widget.Form.FormTopButtons" component="true" />
+<use name="Runtime.Widget.Tab.TabItem" component="true" />
+<use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Table.TableDialog" component="true" />
 <use name="Runtime.Widget.Table.TableModel" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Input" component="true" />
+<use name="Runtime.Widget.TextArea" component="true" />
+<use name="Bayrell.CloudOS.Components.Applications.AppTotalPatches" component="true" />
 
 
 <style>
@@ -35,23 +41,36 @@
 	margin-top: 1.5em;
 }
 .table_widget--environments, .table_widget--modificator_values{
-	margin-right: 20px;
+	padding-right: 20px;
 }
 .table_widget__items{
 	display: flex;
 }
 .table_widget__label{
-	font-size: 1.2em;
+	font-size: 20px;
 	font-weight: bold;
 	margin-bottom: 1em;
 }
-.table_widget__label--no_margin{
+.table_widget__label--modificators{
+	margin-top: 2em;
 	margin-bottom: 0em;
+}
+.table_widget--modificator_values,
+.table_widget--environments,
+.table_widget--volumes{
+	width: 50%;
+}
+.app_variable{
+	padding-bottom: 15px;
+}
+.app_variable__label{
+	font-weight: bold;
+	padding-bottom: 5px;
 }
 </style>
 
 
-<template name="render">
+<template name="renderInfo">
 	
 	%set FormModel form = model.getWidget("form");
 	%set TableModel modificators = form.getWidget("modificators");
@@ -61,11 +80,20 @@
 	<Form @model=["widgets", "form"] />
 	
 	<div class="table_widget__row">
-		<div class="table_widget__label table_widget__label--no_margin">Modificators</div>
+		<div class="table_widget__label table_widget__label--modificators">Modificators</div>
 		
 		<div class="table_widget__items">
 			<div class="table_widget table_widget--modificator_values">
-				Values
+				%set Collection variables = form.data.item.get("variables");
+				%for (int i=0; i<variables.count(); i++)
+				{
+					%set Dict variable = variables.get(i);
+					%set string variable_name = variable.get("name");
+					<div class="app_variable" @key={{ variable_name }} data-name={{ variable_name }}>
+						<div class="app_variable__label">{{ variable.get("label") }}</div>
+						<Input @model=["widgets", "form", "data", "item", "variables", i, "value"] />
+					</div>
+				}
 			</div>
 			
 			%if (modificators != null)
@@ -82,18 +110,68 @@
 		%if (environments != null)
 		{
 			<div class="table_widget table_widget--environments">
-				<div class="table_widget__label">Environments</div>
+				<div class="table_widget__label table_widget__label--environments">Environments</div>
 				<TableDialog @model=["widgets", "form", "widgets", "environments", "widgets", "table"] />
 			</div>
 		}
 		%if (volumes != null)
 		{
 			<div class="table_widget table_widget--volumes">
-				<div class="table_widget__label">Volumes</div>
+				<div class="table_widget__label table_widget__label--volumes">Volumes</div>
 				<TableDialog @model=["widgets", "form", "widgets", "volumes", "widgets", "table"] />
 			</div>
 		}
 	</div>
+</template>
+
+
+<template name="renderTotalPatches">
+	1111
+</template>
+
+
+<template name="render">
+	
+	<FormTopButtons @model=["widgets", "form"] />
+	
+	<Tabs @model=["widgets", "form", "widgets", "tabs"] style=["style1"] tabs=[
+		{
+			"name": "info",
+			"label": "Info",
+		},
+		{
+			"name": "custom_patch",
+			"label": "Custom patch",
+		},
+		{
+			"name": "total_patches",
+			"label": "Total patches",
+		},
+		{
+			"name": "result",
+			"label": "Result",
+		},
+		{
+			"name": "yaml",
+			"label": "Yaml",
+		},
+	]>
+		<TabItem name="info" @model=["widgets", "form", "widgets", "tabs"]>
+			%render static::renderInfo();
+		</TabItem>
+		<TabItem name="custom_patch" @model=["widgets", "form", "widgets", "tabs"]>
+			<TextArea @model=["widgets", "form", "data", "item", "custom_patch"] readonly="true" />
+		</TabItem>
+		<TabItem name="total_patches" @model=["widgets", "form", "widgets", "tabs"]>
+			<AppTotalPatches @model=["widgets", "form", "widgets", "total_patches"] />
+		</TabItem>
+		<TabItem name="result" @model=["widgets", "form", "widgets", "tabs"]>
+			<TextArea @model=["widgets", "form", "data", "item", "content"] readonly="true" />
+		</TabItem>
+		<TabItem name="yaml" @model=["widgets", "form", "widgets", "tabs"]>
+			<TextArea @model=["widgets", "form", "data", "item", "yaml"] readonly="true" />
+		</TabItem>
+	</Tabs>
 	
 </template>
 

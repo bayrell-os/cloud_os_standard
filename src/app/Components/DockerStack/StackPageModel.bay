@@ -127,6 +127,9 @@ struct StackPageModel extends CrudPageModel
 			"stack_name",
 		]);
 		
+		/* Show top buttons */
+		form.commit("setShowTopButtons", false);
+		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
 	}

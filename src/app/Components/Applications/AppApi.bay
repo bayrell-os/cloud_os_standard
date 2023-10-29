@@ -30,6 +30,7 @@ use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
+use Runtime.XML.XML;
 use Bayrell.CloudOS.Lib.AppXml;
 
 
@@ -62,17 +63,35 @@ class AppApi extends CrudApi
 	
 	
 	/**
+	 * Returns search fields
+	 */
+	Collection getSearchFields() => [
+		"id",
+		"name",
+		"stack_name",
+		"status",
+		"template_id",
+		"template_version_id",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
 	 * Returns item fields
 	 */
 	Collection getItemFields() => [
 		"id",
-		"stack_name",
+		"content",
+		"custom_patch",
+		"environments",
 		"name",
+		"stack_name",
+		"status",
 		"template_id",
 		"template_version_id",
-		"status",
-		"environments",
 		"volumes",
+		"yaml",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -87,6 +106,7 @@ class AppApi extends CrudApi
 		"template_version_id",
 		"status",
 		"environments",
+		"custom_patch",
 		"volumes",
 	];
 	
@@ -156,6 +176,32 @@ class AppApi extends CrudApi
 	async void onSaveBefore(Relation item, Dict update_data)
 	{
 		await parent::onSaveBefore(item, update_data);
+		
+		/* Get item variables */
+		Map item_variables = item.get("variables");
+		if (item_variables == null) item_variables = {};
+		item_variables = item_variables.toMap();
+		
+		/* Save variables */
+		Collection variables = update_data["variables"];
+		for (int i=0; i<variables.count(); i++)
+		{
+			Dict variable = variables.get(i);
+			item_variables.setValue(
+				variable.get("name"),
+				variable.get("value"),
+			);
+		}
+		item.set("variables", item_variables.toDict());
+		
+		/* Build xml and yaml content */
+		AppXml xml = new AppXml();
+		xml.item = item;
+		xml.conn = this.getDatabaseConnection();
+		await xml.buildContent();
+		
+		item.set("content", xml.xml_content);
+		item.set("yaml", xml.yaml_content);
 	}
 	
 	
@@ -188,11 +234,27 @@ class AppApi extends CrudApi
 	 */
 	async void buildVariables()
 	{
+		string xml_content = this.item.get("content");
+		XML template = XML::loadXml(xml_content);
+		if (not template.exists()) return;
+		
+		/* Get variables */
 		AppXml xml = new AppXml();
 		xml.item = this.item;
+		xml.template = template;
 		xml.conn = this.getDatabaseConnection();
+		xml.buildVariables();
 		
-		await xml.buildContent();
+		/* Get patches */
+		await xml.loadModificators();
+		await xml.loadTemplateContent();
+		Collection patches = xml.getPatches();
+		
+		/* Set variables to response */
+		Dict data = this.container.response.data;
+		data <= item <= variables <= xml.variables.toCollection();
+		data <= patches <= patches;
+		this.container.setApiData(data);
 	}
 	
 }
