@@ -145,6 +145,37 @@ class Schema extends DatabaseSchema
 	];
 	
 	
+	
+	/**
+	 * Docker services
+	 */
+	@Table{ "name": "docker_services" }
+	pure memorize Collection<BaseStruct> docker_services() =>
+	[
+		/* Fields */
+		new BigIntType{"name": "service_id"},
+		new StringType{"name": "stack_name"},
+		new StringType{"name": "service_name"},
+		new TinyIntType{"name": "enable"},
+		new TinyIntType{"name": "is_deleted"},
+		new TinyIntType{"name": "count_work"},
+		new TinyIntType{"name": "count_total"},
+		new StringType{"name": "docker_name"},
+		new StringType{"name": "docker_image"},
+		new DictType{"name": "docker_json"},
+		new CollectionType{"name": "docker_tasks"},
+		new DictType{"name": "docker_balancer"},
+		new TinyIntType{"name": "timestamp"},
+		new DateTimeType{"name": "gmtime_created"},
+		new DateTimeType{"name": "gmtime_updated"},
+		
+		/* Index */
+		new Primary{"keys": ["service_id"]},
+		new Index{"keys": ["docker_name"]},
+		new Index{"keys": ["stack_name", "service_name"]},
+	];
+	
+	
 	/**
 	 * Docker yaml files
 	 */
@@ -506,21 +537,23 @@ class Schema extends DatabaseSchema
 	Dict onBeforeSave(Dict d)
 	{
 		Relation item = d["item"];
+		string table_name = item.getTableName();
 		if (
-			item.getTableName() == "docker_yaml_files" or
-			item.getTableName() == "domains" or
-			item.getTableName() == "domains_ssl_groups" or
-			item.getTableName() == "modificators" or
-			item.getTableName() == "nginx_files" or
-			item.getTableName() == "routes" or
-			item.getTableName() == "spaces" or
-			item.getTableName() == "spaces_roles" or
-			item.getTableName() == "spaces_users" or
-			item.getTableName() == "spaces_users_roles" or
-			item.getTableName() == "stacks" or
-			item.getTableName() == "templates" or
-			item.getTableName() == "templates_versions" or
-			item.getTableName() == "users"
+			table_name == "docker_services" or
+			table_name == "docker_yaml_files" or
+			table_name == "domains" or
+			table_name == "domains_ssl_groups" or
+			table_name == "modificators" or
+			table_name == "nginx_files" or
+			table_name == "routes" or
+			table_name == "spaces" or
+			table_name == "spaces_roles" or
+			table_name == "spaces_users" or
+			table_name == "spaces_users_roles" or
+			table_name == "stacks" or
+			table_name == "templates" or
+			table_name == "templates_versions" or
+			table_name == "users"
 		)
 		{
 			if (item.isNew())
@@ -530,6 +563,7 @@ class Schema extends DatabaseSchema
 			item.set("gmtime_updated", DateTime::now());
 		}
 		
+		/* Setup uid */
 		if (item.getTableName() == "spaces")
 		{
 			string uid = item.get("uid");

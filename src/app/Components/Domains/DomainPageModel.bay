@@ -148,6 +148,9 @@ struct DomainPageModel extends CrudPageModel
 				/* Set width */
 				routes_table.commit("setDialogWidth", "save", "800px");
 			}
+			
+			/* Hide form buttons */
+			form.proxy(["widgets", "routes", "widgets", "form"]).commit("setShowTopButtons", false);
 		}
 	}
 	

@@ -4,6 +4,8 @@
 /example/env.conf.save
 /example/jwt_private.key
 /example/jwt_public.key
+/src/test
+/src/tmp
 /tmp
 
 # App

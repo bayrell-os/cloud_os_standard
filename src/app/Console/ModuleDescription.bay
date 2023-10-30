@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Console;
 
 use Runtime.Unit.UnitTest;
+use Runtime.Console.Annotations.ConsoleCommand;
 use Bayrell.CloudOS.ModuleDescription as CloudOSModuleDescription;
 
 
@@ -55,6 +56,7 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		new ConsoleCommand("Bayrell.CloudOS.Console.Commands.UpdateServices"),
 	];
 	
 }

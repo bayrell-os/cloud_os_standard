@@ -67,6 +67,7 @@ static class ModuleDescription
 		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
 		new Hook("Bayrell.CloudOS.Hooks.RuntimeHook"),
 		new Route("Bayrell.CloudOS.Components.Applications.AppPageRoute"),
+		new Route("Bayrell.CloudOS.Components.DockerServices.ServicePageRoute"),
 		new Route("Bayrell.CloudOS.Components.DockerStack.StackPageRoute"),
 		new Route("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageRoute"),
 		new Route("Bayrell.CloudOS.Components.Domains.DomainPageRoute"),
@@ -83,6 +84,7 @@ static class ModuleDescription
 		#ifdef BACKEND then
 		new Api("Bayrell.CloudOS.Components.Applications.AppApi"),
 		new Api("Bayrell.CloudOS.Components.Applications.AppModApi"),
+		new Api("Bayrell.CloudOS.Components.DockerServices.ServiceApi"),
 		new Api("Bayrell.CloudOS.Components.DockerStack.StackApi"),
 		new Api("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileApi"),
 		new Api("Bayrell.CloudOS.Components.Domains.DomainApi"),

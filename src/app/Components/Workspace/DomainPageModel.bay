@@ -111,6 +111,7 @@ struct DomainPageModel extends BaseDomainPageModel
 				"component": classof Select,
 			},
 		});
+		
 		/* Add domain dictionary */
 		fields.commit("addDictionaryField", {
 			"from": "domains",
@@ -120,6 +121,9 @@ struct DomainPageModel extends BaseDomainPageModel
 		fields.commit("setFieldsList", [
 			"domain_id",
 		]);
+		
+		/* Hide form buttons */
+		form.commit("setShowTopButtons", false);
 		
 		/* Add components */
 		layout.commit("addComponent", classof Select);

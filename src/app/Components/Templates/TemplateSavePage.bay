@@ -41,19 +41,11 @@
 </style>
 
 
-<template name="renderTop">
-	<div class="web_table__top">
-		<Button type="default" href={{ model.back_page_url }}>Back</Button>
-	</div>
-</template>
-
-
 <template name="render">
 	
 	%set FormModel form = model.getWidget("form");
 	%set TableModel versions = form.getWidget("versions");
 	
-	%render static::renderTop();
 	<Form @model=["widgets", "form"] />
 	
 	%if (versions != null)

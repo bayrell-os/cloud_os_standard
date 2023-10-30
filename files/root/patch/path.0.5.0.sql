@@ -23,7 +23,6 @@ INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "doma
 DROP TABLE "routes";
 ALTER TABLE "adminer_routes" RENAME TO "routes";
 CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
-UPDATE sqlite_sequence SET seq = 45 WHERE name = 'routes';
 COMMIT;
 
 
@@ -70,6 +69,40 @@ INSERT INTO "adminer_routes" ("id", "enable", "protocol", "protocol_data", "doma
 DROP TABLE "routes";
 ALTER TABLE "adminer_routes" RENAME TO "routes";
 CREATE INDEX "routes_domain_id" ON "routes" ("domain_id");
-UPDATE sqlite_sequence SET seq = 45 WHERE name = 'routes';
+COMMIT;
+
+
+-- Add count_work, count_total fields
+
+BEGIN;
+CREATE TABLE "adminer_docker_services" (
+  "service_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "stack_name" text NOT NULL,
+  "service_name" text NOT NULL,
+  "software_api_name" text NOT NULL DEFAULT '',
+  "have_admin_page" integer NOT NULL DEFAULT '0',
+  "admin_port" integer NOT NULL DEFAULT '0',
+  "admin_route" text NOT NULL DEFAULT '',
+  "admin_custom_nginx" text NOT NULL DEFAULT '',
+  "enable" integer NOT NULL DEFAULT '0',
+  "is_deleted" integer NOT NULL DEFAULT '0',
+  "count_work" integer NOT NULL,
+  "count_total" integer NOT NULL,
+  "data" text NULL,
+  "docker_name" text NOT NULL,
+  "docker_image" text NOT NULL DEFAULT '',
+  "docker_content" text NULL,
+  "docker_json" text NULL,
+  "docker_tasks" text NULL,
+  "docker_balancer" text NULL,
+  "timestamp" integer NOT NULL,
+  "gmtime_created" numeric NOT NULL,
+  "gmtime_updated" numeric NOT NULL
+);
+INSERT INTO "adminer_docker_services" ("service_id", "stack_name", "service_name", "software_api_name", "have_admin_page", "admin_port", "admin_route", "admin_custom_nginx", "enable", "is_deleted", "data", "docker_name", "docker_image", "docker_content", "docker_json", "docker_tasks", "docker_balancer", "timestamp", "gmtime_created", "gmtime_updated") SELECT "service_id", "stack_name", "service_name", "software_api_name", "have_admin_page", "admin_port", "admin_route", "admin_custom_nginx", "enable", "is_deleted", "data", "docker_name", "docker_image", "docker_content", "docker_json", "docker_tasks", "docker_balancer", "timestamp", "gmtime_created", "gmtime_updated" FROM "docker_services";
+DROP TABLE "docker_services";
+ALTER TABLE "adminer_docker_services" RENAME TO "docker_services";
+CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
+CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
 COMMIT;
 

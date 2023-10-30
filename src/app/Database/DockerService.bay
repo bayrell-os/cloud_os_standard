@@ -1,0 +1,82 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Database;
+
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
+use Runtime.ORM.Relation;
+use Bayrell.CloudOS.Lib.Docker;
+
+
+class DockerService
+{
+	
+	async static void update(Dict service, int timestamp = 0)
+	{
+		Connection conn = Connection::getConnection();
+		
+		string service_id = service["ID"];
+		string service_name = service["Spec", "Name"];
+		string service_image = service["Spec", "Labels", "com.docker.stack.image"];
+		string stack_name = service["Spec", "Labels", "com.docker.stack.namespace"];
+		string service_short_name = rs::substr(service["Spec", "Name"], rs::strlen(stack_name) + 1);
+		
+		Relation item = Relation::findItem(
+			"docker_services",
+			conn,
+			{
+				"docker_name": service_name,
+			}
+		);
+		
+		if (item == null)
+		{
+			item = new Relation("docker_services");
+		}
+		
+		int count_work = 0;
+		int count_total = service["Spec", "Mode", "Replicated", "Replicas"];
+		
+		Collection service_tasks = Docker::getServiceTasks(service_name);
+		for (int i=0; i<service_tasks.count(); i++)
+		{
+			Dict task = service_tasks.get(i);
+			string state = task["Status", "State"];
+			string desired_state = task["DesiredState"];
+			if (state == "running" and desired_state == "running")
+			{
+				count_work++;
+			}
+		}
+		
+		item.set("docker_name", service_name);
+		item.set("stack_name", stack_name);
+		item.set("service_name", service_short_name);
+		item.set("docker_image", service_image);
+		item.set("is_deleted", 0);
+		item.set("enable", 1);
+		item.set("timestamp", timestamp);
+		item.set("docker_json", service);
+		item.set("docker_tasks", service_tasks);
+		item.set("count_work", count_work);
+		item.set("count_total", count_total);
+		item.save(conn);
+	}
+	
+}
