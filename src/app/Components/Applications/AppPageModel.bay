@@ -42,6 +42,7 @@ use Bayrell.CloudOS.Components.Applications.AppModCrudModel;
 use Bayrell.CloudOS.Components.Applications.AppTable;
 use Bayrell.CloudOS.Components.Applications.AppTotalPatchesModel;
 use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
+use Bayrell.CloudOS.Components.Applications.ComposeButton;
 use Bayrell.CloudOS.Components.Applications.ComposeModel;
 
 
@@ -227,6 +228,7 @@ struct AppPageModel extends CrudPageModel
 		/* Add components */
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);
+		layout.commit("addComponent", classof ComposeButton);
 		layout.commit("addComponent", classof TopSaveButton);
 		
 		/* Add tabs */

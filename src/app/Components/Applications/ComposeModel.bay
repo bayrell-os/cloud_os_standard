@@ -39,7 +39,7 @@ struct ComposeModel extends TopButtonModel
 		"auto_hide": false,
 		"is_modal": true,
 		"width": "500px",
-		"style": DialogModel::STYLE_YES_NO,
+		"style": "compose",
 	};
 	
 	

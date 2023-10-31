@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Lib;
 
 use Runtime.re;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
@@ -29,6 +30,31 @@ use Runtime.XML.YamlConverter;
 
 class Docker
 {
+	/**
+	 * Send docker command
+	 */
+	static var exec(string cmd)
+	{
+		#ifcode PHP then
+		
+		@exec($cmd, $arr, $ret_var);
+		
+		$content = "";
+		foreach ($arr as $value)
+		{
+			$content .= $value;
+		}
+		
+		if ($ret_var != 0)
+		{
+			throw new \Runtime\Exceptions\ApiException($content);
+		}
+		
+		return $content;
+		#endif
+	}
+	
+	
 	/**
 	 * Send docker command
 	 */
@@ -44,7 +70,7 @@ class Docker
 		}
 		$cmd .= "--unix-socket /var/run/docker.sock http:/v1.39" . $url;
 		$cmd .= " 2>/dev/null";
-		$content = @shell_exec($cmd);
+		$content = static::exec($cmd);
 		return $content;
 		
 		#endif
@@ -88,27 +114,24 @@ class Docker
 	}
 	
 	
-	
 	/**
 	 * Get nodes
 	 */
 	static Collection getNodes() => rtl::json_decode( static::dockerApi("/nodes") );
 	
-	/*
-	{
-		 Get nodes
-		Collection nodes = rtl::json_decode( static::dockerApi("/nodes") );
-		Map res = new Map();
-		
-		for (int i=0; i<nodes.count(); i++)
-		{
-			Dict node = nodes.get(i);
-			res.setValue(node["ID"], node);
-		}
-		
-		return res.toDict();
-	}
+	
+	/**
+	 * Compose
 	 */
+	static string compose(string file_path, string stack_name)
+	{
+		string cmd = "sudo docker stack deploy -c " ~
+			file_path ~ " " ~ stack_name ~ " --with-registry-auth"
+		;
+		string result = await static::exec(cmd ~ " 2>&1");
+		return result;
+	}
+	
 	
 	/**
 	 * Stop services
@@ -116,8 +139,15 @@ class Docker
 	static string removeService(string service_name)
 	{
 		string url_api = "/services/" ~ service_name;
-		string content = static::dockerApi(url_api, "DELETE");
-		return content;
+		Dict obj = rtl::json_decode( static::dockerApi(url_api, "DELETE") );
+		
+		string error_message = obj["message"];
+		if (error_message != "")
+		{
+			throw new ApiException(error_message);
+		}
+		
+		return obj["message"];
 	}
 	
 	

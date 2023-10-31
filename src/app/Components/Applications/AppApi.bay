@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.re;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
@@ -31,6 +32,7 @@ use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 use Runtime.XML.XML;
+use Bayrell.CloudOS.Database.DockerService;
 use Bayrell.CloudOS.Lib.AppXml;
 
 
@@ -58,6 +60,8 @@ class AppApi extends CrudApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "compose") return "actionCompose";
+		if (api_name == "stop") return "actionStop";
 		return "";
 	}
 	
@@ -255,6 +259,76 @@ class AppApi extends CrudApi
 		data <= item <= variables <= xml.variables.toCollection();
 		data <= patches <= patches;
 		this.container.setApiData(data);
+	}
+	
+	
+	/**
+	 * Compose app
+	 */
+	async void actionCompose()
+	{
+		Dict pk = this.post_data["pk"];
+		
+		/* Init api */
+		await this.initApi("actionCompose");
+		if (this.container.response.error_name != "") return;
+		
+		/* Find item */
+		this.item = await this.findItem(pk);
+		
+		/* Item not found */
+		if (this.item == null)
+		{
+			this.container.fail( new ApiException("Item not found") );
+			return;
+		}
+		
+		string message = DockerService::composeApp(this.item);
+		Dict item_pk = this.item.getPrimaryKey();
+		
+		/* Set api result */
+		this.container.success({
+			"message": message,
+			"data":
+			{
+				"pk": item_pk,
+			}
+		});
+	}
+	
+	
+	/**
+	 * Stop app
+	 */
+	async void actionStop()
+	{
+		Dict pk = this.post_data["pk"];
+		
+		/* Init api */
+		await this.initApi("actionCompose");
+		if (this.container.response.error_name != "") return;
+		
+		/* Find item */
+		this.item = await this.findItem(pk);
+		
+		/* Item not found */
+		if (this.item == null)
+		{
+			this.container.fail( new ApiException("Item not found") );
+			return;
+		}
+		
+		string message = DockerService::stopApp(this.item);
+		Dict item_pk = this.item.getPrimaryKey();
+		
+		/* Set api result */
+		this.container.success({
+			"message": message,
+			"data":
+			{
+				"pk": item_pk,
+			}
+		});
 	}
 	
 }

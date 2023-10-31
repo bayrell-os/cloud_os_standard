@@ -30,6 +30,14 @@
 <use name="Bayrell.CloudOS.Components.Applications.ComposeModel" />
 
 
+<style>
+%(Dialog)dialog_buttons--compose{
+	display: flex;
+    justify-content: space-between;
+}
+</style>
+
+
 <template name="render">
 	%set ComposeModel button = render_params["button"];
 	%if (button.name == "compose")
@@ -57,19 +65,28 @@
 	%set string app_name = parent_model.getPageTitle("item_name");
 	
 	<Dialog @ref="dialog" @model=["top_buttons", button_pos, "dialog"]
+		renderButtons={{ 
+			button.name == "compose"
+				? method static::renderComposeDialogButtons
+				: method static::renderStopDialogButtons
+		}}
 		@event:DialogEvent="onDialogEvent"
-	>
-		<center>
-			%if (button.name == "compose")
-			{
-				{{ "Compose application '" ~ app_name ~ "' ?" }}
-			}
-			%elseif (button.name == "stop")
-			{
-				{{ "Stop application '" ~ app_name ~ "' ?" }}
-			}
-		</center>
-	</Dialog>
+	/>
+	
+</template>
+
+
+<template name="renderComposeDialogButtons">
+	<Button data-action='close' @event:MouseClickEvent="onButtonClick">Close</Button>
+	<Button type="success" data-action='compose'
+		@event:MouseClickEvent="onButtonClick">Compose</Button>
+</template>
+
+
+<template name="renderStopDialogButtons">
+	<Button data-action='close' @event:MouseClickEvent="onButtonClick">Close</Button>
+	<Button type="danger" data-action='stop'
+		@event:MouseClickEvent="onButtonClick">Stop</Button>
 </template>
 
 
@@ -88,7 +105,19 @@ async void onComposeClick(Message<MouseClickEvent> msg)
 	
 	ModelProxy dialog = button_proxy.proxy("dialog");
 	
-	dialog.commit("setTitle", "Compose item ?");
+	/* Set title */
+	ModelProxy parent_model = form.parentProxy().parentProxy();
+	string app_name = parent_model.call("getPageTitle", "item_name");
+	if (button.name == "compose")
+	{
+		dialog.commit("setTitle", "Compose application '" ~ app_name ~ "' ?");
+	}
+	else if (button.name == "stop")
+	{
+		dialog.commit("setTitle", "Stop application '" ~ app_name ~ "' ?");
+	}
+	
+	/* Show dialog */
 	dialog.commit("show");
 }
 
@@ -102,18 +131,19 @@ async void onDialogEvent(Message<DialogEvent> msg)
 	
 	int button_pos = this.params["button_pos"];
 	ModelProxy button_proxy = form.proxy(["top_buttons", button_pos]);
+	ModelProxy dialog = button_proxy.proxy("dialog");
 	ComposeModel button = button_proxy.data();
 	
-	ModelProxy dialog = button_proxy.proxy("dialog");
+	string action = msg.event.button_result;
 	
-	if (msg.event.button_result == "cancel")
+	if (action == "close")
 	{
 		dialog.commit("hide");
 		return;
 	}
 	
 	/* Compose item */
-	if (msg.event.button_result == "yes")
+	if (action == "compose" or action == "stop")
 	{
 		dialog.commit("setWaitMessage");
 		
@@ -127,16 +157,9 @@ async void onDialogEvent(Message<DialogEvent> msg)
 			await button_proxy.commitAsync("doStop");
 		}
 		
-		/* Check if success */
-		if (button_proxy.call("isSuccess"))
-		{
-			dialog.commit("hide");
-		}
-		else
-		{
-			dialog.commit("setMessage", button_proxy.data(["error_message"]));
-			dialog.commit("setErrorCode", button_proxy.data(["error_code"]));
-		}
+		/* Set result */
+		dialog.commit("setMessage", button_proxy.data(["error_message"]));
+		dialog.commit("setErrorCode", button_proxy.data(["error_code"]));
 		
 		return;
 	}

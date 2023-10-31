@@ -49,6 +49,8 @@
 <template>
 	<div class="app_total_patches">
 		<div class="app_total_patches__items">
+		%if (model.items != null)
+		{
 			%for (int i=0; i<model.items.count(); i++)
 			{
 				%set Dict item = model.items.get(i);
@@ -59,9 +61,17 @@
 					{{ item.get("name") }}
 				</div>
 			}
+		}
 		</div>
 		<div class="app_total_patches__content">
-			<TextArea value={{ model.items.get(model.active).get("content") }} readonly="true" />
+			%if (model.items != null)
+			{
+				%set Dict item = model.items.get(model.active);
+				%if (item != null)
+				{
+					<TextArea value={{ item.get("content") }} readonly="true" />
+				}
+			}
 		</div>
 	</div>
 </template>

@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Database;
 
+use Runtime.fs;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
 use Runtime.ORM.Relation;
@@ -27,6 +28,107 @@ use Bayrell.CloudOS.Lib.Docker;
 class DockerService
 {
 	
+	/**
+	 * Compose app
+	 */
+	async static string composeApp(Relation app)
+	{
+		Connection conn = Connection::getConnection();
+		
+		/* Find yaml file */
+		Relation yaml = await Relation::findOrCreate(
+			"docker_yaml_files", conn,
+			{
+				"file_name": app.get("name") ~ ".conf",
+				"stack_name": app.get("stack_name"),
+			}
+		);
+		
+		/* Create yaml file if does not exists */
+		int yaml_file_id = (int)app.get("yaml_file_id");
+		if (yaml_file_id == 0)
+		{
+			Relation yaml = new Relation("docker_yaml_files");
+		}
+		
+		/* Replace yaml file if wrong id */
+		else if (yaml.get("id") != yaml_file_id)
+		{
+			await yaml.delete(conn);
+			Relation yaml = new Relation("docker_yaml_files");
+		}
+		
+		/* Save yaml */
+		yaml.set("file_name", app.get("name") ~ ".conf");
+		yaml.set("stack_name", app.get("stack_name"));
+		yaml.set("content", app.get("yaml"));
+		yaml.save(conn);
+		
+		/* Save app */
+		app.set("yaml_file_id", yaml.get("id"));
+		app.save(conn);
+		
+		/* Compose yaml file */
+		string message = await static::composeYamlFile(yaml);
+		
+		/* Set run status if success */
+		app.set("status", 1);
+		app.save(conn);
+		
+		return message;
+	}
+	
+	
+	/**
+	 * Save yaml file
+	 */
+	async static string saveYamlFile(Relation yaml)
+	{
+		string file_path = "/data/yaml/" ~ yaml.get("stack_name") ~ "/" ~ yaml.get("file_name");
+		string file_dirname = rs::dirname(file_path);
+		string content = yaml.get("content");
+		await fs::mkdir(file_dirname);
+		await fs::saveFile(file_path, content);
+	}
+	
+	
+	/**
+	 * Compose yaml file
+	 */
+	async static string composeYamlFile(Relation yaml)
+	{
+		/* Save file */
+		await static::saveYamlFile(yaml);
+		
+		string file_path = "/data/yaml/" ~ yaml.get("stack_name") ~ "/" ~ yaml.get("file_name");
+		string result = await Docker::compose(file_path, yaml.get("stack_name"));
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Stop app
+	 */
+	async static string stopApp(Relation app)
+	{
+		Connection conn = Connection::getConnection();
+		
+		/* Stop service */
+		string service_name = app.get("stack_name") ~ "_" ~ app.get("name")
+		string message = await Docker::removeService(service_name);
+		
+		/* Set stop status if success */
+		app.set("status", 0);
+		app.save(conn);
+		
+		return message;
+	}
+	
+	
+	/**
+	 * Update service in database
+	 */
 	async static void update(Dict service, int timestamp = 0)
 	{
 		Connection conn = Connection::getConnection();
