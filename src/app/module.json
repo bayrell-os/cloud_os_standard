@@ -12,6 +12,8 @@
 		"Components/Applications/AppTotalPatches.bay",
 		"Components/Applications/AppTotalPatchesModel.bay",
 		"Components/Applications/AppVolumesCrudModel.bay",
+		"Components/Applications/ComposeButton.bay",
+		"Components/Applications/ComposeModel.bay",
 		"Components/DockerServices/ServicePageModel.bay",
 		"Components/DockerServices/ServicePageRoute.bay",
 		"Components/DockerStack/StackPageModel.bay",

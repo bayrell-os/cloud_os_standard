@@ -42,6 +42,7 @@ use Bayrell.CloudOS.Components.Applications.AppModCrudModel;
 use Bayrell.CloudOS.Components.Applications.AppTable;
 use Bayrell.CloudOS.Components.Applications.AppTotalPatchesModel;
 use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
+use Bayrell.CloudOS.Components.Applications.ComposeModel;
 
 
 struct AppPageModel extends CrudPageModel
@@ -217,9 +218,11 @@ struct AppPageModel extends CrudPageModel
 		form.commit("setShowFormButtons", false);
 		
 		/* Add save top button */
+		form.commit("addTopButton", new ComposeModel{ "name": "compose" });
+		form.commit("addTopButton", new ComposeModel{ "name": "stop" });
 		form.commit("addTopButton",
-			new TopButtonModel{ "name": "save", "component_name": classof TopSaveButton }
-		);
+			new TopButtonModel{ "name": "save", "component_name": classof TopSaveButton })
+		;
 		
 		/* Add components */
 		layout.commit("addComponent", classof Input);

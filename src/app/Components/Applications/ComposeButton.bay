@@ -1,0 +1,149 @@
+<!--
+ *  Bayrell Runtime Library
+ *
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.Applications.ComposeButton">
+
+<use name="Runtime.ModelProxy" />
+<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.Events.ChangeEvent" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Crud.CrudWidget" />
+<use name="Runtime.Widget.Dialog.Dialog" component="true" />
+<use name="Runtime.Widget.Dialog.DialogEvent" />
+<use name="Bayrell.CloudOS.Components.Applications.ComposeModel" />
+
+
+<template name="render">
+	%set ComposeModel button = render_params["button"];
+	%if (button.name == "compose")
+	{
+		<div class="web_crud__top_button">
+			<Button type="default" @event:MouseClickEvent="onComposeClick">Compose</Button>
+		</div>
+	}
+	%if (button.name == "stop")
+	{
+		<div class="web_crud__top_button">
+			<Button type="default" @event:MouseClickEvent="onComposeClick">Stop</Button>
+		</div>
+	}
+	
+	%render static::renderComposeDialog();
+</template>
+
+
+<template name="renderComposeDialog">
+
+	%set CrudWidget parent_model = model.getParentWidget(layout);
+	%set ComposeModel button = render_params["button"];
+	%set int button_pos = render_params["button_pos"];
+	%set string app_name = parent_model.getPageTitle("item_name");
+	
+	<Dialog @ref="dialog" @model=["top_buttons", button_pos, "dialog"]
+		@event:DialogEvent="onDialogEvent"
+	>
+		<center>
+			%if (button.name == "compose")
+			{
+				{{ "Compose application '" ~ app_name ~ "' ?" }}
+			}
+			%elseif (button.name == "stop")
+			{
+				{{ "Stop application '" ~ app_name ~ "' ?" }}
+			}
+		</center>
+	</Dialog>
+</template>
+
+
+<script>
+
+/**
+ * Compose click
+ */
+async void onComposeClick(Message<MouseClickEvent> msg)
+{
+	ModelProxy form = this.proxy();
+	
+	int button_pos = this.params["button_pos"];
+	ModelProxy button_proxy = form.proxy(["top_buttons", button_pos]);
+	ComposeModel button = button_proxy.data();
+	
+	ModelProxy dialog = button_proxy.proxy("dialog");
+	
+	dialog.commit("setTitle", "Compose item ?");
+	dialog.commit("show");
+}
+
+
+/**
+ * Dialog event
+ */
+async void onDialogEvent(Message<DialogEvent> msg)
+{
+	ModelProxy form = this.proxy();
+	
+	int button_pos = this.params["button_pos"];
+	ModelProxy button_proxy = form.proxy(["top_buttons", button_pos]);
+	ComposeModel button = button_proxy.data();
+	
+	ModelProxy dialog = button_proxy.proxy("dialog");
+	
+	if (msg.event.button_result == "cancel")
+	{
+		dialog.commit("hide");
+		return;
+	}
+	
+	/* Compose item */
+	if (msg.event.button_result == "yes")
+	{
+		dialog.commit("setWaitMessage");
+		
+		/* Call api */
+		if (button.name == "compose")
+		{
+			await button_proxy.commitAsync("doCompose");
+		}
+		else if (button.name == "stop")
+		{
+			await button_proxy.commitAsync("doStop");
+		}
+		
+		/* Check if success */
+		if (button_proxy.call("isSuccess"))
+		{
+			dialog.commit("hide");
+		}
+		else
+		{
+			dialog.commit("setMessage", button_proxy.data(["error_message"]));
+			dialog.commit("setErrorCode", button_proxy.data(["error_code"]));
+		}
+		
+		return;
+	}
+	
+}
+
+</script>
+
+
+</class>

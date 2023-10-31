@@ -25,7 +25,6 @@
 <use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Widget.Form.Form" component="true" />
 <use name="Runtime.Widget.Form.FormModel" />
-<use name="Runtime.Widget.Form.FormTopButtons" component="true" />
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Table.TableDialog" component="true" />
@@ -33,6 +32,7 @@
 <use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.Input" component="true" />
 <use name="Runtime.Widget.TextArea" component="true" />
+<use name="Runtime.Widget.TopButtons" component="true" />
 <use name="Bayrell.CloudOS.Components.Applications.AppTotalPatches" component="true" />
 
 
@@ -132,7 +132,7 @@
 
 <template name="render">
 	
-	<FormTopButtons @model=["widgets", "form"] />
+	<TopButtons @model=["widgets", "form"] />
 	
 	<Tabs @model=["widgets", "form", "widgets", "tabs"] style=["style1"] tabs=[
 		{
