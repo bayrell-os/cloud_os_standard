@@ -331,25 +331,29 @@ class AppXml
 		content.pushValue('  <operations>');
 		
 		Collection environments = this.item.get("environments");
-		for (int i=0; i<environments.count(); i++)
+		if (environments != null)
 		{
-			Dict value = environments.get(i);
-			
-			/* Check if enable */
-			int enable = (int)value.get("enable");
-			if (enable != 1)
+			for (int i=0; i<environments.count(); i++)
 			{
-				continue;
+				Dict value = environments.get(i);
+				
+				/* Check if enable */
+				int enable = (int)value.get("enable");
+				if (enable != 1)
+				{
+					continue;
+				}
+				
+				string env_name = value.get("key");
+				string env_value = value.get("value");
+				content.pushValue('    <operation type="add">');
+				content.pushValue('      <path>/template/yaml/services/*/environment[not(' ~
+					env_name ~  ')]</path>');
+				content.pushValue('      <value>');
+				content.pushValue('        <' ~ env_name ~  '>' ~ env_value ~ '</' ~ env_name ~  '>');
+				content.pushValue('      </value>');
+				content.pushValue('    </operation>');
 			}
-			
-			string env_name = value.get("key");
-			string env_value = value.get("value");
-			content.pushValue('    <operation type="add">');
-			content.pushValue('      <path>/template/yaml/services/*/environment[not(' ~ env_name ~  ')]</path>');
-			content.pushValue('      <value>');
-			content.pushValue('        <' ~ env_name ~  '>' ~ env_value ~ '</' ~ env_name ~  '>');
-			content.pushValue('      </value>');
-			content.pushValue('    </operation>');
 		}
 		
 		content.pushValue('  </operations>');
@@ -374,37 +378,40 @@ class AppXml
 		content.pushValue('  <operations>');
 		
 		Collection volumes = this.item.get("volumes");
-		for (int i=0; i<volumes.count(); i++)
+		if (volumes != null)
 		{
-			Dict value = volumes.get(i);
-			
-			/* Check if enable */
-			int enable = (int)value.get("enable");
-			if (enable != 1)
+			for (int i=0; i<volumes.count(); i++)
 			{
-				continue;
-			}
-			
-			string volume_name = value.get("key");
-			string volume_value = value.get("value");
-			content.pushValue('    <operation type="add">');
-			content.pushValue('      <path>/template/yaml/services/*</path>');
-			content.pushValue('      <value>');
-			content.pushValue('        <volumes array="true">' ~
-				volume_name ~ ':' ~ volume_value ~ '</volumes>')
-			;
-			content.pushValue('      </value>');
-			content.pushValue('    </operation>');
-			
-			/* Add volume description */
-			if (rs::indexOf(volume_name, "/") == -1)
-			{
+				Dict value = volumes.get(i);
+				
+				/* Check if enable */
+				int enable = (int)value.get("enable");
+				if (enable != 1)
+				{
+					continue;
+				}
+				
+				string volume_name = value.get("key");
+				string volume_value = value.get("value");
 				content.pushValue('    <operation type="add">');
-				content.pushValue('      <path>/template/yaml/volumes</path>');
+				content.pushValue('      <path>/template/yaml/services/*</path>');
 				content.pushValue('      <value>');
-				content.pushValue('        <' ~ volume_name ~ '/>');
+				content.pushValue('        <volumes array="true">' ~
+					volume_name ~ ':' ~ volume_value ~ '</volumes>')
+				;
 				content.pushValue('      </value>');
 				content.pushValue('    </operation>');
+				
+				/* Add volume description */
+				if (rs::indexOf(volume_name, "/") == -1)
+				{
+					content.pushValue('    <operation type="add">');
+					content.pushValue('      <path>/template/yaml/volumes</path>');
+					content.pushValue('      <value>');
+					content.pushValue('        <' ~ volume_name ~ '/>');
+					content.pushValue('      </value>');
+					content.pushValue('    </operation>');
+				}
 			}
 		}
 		

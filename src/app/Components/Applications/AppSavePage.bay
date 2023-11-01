@@ -89,10 +89,16 @@
 				{
 					%set Dict variable = variables.get(i);
 					%set string variable_name = variable.get("name");
-					<div class="app_variable" @key={{ variable_name }} data-name={{ variable_name }}>
-						<div class="app_variable__label">{{ variable.get("label") }}</div>
-						<Input @model=["widgets", "form", "data", "item", "variables", i, "value"] />
-					</div>
+					%if (variable_name != "_var_app_name_")
+					{
+						<div class="app_variable"
+							@key={{ variable_name }}
+							data-name={{ variable_name }}
+						>
+							<div class="app_variable__label">{{ variable.get("label") }}</div>
+							<Input @model=["widgets", "form", "data", "item", "variables", i, "value"] />
+						</div>
+					}
 				}
 			</div>
 			
@@ -122,11 +128,6 @@
 			</div>
 		}
 	</div>
-</template>
-
-
-<template name="renderTotalPatches">
-	1111
 </template>
 
 
