@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
+use Runtime.Web.ApiResult;
 use Runtime.Web.BaseModel;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.Layout;
@@ -184,7 +185,6 @@ struct AppPageModel extends CrudPageModel
 		/* Set fields list */
 		ModelProxy<FieldList> fields = form.proxy("fields");
 		fields.commit("setFieldsList", [
-			"status",
 			"stack_name",
 			"name",
 			"template_id",
@@ -285,10 +285,14 @@ struct AppPageModel extends CrudPageModel
 	 */
 	static void formEvent(ModelProxy<BaseModel> form, string action, Dict obj, var tag = null)
 	{
-		if (action == FormModel::ON_LOAD_ITEM_AFTER)
+		if (action == FormModel::ON_LOAD_ITEM_AFTER or action == FormModel::ON_SAVE_AFTER)
 		{
-			Collection patches = obj["api", "data", "patches"];
-			form.proxy(["widgets", "total_patches"]).commit("setItems", patches);
+			ApiResult api = obj["api"];
+			if (api.isSuccess())
+			{
+				Collection patches = obj["api", "data", "patches"];
+				form.proxy(["widgets", "total_patches"]).commit("setItems", patches);
+			}
 		}
 		return obj;
 	}

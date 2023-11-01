@@ -21,8 +21,8 @@ namespace Bayrell.CloudOS.Console.Commands;
 use Runtime.io;
 use Runtime.Console.BaseCommand;
 use Runtime.Console.CommandsList;
-use Bayrell.CloudOS.Database.DockerService;
-use Bayrell.CloudOS.Lib.Docker;
+use Bayrell.CloudOS.Lib.DockerApi;
+use Bayrell.CloudOS.Lib.DockerService;
 
 
 class UpdateServices extends BaseCommand
@@ -47,8 +47,8 @@ class UpdateServices extends BaseCommand
 	{
 		int timestamp = rtl::time();
 		
-		Collection services = Docker::getServices();
-		Collection nodes = Docker::getNodes();
+		Collection services = DockerApi::getServices();
+		Collection nodes = DockerApi::getNodes();
 		
 		for (int i=0; i<services.count(); i++)
 		{

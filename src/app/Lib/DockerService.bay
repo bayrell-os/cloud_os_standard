@@ -16,13 +16,13 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Database;
+namespace Bayrell.CloudOS.Lib;
 
 use Runtime.fs;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
 use Runtime.ORM.Relation;
-use Bayrell.CloudOS.Lib.Docker;
+use Bayrell.CloudOS.Lib.DockerApi;
 
 
 class DockerService
@@ -101,7 +101,7 @@ class DockerService
 		await static::saveYamlFile(yaml);
 		
 		string file_path = "/data/yaml/" ~ yaml.get("stack_name") ~ "/" ~ yaml.get("file_name");
-		string result = await Docker::compose(file_path, yaml.get("stack_name"));
+		string result = await DockerApi::compose(file_path, yaml.get("stack_name"));
 		
 		return result;
 	}
@@ -114,15 +114,14 @@ class DockerService
 	{
 		Connection conn = Connection::getConnection();
 		
-		/* Stop service */
-		string service_name = app.get("stack_name") ~ "_" ~ app.get("name")
-		string message = await Docker::removeService(service_name);
-		
-		/* Set stop status if success */
+		/* Set stop status */
 		app.set("status", 0);
 		app.save(conn);
 		
-		return message;
+		/* Stop service */
+		string service_name = app.get("stack_name") ~ "_" ~ app.get("name")
+		await DockerApi::removeService(service_name);
+		return "Service stopped";
 	}
 	
 	
@@ -155,7 +154,7 @@ class DockerService
 		int count_work = 0;
 		int count_total = service["Spec", "Mode", "Replicated", "Replicas"];
 		
-		Collection service_tasks = Docker::getServiceTasks(service_name);
+		Collection service_tasks = DockerApi::getServiceTasks(service_name);
 		for (int i=0; i<service_tasks.count(); i++)
 		{
 			Dict task = service_tasks.get(i);

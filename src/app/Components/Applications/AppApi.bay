@@ -32,8 +32,8 @@ use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 use Runtime.XML.XML;
-use Bayrell.CloudOS.Database.DockerService;
 use Bayrell.CloudOS.Lib.AppXml;
+use Bayrell.CloudOS.Lib.DockerService;
 
 
 class AppApi extends CrudApi
@@ -246,12 +246,15 @@ class AppApi extends CrudApi
 		AppXml xml = new AppXml();
 		xml.item = this.item;
 		xml.template = template;
+		xml.xml_content = xml_content;
 		xml.conn = this.getDatabaseConnection();
-		xml.buildVariables();
 		
-		/* Get patches */
-		await xml.loadModificators();
+		/* Load template */
 		await xml.loadTemplateContent();
+		await xml.loadModificators();
+		
+		/* Get ariables */
+		xml.buildVariables();
 		Collection patches = xml.getPatches();
 		
 		/* Set variables to response */

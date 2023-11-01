@@ -32,7 +32,8 @@ class AppXml
 	Connection conn = null;
 	Relation item = null;
 	XML template = null;
-	string template_content = "";
+	XML template_orig = null;
+	string xml_content_orig = "";
 	string xml_content = "";
 	string yaml_content = "";
 	Vector<XML> modificators = null;
@@ -47,10 +48,9 @@ class AppXml
 	{
 		/* Load operations */
 		await this.loadModificators();
-		this.sortOperations();
-		
-		/* Load template */
 		await this.loadTemplateContent();
+		
+		/* Patch template */
 		this.patchTemplate();
 		this.buildVariables();
 		
@@ -71,8 +71,8 @@ class AppXml
 		
 		if (template_version)
 		{
-			this.template_content = template_version.get("content");
-			this.template = XML::loadXml(this.template_content);
+			this.xml_content_orig = template_version.get("content");
+			this.template_orig = XML::loadXml(this.xml_content_orig);
 		}
 	}
 	
@@ -82,15 +82,23 @@ class AppXml
 	 */
 	void patchTemplate()
 	{
-		if (not this.template) return;
-		if (not this.template.exists()) return;
+		if (not this.template_orig) return;
+		if (not this.template_orig.exists()) return;
 		
+		/* Copy original content */
+		this.template = XML::loadXml(this.template_orig.toString());
+		
+		/* Sort current operations */
+		this.sortOperations();
+		
+		/* Patch by operations */
 		for (int i=0; i<this.operations.count(); i++)
 		{
 			XML operation = this.operations.get(i);
 			this.template.patch(operation);
 		}
 		
+		/* Save new content */
 		this.xml_content = this.template.toString();
 	}
 	
@@ -102,9 +110,26 @@ class AppXml
 	{
 		Vector patches = new Vector();
 		
+		patches.pushValue({
+			"name": "Template",
+			"content": this.xml_content_orig,
+		});
+		
 		for (int i=0; i<this.modificators.count(); i++)
 		{
 			XML modificator = this.modificators.get(i);
+			
+			/* Check if xml is exists */
+			if (modificator == null)
+			{
+				continue;
+			}
+			if (not modificator.exists())
+			{
+				continue;
+			}
+			
+			/* Push modificator */
 			string name = modificator.get("name") |> .get(0) |> .value() |> default string "";
 			patches.pushValue({
 				"name": name,
@@ -222,6 +247,18 @@ class AppXml
 			XML xml = XML::loadXml(xml_content);
 			this.addModificator(xml)
 		}
+		
+		/* Add environments */
+		this.addModificator(this.getEnvironmentsModificator());
+		
+		/* Add volumes */
+		this.addModificator(this.getVolumesModificator());
+		
+		/* Add template patch */
+		this.addModificator(this.getTemplatePatchModificator());
+		
+		/* Add custom patch */
+		this.addModificator(this.getCustomPatchModificator());
 	}
 	
 	
@@ -279,4 +316,124 @@ class AppXml
 		)
 	}
 	
+	
+	/**
+	 * Returns environments modificator
+	 */
+	XML getEnvironmentsModificator()
+	{
+		Vector content = new Vector();
+		
+		content.pushValue('<?xml version="1.1" encoding="UTF-8" ?>');
+		content.pushValue('<patch>');
+		content.pushValue('  <name>Environments</name>');
+		content.pushValue('  <priority>200</priority>');
+		content.pushValue('  <operations>');
+		
+		Collection environments = this.item.get("environments");
+		for (int i=0; i<environments.count(); i++)
+		{
+			Dict value = environments.get(i);
+			
+			/* Check if enable */
+			int enable = (int)value.get("enable");
+			if (enable != 1)
+			{
+				continue;
+			}
+			
+			string env_name = value.get("key");
+			string env_value = value.get("value");
+			content.pushValue('    <operation type="add">');
+			content.pushValue('      <path>/template/yaml/services/*/environment[not(' ~ env_name ~  ')]</path>');
+			content.pushValue('      <value>');
+			content.pushValue('        <' ~ env_name ~  '>' ~ env_value ~ '</' ~ env_name ~  '>');
+			content.pushValue('      </value>');
+			content.pushValue('    </operation>');
+		}
+		
+		content.pushValue('  </operations>');
+		content.pushValue('</patch>');
+		
+		string xml_content = rs::join("\n", content);
+		return XML::loadXml(xml_content);
+	}
+	
+	
+	/**
+	 * Returns volumes modificator
+	 */
+	XML getVolumesModificator()
+	{
+		Vector content = new Vector();
+		
+		content.pushValue('<?xml version="1.1" encoding="UTF-8" ?>');
+		content.pushValue('<patch>');
+		content.pushValue('  <name>Volumes</name>');
+		content.pushValue('  <priority>200</priority>');
+		content.pushValue('  <operations>');
+		
+		Collection volumes = this.item.get("volumes");
+		for (int i=0; i<volumes.count(); i++)
+		{
+			Dict value = volumes.get(i);
+			
+			/* Check if enable */
+			int enable = (int)value.get("enable");
+			if (enable != 1)
+			{
+				continue;
+			}
+			
+			string volume_name = value.get("key");
+			string volume_value = value.get("value");
+			content.pushValue('    <operation type="add">');
+			content.pushValue('      <path>/template/yaml/services/*</path>');
+			content.pushValue('      <value>');
+			content.pushValue('        <volumes array="true">' ~
+				volume_name ~ ':' ~ volume_value ~ '</volumes>')
+			;
+			content.pushValue('      </value>');
+			content.pushValue('    </operation>');
+			
+			/* Add volume description */
+			if (rs::indexOf(volume_name, "/") == -1)
+			{
+				content.pushValue('    <operation type="add">');
+				content.pushValue('      <path>/template/yaml/volumes</path>');
+				content.pushValue('      <value>');
+				content.pushValue('        <' ~ volume_name ~ '/>');
+				content.pushValue('      </value>');
+				content.pushValue('    </operation>');
+			}
+		}
+		
+		content.pushValue('  </operations>');
+		content.pushValue('</patch>');
+		
+		string xml_content = rs::join("\n", content);
+		return XML::loadXml(xml_content);
+	}
+	
+	
+	/**
+	 * Returns template patch modificator
+	 */
+	XML getTemplatePatchModificator()
+	{
+		if (not this.template_orig) return null;
+		if (not this.template_orig.exists()) return null;
+		
+		return this.template_orig.get("patch").get(0);
+	}
+	
+	
+	/**
+	 * Returns custom patch modificator
+	 */
+	XML getCustomPatchModificator()
+	{
+		string xml_content = this.item.get("custom_patch");
+		return XML::loadXml(xml_content);
+	}
 }

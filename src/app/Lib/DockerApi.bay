@@ -28,7 +28,7 @@ use Runtime.XML.XML;
 use Runtime.XML.YamlConverter;
 
 
-class Docker
+class DockerApi
 {
 	/**
 	 * Send docker command
