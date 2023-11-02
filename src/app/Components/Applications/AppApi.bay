@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Components.Applications;
 
 use Runtime.re;
+use Runtime.BaseStruct;
 use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
@@ -198,7 +199,7 @@ class AppApi extends CrudApi
 		}
 		
 		/* Set app name */
-		string app_name = item.get("stack_name") ~ "_" ~ item.get("name");
+		string app_name = item.get("name");
 		item_variables.setValue("_var_app_name_", app_name);
 		
 		/* Set variables */
@@ -282,6 +283,10 @@ class AppApi extends CrudApi
 		await this.initApi("actionCompose");
 		if (this.container.response.error_name != "") return;
 		
+		/* Before save */
+		await this.onSaveInit();
+		if (this.container.response.error_name != "") return;
+		
 		/* Find item */
 		this.item = await this.findItem(pk);
 		
@@ -292,7 +297,15 @@ class AppApi extends CrudApi
 			return;
 		}
 		
+		/* Update item */
+		await this.updateItem(this.item, this.update_data);
+		if (this.container.response.error_name != "") return;
+		
+		/* Compose app */
 		string message = DockerService::composeApp(this.item);
+		
+		/* Transform items */
+		BaseStruct model = this.item.toDict( this.getAllowedFields("item") );
 		Dict item_pk = this.item.getPrimaryKey();
 		
 		/* Set api result */
@@ -301,8 +314,12 @@ class AppApi extends CrudApi
 			"data":
 			{
 				"pk": item_pk,
+				"item": model,
 			}
 		});
+		
+		/* After save */
+		await this.onSaveFinal();
 	}
 	
 	

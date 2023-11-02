@@ -285,7 +285,11 @@ struct AppPageModel extends CrudPageModel
 	 */
 	static void formEvent(ModelProxy<BaseModel> form, string action, Dict obj, var tag = null)
 	{
-		if (action == FormModel::ON_LOAD_ITEM_AFTER or action == FormModel::ON_SAVE_AFTER)
+		if (
+			action == FormModel::ON_LOAD_ITEM_AFTER or
+			action == FormModel::ON_SAVE_AFTER or
+			action == "app_compose_after"
+		)
 		{
 			ApiResult api = obj["api"];
 			if (api.isSuccess())

@@ -72,6 +72,17 @@ struct ComposeModel extends TopButtonModel
 	{
 		if (res == null) return;
 		
+		if (res.isSuccess() and action == "app_compose")
+		{
+			ModelProxy data_storage = model.parentProxy().parentProxy().proxy("data");
+			
+			Dict item = res["data", "item"];
+			data_storage.commit("setItem", item);
+			
+			Dict pk = res["data", "pk"];
+			data_storage.commit("setPrimaryKey", pk);
+		}
+		
 		/* Set error */
 		model.commit("setError", res.getErrorMessage(), res.getErrorCode());
 	}
@@ -107,9 +118,10 @@ struct ComposeModel extends TopButtonModel
 		/* Get post data */
 		Dict search_data = form.data("search_data");
 		Dict post_data = data.call("getItemPostData", search_data);
+		post_data <= item <= data.data("item");
 		
 		/* Before event */
-		Dict d = await static::callEvent(form, "app_compose", {
+		Dict d = await static::callEvent(form, "app_compose_before", {
 			"post_data": post_data,
 			"success": true,
 		});
@@ -122,10 +134,10 @@ struct ComposeModel extends TopButtonModel
 		/* Set api result */
 		data.commit("setApiResult", "app_compose", res);
 		form.commit("setApiResult", "app_compose", res);
-		model.commit("setApiResult", "app_stop", res);
+		model.commit("setApiResult", "app_compose", res);
 		
 		/* After event */
-		Dict d = await static::callEvent(form, "app_compose", {
+		Dict d = await static::callEvent(form, "app_compose_after", {
 			"api": res,
 			"post_data": d["post_data"],
 		});
@@ -162,7 +174,7 @@ struct ComposeModel extends TopButtonModel
 		Dict post_data = data.call("getItemPostData", search_data);
 		
 		/* Before event */
-		Dict d = await static::callEvent(form, "app_stop", {
+		Dict d = await static::callEvent(form, "app_stop_before", {
 			"post_data": post_data,
 			"success": true,
 		});
@@ -178,7 +190,7 @@ struct ComposeModel extends TopButtonModel
 		model.commit("setApiResult", "app_stop", res);
 		
 		/* After event */
-		Dict d = await static::callEvent(form, "app_stop", {
+		Dict d = await static::callEvent(form, "app_stop_after", {
 			"api": res,
 			"post_data": d["post_data"],
 		});
