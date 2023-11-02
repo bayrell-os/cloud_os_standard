@@ -79,7 +79,7 @@ async static ApiResult doCompose(ModelProxy model)
 	
 	/* Send api */
 	string api_name = data.data("api_name");
-	ApiResult res = await Bus::callApi(api_name ~ "::crud.compose", post_data);
+	ApiResult res = await Bus::callApi(api_name ~ "::yaml_compose", post_data);
 	
 	/* Set api result */
 	data.commit("setApiResult", "save", res);

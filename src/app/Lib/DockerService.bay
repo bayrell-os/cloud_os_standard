@@ -20,7 +20,7 @@ namespace Bayrell.CloudOS.Lib;
 
 use Runtime.fs;
 use Runtime.ORM.Connection;
-use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Bayrell.CloudOS.Lib.DockerApi;
 
@@ -120,6 +120,15 @@ class DockerService
 		
 		/* Stop service */
 		string service_name = app.get("stack_name") ~ "_" ~ app.get("name")
+		return await static::stopService(service_name);
+	}
+	
+	
+	/**
+	 * Stop service
+	 */
+	async static string stopService(string service_name)
+	{
 		await DockerApi::removeService(service_name);
 		return "Service stopped";
 	}
@@ -178,6 +187,35 @@ class DockerService
 		item.set("count_work", count_work);
 		item.set("count_total", count_total);
 		item.save(conn);
+	}
+	
+	
+	/**
+	 * Remove old services
+	 */
+	async static void removeOldServices(int timestamp)
+	{
+		Connection conn = Connection::getConnection();
+		
+		/* Update old services */
+		Query q = new Query()
+			|> .update("docker_services")
+			|> .values({
+				"enable": 0,
+				"is_deleted": 1,
+			})
+			|> .where('is_deleted', '=', 0)
+			|> .where('timestamp', '<', timestamp - 15)
+		;
+		conn.execute(q);
+		
+		/* Delete old services */
+		Query q = new Query()
+			|> .delete("docker_services")
+			|> .where('is_deleted', '=', 1)
+			|> .where('timestamp', '<', timestamp - 24*60*60)
+		;
+		conn.execute(q);
 	}
 	
 }

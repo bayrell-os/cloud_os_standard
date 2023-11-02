@@ -37,6 +37,9 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TopButtonModel;
+use Bayrell.CloudOS.Components.DockerServices.ServiceTable;
+use Bayrell.CloudOS.Components.DockerServices.StopButton;
+use Bayrell.CloudOS.Components.DockerServices.StopModel;
 
 
 struct ServicePageModel extends CrudPageModel
@@ -64,10 +67,19 @@ struct ServicePageModel extends CrudPageModel
 			"name": "replicas",
 			"render_method": new Callback(static::getClassName(), "renderRow"),
 		},
-		"row_buttons": new FieldInfo{
-			"name": "row_buttons",
+		"stop_button": new FieldInfo{
+			"name": "stop_button",
 		},
 	};
+	
+	
+	/**
+	 * Factory table
+	 */
+	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new TableModel{
+			"component_name": classof ServiceTable,
+		};
 	
 	
 	/**
@@ -109,6 +121,7 @@ struct ServicePageModel extends CrudPageModel
 			"docker_name",
 			"docker_image",
 			"replicas",
+			"stop_button",
 		]);
 		
 		/* Add save top button */
@@ -116,6 +129,9 @@ struct ServicePageModel extends CrudPageModel
 		table.commit("addTopButton",
 			new TopRefreshModel{}
 		);
+		
+		/* Stop widget */
+		table.commit("addWidget", new StopModel() );
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);

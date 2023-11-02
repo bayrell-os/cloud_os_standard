@@ -16,6 +16,8 @@
 		"Components/Applications/ComposeModel.bay",
 		"Components/DockerServices/ServicePageModel.bay",
 		"Components/DockerServices/ServicePageRoute.bay",
+		"Components/DockerServices/ServiceTable.bay",
+		"Components/DockerServices/StopModel.bay",
 		"Components/DockerStack/StackPageModel.bay",
 		"Components/DockerStack/StackPageRoute.bay",
 		"Components/DockerYamlFiles/YamlFilePageModel.bay",

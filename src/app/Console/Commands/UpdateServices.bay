@@ -53,8 +53,10 @@ class UpdateServices extends BaseCommand
 		for (int i=0; i<services.count(); i++)
 		{
 			Dict service = services.get(i);
-			DockerService::update(service, timestamp);
+			await DockerService::update(service, timestamp);
 		}
+		
+		await DockerService::removeOldServices(timestamp);
 		
 		return static::SUCCESS;
 	}

@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Components.DockerServices;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Widget.Crud.Api.CrudApi;
@@ -28,6 +29,7 @@ use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
+use Bayrell.CloudOS.Lib.DockerService;
 
 
 class ServiceApi extends CrudApi
@@ -52,6 +54,7 @@ class ServiceApi extends CrudApi
 		if (api_name == "crud.search") return "actionSearch";
 		if (api_name == "crud.search_one") return "actionSearchOne";
 		if (api_name == "crud.item") return "actionItem";
+		if (api_name == "service_stop") return "actionServiceStop";
 		return "";
 	}
 	
@@ -95,6 +98,47 @@ class ServiceApi extends CrudApi
         q.where("enable", "=", 1);
 		q.orderBy("stack_name", "asc");
 		return q;
+	}
+	
+	
+	/**
+	 * Action service stop
+	 */
+	async void actionServiceStop()
+	{
+		/* Init api */
+		await this.initApi("actionCompose");
+		if (this.container.response.error_name != "") return;
+		
+		/* Find item */
+		Dict pk = this.post_data["pk"];
+		this.item = await this.findItem(pk);
+		
+		/* Item not found */
+		if (this.item == null)
+		{
+			this.container.fail( new ApiException("Item not found") );
+			return;
+		}
+		
+		/* Stop service */
+		string service_name = this.item.get("stack_name") ~ "_" ~ this.item.get("service_name");
+		string message = DockerService::stopService(service_name);
+		Dict item_pk = this.item.getPrimaryKey();
+		
+		/* Set is delete */
+		this.item.set("enable", 0);
+		this.item.set("is_deleted", 1);
+		this.item.save();
+		
+		/* Set api result */
+		this.container.success({
+			"message": message,
+			"data":
+			{
+				"pk": item_pk,
+			}
+		});
 	}
 	
 }

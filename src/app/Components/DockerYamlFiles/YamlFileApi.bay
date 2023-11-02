@@ -57,7 +57,7 @@ class YamlFileApi extends CrudApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
-		if (api_name == "crud.compose") return "actionCompose";
+		if (api_name == "yaml_compose") return "actionCompose";
 		return "";
 	}
 	
