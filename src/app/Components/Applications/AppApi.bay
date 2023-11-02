@@ -283,19 +283,11 @@ class AppApi extends CrudApi
 		await this.initApi("actionCompose");
 		if (this.container.response.error_name != "") return;
 		
-		/* Before save */
-		await this.onSaveInit();
+		/* Save before */
+		await static::actionSaveBefore({
+			"create": false,
+		});
 		if (this.container.response.error_name != "") return;
-		
-		/* Find item */
-		this.item = await this.findItem(pk);
-		
-		/* Item not found */
-		if (this.item == null)
-		{
-			this.container.fail( new ApiException("Item not found") );
-			return;
-		}
 		
 		/* Update item */
 		await this.updateItem(this.item, this.update_data);
@@ -304,22 +296,12 @@ class AppApi extends CrudApi
 		/* Compose app */
 		string message = DockerService::composeApp(this.item);
 		
-		/* Transform items */
-		BaseStruct model = this.item.toDict( this.getAllowedFields("item") );
-		Dict item_pk = this.item.getPrimaryKey();
+		/* Save after */
+		await static::actionSaveAfter();
+		if (this.container.response.error_name != "") return;
 		
-		/* Set api result */
-		this.container.success({
-			"message": message,
-			"data":
-			{
-				"pk": item_pk,
-				"item": model,
-			}
-		});
-		
-		/* After save */
-		await this.onSaveFinal();
+		/* Set message */
+		this.container.setErrorMessage(message);
 	}
 	
 	
@@ -328,13 +310,12 @@ class AppApi extends CrudApi
 	 */
 	async void actionStop()
 	{
-		Dict pk = this.post_data["pk"];
-		
 		/* Init api */
 		await this.initApi("actionCompose");
 		if (this.container.response.error_name != "") return;
 		
 		/* Find item */
+		Dict pk = this.post_data["pk"];
 		this.item = await this.findItem(pk);
 		
 		/* Item not found */
@@ -344,6 +325,7 @@ class AppApi extends CrudApi
 			return;
 		}
 		
+		/* Stop app */
 		string message = DockerService::stopApp(this.item);
 		Dict item_pk = this.item.getPrimaryKey();
 		

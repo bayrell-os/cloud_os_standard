@@ -1,0 +1,100 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileSaveForm"
+    extends="Runtime.Widget.Form.Form"
+>
+
+<use name="Runtime.ModelProxy" />
+<use name="Runtime.Web.ApiResult" />
+<use name="Runtime.Web.Bus" />
+<use name="Runtime.Web.Message" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Widget.Button" />
+
+
+<template name="renderButtons">
+	%if (model.show_form_buttons)
+	{
+		<div class="web_form__buttons">
+			<Button type="primary large" @event:MouseClickEvent="onSaveClick">Save</Button>
+			<Button type="large" @event:MouseClickEvent="onComposeClick">Compose</Button>
+		</div>
+	}
+</template>
+
+
+<script>
+
+/**
+ * Compose click
+ */
+async void onComposeClick(Message<MouseClickEvent> msg)
+{
+	ModelProxy model = this.modelProxy();
+	
+	/* Set wait message */
+	model.proxy("data").commit("setWaitMessage");
+	
+	/* Send compose */
+	await static::doCompose(model);
+}
+
+
+/**
+ * Do compose
+ */
+async static ApiResult doCompose(ModelProxy model)
+{
+	/* Get data storage */
+	ModelProxy data = model.proxy("data");
+	if (not data.call("isReady")) return;
+	
+	/* Get post data */
+	Dict search_data = model.data("search_data");
+	Dict post_data = data.call("getSavePostData", search_data);
+	
+	/* Before event */
+	Dict d = await model.commitAsync("callEvent", static::ON_SAVE_BEFORE, {
+		"post_data": post_data,
+		"success": true,
+	});
+	
+	if (not d["success"]) return;
+	
+	/* Send api */
+	string api_name = data.data("api_name");
+	ApiResult res = await Bus::callApi(api_name ~ "::crud.compose", post_data);
+	
+	/* Set api result */
+	data.commit("setApiResult", "save", res);
+	model.commit("setApiResult", "save", res);
+	
+	/* After event */
+	await model.commitAsync("callEvent", static::ON_SAVE_AFTER, {
+		"api": res,
+		"post_data": d["post_data"],
+	});
+}
+
+
+</script>
+
+
+
+</class>

@@ -32,6 +32,7 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TextArea;
+use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileSaveForm;
 
 
 struct YamlFilePageModel extends CrudPageModel
@@ -75,6 +76,13 @@ struct YamlFilePageModel extends CrudPageModel
 	 * Api name
 	 */
 	pure static Dict getApiName(string type) => "app.docker.yaml";
+	
+	
+	/**
+	 * Factory form
+	 */
+	static FormModel createFormModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new FormModel{ "component_name": classof YamlFileSaveForm };
 	
 	
 	/**

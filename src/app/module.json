@@ -20,6 +20,7 @@
 		"Components/DockerStack/StackPageRoute.bay",
 		"Components/DockerYamlFiles/YamlFilePageModel.bay",
 		"Components/DockerYamlFiles/YamlFilePageRoute.bay",
+		"Components/DockerYamlFiles/YamlFileSaveForm.bay",
 		"Components/Domains/DomainPageModel.bay",
 		"Components/Domains/DomainPageRoute.bay",
 		"Components/Domains/DomainSavePage.bay",

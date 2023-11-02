@@ -19,7 +19,9 @@
 namespace Bayrell.CloudOS.Components.DockerYamlFiles;
 
 use Runtime.re;
+use Runtime.BaseStruct;
 use Runtime.DateTime;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Widget.Crud.Api.CrudApi;
@@ -28,6 +30,7 @@ use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
+use Bayrell.CloudOS.Lib.DockerService;
 
 
 class YamlFileApi extends CrudApi
@@ -54,6 +57,7 @@ class YamlFileApi extends CrudApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "crud.compose") return "actionCompose";
 		return "";
 	}
 	
@@ -103,6 +107,37 @@ class YamlFileApi extends CrudApi
 			|> .orderBy("file_name", "asc")
 		;
 		return q;
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	async void actionCompose()
+	{
+		/* Init api */
+		await this.initApi("actionCompose");
+		if (this.container.response.error_name != "") return;
+		
+		/* Save before */
+		await static::actionSaveBefore({
+			"create": false,
+		});
+		if (this.container.response.error_name != "") return;
+		
+		/* Update item */
+		await this.updateItem(this.item, this.update_data);
+		if (this.container.response.error_name != "") return;
+		
+		/* Compose yaml file */
+		string message = DockerService::composeYamlFile(this.item);
+		
+		/* Save after */
+		await static::actionSaveAfter();
+		if (this.container.response.error_name != "") return;
+		
+		/* Set message */
+		this.container.setErrorMessage(message);
 	}
 	
 }
