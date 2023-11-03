@@ -25,14 +25,18 @@
 <use name="Runtime.Widget.Crud.CrudWidget" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
+<use name="Runtime.Widget.TopButtons" component="true" />
 <use name="Bayrell.CloudOS.Components.Applications.AppTableModel" />
 
 
 <template name="renderTop">
+	<TopButtons @model=[] />
+	<!--
 	<div class="web_table__top">
 		<Button type="primary middle">Refresh</Button>
 		<Button type="success middle" href={{ static::url("app:applications:add") }}>[+] Add</Button>
 	</div>
+	-->
 </template>
 
 
@@ -45,7 +49,9 @@
 	
 	%elseif (field.name == "replicas")
 	{
-		{{ "1/1" }}
+		%set int count_work = (int)item.get("count_work") |> default int 0;
+		%set int count_total = (int)item.get("count_total") |> default int 0;
+		{{ count_work ~ "/" ~ count_total }}
 	}
 	
 	%else

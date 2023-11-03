@@ -77,6 +77,8 @@ class AppApi extends CrudApi
 		"status",
 		"template_id",
 		"template_version_id",
+		"count_work",
+		"count_total",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -166,10 +168,20 @@ class AppApi extends CrudApi
 				"templates.name as template_name",
 				"templates.id as template_id",
 				"templates.uid as template_uid",
+				"docker_services.count_work as count_work",
+				"docker_services.count_total as count_total",
 			])
+			
+			.leftJoin(
+				"docker_services",
+				[
+					"applications.stack_name=docker_services.stack_name",
+					"applications.name=docker_services.service_name",
+					"docker_services.enable=1",
+					"docker_services.is_deleted=0",
+				]
+			)
 		;
-		
-		/* q.debug(1); */
 		
 		return q;
 	}

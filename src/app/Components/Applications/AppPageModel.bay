@@ -31,6 +31,8 @@ use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.TopSaveButton;
 use Runtime.Widget.Tab.TabModel;
 use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Table.TopRefreshButton;
+use Runtime.Widget.Table.TopRefreshModel;
 use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
@@ -165,9 +167,13 @@ struct AppPageModel extends CrudPageModel
 		});
 		model.proxy("tabs").commit("setActive", status);
 		
+		/* Top Buttons */
+		table.commit("addTopButton", new TopRefreshModel{});
+		
 		/* Add components */
 		layout.commit("addComponent", classof AppTable);
 		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof TopRefreshButton);
 	}
 	
 	
