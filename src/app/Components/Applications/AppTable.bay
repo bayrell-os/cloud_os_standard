@@ -17,11 +17,15 @@
 -->
 
 <class name="Bayrell.CloudOS.Components.Applications.AppTable"
-    extends="Runtime.Widget.Table.Table">
+    extends="Runtime.Widget.Table.TableDialog">
 
 
 <use name="Runtime.Web.Layout" />
+<use name="Runtime.Web.ModelProxy" />
+<use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Widget.Button" />
+<use name="Runtime.Widget.Message" />
+<use name="Runtime.Widget.Dialog.DialogEvent" />
 <use name="Runtime.Widget.Crud.CrudWidget" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
@@ -49,9 +53,27 @@
 	
 	%elseif (field.name == "replicas")
 	{
-		%set int count_work = (int)item.get("count_work") |> default int 0;
-		%set int count_total = (int)item.get("count_total") |> default int 0;
-		{{ count_work ~ "/" ~ count_total }}
+		%if (item["status"] == 1)
+		{
+			%set int count_work = (int)item.get("count_work") |> default int 0;
+			%set int count_total = (int)item.get("count_total") |> default int 0;
+			{{ count_work ~ "/" ~ count_total }}
+		}
+	}
+	
+	%elseif (field.name == "row_buttons")
+	{
+		%set CrudWidget parent_model = model.getParentWidget(layout);
+		%set string href_edit = parent_model.getRouteHref("edit", {"item": item});
+		
+		<div class="web_table__td_row_buttons">
+			<Button type="small" href={{ href_edit }}>
+				Edit
+			</Button>
+			<Button type="danger small"
+				@event:MouseClickEvent="onDeleteClick"
+				data-item={{ item }} data-pos={{ row_number }}>Delete</Button>
+		</div>
 	}
 	
 	%else
@@ -90,6 +112,35 @@
 	
 </template>
 
+
+<script>
+
+/**
+ * Save dialog event
+ */
+async void onSaveDialogEvent(Message<DialogEvent> msg)
+{
+	ModelProxy parent_model = this.proxyParentWidget();
+	ModelProxy form = parent_model.proxy(["widgets", "form"]);
+	
+	await parent::onSaveDialogEvent(msg);
+	
+	/* Save item */
+	if (msg.event.button_result == "yes")
+	{
+		/* Check if success */
+		if (form.proxy("data").call("isSuccess"))
+		{
+			Dict item = form.proxy("data").data("item");
+			int id = item["id"];
+			string url = static::url("app:applications:edit", {"id": id});
+			document.location = url;
+		}
+	}
+	
+}
+
+</script>
 
 
 </class>

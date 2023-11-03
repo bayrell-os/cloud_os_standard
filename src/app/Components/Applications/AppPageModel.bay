@@ -30,7 +30,9 @@ use Runtime.Widget.Crud.CrudPageModel;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.TopSaveButton;
 use Runtime.Widget.Tab.TabModel;
+use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Table.TopAddDialog;
 use Runtime.Widget.Table.TopRefreshButton;
 use Runtime.Widget.Table.TopRefreshModel;
 use Runtime.Widget.FieldInfo;
@@ -128,10 +130,22 @@ struct AppPageModel extends CrudPageModel
 	
 	
 	/**
+	 * Factory table
+	 */
+	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
+		=> new TableDialogModel{};
+	
+	
+	/**
 	 * Init widget
 	 */
 	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
 	{
+		string action = model.data("action");
+		if (action == "index")
+		{
+			model.commit("setAction", "dialog");
+		}
 		await parent::initWidget(model, layout);
 	}
 	
@@ -167,12 +181,21 @@ struct AppPageModel extends CrudPageModel
 		});
 		model.proxy("tabs").commit("setActive", status);
 		
+		/* Remove field replicas */
+		if (status == "stop")
+		{
+			fields.commit("removeFieldFromList", "replicas");
+		}
+		
 		/* Top Buttons */
+		table.commit("clearTopButtons");
+		table.commit("addTopButton", new TopButtonModel{ "component_name": classof TopAddDialog });
 		table.commit("addTopButton", new TopRefreshModel{});
 		
 		/* Add components */
 		layout.commit("addComponent", classof AppTable);
 		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof TopAddDialog);
 		layout.commit("addComponent", classof TopRefreshButton);
 	}
 	

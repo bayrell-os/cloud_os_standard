@@ -540,6 +540,7 @@ class Schema extends DatabaseSchema
 		Relation item = d["item"];
 		string table_name = item.getTableName();
 		if (
+			table_name == "applications" or
 			table_name == "docker_services" or
 			table_name == "docker_yaml_files" or
 			table_name == "domains" or

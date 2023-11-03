@@ -61,6 +61,7 @@ class AppApi extends CrudApi
 		if (api_name == "crud.item") return "actionItem";
 		if (api_name == "crud.save") return "actionSave";
 		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "crud.dictionary") return "actionDictionary";
 		if (api_name == "compose") return "actionCompose";
 		if (api_name == "stop") return "actionStop";
 		return "";
@@ -143,6 +144,19 @@ class AppApi extends CrudApi
 			"table_name": "modificators",
 			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("name", "asc"),
 		},
+		
+		/* Stack name */
+		new Purify{ "name": "stack_name" },
+		new LowerCase{ "name": "stack_name" },
+		new Required{ "name": "stack_name" },
+		
+		/* Name */
+		new Purify{ "name": "name" },
+		new LowerCase{ "name": "name" },
+		new Required{ "name": "name" },
+		
+		/* Unique */
+		new Unique{"keys": ["stack_name", "name"]},
 	];
 	
 	
@@ -201,13 +215,16 @@ class AppApi extends CrudApi
 		
 		/* Save variables */
 		Collection variables = update_data["variables"];
-		for (int i=0; i<variables.count(); i++)
+		if (variables)
 		{
-			Dict variable = variables.get(i);
-			item_variables.setValue(
-				variable.get("name"),
-				variable.get("value")
-			);
+			for (int i=0; i<variables.count(); i++)
+			{
+				Dict variable = variables.get(i);
+				item_variables.setValue(
+					variable.get("name"),
+					variable.get("value")
+				);
+			}
 		}
 		
 		/* Set app name */
