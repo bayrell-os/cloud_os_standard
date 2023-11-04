@@ -67,6 +67,7 @@ class ServiceApi extends CrudApi
 		"stack_name",
 		"service_name",
 		"docker_image",
+		"docker_tasks",
 		"count_work",
 		"count_total",
 		"gmtime_created",

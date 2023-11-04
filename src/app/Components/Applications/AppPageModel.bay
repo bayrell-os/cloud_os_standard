@@ -50,7 +50,6 @@ use Bayrell.CloudOS.Components.Applications.AppVolumesCrudModel;
 use Bayrell.CloudOS.Components.Applications.ComposeButton;
 use Bayrell.CloudOS.Components.Applications.ComposeModel;
 use Bayrell.CloudOS.Components.Applications.ServiceInfo;
-use Bayrell.CloudOS.Components.Applications.ServiceInfoModel;
 
 
 struct AppPageModel extends CrudPageModel

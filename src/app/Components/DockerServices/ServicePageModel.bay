@@ -37,6 +37,7 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TopButtonModel;
+use Bayrell.CloudOS.Components.Applications.ServiceInfo;
 use Bayrell.CloudOS.Components.DockerServices.ServiceTable;
 use Bayrell.CloudOS.Components.DockerServices.StopButton;
 use Bayrell.CloudOS.Components.DockerServices.StopModel;
@@ -130,11 +131,15 @@ struct ServicePageModel extends CrudPageModel
 			new TopRefreshModel{}
 		);
 		
+		/* Add Service */
+		table.commit("addWidget", new ServiceInfo{});
+		
 		/* Stop widget */
 		table.commit("addWidget", new StopModel() );
 		
 		/* Add components */
 		layout.commit("addComponent", classof Label);
+		layout.commit("addComponent", classof ServiceTable);
 		layout.commit("addComponent", classof TopRefreshButton);
 	}
 	

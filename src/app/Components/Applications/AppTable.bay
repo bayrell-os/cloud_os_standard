@@ -35,8 +35,9 @@
 
 
 <style>
-.app_table{
-	display: flex;
+.app_table %(Tabs)tabs, .app_table %(ServiceInfoComponent)service_info{
+	display: inline-block;
+	vertical-align: top;
 }
 .web_table tr.web_table__row_item{
 	cursor: pointer;
@@ -46,12 +47,6 @@
 
 <template name="renderTop">
 	<TopButtons @model=[] />
-	<!--
-	<div class="web_table__top">
-		<Button type="primary middle">Refresh</Button>
-		<Button type="success middle" href={{ static::url("app:applications:add") }}>[+] Add</Button>
-	</div>
-	-->
 </template>
 
 
