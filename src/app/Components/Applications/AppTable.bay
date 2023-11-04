@@ -31,6 +31,17 @@
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
 <use name="Runtime.Widget.TopButtons" component="true" />
 <use name="Bayrell.CloudOS.Components.Applications.AppTableModel" />
+<use name="Bayrell.CloudOS.Components.Applications.ServiceInfoComponent" component="true" />
+
+
+<style>
+.app_table{
+	display: flex;
+}
+.web_table tr.web_table__row_item{
+	cursor: pointer;
+}
+</style>
 
 
 <template name="renderTop">
@@ -67,7 +78,9 @@
 		%set string href_edit = parent_model.getRouteHref("edit", {"item": item});
 		
 		<div class="web_table__td_row_buttons">
-			<Button type="small" href={{ href_edit }}>
+			<Button type="small" href={{ href_edit }}
+				@event:MouseClickEvent="onEditClick"
+			>
 				Edit
 			</Button>
 			<Button type="danger small"
@@ -90,30 +103,65 @@
 	%set Collection parent_model_path = layout.getWidgetGlobalPath(parent_model.widget_path);
 	%set Collection tabs_model_path = parent_model_path.concat(["tabs"]);
 	
-	<Tabs @global={{ tabs_model_path }} style=["style1"] tabs=[
-		{
-			"name": "run",
-			"label": "Run",
-			"href": static::url("app:applications:index", {"status": "run"}),
-		},
-		{
-			"name": "stop",
-			"label": "Stoped",
-			"href": static::url("app:applications:index", {"status": "stop"}),
-		},
-	]>
-		<TabItem name="run" @global={{ tabs_model_path }}>
-			%render parent::renderTable();
-		</TabItem>
-		<TabItem name="stop" @global={{ tabs_model_path }}>
-			%render parent::renderTable();
-		</TabItem>
-	</Tabs>
+	<div class="app_table">
+	
+		<Tabs @global={{ tabs_model_path }} style=["style1"] tabs=[
+			{
+				"name": "run",
+				"label": "Run",
+				"href": static::url("app:applications:index", {"status": "run"}),
+			},
+			{
+				"name": "stop",
+				"label": "Stoped",
+				"href": static::url("app:applications:index", {"status": "stop"}),
+			},
+		]>
+			<TabItem name="run" @global={{ tabs_model_path }}>
+				%render parent::renderTable();
+			</TabItem>
+			<TabItem name="stop" @global={{ tabs_model_path }}>
+				%render parent::renderTable();
+			</TabItem>
+		</Tabs>
+		
+		<ServiceInfoComponent @model=["widgets", "service_info"] />
+	
+	</div>
 	
 </template>
 
 
 <script>
+
+
+/**
+ * Row click
+ */
+async void onRowClick(Message<MouseClickEvent> msg)
+{
+	ModelProxy model = this.proxy();
+	int row_number = msg.sender.params.get("data-row-number");
+	model.proxy("data").commit("setSelected", row_number);
+	
+	/* Load data */
+	Dict item = model.data(["data", "items", row_number]);
+	
+	/* Update service name */
+	await model.proxy(["widgets", "service_info"]).commitAsync("updateService", item);
+}
+
+
+/**
+ * Edit click
+ */
+async void onEditClick(Message<MouseClickEvent> msg)
+{
+	msg.cancel();
+	string href = msg.sender.params.get('href');
+	document.location = href;
+}
+
 
 /**
  * Save dialog event

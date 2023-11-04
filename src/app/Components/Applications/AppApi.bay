@@ -80,6 +80,7 @@ class AppApi extends CrudApi
 		"template_version_id",
 		"count_work",
 		"count_total",
+		"docker_tasks",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -184,6 +185,7 @@ class AppApi extends CrudApi
 				"templates.uid as template_uid",
 				"docker_services.count_work as count_work",
 				"docker_services.count_total as count_total",
+				"docker_services.docker_tasks as docker_tasks",
 			])
 			
 			.leftJoin(

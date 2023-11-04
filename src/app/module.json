@@ -14,6 +14,8 @@
 		"Components/Applications/AppVolumesCrudModel.bay",
 		"Components/Applications/ComposeButton.bay",
 		"Components/Applications/ComposeModel.bay",
+		"Components/Applications/ServiceInfo.bay",
+		"Components/Applications/ServiceInfoComponent.bay",
 		"Components/DockerServices/ServicePageModel.bay",
 		"Components/DockerServices/ServicePageRoute.bay",
 		"Components/DockerServices/ServiceTable.bay",
