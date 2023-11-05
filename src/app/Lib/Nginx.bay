@@ -1,0 +1,179 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Lib;
+
+use Runtime.fs;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryResult;
+use Runtime.ORM.Relation;
+use Bayrell.CloudOS.Lib.DockerService;
+
+
+class Nginx
+{
+	
+	/**
+	 * Returns upstream
+	 */
+	static Dict getUpstream(Dict service, string target_port, string network_name)
+	{
+		Vector res = new Vector();
+		
+		string docker_name = service["docker_name"];
+		string upstream_name = target_port ~ "." ~ docker_name ~ "." ~ network_name ~ ".example";
+		
+		Collection ip_arr = DockerService::getIpAddresses(service, network_name);
+		if (ip_arr.count() > 0)
+		{
+			res.pushValue("upstream " ~ upstream_name ~ " {");
+			for (int i=0; i<ip_arr.count(); i++)
+			{
+				string ip = ip_arr.get(i);
+				res.pushValue("  server " ~ ip ~ ":" ~ target_port ~ ";");
+			}
+			res.pushValue("}");
+		}
+		
+		return {
+			"res": rs::join("\n", res),
+			"name": upstream_name,
+		};
+	}
+	
+	
+	/**
+	 * Update upstreams
+	 */
+	async static void updateUpstreams(string network_name)
+	{
+		Connection conn = Connection::getConnection();
+		
+		/* Get services */
+		Query q = (new Query())
+			.select("docker_services")
+			.where("enable", "=", "1")
+			.where("is_deleted", "=", "0")
+			.where("docker_name", "!=", "")
+			.orderBy("docker_name", "asc")
+		;
+		
+		QueryResult services = await conn.fetchAll(q);
+		
+		
+		/* Get routes */
+		Query q = (new Query())
+			.select("routes")
+			.where("enable", "=", "1")
+			.where("protocol", "=", "http")
+			.orderBy("route_prefix", "desc")
+		;
+		
+		QueryResult routes = await conn.fetchAll(q);
+		
+		
+		/* Get upstreams */
+		Map upstreams_names = new Map();
+		Vector upstreams = new Vector();
+		for (int i=0; i<services.count(); i++)
+		{
+			Dict service = services.get(i);
+			string docker_name = service["docker_name"];
+			
+			/* Get service routes */
+			Collection service_routes = routes.filter(
+				Dict (Dict route) use (docker_name)
+				{
+					return route["docker_name"] == docker_name;
+				}
+			);
+			
+			for (int j=0; j<service_routes.count(); j++)
+			{
+				Dict route = service_routes.get(j);
+				Dict upstream = static::getUpstream(
+					service,
+					route["target_port"],
+					network_name
+				);
+				
+				if (not upstreams_names.has(network_name))
+				{
+					upstreams_names.setValue(network_name, 1);
+					upstreams.pushValue(upstream["res"]);
+				}
+			}
+		}
+		
+		/* Save upstreams content */
+		upstreams = upstreams.filter( bool (string upstream) => upstream != "" );
+		string upstreams_content = rs::join("\n", upstreams);
+		await static::updateFile(
+			"/conf.d/99-" ~ network_name ~ "-upstreams.conf",
+			upstreams_content
+		);
+	}
+	
+	
+	/**
+	 * Update file
+	 */
+	async static void updateFile(string file_name, string content)
+	{
+		Connection conn = Connection::getConnection();
+		Relation nginx_file = await Relation::findOrCreate("nginx_files", conn, {
+			"name": file_name,
+		});
+		
+		nginx_file.set("content", content);
+		nginx_file.set("enable", 1);
+		nginx_file.set("is_deleted", 0);
+		nginx_file.set("timestamp", rtl::time());
+		
+		await nginx_file.save(conn);
+	}
+	
+	
+	/**
+	 * Update domains
+	 */
+	async static void updateDomains()
+	{
+		
+	}
+	
+	
+	/**
+	 * Update admin upstreams
+	 */
+	async static void updateAdminUpstreams()
+	{
+		
+	}
+	
+	
+	/**
+	 * Reload nginx
+	 */
+	async static void reload()
+	{
+		
+	}
+	
+}

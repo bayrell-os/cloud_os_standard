@@ -29,6 +29,47 @@ class DockerService
 {
 	
 	/**
+	 * Returns ip addresses
+	 */
+	static Vector getIpAddresses(Dict service, string network_name)
+	{
+		Vector ip_res = new Vector();
+		
+		Collection tasks = service["docker_tasks"];
+		for (int tasks_i=0; tasks_i<tasks.count(); tasks_i++)
+		{
+			Dict task = tasks[tasks_i];
+			
+			string state = task["Status", "State"];
+			string desired_state = task["DesiredState"];
+			if (state != "running") continue;
+			if (desired_state != "running") continue;
+			
+			Collection networks = task["NetworksAttachments"];
+			if (networks == null) continue;
+			
+			for (int networks_i=0; networks_i<networks.count(); networks_i++)
+			{
+				Dict network = networks[networks_i];
+				string name = network["Network", "Spec", "Name"];
+				if (name == network_name)
+				{
+					Collection addresses = network["Addresses"];
+					for (int addresses_i=0; addresses_i<addresses.count(); addresses_i++)
+					{
+						string address = addresses[addresses_i];
+						Collection arr = rs::split("/", address);
+						ip_res.pushValue(arr[0]);
+					}
+				}
+			}
+		}
+		
+		return ip_res;
+	}
+	
+	
+	/**
 	 * Compose app
 	 */
 	async static string composeApp(Relation app)
