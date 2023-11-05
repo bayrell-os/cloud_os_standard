@@ -206,9 +206,9 @@ class AppApi extends CrudApi
 	/**
 	 * Before update item event
 	 */
-	async void onSaveBefore(Relation item, Dict update_data)
+	async void onSaveAfter(Relation item, Dict update_data)
 	{
-		await parent::onSaveBefore(item, update_data);
+		await parent::onSaveAfter(item, update_data);
 		
 		/* Get item variables */
 		Map item_variables = item.get("variables");
@@ -236,14 +236,18 @@ class AppApi extends CrudApi
 		/* Set variables */
 		item.set("variables", item_variables.toDict());
 		
-		/* Build xml and yaml content */
+		/* Create AppXml */
 		AppXml xml = new AppXml();
 		xml.item = item;
 		xml.conn = this.getDatabaseConnection();
-		await xml.buildContent();
+		
+		/* Build xml and yaml content */
+		Dict pk = this.post_data["pk"];
+		await xml.buildContent(pk == null);
 		
 		item.set("content", xml.xml_content);
 		item.set("yaml", xml.yaml_content);
+		await item.save(xml.conn);
 	}
 	
 	
@@ -278,6 +282,7 @@ class AppApi extends CrudApi
 	{
 		string xml_content = this.item.get("content");
 		XML template = XML::loadXml(xml_content);
+		
 		if (not template.exists()) return;
 		
 		/* Get variables */
@@ -288,7 +293,6 @@ class AppApi extends CrudApi
 		xml.conn = this.getDatabaseConnection();
 		
 		/* Load template */
-		await xml.loadTemplateContent();
 		await xml.loadModificators();
 		
 		/* Get ariables */

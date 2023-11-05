@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Lib;
 
 use Runtime.re;
+use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
@@ -44,11 +45,19 @@ class AppXml
 	/**
 	 * Build content
 	 */
-	async void buildContent()
+	async void buildContent(bool init_template = false)
 	{
+		/* Load template */
+		await this.loadTemplateContent();
+		
+		/* Add default modificators */
+		if (init_template)
+		{
+			await this.addDefaultModificators();
+		}
+		
 		/* Load operations */
 		await this.loadModificators();
-		await this.loadTemplateContent();
 		
 		/* Patch template */
 		this.patchTemplate();
@@ -219,6 +228,49 @@ class AppXml
 		
 		YamlConverter converter = new YamlConverter(yaml, variables);
 		this.yaml_content = converter.convert();
+	}
+	
+	
+	/**
+	 * Add default modificators
+	 */
+	async void addDefaultModificators()
+	{
+		if (not this.template_orig) return;
+		if (not this.template_orig.exists()) return;
+		
+		XML modificators = this.template_orig.get("modificators").get(0);
+		if (not modificators) return;
+		
+		int app_id = this.item.get("id");
+		
+		Collection<XML> items = modificators.get("li");
+		for (int i=0; i<items.count(); i++)
+		{
+			string modificator_uid = items.get(i).value();
+			
+			/* Get modificator by uid */
+			Query q = (new Query)
+				.select("modificators")
+				.where("uid", "=", modificator_uid)
+			;
+			
+			Dict item = await this.conn.fetch(q);
+			if (item)
+			{
+				int modificator_id = item["id"];
+				
+				/* Add modificator to app */
+				Query q = (new Query)
+					.insert("app_modificators")
+					.values({
+						"app_id": app_id,
+						"modificator_id": modificator_id,
+					})
+				;
+				await this.conn.execute(q);
+			}
+		}
 	}
 	
 	

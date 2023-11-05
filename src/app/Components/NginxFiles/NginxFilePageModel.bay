@@ -137,6 +137,11 @@ struct NginxFilePageModel extends CrudPageModel
 			"content",
 		]);
 		
+		if (form.data("action") == "edit")
+		{
+			fields.commit("removeFieldFromList", "name");
+		}
+		
 		/* Add components */
 		layout.commit("addComponent", classof Input);
 		layout.commit("addComponent", classof Select);

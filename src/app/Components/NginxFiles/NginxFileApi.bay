@@ -27,6 +27,7 @@ use Runtime.Widget.Crud.Api.CrudRule;
 use Runtime.Widget.Crud.Api.Dictionary;
 use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.ReadOnly;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 
@@ -91,7 +92,8 @@ class NginxFileApi extends CrudApi
 	[
 		new Purify{ "name": "name" },
 		new LowerCase{ "name": "name" },
-		new Required{ "name": "name" },
+		new Required{ "name": "name", "check_update": false },
+		new ReadOnly{ "name": "name", "can_create": true },
 		new Required{ "name": "enable" },
 		new Unique{"keys": ["name"]},
 	];
