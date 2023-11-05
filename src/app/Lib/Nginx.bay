@@ -19,10 +19,13 @@
 namespace Bayrell.CloudOS.Lib;
 
 use Runtime.fs;
+use Runtime.io;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
+use Runtime.XML.XML;
+use Bayrell.CloudOS.Lib.AppXml;
 use Bayrell.CloudOS.Lib.DockerService;
 
 
@@ -76,7 +79,6 @@ class Nginx
 		
 		QueryResult services = await conn.fetchAll(q);
 		
-		
 		/* Get routes */
 		Query q = (new Query())
 			.select("routes")
@@ -86,7 +88,6 @@ class Nginx
 		;
 		
 		QueryResult routes = await conn.fetchAll(q);
-		
 		
 		/* Get upstreams */
 		Map upstreams_names = new Map();
@@ -113,9 +114,10 @@ class Nginx
 					network_name
 				);
 				
-				if (not upstreams_names.has(network_name))
+				string upstream_name = upstream["name"];
+				if (not upstreams_names.has(upstream_name))
 				{
-					upstreams_names.setValue(network_name, 1);
+					upstreams_names.setValue(upstream_name, 1);
 					upstreams.pushValue(upstream["res"]);
 				}
 			}
@@ -153,27 +155,143 @@ class Nginx
 	/**
 	 * Update domains
 	 */
-	async static void updateDomains()
+	async static void updateAdminUpstreams(string network_name)
 	{
+		bool updated = false;
+		Connection conn = Connection::getConnection();
 		
+		/* Get services */
+		Query q = (new Query())
+			.select("docker_services")
+			.fields([
+				"applications.name",
+				"applications.stack_name",
+				"applications.content",
+				"applications.variables",
+				"docker_services.docker_tasks",
+				"docker_services.docker_name",
+			])
+			.innerJoin(
+				"applications",
+				[
+					"applications.stack_name=docker_services.stack_name",
+					"applications.name=docker_services.service_name",
+					"docker_services.enable=1",
+					"docker_services.is_deleted=0",
+				]
+			)
+			.where("enable", "=", "1")
+			.where("is_deleted", "=", "0")
+			.where("docker_name", "!=", "")
+			.orderBy("docker_name", "asc")
+		;
+		
+		QueryResult services = await conn.fetchAll(q);
+		Vector service_admin_page = new Vector;
+		Map upstreams_names = new Map;
+		Vector upstreams = new Vector;
+		
+		for (int i=0; i<services.count(); i++)
+		{
+			Dict service = services.get(i);
+			
+			XML xml_content = XML::loadXml(service.get("content"));
+			
+			if (xml_content == null) continue;
+			if (not xml_content.exists()) continue;
+			
+			XML xml_admin = xml_content.get("admin").get(0);
+			if (xml_admin == null) continue;
+			if (not xml_admin.exists()) continue;
+			
+			XML xml_port = xml_admin.get("port").get(0);
+			if (xml_port == null) continue;
+			if (not xml_port.exists()) continue;
+			
+			AppXml xml = new AppXml();
+			xml.item = service;
+			xml.conn = conn;
+			xml.template = xml_content;
+			xml.buildVariables();
+			
+			XML xml_nginx = xml_admin.get("nginx").get(0);
+			if (xml_nginx == null) continue;
+			if (not xml_nginx.exists()) continue;
+			
+			string nginx_content = xml_nginx.value();
+			Collection variables = xml.getVariables();
+			nginx_content = AppXml::patchContent(nginx_content, variables);
+			
+			string docker_name = service["docker_name"];
+			service_admin_page.pushValue("# Service " ~ docker_name);
+			service_admin_page.pushValue(nginx_content);
+			
+			string target_port = xml_port.value();
+			Dict upstream = static::getUpstream(service, target_port, network_name);
+			
+			string upstream_name = upstream["name"];
+			if (not upstreams_names.has(upstream_name))
+			{
+				upstreams_names.setValue(upstream_name, 1);
+				upstreams.pushValue(upstream["res"]);
+			}
+		}
+		
+		/* Save admin content */
+		service_admin_page = service_admin_page.filter( bool (string s) => s != "" );
+		string admin_page_content = rs::join("\n", service_admin_page);
+		bool res1 = await static::updateLocalFile(
+			"/etc/nginx/inc/services_admin_page.inc",
+			admin_page_content
+		);
+		
+		/* Save upstreams content */
+		upstreams = upstreams.filter( bool (string s) => s != "" );
+		string upstreams_content = rs::join("\n", upstreams);
+		bool res2 = await static::updateLocalFile(
+			"/etc/nginx/conf.d/99-admin-upstreams.conf",
+			upstreams_content
+		);
+		
+		if (res1 or res2)
+		{
+			await Nginx::localReload();
+		}
 	}
 	
 	
 	/**
-	 * Update admin upstreams
+	 * Update local file
 	 */
-	async static void updateAdminUpstreams()
+	async static bool updateLocalFile(string file_name, string new_content)
 	{
+		string old_content = "";
 		
+		bool file_exists = await fs::isFile(file_name);
+		if (file_exists)
+		{
+			old_content = await fs::readFile(file_name)
+		}
+		
+		if (old_content != new_content or not file_exists)
+		{
+			await fs::saveFile(file_name, new_content);
+			return true;
+		}
+		
+		return false;
 	}
 	
 	
 	/**
 	 * Reload nginx
 	 */
-	async static void reload()
+	async static void localReload()
 	{
-		
+		io::print("Reload nginx");
+		#ifcode PHP then
+		shell_exec("sudo /usr/sbin/nginx -s reload");
+		#endif
 	}
 	
 }

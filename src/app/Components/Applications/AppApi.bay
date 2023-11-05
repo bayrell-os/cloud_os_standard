@@ -204,6 +204,30 @@ class AppApi extends CrudApi
 	
 	
 	/**
+	 * Convert item
+	 */
+	async Dict convertItem(string action, Relation item)
+	{
+		Dict res = parent::convertItem(action, item);
+		
+		bool is_admin = false;
+		XML xml = XML::loadXml(item.get("content"));
+		if (xml and xml.exists())
+		{
+			XML xml_admin = xml.get("admin").get(0);
+			if (xml_admin)
+			{
+				is_admin = true;
+			}
+		}
+		
+		res <= is_admin <= is_admin;
+		
+		return res;
+	}
+	
+	
+	/**
 	 * Before update item event
 	 */
 	async void onSaveAfter(Relation item, Dict update_data)
@@ -228,10 +252,6 @@ class AppApi extends CrudApi
 				);
 			}
 		}
-		
-		/* Set app name */
-		string app_name = item.get("name");
-		item_variables.setValue("_var_app_name_", app_name);
 		
 		/* Set variables */
 		item.set("variables", item_variables.toDict());

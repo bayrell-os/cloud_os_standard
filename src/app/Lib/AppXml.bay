@@ -201,6 +201,35 @@ class AppXml
 				});
 			}
 		}
+		
+		/* Set app name */
+		this.variables.pushValue({
+			"name": "_var_app_name_",
+			"value": this.item.get("name"),
+		});
+		this.variables.pushValue({
+			"name": "_var_service_name_",
+			"value": this.item.get("stack_name") ~ "_" ~ this.item.get("name"),
+		});
+	}
+	
+	
+	/**
+	 * Returns variables
+	 */
+	Dict getVariables()
+	{
+		Map variables = new Map();
+		for (int i=0; i<this.variables.count(); i++)
+		{
+			Dict variable = this.variables.get(i);
+			variables.setValue(
+				variable.get("name"),
+				variable.get("value"),
+			)
+		}
+		
+		return variables.toDict();
 	}
 	
 	
@@ -216,18 +245,26 @@ class AppXml
 		if (not yaml) return;
 		
 		/* Get variables */
-		Map variables = new Map();
-		for (int i=0; i<this.variables.count(); i++)
-		{
-			Dict variable = this.variables.get(i);
-			variables.setValue(
-				variable.get("name"),
-				variable.get("value"),
-			)
-		}
+		Dict variables = this.getVariables();
 		
 		YamlConverter converter = new YamlConverter(yaml, variables);
 		this.yaml_content = converter.convert();
+	}
+	
+	
+	/**
+	 * Patch content
+	 */
+	static void patchContent(string content, Dict variables)
+	{
+		Collection variables_keys = variables.keys();
+		for (int i=0; i<variables_keys.count(); i++)
+		{
+			string var_name = variables_keys.get(i);
+			string var_value = variables.get(var_name);
+			content = rs::replace(var_name, var_value, content);
+		}
+		return content;
 	}
 	
 	

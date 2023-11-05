@@ -45,12 +45,7 @@ class UpdateNginx extends BaseCommand
 	async static int run()
 	{
 		await Nginx::updateUpstreams("cloud_network");
-		await Nginx::updateDomains();
-        bool updated = await Nginx::updateAdminUpstreams();
-        if (updated)
-        {
-            await Nginx::reload();
-        }
+		await Nginx::updateAdminUpstreams("cloud_network");
 		return static::SUCCESS;
 	}
 	

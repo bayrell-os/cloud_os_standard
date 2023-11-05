@@ -67,15 +67,29 @@
 		}
 	}
 	
+	%elseif (field.name == "admin_button")
+	{
+		%set int is_admin = (int)item.get("is_admin") |> default bool false;
+		%if (is_admin)
+		{
+			%set string service_name = item.get("stack_name") ~ "_" ~ item.get("name");
+			<Button type="small"
+				href={{ "/applications/admin/" ~ service_name ~ "/ "}}
+			>Admin</Button>
+		}
+		%else
+		{
+			{{ "No" }}
+		}
+	}
+	
 	%elseif (field.name == "row_buttons")
 	{
 		%set CrudWidget parent_model = model.getParentWidget(layout);
 		%set string href_edit = parent_model.getRouteHref("edit", {"item": item});
 		
 		<div class="web_table__td_row_buttons">
-			<Button type="small" href={{ href_edit }}
-				@event:MouseClickEvent="onEditClick"
-			>
+			<Button type="small" href={{ href_edit }}>
 				Edit
 			</Button>
 			<Button type="danger small"
@@ -144,17 +158,6 @@ async void onRowClick(Message<MouseClickEvent> msg)
 	
 	/* Update service name */
 	await model.proxy(["widgets", "service_info"]).commitAsync("updateService", item);
-}
-
-
-/**
- * Edit click
- */
-async void onEditClick(Message<MouseClickEvent> msg)
-{
-	msg.cancel();
-	string href = msg.sender.params.get('href');
-	document.location = href;
 }
 
 

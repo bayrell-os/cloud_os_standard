@@ -107,6 +107,10 @@ struct AppPageModel extends CrudPageModel
 			"name": "replicas",
 			"component": classof Label,
 		},
+		"admin_button": new FieldInfo{
+			"label": "Admin",
+			"name": "admin_button",
+		},
 		"row_buttons": new FieldInfo{
 			"name": "row_buttons",
 		},
@@ -172,6 +176,7 @@ struct AppPageModel extends CrudPageModel
 			"service_name",
 			"status",
 			"replicas",
+			"admin_button",
 			"row_buttons",
 		]);
 		
@@ -185,6 +190,7 @@ struct AppPageModel extends CrudPageModel
 		/* Remove field replicas */
 		if (status == "stop")
 		{
+			fields.commit("removeFieldFromList", "admin_button");
 			fields.commit("removeFieldFromList", "replicas");
 		}
 		

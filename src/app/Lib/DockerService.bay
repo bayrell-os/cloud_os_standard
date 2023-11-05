@@ -36,6 +36,8 @@ class DockerService
 		Vector ip_res = new Vector();
 		
 		Collection tasks = service["docker_tasks"];
+		if (tasks == null) return ip_res;
+		
 		for (int tasks_i=0; tasks_i<tasks.count(); tasks_i++)
 		{
 			Dict task = tasks[tasks_i];
