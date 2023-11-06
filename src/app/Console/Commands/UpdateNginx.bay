@@ -46,6 +46,7 @@ class UpdateNginx extends BaseCommand
 	{
 		await Nginx::updateUpstreams("cloud_network");
 		await Nginx::updateAdminUpstreams("cloud_network");
+		await Nginx::updateDomains();
 		return static::SUCCESS;
 	}
 	

@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Lib;
 
 use Runtime.fs;
 use Runtime.io;
+use Runtime.re;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
@@ -130,6 +131,162 @@ class Nginx
 			"/conf.d/99-" ~ network_name ~ "-upstreams.conf",
 			upstreams_content
 		);
+	}
+	
+	
+	/**
+	 * Update domains
+	 */
+	async static void updateDomains()
+	{
+		Connection conn = Connection::getConnection();
+		
+		/* Get services */
+		Query q = (new Query())
+			.select("domains")
+			.addField("spaces.uid as space_uid")
+			.leftJoin(
+				"spaces",
+				[
+					"domains.space_id=spaces.id"
+				]
+			)
+			.where("domains.is_deleted", "=", "0")
+			.orderBy("domains.domain_name", "asc")
+		;
+		
+		QueryResult domains = await conn.fetchAll(q);
+		for (int i=0; i<domains.count(); i++)
+		{
+			Dict domain = domains.get(i);
+			int domain_id = domain["id"];
+			string domain_name = domain["domain_name"];
+			
+			Query q = (new Query())
+				.select("routes")
+				.where("routes.enable", "=", "1")
+				.where("routes.protocol", "=", "http")
+				.where("routes.domain_id", "=", domain_id)
+				.orderBy("routes.route_prefix", "desc")
+			;
+			QueryResult routes = await conn.fetchAll(q);
+			
+			bool has_root_route = false;
+			
+			Vector nginx_routes = new Vector;
+			for (int j=0; j<routes.count(); j++)
+			{
+				Dict route = routes[j];
+				
+				string upstream_name = route["target_port"] ~ "." ~ route["docker_name"]
+					~ ".cloud_network.example"
+				;
+				Dict protocol_data = route["protocol_data"];
+				
+				bool has_websocket = protocol_data["websocket"] |> default bool false;
+				bool has_rewrite = protocol_data["nginx_rewrite"] |> default bool true;
+				
+				string domain_route_prefix = route["route_prefix"];
+				string domain_target_prefix = route["target_prefix"];
+				string domain_route_prefix = re::replace("\/+$", "", domain_route_prefix);
+				string domain_target_prefix = re::replace("\/+$", "", domain_target_prefix);
+				
+				if (domain_route_prefix == "")
+				{
+					has_root_route = true;
+				}
+				
+				nginx_routes.pushValue("  location " ~ domain_route_prefix ~ "/ {");
+				
+				/* Proxy params */
+				string domain_target_prefix_last_slash = "/";
+				if (domain_target_prefix == "" and not has_rewrite)
+				{
+					domain_target_prefix_last_slash = "";
+				}
+				nginx_routes.pushValue("    proxy_pass http://" ~ upstream_name ~
+					domain_target_prefix ~ domain_target_prefix_last_slash ~ ";");
+				nginx_routes.pushValue("    include proxy_params;");
+				
+				/* Add websocket settings */
+				if (has_websocket)
+				{
+					nginx_routes.pushValue("    proxy_http_version 1.1;");
+					nginx_routes.pushValue("    proxy_set_header Upgrade $http_upgrade;");
+					nginx_routes.pushValue("    proxy_set_header Connection \"upgrade\";");
+				}
+				
+				/* Add route prefix */
+				if (has_rewrite)
+				{
+					nginx_routes.pushValue("    proxy_set_header X-FORWARDED-PREFIX \"" ~
+						domain_route_prefix ~ "\";");
+				}
+				else
+				{
+					nginx_routes.pushValue("    proxy_set_header X-FORWARDED-PREFIX \"\";");
+				}
+				
+				/* Add space id */
+				if (domain["space_uid"] != "")
+				{
+					nginx_routes.pushValue("    proxy_set_header X-SPACE-UID \"" ~
+						domain["space_uid"] ~ "\";");
+				}
+				else
+				{
+					nginx_routes.pushValue("    proxy_set_header X-SPACE-UID \"0\";");
+				}
+				
+				/* Add rewrite */
+				if (domain_route_prefix != "" and has_rewrite)
+				{
+					nginx_routes.pushValue("    rewrite " ~ domain_route_prefix ~
+						"/(.*) " ~ "/$1 break;");
+				}
+				
+				/* Add nginx_config */
+				string nginx_config = rs::trim(route["nginx_config"]);
+				if (nginx_config != "")
+				{
+					Collection nginx_config_arr = rs::split("\n", nginx_config);
+					nginx_config_arr = nginx_config_arr.map(
+						string (string s) => "    " ~ s
+					);
+					nginx_config = rs::join("\n", nginx_config);
+					nginx_routes.pushValue(nginx_config);
+				}
+				
+				nginx_routes.pushValue("  }");
+			}
+			
+			/* Convert nginx routes to string */
+			string nginx_routes_content = "\n" ~ rs::join("\n", nginx_routes);
+			
+			/* Create nginx files */
+			string nginx_content = domain["nginx_template"];
+			if (nginx_content == "")
+			{
+				nginx_content = "server {\n";
+				nginx_content ~= "  listen 80;\n";
+				nginx_content ~= "  server_name %DOMAIN_NAME%;\n";
+				nginx_content ~= "  root /var/www/html;\n";
+				nginx_content ~= "  index index.php index.html;\n";
+				nginx_content ~= "  autoindex off;\n";
+				nginx_content ~= "%ROUTES%\n";
+				nginx_content ~= "%SSL%\n";
+				nginx_content ~= "}";
+			}
+			
+			nginx_content = rs::replace("%DOMAIN_NAME%", domain["domain_name"], nginx_content);
+			nginx_content = rs::replace("%ROUTES%", nginx_routes_content, nginx_content);
+			nginx_content = rs::replace("%SSL%", "", nginx_content);
+			
+			/* Update file */
+			string file_name = "/domains/" ~ domain["domain_name"] ~ ".conf";
+			await static::updateFile(file_name, nginx_content);
+		}
+		
 	}
 	
 	
