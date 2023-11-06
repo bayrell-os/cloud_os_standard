@@ -1,4 +1,4 @@
--- Adminer 4.7.1 SQLite 3 dump
+-- Adminer 4.8.1 SQLite 3 3.31.1 dump
 
 DROP TABLE IF EXISTS "app_modificators";
 CREATE TABLE "app_modificators" (
@@ -6,9 +6,9 @@ CREATE TABLE "app_modificators" (
   "modificator_id" integer NOT NULL
 );
 
-CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
-
 CREATE UNIQUE INDEX "applications_modificators_app_id_modificator_id" ON "app_modificators" ("app_id", "modificator_id");
+
+CREATE INDEX "applications_modificators_modificator_id" ON "app_modificators" ("modificator_id");
 
 
 DROP TABLE IF EXISTS "applications";
@@ -30,9 +30,9 @@ CREATE TABLE "applications" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
-
 CREATE INDEX "app_status_template_id" ON "applications" ("template_version_id");
+
+CREATE UNIQUE INDEX "applications_stack_name_name" ON "applications" ("stack_name", "name");
 
 
 DROP TABLE IF EXISTS "cron";
@@ -55,6 +55,8 @@ CREATE TABLE "docker_services" (
   "admin_custom_nginx" text NOT NULL DEFAULT '',
   "enable" integer NOT NULL DEFAULT '0',
   "is_deleted" integer NOT NULL DEFAULT '0',
+  "count_work" integer NOT NULL,
+  "count_total" integer NOT NULL,
   "data" text NULL,
   "docker_name" text NOT NULL,
   "docker_image" text NOT NULL DEFAULT '',
@@ -67,9 +69,9 @@ CREATE TABLE "docker_services" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
-
 CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
+
+CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
 
 
 DROP TABLE IF EXISTS "docker_yaml_files";
@@ -84,11 +86,11 @@ CREATE TABLE "docker_yaml_files" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
+CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
 
 CREATE UNIQUE INDEX "docker_yaml_files_stack_name_file_name" ON "docker_yaml_files" ("stack_name", "file_name");
 
-CREATE INDEX "docker_yaml_files_file_name" ON "docker_yaml_files" ("file_name");
+CREATE INDEX "docker_yaml_files_stack_name" ON "docker_yaml_files" ("stack_name");
 
 
 DROP TABLE IF EXISTS "domains";
@@ -187,7 +189,7 @@ CREATE TABLE "routes" (
   "enable" integer NOT NULL DEFAULT '0',
   "protocol" text NOT NULL,
   "protocol_data" text NOT NULL DEFAULT '',
-  "domain_name" text NOT NULL,
+  "domain_id" integer NULL,
   "route_prefix" text NOT NULL DEFAULT '/',
   "docker_name" text NOT NULL,
   "source_port" integer NOT NULL DEFAULT '80',
@@ -199,7 +201,7 @@ CREATE TABLE "routes" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE INDEX "routes_domain_name" ON "routes" ("domain_name");
+CREATE INDEX "routes_domain_id" ON "routes" ("domain_id");
 
 
 DROP TABLE IF EXISTS "spaces";
@@ -224,9 +226,9 @@ CREATE TABLE "spaces_roles" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "spaces_roles_space_id_name" ON "spaces_roles" ("space_id", "name");
-
 CREATE INDEX "spaces_roles_name" ON "spaces_roles" ("name");
+
+CREATE UNIQUE INDEX "spaces_roles_space_id_name" ON "spaces_roles" ("space_id", "name");
 
 
 DROP TABLE IF EXISTS "spaces_users";
@@ -238,9 +240,9 @@ CREATE TABLE "spaces_users" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "spaces_users_space_id_user_id" ON "spaces_users" ("space_id", "user_id");
-
 CREATE INDEX "spaces_users_user_id" ON "spaces_users" ("user_id");
+
+CREATE UNIQUE INDEX "spaces_users_space_id_user_id" ON "spaces_users" ("space_id", "user_id");
 
 
 DROP TABLE IF EXISTS "spaces_users_roles";
@@ -290,9 +292,9 @@ CREATE TABLE "templates_versions" (
   "gmtime_updated" numeric NOT NULL
 );
 
-CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
-
 CREATE INDEX "templates_versions_template_id" ON "templates_versions" ("template_id");
+
+CREATE UNIQUE INDEX "templates_versions_template_id_version" ON "templates_versions" ("template_id", "version");
 
 
 DROP TABLE IF EXISTS "users";

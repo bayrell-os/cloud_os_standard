@@ -106,3 +106,176 @@ CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
 CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
 COMMIT;
 
+
+-- Update modificators
+
+UPDATE modificators
+SET `version`='1.6', `content`='<?xml version="1.1" encoding="UTF-8" ?>
+<modificator>
+	<uid>org.bayrell.modificator.cloud_os</uid>
+	<name>Cloud OS</name>
+	<date>2022-08-09T17:15:00+06:00</date>
+	<version>1.6</version>
+	<priority>-1000</priority>
+	<operations>
+    
+		<operation type="add" position="first">
+			<path>/template/yaml[not(version)]</path>
+			<value>
+				<version>3.7</version>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(hostname)]</path>
+			<value>
+				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(environment)]</path>
+			<value>
+				<environment></environment>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(logging)]</path>
+			<value>
+				<logging>
+					<driver>journald</driver>
+				</logging>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(deploy)]</path>
+			<value>
+				<deploy>
+					<replicas type="int">1</replicas>
+					<endpoint_mode>dnsrr</endpoint_mode>
+					<rollback_config>
+						<parallelism type="int">1</parallelism>
+						<failure_action>continue</failure_action>
+						<order>start-first</order>
+						<delay>40s</delay>
+					</rollback_config>
+					<update_config>
+						<parallelism type="int">1</parallelism>
+						<failure_action>rollback</failure_action>
+						<order>start-first</order>
+						<delay>40s</delay>
+					</update_config>
+					<restart_policy>
+						<condition>on-failure</condition>
+						<max_attempts type="int">3</max_attempts>
+						<delay>5s</delay>
+						<window>120s</window>
+					</restart_policy>
+				</deploy>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(dns)]</path>
+			<value>
+				<dns array="true">172.18.0.1</dns>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*[not(networks)]</path>
+			<value>
+				<networks array="true">cloud_network</networks>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml[not(networks)]</path>
+			<value>
+				<networks>
+					<cloud_network>
+						<external type="boolean">true</external>
+					</cloud_network>
+				</networks>
+			</value>
+		</operation>
+		
+		<operation type="add">
+			<path>/template/yaml/services/*/environment</path>
+			<value>
+				<DOCKER_NODE_ID>{{.Node.ID}}</DOCKER_NODE_ID>
+				<DOCKER_TASK_ID>{{.Task.ID}}</DOCKER_TASK_ID>
+				<DOCKER_SERVICE_ID>{{.Service.ID}}</DOCKER_SERVICE_ID>
+				<DOCKER_SERVICE_NAME>{{.Service.Name}}</DOCKER_SERVICE_NAME>
+				<TZ>Asia/Almaty</TZ>
+			</value>
+		</operation>
+		
+		<!-- Patch last -->
+		
+		<operation type="add" priority="9999">
+			<path>/template/variables[not(variable[name="_var_app_name_"])]</path>
+			<value>
+				<variable>
+					<name>_var_app_name_</name>
+					<label>App name</label>
+					<type>string</type>
+				</variable>
+			</value>
+		</operation>
+
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/volumes</path>
+			<name>array</name>
+			<value>true</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/env_file</path>
+			<name>array</name>
+			<value>true</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/ports</path>
+			<name>array</name>
+			<value>true</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/environment</path>
+			<name>type</name>
+			<value>map</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/volumes</path>
+			<name>type</name>
+			<value>map</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/volumes/*</path>
+			<name>type</name>
+			<value>map</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/ports/target</path>
+			<name>type</name>
+			<value>int</value>
+		</operation>
+		
+		<operation type="addAttribute" priority="9999">
+			<path>/template/yaml/services/*/ports/published</path>
+			<name>type</name>
+			<value>int</value>
+		</operation>
+		
+	</operations>
+</modificator>'
+
+WHERE `uid`="org.bayrell.modificator.cloud_os";
+

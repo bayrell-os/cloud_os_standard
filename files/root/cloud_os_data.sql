@@ -9,47 +9,42 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 	<uid>org.bayrell.modificator.cloud_os</uid>
 	<name>Cloud OS</name>
 	<date>2022-08-09T17:15:00+06:00</date>
-	<version>1.5</version>
+	<version>1.6</version>
 	<priority>-1000</priority>
 	<operations>
     
 		<operation type="add" position="first">
-			<path>/template/yaml</path>
-			<notExists>/template/yaml/version</notExists>
+			<path>/template/yaml[not(version)]</path>
 			<value>
 				<version>3.7</version>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/hostname</notExists>
+			<path>/template/yaml/services/*[not(hostname)]</path>
 			<value>
 				<hostname>{{.Service.Name}}.{{.Task.ID}}.local</hostname>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/environment</notExists>
+			<path>/template/yaml/services/*[not(environment)]</path>
 			<value>
 				<environment></environment>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/logging</notExists>
+			<path>/template/yaml/services/*[not(logging)]</path>
 			<value>
 				<logging>
 					<driver>journald</driver>
 				</logging>
 			</value>
 		</operation>
-			
+		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/deploy</notExists>
+			<path>/template/yaml/services/*[not(deploy)]</path>
 			<value>
 				<deploy>
 					<replicas type="int">1</replicas>
@@ -77,24 +72,21 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/dns</notExists>
+			<path>/template/yaml/services/*[not(dns)]</path>
 			<value>
-				<dns type="array">172.18.0.1</dns>
+				<dns array="true">172.18.0.1</dns>
 			</value>
 		</operation>
 		
 		<operation type="add">
-			<path>/template/yaml/services/*</path>
-			<notExists>/template/yaml/services/*/networks</notExists>
+			<path>/template/yaml/services/*[not(networks)]</path>
 			<value>
-				<networks type="array">cloud_network</networks>
+				<networks array="true">cloud_network</networks>
 			</value>
 		</operation>
-			
+		
 		<operation type="add">
-			<path>/template/yaml</path>
-			<notExists>/template/yaml/networks</notExists>
+			<path>/template/yaml[not(networks)]</path>
 			<value>
 				<networks>
 					<cloud_network>
@@ -117,9 +109,8 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 		
 		<!-- Patch last -->
 		
-		<operation type="add" priority="1000">
-			<path>/template/variables</path>
-			<notExists>/template/variables/variable[name="_var_app_name_"]</notExists>
+		<operation type="add" priority="9999">
+			<path>/template/variables[not(variable[name="_var_app_name_"])]</path>
 			<value>
 				<variable>
 					<name>_var_app_name_</name>
@@ -128,50 +119,50 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 				</variable>
 			</value>
 		</operation>
-		
-		<operation type="addAttribute" priority="1000">
+
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/volumes</path>
-			<name>type</name>
-			<value>array</value>
+			<name>array</name>
+			<value>true</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/env_file</path>
-			<name>type</name>
-			<value>array</value>
+			<name>array</name>
+			<value>true</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/ports</path>
-			<name>type</name>
-			<value>array</value>
+			<name>array</name>
+			<value>true</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/environment</path>
 			<name>type</name>
 			<value>map</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/volumes</path>
 			<name>type</name>
 			<value>map</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/volumes/*</path>
 			<name>type</name>
 			<value>map</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/ports/target</path>
 			<name>type</name>
 			<value>int</value>
 		</operation>
 		
-		<operation type="addAttribute" priority="1000">
+		<operation type="addAttribute" priority="9999">
 			<path>/template/yaml/services/*/ports/published</path>
 			<name>type</name>
 			<value>int</value>
