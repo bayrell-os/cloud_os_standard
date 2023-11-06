@@ -146,9 +146,12 @@ class Nginx
 		nginx_file.set("content", content);
 		nginx_file.set("enable", 1);
 		nginx_file.set("is_deleted", 0);
-		nginx_file.set("timestamp", rtl::time());
 		
-		await nginx_file.save(conn);
+		if (nginx_file.isChanged())
+		{
+			nginx_file.set("timestamp", rtl::time());
+			await nginx_file.save(conn);
+		}
 	}
 	
 	

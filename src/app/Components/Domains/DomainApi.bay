@@ -27,6 +27,7 @@ use Runtime.Widget.Crud.Api.CrudRule;
 use Runtime.Widget.Crud.Api.Filter;
 use Runtime.Widget.Crud.Api.LowerCase;
 use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.ReadOnly;
 use Runtime.Widget.Crud.Api.Required;
 use Runtime.Widget.Crud.Api.Unique;
 
@@ -86,7 +87,8 @@ class DomainApi extends CrudApi
 	[
 		new Purify{ "name": "domain_name" },
 		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "domain_name" },
+		new Required{ "name": "domain_name", "check_update": false },
+		new ReadOnly{ "name": "domain_name", "can_create": true },
 		new Unique{"keys": ["domain_name"]},
 		new Filter{"api_name": "space_id", "field_name": "space_id"},
 	];

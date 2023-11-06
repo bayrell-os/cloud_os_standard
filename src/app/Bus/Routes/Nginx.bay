@@ -1,0 +1,126 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Bus.Routes;
+
+use Runtime.ORM.Connection;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryResult;
+use Runtime.Web.ApiResult;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.RouteInfo;
+use Bayrell.CloudOS.Bus.Routes.BusCheck;
+
+
+class Nginx extends BaseRoute
+{
+	
+	/**
+	 * Returns routes
+	 */
+	pure Collection<RouteInfo> getRoutes() =>
+	[
+		new RouteInfo
+		{
+			"uri": "/api/bus/nginx/changes/",
+			"name": "app:bus:nginx:changes",
+			"method": "actionNginxChanges",
+			"middleware": [
+				classof BusCheck,
+			],
+		},
+		new RouteInfo
+		{
+			"uri": "/api/bus/ssl/changes/",
+			"name": "app:bus:ssl:changes",
+			"method": "actionSSLChanges",
+			"middleware": [
+				classof BusCheck,
+			],
+		},
+		new RouteInfo
+		{
+			"uri": "/api/bus/ssl/get_changes/",
+			"name": "app:bus:ssl:get_changes",
+			"method": "actionSSLChanges",
+			"middleware": [
+				classof BusCheck,
+			],
+		},
+	];
+	
+	
+	/**
+	 * Nginx changes
+	 */
+	void actionNginxChanges()
+	{
+		Connection conn = Connection::getConnection();
+		int timestamp = (int)this.container.request.payload["data", "timestamp"];
+		
+		Query q = (new Query)
+			.select("nginx_files")
+			.where("timestamp", ">=", timestamp)
+		;
+		
+		QueryResult items = await conn.fetchAll(q);
+		
+		/* Convert datetime */
+		items = items.map(
+			Dict (Dict item)
+			{
+				return item.copy({
+					"gmtime_created": item.get("gmtime_created").getRFC822(),
+					"gmtime_updated": item.get("gmtime_updated").getRFC822(),
+				})
+			}
+		);
+		
+		/* Filter fields */
+		items = items.map(
+			Dict (Dict item) => item.intersect([
+				"id",
+				"name",
+				"enable",
+				"is_deleted",
+				"content",
+				"timestamp",
+				"gmtime_created",
+				"gmtime_updated",
+			])
+		);
+		
+		ApiResult api_result = new ApiResult;
+		api_result = api_result.success({
+			"data": items,
+		});
+		this.container.setResponse(api_result);
+	}
+	
+	
+	/**
+	 * SSL changes
+	 */
+	void actionSSLChanges()
+	{
+		ApiResult api_result = new ApiResult;
+		api_result = api_result.success();
+		this.container.setResponse(api_result);
+	}
+	
+}
