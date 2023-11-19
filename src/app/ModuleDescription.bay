@@ -48,14 +48,8 @@ static class ModuleDescription
 	 */
 	pure Dict<string> requiredModules() =>
 	{
-		"Runtime": ">=0.3",
-		"Runtime.Web": "*",
-		"Runtime.Widget": "*",
-		
-		#ifdef BACKEND then
-		"Runtime.ORM": "*",
-		"Runtime.XML": "*",
-		#endif
+		"Runtime": ">=0.12",
+		"Runtime.Web": ">=0.12",
 	};
 	
 	
@@ -64,42 +58,11 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
-		new Hook("Bayrell.CloudOS.Hooks.RuntimeHook"),
-		new Route("Bayrell.CloudOS.Components.Applications.AppPageRoute"),
-		new Route("Bayrell.CloudOS.Components.DockerServices.ServicePageRoute"),
-		new Route("Bayrell.CloudOS.Components.DockerStack.StackPageRoute"),
-		new Route("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageRoute"),
-		new Route("Bayrell.CloudOS.Components.Domains.DomainPageRoute"),
+		new Hook("Runtime.Web.Hooks.AppHook"),
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
-		new Route("Bayrell.CloudOS.Components.Modificators.ModificatorPageRoute"),
-		new Route("Bayrell.CloudOS.Components.NginxFiles.NginxFilePageRoute"),
-		new Route("Bayrell.CloudOS.Components.Routes.RoutePageRoute"),
-		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
-		new Route("Bayrell.CloudOS.Components.Settings.SettingsRoute"),
-		new Route("Bayrell.CloudOS.Components.Templates.TemplatePageRoute"),
-		new Route("Bayrell.CloudOS.Components.Workspace.WorkspacePageRoute"),
-		new Route("Bayrell.CloudOS.Components.XML.ImportRoute"),
 		
 		#ifdef BACKEND then
-		new Api("Bayrell.CloudOS.Components.Applications.AppApi"),
-		new Api("Bayrell.CloudOS.Components.Applications.AppModApi"),
-		new Api("Bayrell.CloudOS.Components.DockerServices.ServiceApi"),
-		new Api("Bayrell.CloudOS.Components.DockerStack.StackApi"),
-		new Api("Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileApi"),
-		new Api("Bayrell.CloudOS.Components.Domains.DomainApi"),
-		new Api("Bayrell.CloudOS.Components.Modificators.ModificatorApi"),
-		new Api("Bayrell.CloudOS.Components.NginxFiles.NginxFileApi"),
-		new Api("Bayrell.CloudOS.Components.Routes.RouteApi"),
-		new Api("Bayrell.CloudOS.Components.SSLGroup.SSLGroupApi"),
-		new Api("Bayrell.CloudOS.Components.Templates.TemplateApi"),
-		new Api("Bayrell.CloudOS.Components.Templates.VersionApi"),
-		new Api("Bayrell.CloudOS.Components.Workspace.DomainApi"),
-		new Api("Bayrell.CloudOS.Components.Workspace.WorkspaceApi"),
-		
-		new Hook("Bayrell.CloudOS.Database.Schema"),
-		new Database("Bayrell.CloudOS.Database.Schema"),
-		new Route("Bayrell.CloudOS.Components.Adminer.AdminerRoute"),
+		new Hook("Runtime.Web.Hooks.ResponseHook"),
 		#endif
 	];
 	

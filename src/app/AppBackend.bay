@@ -19,18 +19,17 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.Context;
-use Runtime.Web.App;
+use Runtime.Web.BaseBackend;
 
 
-class Main extends App
+class AppBackend extends BaseBackend
 {
 	/**
 	 * Init app
 	 */
-	async Context init(Context c)
+	async void init()
 	{
-		c = await parent::init(c);
-		return c;
+		await parent::init();
 	}
 	
 	
@@ -48,7 +47,6 @@ class Main extends App
 	 */
 	async int main()
 	{
-		int res = await parent::main();
-		return res;
+		return await parent::main();
 	}
 }

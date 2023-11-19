@@ -5,16 +5,14 @@ ini_set('html_errors', 'on');
 set_time_limit(30);
 
 /* Init context */
-require_once dirname(__DIR__) . "/init.php";
+$init = require_once dirname(__DIR__) . "/init.php";
 
 /* Run web app */
 \Runtime\rtl::runApp(
     
     /* Entry point */
-    'Bayrell.CloudOS.Main',
+    'Bayrell.CloudOS.AppBackend',
     
     /* Modules */
-    [
-        'Bayrell.CloudOS'
-    ]
+    $init["modules"]
 );

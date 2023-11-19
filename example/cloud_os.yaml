@@ -2,17 +2,16 @@ version: "3.3"
 
 services:
     
-    standard:
-        image: bayrell/cloud_os_standard:0.5.0-20231106_182124
+    standard_dev:
+        image: bayrell/cloud_os_standard:0.5.0
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_dev:/data"
-            - "/home/ubuntu/bayrell/cloud_os_standard_0.5/src:/srv"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.5_dev/src:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "/etc/hostname:/etc/hostname_orig:ro"
         ports:
-            - "8020:22"
-            - "8080:80"
+            - "8081:80"
         env_file:
             - ./env.conf
         environment:

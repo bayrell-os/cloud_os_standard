@@ -23,124 +23,55 @@ use Runtime.ModelProxy;
 use Runtime.Web.AppHook as BaseAppHook;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
+use Bayrell.CloudOS.Components.CoreUI;
+use Bayrell.CloudOS.Components.DefaultLayout;
 
 
 class AppHook extends BaseAppHook
 {
-	
 	/**
 	 * Register hooks
 	 */
 	void register_hooks()
 	{
-		#ifdef BACKEND then
-		this.registerMethod( static::RENDER_HEAD, "render_css", 9999 );
-		this.registerMethod( static::RENDER_FOOTER, "render_footer" );
-		#endif
+		this.register( static::CORE_UI );
+		this.register( static::EXPORT_DATA );
+		this.register( static::LAYOUT_CLASS_NAME );
+	}
+	
+	
+	/**
+	 * Core ui class name
+	 */
+	void core_ui(Map params)
+	{
+		params.set("class_name", classof CoreUI);
+	}
+	
+	
+	/**
+	 * Layout class name
+	 */
+	void layout_class_name(Map params)
+	{
+		string layout_name = params["layout_name"];
 		
-		this.register( static::CSS_VARS );
-		this.register( static::CSS_CLASS_NAMES );
-		this.register( static::INIT_LAYOUT );
-		this.register( static::LAYOUT_PAGE_CLASS_NAME );
-		this.registerMethod( static::CALL_ROUTE_AFTER, "page_not_found", 9999 );
+		if (layout_name == "default")
+		{
+			params.set("class_name", classof DefaultLayout);
+		}
 	}
 	
 	
 	/**
-	 * Get css vars
+	 * Export data
 	 */
-	Dict css_vars(Dict d)
+	void export_data(Map params)
 	{
-		d <= color_primary <= "#337ab7";
-		d <= color_danger <= "#d14b42";
-		d <= color_success <= "#090";
-		d <= color_selected <= "#337ab7";
-		d <= color_selected_background <= "#fff";
-		d <= color_border <= "#e7e7e7";
-		d <= color_hover <= "#eee";
-		d <= color_table_border <= "#ccc";
-		d <= color_table_hover <= "#eee";
-		d <= color_table_selected <= "#337ab7";
-		return d;
-	}
-	
-	
-	/**
-	 * Returns render css
-	 */
-	Dict render_css(Dict d)
-	{
-		d <= classes <= d["classes"].concat([
-			"Bayrell.CloudOS.Components.CSS",
+		params.set("entry_point", "Bayrell.CloudOS.AppFrontend");
+		params.set("modules", [
+			"Bayrell.CloudOS"
 		]);
-		
-		return d;
-	}
-	
-	
-	/**
-	 * Returns render footer
-	 */
-	Dict render_footer(Dict d)
-	{
-		d <= classes <= d["classes"].concat([
-			"Bayrell.CloudOS.Components.Scripts",
-		]);
-		
-		return d;
-	}
-	
-	
-	/**
-	 * Get css class names
-	 */
-	Dict css_class_names(Dict d)
-	{
-		d["css_class_names"].prependValue("Bayrell.CloudOS.Components.CSS");
-		return d;
-	}
-	
-	
-	/**
-	 * Returns layout class name
-	 */
-	Map layout_page_class_name(Map d)
-	{
-		d <= default <= "Bayrell.CloudOS.Components.DefaultLayout";
-		return d;
-	}
-	
-	
-	/**
-	 * Init layout
-	 */
-	async Dict init_layout(Dict d)
-	{
-		RenderContainer container = d["container"];
-		string host = container.request.host;
-		ModelProxy layout = container.layoutProxy();
-		ModelProxy seo = layout.proxy(["models", "seo"]);
-		
-		seo.commit("setSiteName", "Cloud OS");
-		seo.commit("setTitleExt", "Cloud OS");
-		
-		return d;
-	}
-	
-	
-	/**
-	 * Call route after
-	 */
-	async Dict page_not_found(Dict d)
-	{
-		RenderContainer container = d["container"];
-		Response response = container.response;
-		
-		if (response != null) return d;
-		
-		await container.callMethod(["Bayrell.CloudOS.Components.NotFoundRoute", "actionIndex"]);
-		
-		return d;
 	}
 	
 }
