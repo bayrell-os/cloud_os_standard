@@ -22,9 +22,9 @@
 [submodule "src/lib/Runtime.Widget"]
 	path = src/lib/Runtime.Widget
 	url = https://github.com/bayrell/Runtime.Widget
-[submodule "src/lib/Runtime.Render"]
-	path = src/lib/Runtime.Render
-	url = https://github.com/bayrell/Runtime.Render
+[submodule "src/lib/Runtime.Web.Render"]
+	path = src/lib/Runtime.Web.Render
+	url = https://github.com/bayrell/Runtime.Web.Render
 [submodule "src/lib/Runtime.Crud"]
 	path = src/lib/Runtime.Crud
 	url = https://github.com/bayrell/Runtime.Crud
