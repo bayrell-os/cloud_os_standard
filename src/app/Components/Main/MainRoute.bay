@@ -63,10 +63,10 @@ class MainRoute extends BaseRoute
 	async void actionIndex()
 	{
 		/* Set page model */
-		this.setPageModel(new IndexPageModel);
+		this.layout.setPageModel(classof IndexPageModel);
 		
 		/* Set title */
-		this.setPageTitle("Index page");
+		this.layout.setPageTitle("Index page");
 		
 		/* Render page */
 		this.render(classof IndexPage);
