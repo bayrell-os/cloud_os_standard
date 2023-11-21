@@ -19,10 +19,10 @@
 namespace Bayrell.CloudOS.Components.Main;
 
 use Runtime.lib;
-use Runtime.Web.BaseModel;
+use Runtime.Web.PageModel;
 
 
-class IndexPageModel extends BaseModel
+class IndexPageModel extends PageModel
 {
 	
 }

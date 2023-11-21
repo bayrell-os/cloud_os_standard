@@ -19,11 +19,11 @@
 namespace Bayrell.CloudOS;
 
 use Runtime.Context;
-use Runtime.Web.BaseBackend;
+use Runtime.Web.BaseFrontend;
 use Runtime.Web.RenderProvider;
 
 
-class AppFrontend extends BaseBackend
+class AppFrontend extends BaseFrontend
 {
 	/**
 	 * Init app

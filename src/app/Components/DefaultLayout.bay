@@ -107,8 +107,8 @@
 			{
 				%set Dict sub_item = items[i];
 				<div class="app_layout_menu_item">
-					%set bool is_active = static::isMenuActive(layout, sub_item);
-					<a href={{ static::url(sub_item["link"]) }} class="nolink"
+					%set bool is_active = this.isMenuActive(sub_item);
+					<a href={{ this.layout.url(sub_item["link"]) }} class="nolink"
 						class={{ is_active ? "active" : "" }}
 					>{{ sub_item["title"] }}</a>
 				</div>
@@ -117,9 +117,9 @@
 		
 		%else
 		{
-			%set bool is_active = static::isMenuActive(layout, item);
+			%set bool is_active = this.isMenuActive(item);
 			<div class="app_layout_menu_item">
-				<a href={{ static::url(item["link"]) }} class="nolink"
+				<a href={{ this.layout.url(item["link"]) }} class="nolink"
 					class={{ is_active ? "active" : "" }}
 				>{{ item["title"] }}</a>
 			</div>
@@ -135,22 +135,22 @@
 		<div class='app_layout_wrap'>
 			<div class='app_layout_menu_wrap'>
 				<div class='app_layout_site_name'>
-					<a class='nolink' href='/'>{{ static::getHostname() }}</a>
+					<a class='nolink' href='/'>{{ this.getHostname() }}</a>
 				</div>
 				<div class='app_layout_menu'>
-					%set Collection menu = static::getMenu();
+					%set Collection menu = this.getMenu();
 					%for (int i=0; i<menu.count(); i++)
 					{
-						%render static::renderMenuItem(menu[i]);
+						%render this.renderMenuItem(menu[i]);
 					}
 				</div>
 			</div>
 			<div class='app_layout_content_wrap'>
-				<div class='app_layout_title'>{{ layout.title }}</div>
+				<div class='app_layout_title'>{{ this.layout.title }}</div>
 				<div class='app_layout_content'>
-					%var string page_class_name = layout.page_class_name;
-					%var string page_model_class_name = layout.page_model_class_name;
-					<{page_class_name} @model=[ "pages", page_model_class_name ] />
+					%var string current_page = this.layout.current_page;
+					%var string current_page_model = this.layout.current_page_model;
+					<{current_page} @model=[ "widgets", current_page_model ] />
 				</div>
 			</div>
 		</div>
@@ -192,23 +192,23 @@ void updateParams(Collection model_path, Dict params, var content)
 /**
  * Returns hostname
  */
-pure string getHostname() => "Hostname";
+string getHostname() => "Hostname";
 
 
 /**
  * Returns true if menu is active
  */
-pure bool isMenuActive(LayoutModel layout, Dict item)
+bool isMenuActive(Dict item)
 {
-	if (layout.route == null)
+	if (this.layout.route == null)
 	{
 		return false;
 	}
-	if (item.has("link") and layout.route.name == item["link"])
+	if (item.has("link") and this.layout.route.name == item["link"])
 	{
 		return true;
 	}
-	if (item.has("links") and item["links"].indexOf(layout.route.name) > -1)
+	if (item.has("links") and item["links"].indexOf(this.layout.route.name) > -1)
 	{
 		return true;
 	}
@@ -219,7 +219,7 @@ pure bool isMenuActive(LayoutModel layout, Dict item)
 /**
  * Returns menu items
  */
-pure Collection getMenu()
+Vector getMenu()
 {
 	return [
 		

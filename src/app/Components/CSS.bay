@@ -55,8 +55,10 @@ td, th{
 
 
 <template>
-	%set Collection css_class_names = layout.getCssClasses();
-	%set string css = layout::getCss(css_class_names);
+	%set Collection components = this.layout.getComponents(
+		[static::getClassName()].concat(static::components())
+	);
+	%set string css = this.layout::getCss(components);
 	<style>@raw{{ css }}</style>
 </template>
 

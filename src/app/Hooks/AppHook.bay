@@ -20,10 +20,7 @@ namespace Bayrell.CloudOS.Hooks;
 
 use Runtime.re;
 use Runtime.ModelProxy;
-use Runtime.Web.AppHook as BaseAppHook;
-use Runtime.Web.RenderContainer;
-use Runtime.Web.Response;
-use Bayrell.CloudOS.Components.CoreUI;
+use Runtime.Web.Hooks.AppHook as BaseAppHook;
 use Bayrell.CloudOS.Components.DefaultLayout;
 
 
@@ -34,18 +31,14 @@ class AppHook extends BaseAppHook
 	 */
 	void register_hooks()
 	{
-		this.register( static::CORE_UI );
+		#ifdef BACKEND then
+		this.register( static::RENDER_HEAD, 9999 );
+		this.register( static::RENDER_FOOTER );
+		#endif
+		
+		this.register( static::CSS_VARS );
 		this.register( static::EXPORT_DATA );
 		this.register( static::LAYOUT_CLASS_NAME );
-	}
-	
-	
-	/**
-	 * Core ui class name
-	 */
-	void core_ui(Map params)
-	{
-		params.set("class_name", classof CoreUI);
 	}
 	
 	
@@ -54,8 +47,7 @@ class AppHook extends BaseAppHook
 	 */
 	void layout_class_name(Map params)
 	{
-		string layout_name = params["layout_name"];
-		
+		string layout_name = params.get("layout_name");
 		if (layout_name == "default")
 		{
 			params.set("class_name", classof DefaultLayout);
@@ -68,10 +60,50 @@ class AppHook extends BaseAppHook
 	 */
 	void export_data(Map params)
 	{
-		params.set("entry_point", "Bayrell.CloudOS.AppFrontend");
-		params.set("modules", [
+		Map data = params.get("data");
+		data.set("entry_point", "Bayrell.CloudOS.AppFrontend");
+		data.set("modules", [
 			"Bayrell.CloudOS"
 		]);
 	}
 	
+	
+	/**
+	 * Get css vars
+	 */
+	void css_vars(Map params)
+	{
+		params.set("color_primary", "#337ab7");
+		params.set("color_danger", "#d14b42");
+		params.set("color_success", "#090");
+		params.set("color_selected", "#337ab7");
+		params.set("color_selected_background", "#fff");
+		params.set("color_border", "#e7e7e7");
+		params.set("color_hover", "#eee");
+		params.set("color_table_border", "#ccc");
+		params.set("color_table_hover", "#eee");
+		params.set("color_table_selected", "#337ab7");
+	}
+	
+	
+	/**
+	 * Header components
+	 */
+	void render_head(Map params)
+	{
+		params["components"].appendItems([
+			"Bayrell.CloudOS.Components.CSS",
+		]);
+	}
+	
+	
+	/**
+	 * Footer components
+	 */
+	void render_footer(Map params)
+	{
+		params["components"].appendItems([
+			"Bayrell.CloudOS.Components.Scripts",
+		]);
+	}
 }

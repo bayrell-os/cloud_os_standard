@@ -28,9 +28,7 @@
 			"modules":
 			[
 				"Runtime",
-				"Runtime.Web",
-				"Runtime.Web.Crud",
-				"Runtime.Widget"
+				"Runtime.Web"
 			]
 		}
 	],

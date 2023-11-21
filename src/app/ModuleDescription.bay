@@ -58,11 +58,10 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		new Hook("Runtime.Web.Hooks.AppHook"),
-		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
+		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
 		
 		#ifdef BACKEND then
-		new Hook("Runtime.Web.Hooks.ResponseHook"),
+		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
 		#endif
 	];
 	
