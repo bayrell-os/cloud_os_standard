@@ -39,6 +39,17 @@ class AppHook extends BaseAppHook
 		this.register( static::CSS_VARS );
 		this.register( static::EXPORT_DATA );
 		this.register( static::LAYOUT_CLASS_NAME );
+		this.register( static::RENDER_PROVIDER_SETTINGS );
+	}
+	
+	
+	/**
+	 * Render settings
+	 */
+	void render_provider_settings(Map params)
+	{
+		/* Restore SSR content in Frontend */
+		params.set("is_ssr", true);
 	}
 	
 	
