@@ -15,6 +15,7 @@ $loader->addPsr4("Runtime\\Unit\\",  __DIR__ . "/lib/Runtime.Unit/php");
 $loader->addPsr4("Runtime\\Web\\",  __DIR__ . "/lib/Runtime.Web/php");
 $loader->addPsr4("Runtime\\Web\\Crud\\",  __DIR__ . "/lib/Runtime.Web.Crud/php");
 $loader->addPsr4("Runtime\\Widget\\",  __DIR__ . "/lib/Runtime.Widget/php");
+$loader->addPsr4("Runtime\\Widget\\Table\\",  __DIR__ . "/lib/Runtime.Widget.Table/php");
 $loader->addPsr4("Runtime\\XML\\",  __DIR__ . "/lib/Runtime.XML/php");
 
 /* App */

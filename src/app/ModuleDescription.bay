@@ -62,6 +62,7 @@ static class ModuleDescription
 		
 		#ifdef BACKEND then
 		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
+		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
 		#endif
 	];
 	

@@ -28,7 +28,9 @@
 			"modules":
 			[
 				"Runtime",
-				"Runtime.Web"
+				"Runtime.Web",
+				"Runtime.Widget",
+				"Runtime.Widget.Table"
 			]
 		}
 	],

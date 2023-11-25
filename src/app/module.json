@@ -5,6 +5,7 @@
 		"Components/Main/AboutPage.bay",
 		"Components/Main/IndexPage.bay",
 		"Components/Main/IndexPageModel.bay",
+		"Components/SSLGroup/SSLTableModel.bay",
 		"Components/DefaultLayout.bay",
 		"Components/NotFoundPage.bay",
 		"Hooks/AppHook.bay",

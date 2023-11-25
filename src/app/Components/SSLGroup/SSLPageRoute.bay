@@ -18,23 +18,15 @@
 
 namespace Bayrell.CloudOS.Components.SSLGroup;
 
-use Runtime.ModelProxy;
-use Runtime.Web.BaseModel;
-use Runtime.Web.BaseWidget;
+use Runtime.Web.BaseRoute;
+use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
-use Runtime.Widget.Table.TableCrudModel;
-use Runtime.Widget.Form.FormCrudModel;
-use Runtime.Widget.Button;
-use Runtime.Widget.FieldComponent;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.SSLGroup.SSLPageModel;
+use Runtime.Widget.Table.TableModel;
+use Bayrell.CloudOS.Components.Main.IndexPage;
+use Bayrell.CloudOS.Components.SSLGroup.SSLTableModel;
 
 
-class SSLPageRoute extends CrudRoute
+class SSLPageRoute extends BaseRoute
 {
 	
 	/**
@@ -70,8 +62,31 @@ class SSLPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns page model
+	 * Returns page model name
 	 */
-	string getPageModelName() => classof SSLPageModel;
+	string getPageModelName() => classof PageModel;
+	
+	
+	/**
+	 * Index
+	 */
+	async void actionIndex()
+	{
+		PageModel page_model = this.layout.getPageModel();
+		
+		/* Create table widget */
+		TableModel table = page_model.addWidget( new SSLTableModel(this.layout) );
+		table.setPage(this.layout.request_query.get("page"));
+		table.init();
+		
+		/* Load table widget */
+		/* await table.loadData(); */
+		
+		/* Title */
+		this.layout.setPageTitle("List of SSL groups");
+		
+		/* Render page */
+		this.render( classof IndexPage );
+	}
 	
 }

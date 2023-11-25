@@ -28,3 +28,6 @@
 [submodule "src/lib/Runtime.Crud"]
 	path = src/lib/Runtime.Crud
 	url = https://github.com/bayrell/Runtime.Crud
+[submodule "src/lib/Runtime.Widget.Table"]
+	path = src/lib/Runtime.Widget.Table
+	url = https://github.com/bayrell/Runtime.Widget.Table
