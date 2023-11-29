@@ -23,6 +23,7 @@ use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Components.Main.IndexPage;
+use Bayrell.CloudOS.Components.SSLGroup.SSLPageModel;
 use Bayrell.CloudOS.Components.SSLGroup.SSLTableModel;
 
 
@@ -64,7 +65,7 @@ class SSLPageRoute extends BaseRoute
 	/**
 	 * Returns page model name
 	 */
-	string getPageModelName() => classof PageModel;
+	string getPageModelName() => classof SSLPageModel;
 	
 	
 	/**
@@ -76,11 +77,13 @@ class SSLPageRoute extends BaseRoute
 		
 		/* Create table widget */
 		TableModel table = page_model.addWidget( new SSLTableModel(this.layout) );
-		table.setPage(this.layout.request_query.get("page"));
 		table.init();
 		
+		/* Set page */
+		table.storage.setPage(this.layout.request_query.get("page", 1));
+		
 		/* Load table widget */
-		/* await table.loadData(); */
+		await table.loadData();
 		
 		/* Title */
 		this.layout.setPageTitle("List of SSL groups");

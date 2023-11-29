@@ -23,7 +23,7 @@ use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.RefreshEvent;
 use Runtime.Widget.Table.RowButtons;
 use Runtime.Widget.Table.RowNumber;
-use Runtime.Widget.Table.TableApiProvider;
+use Runtime.Widget.Table.TableApiStorage;
 use Runtime.Widget.Table.TableModel;
 
 
@@ -37,7 +37,7 @@ class SSLTableModel extends TableModel
 	{
 		parent::init();
 		
-		/*this.setDataProvider( new TableApiProvider("app.ssl") );*/
+		this.setDataStorage( new TableApiStorage(this.layout, "app.ssl") );
 		
 		this.addField({
 			"name": "row_number",

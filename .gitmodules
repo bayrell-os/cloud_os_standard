@@ -25,9 +25,9 @@
 [submodule "src/lib/Runtime.Web.Render"]
 	path = src/lib/Runtime.Render
 	url = https://github.com/bayrell/Runtime.Render
-[submodule "src/lib/Runtime.Crud"]
+[submodule "src/lib/Runtime.Widget.Crud"]
 	path = src/lib/Runtime.Widget.Crud
-	url = https://github.com/bayrell/Runtime.Crud
+	url = https://github.com/bayrell/Runtime.Widget.Crud
 [submodule "src/lib/Runtime.Widget.Table"]
 	path = src/lib/Runtime.Widget.Table
 	url = https://github.com/bayrell/Runtime.Widget.Table

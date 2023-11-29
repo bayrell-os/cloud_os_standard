@@ -39,6 +39,12 @@ class SSLGroupApi extends CrudApi
 	
 	
 	/**
+	 * Returns interface name
+	 */
+	pure string getInterfaceName() => "crud";
+	
+	
+	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "domains_ssl_groups";
