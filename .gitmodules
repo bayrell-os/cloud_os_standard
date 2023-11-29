@@ -26,7 +26,7 @@
 	path = src/lib/Runtime.Render
 	url = https://github.com/bayrell/Runtime.Render
 [submodule "src/lib/Runtime.Crud"]
-	path = src/lib/Runtime.Crud
+	path = src/lib/Runtime.Widget.Crud
 	url = https://github.com/bayrell/Runtime.Crud
 [submodule "src/lib/Runtime.Widget.Table"]
 	path = src/lib/Runtime.Widget.Table
