@@ -16,29 +16,21 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Console;
+namespace Bayrell.CloudOS;
 
 use Runtime.Context;
-use Runtime.Console.App;
+use Runtime.Web.BaseApp;
+use Runtime.Web.RenderProvider;
 
 
-class Main extends App
+class WebApp extends BaseApp
 {
-	/**
-	 * Modules
-	 */
-	async Context modules(Context c)
-	{
-		return c;
-	}
-	
-	
 	/**
 	 * Init app
 	 */
-	async Context init(Context c)
+	async void init()
 	{
-		return await parent::init(c);
+		await parent::init();
 	}
 	
 	
@@ -56,6 +48,6 @@ class Main extends App
 	 */
 	async int main()
 	{
-		return await parent::main();
+		return 0;
 	}
 }

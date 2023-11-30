@@ -16,20 +16,29 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Console;
 
 use Runtime.Context;
-use Runtime.Web.BaseBackend;
+use Runtime.Console.App;
 
 
-class AppBackend extends BaseBackend
+class ConsoleApp extends App
 {
+	/**
+	 * Modules
+	 */
+	async Context modules(Context c)
+	{
+		return c;
+	}
+	
+	
 	/**
 	 * Init app
 	 */
-	async void init()
+	async Context init(Context c)
 	{
-		await parent::init();
+		return await parent::init(c);
 	}
 	
 	

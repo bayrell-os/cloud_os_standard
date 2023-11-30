@@ -11,7 +11,7 @@ $init = require_once dirname(__DIR__) . "/init.php";
 \Runtime\rtl::runApp(
     
     /* Entry point */
-    'Bayrell.CloudOS.AppBackend',
+    'Bayrell.CloudOS.Frontend.WebApp',
     
     /* Modules */
     $init["modules"]

@@ -32,7 +32,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "Bayrell.CloudOS";
+	pure string getModuleName() => "Bayrell.CloudOS.Frontend";
 	
 	
 	/**
@@ -50,6 +50,10 @@ static class ModuleDescription
 	{
 		"Runtime": ">=0.12",
 		"Runtime.Web": ">=0.12",
+		
+		#ifdef BACKEND then
+		"Bayrell.CloudOS.Backend": ">=0.5",
+		#endif
 	};
 	
 	

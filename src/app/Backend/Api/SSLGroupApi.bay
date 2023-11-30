@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.SSLGroup;
+namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
@@ -35,13 +35,7 @@ class SSLGroupApi extends CrudApi
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.ssl_group";
-	
-	
-	/**
-	 * Returns interface name
-	 */
-	pure string getInterfaceName() => "crud";
+	pure string getApiName() => "app.ssl_group::crud";
 	
 	
 	/**

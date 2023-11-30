@@ -17,7 +17,7 @@ $init["modules"][] = "Bayrell.CloudOS.Console";
 $exit_code = \Runtime\rtl::runApp(
     
     /* Entry point */
-    'Bayrell.CloudOS.Console.Main',
+    'Bayrell.CloudOS.Console.ConsoleApp',
     
     /* Modules */
     $init["modules"],

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Bus;
+namespace Bayrell.CloudOS.Backend;
 
 use Runtime.Entity.Hook;
 use Runtime.ORM.Annotations.Database;
@@ -32,7 +32,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "Bayrell.CloudOS.Bus";
+	pure string getModuleName() => "Bayrell.CloudOS.Backend";
 	
 	
 	/**
@@ -57,11 +57,7 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		#ifdef BACKEND then
-		
-		new Route("Bayrell.CloudOS.Bus.Routes.Nginx"),
-		
-		#endif
+		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),
 	];
 	
 }
