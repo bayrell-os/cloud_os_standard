@@ -8,6 +8,8 @@
 		"Frontend/Main/IndexPageModel.bay",
 		"Frontend/SSLGroup/SSLPageModel.bay",
 		"Frontend/SSLGroup/SSLTableModel.bay",
+		"Frontend/Settings/DatabasePage.bay",
+		"Frontend/Settings/SettingsPage.bay",
 		"Frontend/DefaultLayout.bay",
 		"Frontend/NotFoundPage.bay",
 		"Frontend/WebApp.bay",

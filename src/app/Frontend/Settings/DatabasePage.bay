@@ -25,16 +25,18 @@
 
 
 <template>
-	<div>Redirect. Please wait...</div>
-	<form id="adminer_form" method="POST" @ref="adminer_form"
-		action="/settings/database/adminer/" enctype="multipart/form-data">
-		<input type='hidden' name='auth[driver]' value='sqlite' />
-		<input type='hidden' name='auth[username]' value='admin' />
-		<input type='hidden' name='auth[password]' value='admin' />
-		<input type='hidden' name='auth[db]' value='/data/db/cloud_os.db' />
-		<input type='hidden' name='auth[permanent]' value='1' />
-		<button>Open</button>
-	</form>
+	<div>
+		<div>Redirect. Please wait...</div>
+		<form id="adminer_form" method="POST" @ref="adminer_form"
+			action="/settings/database/adminer/" enctype="multipart/form-data">
+			<input type='hidden' name='auth[driver]' value='sqlite' />
+			<input type='hidden' name='auth[username]' value='admin' />
+			<input type='hidden' name='auth[password]' value='admin' />
+			<input type='hidden' name='auth[db]' value='/data/db/cloud_os.db' />
+			<input type='hidden' name='auth[permanent]' value='1' />
+			<button>Open</button>
+		</form>
+	</div>
 </template>
 
 

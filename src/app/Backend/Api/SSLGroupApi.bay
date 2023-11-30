@@ -82,10 +82,9 @@ class SSLGroupApi extends CrudApi
 	/**
 	 * Build search query
 	 */
-	async Query buildSearchQuery(Query q)
+	async void buildSearchQuery(Query q)
 	{
-		q = q.orderBy("id", "asc");
-		return q;
+		q.orderBy("id", "asc");
 	}
 	
 	

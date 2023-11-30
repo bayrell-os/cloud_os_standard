@@ -45,23 +45,23 @@ class AdminerRoute extends BaseRoute
 	 */
 	async void actionIndex()
 	{
-        string content = "";
-        
-        #ifcode PHP then
-        
-        $file_path = BASE_PATH . "/app/Components/Adminer/adminer-sqlite.php";
-        
-        @ob_start();
+		string content = "";
+		
+		#ifcode PHP then
+		
+		$file_path = BASE_PATH . "/app/Frontend/Adminer/adminer-sqlite.php";
+		
+		@ob_start();
 		$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 		include $file_path;
 		$content = ob_get_contents();
 		@ob_end_clean();
-        
-        #endif
-        
-        /* Create response */
+		
+		#endif
+		
+		/* Create response */
 		Response response = new Response();
-		response <= content <= content;        
+		response.content = content;
 		this.container.setResponse(response);
 	}
 	
