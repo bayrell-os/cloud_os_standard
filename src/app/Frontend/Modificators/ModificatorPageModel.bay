@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Modificators;
+namespace Bayrell.CloudOS.Frontend.Modificators;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;

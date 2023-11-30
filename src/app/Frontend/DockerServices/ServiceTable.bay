@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerServices.ServiceTable"
+<class name="Bayrell.CloudOS.Frontend.DockerServices.ServiceTable"
 	extends="Runtime.Widget.Table.Table">
 
 <use name="Runtime.BaseModel" />
@@ -28,7 +28,7 @@
 <use name="Runtime.Widget.Button" />
 <use name="Runtime.Widget.Dialog.Dialog" component="true" />
 <use name="Runtime.Widget.Dialog.DialogEvent" />
-<use name="Bayrell.CloudOS.Components.Applications.ServiceInfoComponent" component="true" />
+<use name="Bayrell.CloudOS.Frontend.Applications.ServiceInfoComponent" component="true" />
 
 
 <style>

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Routes;
+namespace Bayrell.CloudOS.Frontend.Routes;
 
 use Runtime.lib;
 use Runtime.ModelProxy;
@@ -35,7 +35,7 @@ use Runtime.Widget.Label;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
 use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.Routes.RoutePageModel;
+use Bayrell.CloudOS.Frontend.Routes.RoutePageModel;
 
 
 class RoutePageRoute extends CrudRoute

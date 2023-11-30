@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Applications.AppTable"
+<class name="Bayrell.CloudOS.Frontend.Applications.AppTable"
     extends="Runtime.Widget.Table.TableDialog">
 
 
@@ -30,8 +30,8 @@
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabItem" component="true" />
 <use name="Runtime.Widget.TopButtons" component="true" />
-<use name="Bayrell.CloudOS.Components.Applications.AppTableModel" />
-<use name="Bayrell.CloudOS.Components.Applications.ServiceInfoComponent" component="true" />
+<use name="Bayrell.CloudOS.Frontend.Applications.AppTableModel" />
+<use name="Bayrell.CloudOS.Frontend.Applications.ServiceInfoComponent" component="true" />
 
 
 <style>

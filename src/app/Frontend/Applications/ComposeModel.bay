@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.ModelProxy;
 use Runtime.Web.ApiResult;
@@ -24,7 +24,7 @@ use Runtime.Web.Bus;
 use Runtime.Widget.TopButtonModel;
 use Runtime.Widget.Dialog.DialogModel;
 use Runtime.Widget.Form.FormModel;
-use Bayrell.CloudOS.Components.Applications.ComposeButton;
+use Bayrell.CloudOS.Frontend.Applications.ComposeButton;
 
 
 struct ComposeModel extends TopButtonModel

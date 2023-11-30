@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage">
+<class name="Bayrell.CloudOS.Frontend.Workspace.WorkspaceSavePage">
 
 <use name="Runtime.ModelProxy" />
 <use name="Runtime.Web.LayoutModel" />

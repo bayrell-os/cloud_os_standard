@@ -16,14 +16,14 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.SSLGroup;
+namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
 use Runtime.Widget.Label;
+use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.RefreshEvent;
 use Runtime.Widget.Table.RowButtons;
 use Runtime.Widget.Table.RowNumber;
-use Runtime.Widget.Table.TableApiStorage;
 use Runtime.Widget.Table.TableModel;
 
 
@@ -37,7 +37,7 @@ class SSLTableModel extends TableModel
 	{
 		parent::init();
 		
-		this.setDataStorage( new TableApiStorage(this.layout, "app.ssl") );
+		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
 		
 		this.addField({
 			"name": "row_number",

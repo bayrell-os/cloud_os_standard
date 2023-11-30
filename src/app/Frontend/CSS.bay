@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.CSS">
+<class name="Bayrell.CloudOS.Frontend.CSS">
 
 <use name="Runtime.Web.App" />
 

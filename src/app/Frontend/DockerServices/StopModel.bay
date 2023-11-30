@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerServices;
+namespace Bayrell.CloudOS.Frontend.DockerServices;
 
 use Runtime.Web.BaseModel;
 use Runtime.Widget.Dialog.DialogModel;

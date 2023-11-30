@@ -16,11 +16,11 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Frontend.DockerStack;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.DockerStack.StackPageModel;
+use Bayrell.CloudOS.Frontend.DockerStack.StackPageModel;
 
 
 class StackPageRoute extends CrudRoute

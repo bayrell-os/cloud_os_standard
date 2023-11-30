@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components;
+namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.BaseStruct;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RenderContainer;
-use Bayrell.CloudOS.Components.NotFoundPage;
+use Bayrell.CloudOS.Frontend.NotFoundPage;
 use Bayrell.Helper;
 
 

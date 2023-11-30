@@ -13,8 +13,8 @@ $loader->addPsr4("Runtime\\ORM\\",  __DIR__ . "/lib/Runtime.ORM/php");
 $loader->addPsr4("Runtime\\Render\\",  __DIR__ . "/lib/Runtime.Render/php");
 $loader->addPsr4("Runtime\\Unit\\",  __DIR__ . "/lib/Runtime.Unit/php");
 $loader->addPsr4("Runtime\\Web\\",  __DIR__ . "/lib/Runtime.Web/php");
-$loader->addPsr4("Runtime\\Web\\Crud\\",  __DIR__ . "/lib/Runtime.Web.Crud/php");
 $loader->addPsr4("Runtime\\Widget\\",  __DIR__ . "/lib/Runtime.Widget/php");
+$loader->addPsr4("Runtime\\Widget\\Crud\\",  __DIR__ . "/lib/Runtime.Widget.Crud/php");
 $loader->addPsr4("Runtime\\Widget\\Table\\",  __DIR__ . "/lib/Runtime.Widget.Table/php");
 $loader->addPsr4("Runtime\\XML\\",  __DIR__ . "/lib/Runtime.XML/php");
 
@@ -27,7 +27,8 @@ $loader->addPsr4("Bayrell\\CloudOS\\",  __DIR__ . "/source/php");
 /* Modules */
 $modules = [
     "Runtime",
-    "Bayrell.CloudOS",
+    "Bayrell.CloudOS.Backend",
+    "Bayrell.CloudOS.Frontend",
 ];
 
 $obj = [

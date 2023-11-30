@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerServices;
+namespace Bayrell.CloudOS.Frontend.DockerServices;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -37,10 +37,10 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TopButtonModel;
-use Bayrell.CloudOS.Components.Applications.ServiceInfo;
-use Bayrell.CloudOS.Components.DockerServices.ServiceTable;
-use Bayrell.CloudOS.Components.DockerServices.StopButton;
-use Bayrell.CloudOS.Components.DockerServices.StopModel;
+use Bayrell.CloudOS.Frontend.Applications.ServiceInfo;
+use Bayrell.CloudOS.Frontend.DockerServices.ServiceTable;
+use Bayrell.CloudOS.Frontend.DockerServices.StopButton;
+use Bayrell.CloudOS.Frontend.DockerServices.StopModel;
 
 
 struct ServicePageModel extends CrudPageModel

@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.NotFoundPage">
+<class name="Bayrell.CloudOS.Frontend.NotFoundPage">
 
 <style>
 .text_not_found{

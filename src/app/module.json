@@ -9,9 +9,9 @@
 		"Frontend/SSLGroup/SSLPageModel.bay",
 		"Frontend/SSLGroup/SSLTableModel.bay",
 		"Frontend/DefaultLayout.bay",
-		"Frontend/NotFoundPage.bay",		
-		"WebApp.bay",
-		"ModuleDescription.bay"
+		"Frontend/NotFoundPage.bay",
+		"Frontend/WebApp.bay",
+		"Frontend/ModuleDescription.bay"
 	],
 	"src": "./",
 	"dest":

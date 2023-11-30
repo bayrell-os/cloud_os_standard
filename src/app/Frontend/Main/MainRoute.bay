@@ -16,13 +16,13 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Main;
+namespace Bayrell.CloudOS.Frontend.Main;
 
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Bayrell.CloudOS.Components.Main.AboutPage;
-use Bayrell.CloudOS.Components.Main.IndexPage;
-use Bayrell.CloudOS.Components.Main.IndexPageModel;
+use Bayrell.CloudOS.Frontend.Main.AboutPage;
+use Bayrell.CloudOS.Frontend.Main.IndexPage;
+use Bayrell.CloudOS.Frontend.Main.IndexPageModel;
 
 
 class MainRoute extends BaseRoute

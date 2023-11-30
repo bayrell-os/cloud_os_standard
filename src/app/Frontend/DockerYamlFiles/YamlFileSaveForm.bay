@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DockerYamlFiles.YamlFileSaveForm"
+<class name="Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFileSaveForm"
     extends="Runtime.Widget.Form.Form"
 >
 

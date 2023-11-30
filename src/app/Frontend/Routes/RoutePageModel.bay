@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Routes;
+namespace Bayrell.CloudOS.Frontend.Routes;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;

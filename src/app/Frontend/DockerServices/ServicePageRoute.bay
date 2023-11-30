@@ -16,11 +16,11 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerServices;
+namespace Bayrell.CloudOS.Frontend.DockerServices;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.DockerServices.ServicePageModel;
+use Bayrell.CloudOS.Frontend.DockerServices.ServicePageModel;
 
 
 class ServicePageRoute extends CrudRoute

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.Context;
 use Runtime.Web.BaseApp;
@@ -48,6 +48,6 @@ class WebApp extends BaseApp
 	 */
 	async int main()
 	{
-		return 0;
+		return await parent::main();
 	}
 }

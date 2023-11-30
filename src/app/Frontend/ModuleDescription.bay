@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS;
+namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.Entity.Hook;
 use Runtime.ORM.Annotations.Database;
@@ -62,11 +62,13 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
-		new Hook("Bayrell.CloudOS.Hooks.AppHook"),
+		new Hook("Bayrell.CloudOS.Frontend.Hooks.AppHook"),
 		
 		#ifdef BACKEND then
-		new Route("Bayrell.CloudOS.Components.Main.MainRoute"),
-		new Route("Bayrell.CloudOS.Components.SSLGroup.SSLPageRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Adminer.AdminerRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Main.MainRoute"),
+		new Route("Bayrell.CloudOS.Frontend.SSLGroup.SSLPageRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Settings.SettingsRoute"),
 		#endif
 	];
 	

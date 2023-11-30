@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.SSLGroup;
+namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
 use Runtime.Web.PageModel;
 

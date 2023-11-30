@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Settings.DatabasePage">
+<class name="Bayrell.CloudOS.Frontend.Settings.DatabasePage">
 
 
 <style>

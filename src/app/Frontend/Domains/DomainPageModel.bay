@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Domains;
+namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -33,9 +33,9 @@ use Runtime.Widget.FieldInfo;
 use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
-use Bayrell.CloudOS.Components.Domains.DomainFormModel;
-use Bayrell.CloudOS.Components.Domains.DomainTableModel;
-use Bayrell.CloudOS.Components.Routes.RoutePageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainFormModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
+use Bayrell.CloudOS.Frontend.Routes.RoutePageModel;
 
 
 struct DomainPageModel extends CrudPageModel

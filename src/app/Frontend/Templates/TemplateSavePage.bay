@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Templates.TemplateSavePage">
+<class name="Bayrell.CloudOS.Frontend.Templates.TemplateSavePage">
 
 <use name="Runtime.ModelProxy" />
 <use name="Runtime.Web.LayoutModel" />

@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Templates;
+namespace Bayrell.CloudOS.Frontend.Templates;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Templates.TemplatePageModel;
-use Bayrell.CloudOS.Components.Templates.TemplateSavePage;
+use Bayrell.CloudOS.Frontend.Templates.TemplatePageModel;
+use Bayrell.CloudOS.Frontend.Templates.TemplateSavePage;
 
 
 class TemplatePageRoute extends CrudRoute

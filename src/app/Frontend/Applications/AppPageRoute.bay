@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Applications.AppPageModel;
-use Bayrell.CloudOS.Components.Applications.AppSavePage;
+use Bayrell.CloudOS.Frontend.Applications.AppPageModel;
+use Bayrell.CloudOS.Frontend.Applications.AppSavePage;
 
 
 class AppPageRoute extends CrudRoute

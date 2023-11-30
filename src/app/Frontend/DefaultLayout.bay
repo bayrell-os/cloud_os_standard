@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.DefaultLayout">
+<class name="Bayrell.CloudOS.Frontend.DefaultLayout">
 
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.LayoutModel" />

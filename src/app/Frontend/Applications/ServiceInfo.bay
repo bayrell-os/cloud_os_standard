@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.DateTime;
 use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
-use Bayrell.CloudOS.Components.Applications.ServiceInfoComponent;
+use Bayrell.CloudOS.Frontend.Applications.ServiceInfoComponent;
 
 
 struct ServiceInfo extends BaseModel

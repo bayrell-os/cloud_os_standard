@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerYamlFiles;
+namespace Bayrell.CloudOS.Frontend.DockerYamlFiles;
 
 use Runtime.ModelProxy;
 use Runtime.Web.BaseModel;
@@ -31,7 +31,7 @@ use Runtime.Widget.FieldInfo;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.DockerYamlFiles.YamlFilePageModel;
+use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageModel;
 
 
 class YamlFilePageRoute extends CrudRoute

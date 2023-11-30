@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Workspace;
+namespace Bayrell.CloudOS.Frontend.Workspace;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -36,7 +36,7 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.Select;
-use Bayrell.CloudOS.Components.Domains.DomainPageModel as BaseDomainPageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainPageModel as BaseDomainPageModel;
 
 
 struct DomainPageModel extends BaseDomainPageModel

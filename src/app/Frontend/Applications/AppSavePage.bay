@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Applications.AppSavePage">
+<class name="Bayrell.CloudOS.Frontend.Applications.AppSavePage">
 
 
 <use name="Runtime.ModelProxy" />
@@ -33,7 +33,7 @@
 <use name="Runtime.Widget.Input" component="true" />
 <use name="Runtime.Widget.TextArea" component="true" />
 <use name="Runtime.Widget.TopButtons" component="true" />
-<use name="Bayrell.CloudOS.Components.Applications.AppTotalPatches" component="true" />
+<use name="Bayrell.CloudOS.Frontend.Applications.AppTotalPatches" component="true" />
 
 
 <style>

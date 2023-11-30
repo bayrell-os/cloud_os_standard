@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.NginxFiles;
+namespace Bayrell.CloudOS.Frontend.NginxFiles;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Frontend.DockerStack;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;

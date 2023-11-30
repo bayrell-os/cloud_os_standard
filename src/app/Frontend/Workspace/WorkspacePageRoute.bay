@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Workspace;
+namespace Bayrell.CloudOS.Frontend.Workspace;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Workspace.WorkspacePageModel;
-use Bayrell.CloudOS.Components.Workspace.WorkspaceSavePage;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspaceSavePage;
 
 
 class WorkspacePageRoute extends CrudRoute

@@ -16,11 +16,11 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Modificators;
+namespace Bayrell.CloudOS.Frontend.Modificators;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Modificators.ModificatorPageModel;
+use Bayrell.CloudOS.Frontend.Modificators.ModificatorPageModel;
 
 
 class ModificatorPageRoute extends CrudRoute

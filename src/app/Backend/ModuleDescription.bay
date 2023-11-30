@@ -48,7 +48,7 @@ static class ModuleDescription
 	 */
 	pure Dict<string> requiredModules() =>
 	{
-		"Bayrell.CloudOS": ">=0.5",
+		"Runtime.ORM": "*",
 	};
 	
 	
@@ -58,6 +58,9 @@ static class ModuleDescription
 	pure Collection<Dict> entities() =>
 	[
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),
+		new Database("Bayrell.CloudOS.Backend.Database.Schema"),
+		new Hook("Bayrell.CloudOS.Backend.Hooks.RuntimeHook"),
+		new Hook("Bayrell.CloudOS.Backend.Database.Schema"),
 	];
 	
 }

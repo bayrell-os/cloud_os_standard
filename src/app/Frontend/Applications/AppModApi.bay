@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.re;
 use Runtime.Exceptions.ApiException;

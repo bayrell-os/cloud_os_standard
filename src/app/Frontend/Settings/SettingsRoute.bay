@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Settings;
+namespace Bayrell.CloudOS.Frontend.Settings;
 
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Bayrell.CloudOS.Components.Settings.DatabasePage;
-use Bayrell.CloudOS.Components.Settings.SettingsPage;
+use Bayrell.CloudOS.Frontend.Settings.DatabasePage;
+use Bayrell.CloudOS.Frontend.Settings.SettingsPage;
 
 
 class SettingsRoute extends BaseRoute
@@ -53,7 +53,7 @@ class SettingsRoute extends BaseRoute
 	async void actionIndex()
 	{
 		/* Set title */
-		this.setPageTitle("Settings");
+		this.layout.setPageTitle("Settings");
 		
 		/* Render page */
 		this.render(classof SettingsPage);
@@ -66,7 +66,7 @@ class SettingsRoute extends BaseRoute
 	async void actionDatabase()
 	{
 		/* Set title */
-		this.setPageTitle("Database");
+		this.layout.setPageTitle("Database");
 		
 		/* Render page */
 		this.render(classof DatabasePage);

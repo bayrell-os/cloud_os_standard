@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.XML;
+namespace Bayrell.CloudOS.Frontend.XML;
 
 use Runtime.re;
 use Runtime.BaseStruct;

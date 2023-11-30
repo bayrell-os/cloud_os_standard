@@ -1,4 +1,4 @@
-<!--
+/*!
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,28 +14,41 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
--->
+ */
 
-<class name="Bayrell.CloudOS.Frontend.Main.IndexPage">
+namespace Bayrell.CloudOS.Backend.Hooks;
 
-
-<style>
-
-</style>
-
-
-<template>
-	<div @render="title">
-		Cloud OS Version 0.5.0
-	</div>
-</template>
+use Runtime.Context;
+use Runtime.Hooks.RuntimeHook as BaseRuntimeHook;
+use Runtime.ORM.Provider;
+use Runtime.ORM.SQLite.ConnectionSQLite;
 
 
-<script>
-
-var title;
-
-</script>
-
-
-</class>
+class RuntimeHook extends BaseRuntimeHook
+{
+	/**
+	 * Register hooks
+	 */
+	void register_hooks()
+	{
+		this.register( static::START );
+	}
+	
+	
+	/**
+	 * Start context
+	 */
+	async Dict start(Dict d)
+	{
+		Provider provider = @.provider("Runtime.ORM.Provider");
+		
+		ConnectionSQLite conn = new ConnectionSQLite("default");
+		conn.database = "/data/db/cloud_os.db";
+		await conn.connect();
+		
+		provider.addConnection(conn);
+		
+		return d;
+	}
+	
+}

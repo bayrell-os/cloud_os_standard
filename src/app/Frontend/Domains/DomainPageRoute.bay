@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Domains;
+namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudRoute;
-use Bayrell.CloudOS.Components.Domains.DomainPageModel;
-use Bayrell.CloudOS.Components.Domains.DomainSavePage;
+use Bayrell.CloudOS.Frontend.Domains.DomainPageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainSavePage;
 
 
 class DomainPageRoute extends CrudRoute

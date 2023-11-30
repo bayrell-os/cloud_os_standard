@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Templates;
+namespace Bayrell.CloudOS.Frontend.Templates;
 
 use Runtime.Callback;
 use Runtime.ModelProxy;
@@ -34,7 +34,7 @@ use Runtime.Widget.FieldList;
 use Runtime.Widget.Input;
 use Runtime.Widget.Label;
 use Runtime.Widget.TextArea;
-use Bayrell.CloudOS.Components.Templates.VersionPageModel;
+use Bayrell.CloudOS.Frontend.Templates.VersionPageModel;
 
 
 struct TemplatePageModel extends CrudPageModel

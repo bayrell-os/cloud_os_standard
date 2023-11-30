@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Hooks;
+namespace Bayrell.CloudOS.Frontend.Hooks;
 
 use Runtime.re;
 use Runtime.ModelProxy;
 use Runtime.Web.Hooks.AppHook as BaseAppHook;
-use Bayrell.CloudOS.Components.DefaultLayout;
+use Bayrell.CloudOS.Frontend.DefaultLayout;
 
 
 class AppHook extends BaseAppHook
@@ -72,9 +72,9 @@ class AppHook extends BaseAppHook
 	void export_data(Map params)
 	{
 		Map data = params.get("data");
-		data.set("entry_point", "Bayrell.CloudOS.AppFrontend");
+		data.set("entry_point", "Bayrell.CloudOS.Frontend.WebApp");
 		data.set("modules", [
-			"Bayrell.CloudOS"
+			"Bayrell.CloudOS.Frontend"
 		]);
 	}
 	
@@ -103,7 +103,7 @@ class AppHook extends BaseAppHook
 	void render_head(Map params)
 	{
 		params["components"].appendItems([
-			"Bayrell.CloudOS.Components.CSS",
+			"Bayrell.CloudOS.Frontend.CSS",
 		]);
 	}
 	
@@ -114,7 +114,7 @@ class AppHook extends BaseAppHook
 	void render_footer(Map params)
 	{
 		params["components"].appendItems([
-			"Bayrell.CloudOS.Components.Scripts",
+			"Bayrell.CloudOS.Frontend.Scripts",
 		]);
 	}
 }

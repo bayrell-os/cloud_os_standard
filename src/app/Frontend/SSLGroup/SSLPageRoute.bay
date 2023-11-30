@@ -16,15 +16,15 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.SSLGroup;
+namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
 use Runtime.Web.BaseRoute;
 use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Components.Main.IndexPage;
-use Bayrell.CloudOS.Components.SSLGroup.SSLPageModel;
-use Bayrell.CloudOS.Components.SSLGroup.SSLTableModel;
+use Bayrell.CloudOS.Frontend.Main.IndexPage;
+use Bayrell.CloudOS.Frontend.SSLGroup.SSLPageModel;
+use Bayrell.CloudOS.Frontend.SSLGroup.SSLTableModel;
 
 
 class SSLPageRoute extends BaseRoute

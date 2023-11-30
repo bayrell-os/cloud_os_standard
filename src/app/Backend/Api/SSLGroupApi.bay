@@ -22,12 +22,13 @@ use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
 
 
 class SSLGroupApi extends CrudApi
@@ -42,20 +43,6 @@ class SSLGroupApi extends CrudApi
 	 * Returns table name
 	 */
 	pure string getTableName() => "domains_ssl_groups";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "crud.save") return "actionSave";
-		if (api_name == "crud.delete") return "actionDelete";
-		return "";
-	}
 	
 	
 	/**
@@ -99,6 +86,16 @@ class SSLGroupApi extends CrudApi
 	{
 		q = q.orderBy("id", "asc");
 		return q;
+	}
+	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent::actionSearch();
 	}
 	
 }

@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Settings.SettingsPage">
+<class name="Bayrell.CloudOS.Frontend.Settings.SettingsPage">
 
 <use name="Runtime.Widget.Button" component="true" />
 
@@ -27,7 +27,7 @@
 
 
 <template>
-	<Button href={{ static::url("app:settings:database") }}>
+	<Button href={{ this.layout.url("app:settings:database") }}>
 		Open database
 	</Button>
 </template>

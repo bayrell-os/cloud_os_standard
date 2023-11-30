@@ -16,12 +16,12 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.XML;
+namespace Bayrell.CloudOS.Frontend.XML;
 
 use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Bayrell.CloudOS.Components.XML.ImportPage;
-use Bayrell.CloudOS.Components.XML.ImportPageModel;
+use Bayrell.CloudOS.Frontend.XML.ImportPage;
+use Bayrell.CloudOS.Frontend.XML.ImportPageModel;
 
 
 class ImportRoute extends BaseRoute

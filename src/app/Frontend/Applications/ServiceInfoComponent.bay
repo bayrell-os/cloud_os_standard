@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Applications.ServiceInfoComponent">
+<class name="Bayrell.CloudOS.Frontend.Applications.ServiceInfoComponent">
 
 <style>
 .service_info{

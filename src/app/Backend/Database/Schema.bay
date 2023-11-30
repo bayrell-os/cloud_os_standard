@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Database;
+namespace Bayrell.CloudOS.Backend.Database;
 
 use Runtime.re;
 use Runtime.BaseStruct;
@@ -35,19 +35,6 @@ use Runtime.ORM.Annotations.StringType;
 use Runtime.ORM.Annotations.Table;
 use Runtime.ORM.Annotations.TinyIntType;
 use Runtime.ORM.Annotations.Unique;
-use Bayrell.CloudOS.Models.AppEnvironment;
-use Bayrell.CloudOS.Models.AppVolume;
-use Bayrell.CloudOS.Models.Application;
-use Bayrell.CloudOS.Models.DockerStack;
-use Bayrell.CloudOS.Models.DockerYamlFile;
-use Bayrell.CloudOS.Models.Domain;
-use Bayrell.CloudOS.Models.DomainSSLGroup;
-use Bayrell.CloudOS.Models.Modificator;
-use Bayrell.CloudOS.Models.NginxFile;
-use Bayrell.CloudOS.Models.Route;
-use Bayrell.CloudOS.Models.Template;
-use Bayrell.CloudOS.Models.User;
-use Bayrell.CloudOS.Models.Workspace;
 
 
 class Schema extends DatabaseSchema
@@ -65,7 +52,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Applications
 	 */
-	@Table{ "name": "applications", "model_name": classof Application }
+	@Table{ "name": "applications" }
 	pure memorize Collection<BaseStruct> applications() =>
 	[
 		/* Fields */
@@ -180,7 +167,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Docker yaml files
 	 */
-	@Table{ "name": "docker_yaml_files", "model_name": classof DockerYamlFile }
+	@Table{ "name": "docker_yaml_files" }
 	pure memorize Collection<BaseStruct> docker_yaml_files() =>
 	[
 		/* Fields */
@@ -204,7 +191,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Domains
 	 */
-	@Table{ "name": "domains", "model_name": classof Domain }
+	@Table{ "name": "domains" }
 	pure memorize Collection<BaseStruct> domains() =>
 	[
 		/* Fields */
@@ -237,7 +224,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Domains ssl group
 	 */
-	@Table{ "name": "domains_ssl_groups", "model_name": classof DomainSSLGroup }
+	@Table{ "name": "domains_ssl_groups" }
 	pure memorize Collection<BaseStruct> domains_ssl_groups() =>
 	[
 		/* Fields */
@@ -283,7 +270,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Nginx files
 	 */
-	@Table{ "name": "nginx_files", "model_name": classof NginxFile }
+	@Table{ "name": "nginx_files" }
 	pure memorize Collection<BaseStruct> nginx_files() =>
 	[
 		/* Fields */
@@ -306,7 +293,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Routes
 	 */
-	@Table{ "name": "routes", "model_name": classof Route }
+	@Table{ "name": "routes" }
 	pure memorize Collection<BaseStruct> routes() =>
 	[
 		/* Fields */
@@ -343,7 +330,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Workspace
 	 */
-	@Table{ "name": "spaces", "model_name": classof Workspace }
+	@Table{ "name": "spaces" }
 	pure memorize Collection<BaseStruct> spaces() =>
 	[
 		/* Fields */
@@ -447,7 +434,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Docker stack
 	 */
-	@Table{ "name": "stacks", "model_name": classof DockerStack }
+	@Table{ "name": "stacks" }
 	pure memorize Collection<BaseStruct> stacks() =>
 	[
 		/* Fields */
@@ -463,7 +450,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * Template
 	 */
-	@Table{ "name": "templates", "model_name": classof Template }
+	@Table{ "name": "templates" }
 	pure memorize Collection<BaseStruct> templates() =>
 	[
 		/* Fields */
@@ -513,7 +500,7 @@ class Schema extends DatabaseSchema
 	/**
 	 * User
 	 */
-	@Table{ "name": "users", "model_name": classof User }
+	@Table{ "name": "users" }
 	pure memorize Collection<BaseStruct> users() =>
 	[
 		/* Fields */

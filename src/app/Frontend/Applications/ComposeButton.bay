@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.Applications.ComposeButton">
+<class name="Bayrell.CloudOS.Frontend.Applications.ComposeButton">
 
 <use name="Runtime.ModelProxy" />
 <use name="Runtime.Web.LayoutModel" />
@@ -27,7 +27,7 @@
 <use name="Runtime.Widget.Crud.CrudWidget" />
 <use name="Runtime.Widget.Dialog.Dialog" component="true" />
 <use name="Runtime.Widget.Dialog.DialogEvent" />
-<use name="Bayrell.CloudOS.Components.Applications.ComposeModel" />
+<use name="Bayrell.CloudOS.Frontend.Applications.ComposeModel" />
 
 
 <style>

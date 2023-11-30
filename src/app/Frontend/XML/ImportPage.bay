@@ -16,7 +16,7 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Components.XML.ImportPage">
+<class name="Bayrell.CloudOS.Frontend.XML.ImportPage">
 
 <use name="Runtime.ModelProxy" />
 <use name="Runtime.Web.ApiResult" />
