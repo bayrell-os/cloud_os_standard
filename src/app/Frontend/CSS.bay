@@ -55,10 +55,13 @@ td, th{
 
 
 <template>
+	%set string version = ModuleDescription::getModuleVersion();
 	%set Collection components = this.layout.getComponents(
 		[static::getClassName()].concat(static::components())
 	);
 	%set string css = this.layout::getCss(components);
+	<link rel='stylesheet' id='bootstrap-css' type='text/css' media='all'
+		href='/assets/bootstrap.min.css' />
 	<style>@raw{{ css }}</style>
 </template>
 

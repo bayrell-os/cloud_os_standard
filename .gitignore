@@ -4,6 +4,7 @@
 /example/env.conf.save
 /example/jwt_private.key
 /example/jwt_public.key
+/node_modules
 /src/test
 /src/tmp
 /tmp

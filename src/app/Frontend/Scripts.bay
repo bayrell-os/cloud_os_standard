@@ -23,12 +23,12 @@
 
 <template>
 	%set string version = ModuleDescription::getModuleVersion();
-	<script type='text/javascript'
-		src='/assets/vue.runtime.global.js' id='vue-runtime-js'></script>
-	<script type='text/javascript'
-		src={{ '/assets/runtime.js?ver=' ~ version }} id='bayrell-runtime-js'></script>
-	<script type='text/javascript'
-		src={{ '/assets/app.js?ver=' ~ version }} id='app-js'></script>
+	<script type='text/javascript' id='vue-runtime-js'
+		src='/assets/vue.runtime.global.js'></script>
+	<script type='text/javascript' id='bayrell-runtime-js'
+		src={{ '/assets/runtime.js?ver=' ~ version }}></script>
+	<script type='text/javascript' id='app-js'
+		src={{ '/assets/app.js?ver=' ~ version }}></script>
 </template>
 
 
