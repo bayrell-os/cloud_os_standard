@@ -9,18 +9,18 @@ function clean(cb) {
 	cb();
 }
 
-function compileBootstrap(cb) {
-	return src('./src/app/bootstrap.scss')
+function compileCss(cb) {
+	return src('./src/app/app.scss')
 		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', sass.logError))
 		.pipe(minifyCSS())
-		.pipe(concat('bootstrap.min.css'))
+		.pipe(concat('app.min.css'))
 		.pipe(sourcemaps.write('./'))
 		.pipe(dest('./src/public/assets'))
 	;
 }
 
-function compileApp(cb) {
+function compileJs(cb) {
 	return src([
 			'./src/public/assets/vue.runtime.global.prod.js',
 			'./src/public/assets/runtime.js',
@@ -36,16 +36,15 @@ function compileApp(cb) {
 
 function watchFiles() {
 	watch([
-		'./src/app/app.scss',
-		'./src/app/bootstrap.scss'
-	], compileBootstrap);
+		'./src/app/app.scss'
+	], compileCss);
 }
 
 // Определение задач
 task('clean', clean);
-task('app', compileApp);
-task('bootstrap', compileBootstrap);
+task('css', compileCss);
+task('js', compileJs);
 task('watch', watchFiles);
 
 // Основная задача сборки
-exports.build = series(clean, parallel('app', 'bootstrap'));
+exports.build = series(clean, parallel('css', 'js'));

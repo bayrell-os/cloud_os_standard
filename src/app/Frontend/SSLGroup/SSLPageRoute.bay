@@ -21,8 +21,8 @@ namespace Bayrell.CloudOS.Frontend.SSLGroup;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
+use Runtime.Widget.Crud.CrudPage;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Frontend.Main.IndexPage;
 use Bayrell.CloudOS.Frontend.SSLGroup.SSLPageModel;
 use Bayrell.CloudOS.Frontend.SSLGroup.SSLTableModel;
 
@@ -73,7 +73,10 @@ class SSLPageRoute extends BaseRoute
 	 */
 	async void actionIndex()
 	{
-		PageModel page_model = this.layout.getPageModel();
+		SSLPageModel page_model = this.layout.getPageModel();
+		
+		/* Set action */
+		page_model.setAction("index");
 		
 		/* Create table widget */
 		TableModel table = page_model.addWidget( new SSLTableModel(this.layout) );
@@ -89,7 +92,7 @@ class SSLPageRoute extends BaseRoute
 		this.layout.setPageTitle("List of SSL groups");
 		
 		/* Render page */
-		this.render( classof IndexPage );
+		this.render( classof CrudPage );
 	}
 	
 }

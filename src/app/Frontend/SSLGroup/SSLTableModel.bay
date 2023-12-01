@@ -18,12 +18,10 @@
 
 namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
-use Runtime.Widget.Label;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtons;
+use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Table.RefreshButtonModel;
-use Runtime.Widget.Table.RefreshEvent;
-use Runtime.Widget.Table.RowButtons;
-use Runtime.Widget.Table.RowNumber;
 use Runtime.Widget.Table.TableModel;
 
 
@@ -37,28 +35,57 @@ class SSLTableModel extends TableModel
 	{
 		parent::init();
 		
+		/* Setup api storage */
 		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
 		
+		/* Row number */
 		this.addField({
 			"name": "row_number",
-			"component": classof RowNumber,
 		});
+		
+		/* Field name */
 		this.addField({
-			"name": "service_name",
-			"component": classof Label,
+			"name": "name",
+			"label": "Name",
 		});
+		
+		/* Field container name */
 		this.addField({
-			"name": "status",
-			"component": classof Label,
+			"name": "container_name",
+			"label": "Container name",
 		});
-		this.addField({
-			"name": "replicas",
-			"component": classof Label,
+		
+		/* Row buttons */
+		RowButtonsModel buttons = new RowButtonsModel();
+		
+		/* Edit button */
+		buttons.addButton(new ButtonModel{
+			"content": "Edit",
+			"styles": [
+				"small",
+			],
 		});
+		
+		/* Delete button */
+		buttons.addButton(new ButtonModel{
+			"content": "Delete",
+			"styles": [
+				"danger",
+				"small",
+			],
+		});
+		
+		/* Add buttons */
 		this.addField({
 			"name": "row_buttons",
 			"component": classof RowButtons,
+			"model": buttons,
 		});
+		
+		/* Setup table style */
+		this.addStyle("table-bordered");
+		/* this.addStyle("table-hover"); */
+		this.addStyle("w-auto");
 		
 		/* Add refresh button */
 		/*RefreshButtonModel refresh_button = this.addTopButton( new RefreshButtonModel(this.layout) );

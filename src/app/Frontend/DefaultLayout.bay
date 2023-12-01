@@ -56,7 +56,7 @@
 	padding-right: 10px;
 }
 .app_layout_site_name{
-	border-right: 1px ${ vars["color_border"] } solid;
+	border-right: 1px var(--widget-color-border) solid;
 }
 .app_layout_top_menu{
 	display: flex;
@@ -72,7 +72,7 @@
 	position: relative;
 	height: calc(100% - 40px);
 	overflow-y: auto;
-	border-right: 1px ${ vars["color_border"] } solid;
+	border-right: 1px var(--widget-color-border) solid;
 }
 .app_layout_menu_item_label{
 	font-size: 1rem;
@@ -82,15 +82,15 @@
 .app_layout_menu_item a{
 	display: block;
 	padding: 10px;
-	border-bottom: 1px solid ${ vars["color_border"] };
+	border-bottom: 1px solid var(--widget-color-border);
 }
 .app_layout_menu_item a:hover{
-	background-color: ${ vars["color_hover"] };
+	background-color: var(--widget-color-hover);
 }
 .app_layout_menu_item a.active, .app_layout_menu_item a.active:hover{
-	background-color: ${ vars["color_selected"] };
-	border-color: ${ vars["color_selected"] };
-	color: ${ vars["color_selected_background"] };
+	background-color: var(--widget-color-selected);
+	border-color: var(--widget-color-selected);
+	color: var(--widget-color-selected-text);
 }
 </style>
 

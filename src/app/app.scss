@@ -1,25 +1,13 @@
-*{box-sizing: border-box;}
-body, html{
-	font-family: 'Ubuntu', sans-serif;
-	font-size: 14px;
-	width: 100%;
-	padding: 0;
-	margin: 0;
-}
-a { text-decoration: inherit; color: #0000d0; cursor: pointer; }
-a:hover, a:visited:hover { text-decoration: underline; color: red; }
-a:visited { text-decoration: inherit; color: #0000d0; }
-a.link { text-decoration: none; color: #0000d0; cursor: pointer; }
-a.link:hover, a.link:visited:hover { text-decoration: underline; color: red; }
-a.link:visited { text-decoration: none; color: #0000d0; }
-a.nolink{
-	text-decoration: inherit;
-	color: inherit;
-}
-a.nolink:hover,a.nolink:visited,a.nolink:visited:hover{
-	text-decoration: inherit;
-	color: inherit;
-}
-.cursor{
-	cursor:pointer;
-}
+// Include any default variable overrides here
+$enable-dark-mode: false;
+$enable-rounded: false;
+$btn-padding-x: 1rem;
+$btn-padding-y: 0.35rem;
+$btn-padding-x-sm: 0.7rem;
+$btn-padding-y-sm: 0.35rem;
+$btn-font-size-sm: 0.95rem;
+$line-height-base: 1.2;
+$line-height-sm: 1;
+
+// Include Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap";

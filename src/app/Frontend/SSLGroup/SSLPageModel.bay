@@ -19,9 +19,10 @@
 namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
 use Runtime.Web.PageModel;
+use Runtime.Widget.Crud.CrudPageModel;
 
 
-class SSLPageModel extends PageModel
+class SSLPageModel extends CrudPageModel
 {
 	
 }

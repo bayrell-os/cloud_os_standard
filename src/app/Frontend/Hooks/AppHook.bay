@@ -36,6 +36,7 @@ class AppHook extends BaseAppHook
 		this.register( static::RENDER_FOOTER );
 		#endif
 		
+		this.register( static::COMPONENTS, 1000 );
 		this.register( static::CSS_VARS );
 		this.register( static::EXPORT_DATA );
 		this.register( static::LAYOUT_CLASS_NAME );
@@ -91,20 +92,13 @@ class AppHook extends BaseAppHook
 	
 	
 	/**
-	 * Get css vars
+	 * App components
 	 */
-	void css_vars(Map params)
+	void components(Map params)
 	{
-		params.set("color_primary", "#337ab7");
-		params.set("color_danger", "#d14b42");
-		params.set("color_success", "#090");
-		params.set("color_selected", "#337ab7");
-		params.set("color_selected_background", "#fff");
-		params.set("color_border", "#e7e7e7");
-		params.set("color_hover", "#eee");
-		params.set("color_table_border", "#ccc");
-		params.set("color_table_hover", "#eee");
-		params.set("color_table_selected", "#337ab7");
+		params["components"].appendItems([
+			"Bayrell.CloudOS.Frontend.CSS",
+		]);
 	}
 	
 	

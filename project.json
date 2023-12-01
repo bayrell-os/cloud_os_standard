@@ -38,6 +38,7 @@
 	"exclude":
 	[
 		"./example",
-		"./files"
+		"./files",
+		"./node_modules"
 	]
 }
