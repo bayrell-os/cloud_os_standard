@@ -32,7 +32,10 @@ $modules = [
 ];
 
 $obj = [
-    "env" => [],
+    "environments" => [
+        "DEBUG" => true,
+        "CLOUD_ENV" => "dev",
+    ],
     "modules" => $modules,
     "loader" => $loader,
 ];

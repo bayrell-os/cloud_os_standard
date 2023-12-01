@@ -1,0 +1,25 @@
+*{box-sizing: border-box;}
+body, html{
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 14px;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+a { text-decoration: inherit; color: #0000d0; cursor: pointer; }
+a:hover, a:visited:hover { text-decoration: underline; color: red; }
+a:visited { text-decoration: inherit; color: #0000d0; }
+a.link { text-decoration: none; color: #0000d0; cursor: pointer; }
+a.link:hover, a.link:visited:hover { text-decoration: underline; color: red; }
+a.link:visited { text-decoration: none; color: #0000d0; }
+a.nolink{
+	text-decoration: inherit;
+	color: inherit;
+}
+a.nolink:hover,a.nolink:visited,a.nolink:visited:hover{
+	text-decoration: inherit;
+	color: inherit;
+}
+.cursor{
+	cursor:pointer;
+}

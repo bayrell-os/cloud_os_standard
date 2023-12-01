@@ -1,4 +1,4 @@
-const { src, dest, series, parallel, task } = require('gulp');
+const { src, dest, series, parallel, task, watch } = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const minifyCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
@@ -34,10 +34,18 @@ function compileApp(cb) {
 	;
 }
 
+function watchFiles() {
+	watch([
+		'./src/app/app.scss',
+		'./src/app/bootstrap.scss'
+	], compileBootstrap);
+}
+
 // Определение задач
 task('clean', clean);
 task('app', compileApp);
 task('bootstrap', compileBootstrap);
+task('watch', watchFiles);
 
 // Основная задача сборки
 exports.build = series(clean, parallel('app', 'bootstrap'));

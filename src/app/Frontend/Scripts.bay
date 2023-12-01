@@ -23,12 +23,20 @@
 
 <template>
 	%set string version = ModuleDescription::getModuleVersion();
-	<script type='text/javascript' id='vue-runtime-js'
-		src='/assets/vue.runtime.global.js'></script>
-	<script type='text/javascript' id='bayrell-runtime-js'
-		src={{ '/assets/runtime.js?ver=' ~ version }}></script>
-	<script type='text/javascript' id='app-js'
-		src={{ '/assets/app.js?ver=' ~ version }}></script>
+	%if (@.env("CLOUD_ENV") == "prod")
+	{
+		<script type='text/javascript' id='app-min-js'
+			src='/assets/app.min.js'></script>
+	}
+	%else
+	{
+		<script type='text/javascript' id='vue-runtime-js'
+			src='/assets/vue.runtime.global.js'></script>
+		<script type='text/javascript' id='bayrell-runtime-js'
+			src={{ '/assets/runtime.js?ver=' ~ version }}></script>
+		<script type='text/javascript' id='app-js'
+			src={{ '/assets/app.js?ver=' ~ version }}></script>
+	}
 </template>
 
 

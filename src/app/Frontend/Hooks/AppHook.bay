@@ -72,10 +72,21 @@ class AppHook extends BaseAppHook
 	void export_data(Map params)
 	{
 		Map data = params.get("data");
+		
+		/* Setup modules */
 		data.set("entry_point", "Bayrell.CloudOS.Frontend.WebApp");
 		data.set("modules", [
 			"Bayrell.CloudOS.Frontend"
 		]);
+		
+		/* Setup environments */
+		Map environments = data.get("environments");
+		Collection arr = ["CLOUD_ENV", "DEBUG"];
+		for (int i=0; i<arr.count(); i++)
+		{
+			string name = arr.get(i);
+			environments.set(name, @.env(name));
+		}
 	}
 	
 	

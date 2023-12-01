@@ -14,5 +14,10 @@ $init = require_once dirname(__DIR__) . "/init.php";
     'Bayrell.CloudOS.Frontend.WebApp',
     
     /* Modules */
-    $init["modules"]
+    $init["modules"],
+    
+    /* Params */
+    \Runtime\Map::from([
+        "environments" => \Runtime\Map::from($init["environments"]),
+    ])
 );
