@@ -31,6 +31,7 @@
 				"Runtime.Web",
 				"Runtime.Widget",
 				"Runtime.Widget.Crud",
+				"Runtime.Widget.Dialog",
 				"Runtime.Widget.Table"
 			]
 		}

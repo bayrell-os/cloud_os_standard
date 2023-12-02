@@ -51,6 +51,7 @@ static class ModuleDescription
 		"Runtime": ">=0.12",
 		"Runtime.Web": ">=0.12",
 		"Runtime.Widget": ">=0.12",
+		"Runtime.Widget.Dialog": ">=0.12",
 		"Runtime.Widget.Table": ">=0.12",
 		
 		#ifdef BACKEND then
