@@ -22,6 +22,7 @@ use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Table.AddButtonModel;
 use Runtime.Widget.Table.TableModel;
 
 
@@ -56,10 +57,10 @@ class SSLTableModel extends TableModel
 		});
 		
 		/* Row buttons */
-		RowButtonsModel buttons = new RowButtonsModel();
+		RowButtonsModel row_buttons = new RowButtonsModel();
 		
 		/* Edit button */
-		buttons.addButton(new ButtonModel{
+		row_buttons.addButton(new ButtonModel{
 			"content": "Edit",
 			"styles": [
 				"small",
@@ -67,7 +68,7 @@ class SSLTableModel extends TableModel
 		});
 		
 		/* Delete button */
-		buttons.addButton(new ButtonModel{
+		row_buttons.addButton(new ButtonModel{
 			"content": "Delete",
 			"styles": [
 				"danger",
@@ -79,17 +80,17 @@ class SSLTableModel extends TableModel
 		this.addField({
 			"name": "row_buttons",
 			"component": classof RowButtons,
-			"model": buttons,
+			"model": row_buttons,
 		});
 		
 		/* Setup table style */
-		this.addStyle("table-bordered");
-		/* this.addStyle("table-hover"); */
-		this.addStyle("w-auto");
+		this.styles.add("border");
+		this.styles.add("w_auto");
 		
-		/* Add refresh button */
-		/*RefreshButtonModel refresh_button = this.addTopButton( new RefreshButtonModel(this.layout) );
-		refresh_button.addEvent( method this.onRefresh );*/
+		/* Add button */
+		this.top_buttons.addButton(new AddButtonModel{
+			"table": this,
+		});
 	}
 	
 	
