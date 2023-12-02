@@ -31,3 +31,6 @@
 [submodule "src/lib/Runtime.Widget.Table"]
 	path = src/lib/Runtime.Widget.Table
 	url = https://github.com/bayrell/Runtime.Widget.Table
+[submodule "src/lib/Runtime.Widget.Dialog"]
+	path = src/lib/Runtime.Widget.Dialog
+	url = https://github.com/bayrell/Runtime.Widget.Dialog
