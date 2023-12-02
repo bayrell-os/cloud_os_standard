@@ -21,7 +21,7 @@
 <use name="Bayrell.CloudOS.Frontend.ModuleDescription" />
 
 
-<template>
+<template multiblock="false">
 	%set string version = ModuleDescription::getModuleVersion();
 	%if (@.env("CLOUD_ENV") == "prod")
 	{
