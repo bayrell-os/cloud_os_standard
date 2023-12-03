@@ -50,7 +50,7 @@ class AppHook extends BaseAppHook
 	void render_provider_settings(Map params)
 	{
 		/* Restore SSR content in Frontend */
-		params.set("is_ssr", true);
+		params.set("ssr", true);
 	}
 	
 	
