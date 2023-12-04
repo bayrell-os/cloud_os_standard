@@ -19,15 +19,14 @@
 namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
 use Runtime.Widget.ButtonModel;
+use Runtime.Widget.Input;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Table.AddButtonModel;
-use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Frontend.SSLGroup.SSLFormModel;
+use Runtime.Widget.Form.FormModel;
 
 
-class SSLTableModel extends TableModel
+class SSLFormModel extends FormModel
 {
 	/**
 	 * Constructor
@@ -39,61 +38,18 @@ class SSLTableModel extends TableModel
 		/* Setup api storage */
 		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
 		
-		/* Create form */
-		SSLFormModel form_model = this.addWidget( new SSLFormModel );
-		
-		/* Row number */
-		this.addField({
-			"name": "row_number",
-		});
-		
 		/* Field name */
 		this.addField({
 			"name": "name",
 			"label": "Name",
+			"component": classof Input,
 		});
 		
 		/* Field container name */
 		this.addField({
 			"name": "container_name",
 			"label": "Container name",
-		});
-		
-		/* Row buttons */
-		RowButtonsModel row_buttons = new RowButtonsModel();
-		
-		/* Edit button */
-		row_buttons.add(new ButtonModel{
-			"content": "Edit",
-			"styles": [
-				"small",
-			],
-		});
-		
-		/* Delete button */
-		row_buttons.add(new ButtonModel{
-			"content": "Delete",
-			"styles": [
-				"danger",
-				"small",
-			],
-		});
-		
-		/* Add buttons */
-		this.addField({
-			"name": "row_buttons",
-			"component": classof RowButtons,
-			"model": row_buttons,
-		});
-		
-		/* Setup table style */
-		this.styles.add("border");
-		this.styles.add("w_auto");
-		
-		/* Add button */
-		this.top_buttons.add(new AddButtonModel{
-			"table": this,
-			"form": form_model,
+			"component": classof Input,
 		});
 	}
 }

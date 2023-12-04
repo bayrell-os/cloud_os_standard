@@ -32,6 +32,7 @@
 				"Runtime.Widget",
 				"Runtime.Widget.Crud",
 				"Runtime.Widget.Dialog",
+				"Runtime.Widget.Form",
 				"Runtime.Widget.Table"
 			]
 		}

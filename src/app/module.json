@@ -6,6 +6,7 @@
 		"Frontend/Main/AboutPage.bay",
 		"Frontend/Main/IndexPage.bay",
 		"Frontend/Main/IndexPageModel.bay",
+		"Frontend/SSLGroup/SSLFormModel.bay",
 		"Frontend/SSLGroup/SSLPageModel.bay",
 		"Frontend/SSLGroup/SSLTableModel.bay",
 		"Frontend/Settings/DatabasePage.bay",

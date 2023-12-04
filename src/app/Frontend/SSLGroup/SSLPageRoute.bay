@@ -86,8 +86,8 @@ class SSLPageRoute extends BaseRoute
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));
 		
-		/* Load table widget */
-		await table.loadData();
+		/* Load page model data */
+		await page_model.loadData();
 		
 		/* Title */
 		this.layout.setPageTitle("List of SSL groups");
