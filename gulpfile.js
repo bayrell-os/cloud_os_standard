@@ -9,7 +9,7 @@ function clean(cb) {
 	cb();
 }
 
-function compileCss(cb) {
+function compileCss() {
 	return src('./src/app/app.scss')
 		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', sass.logError))
@@ -20,7 +20,16 @@ function compileCss(cb) {
 	;
 }
 
-function compileJs(cb) {
+function copyVue() {
+	return src([
+			'./node_modules/vue/dist/vue.runtime.global.js',
+			'./node_modules/vue/dist/vue.runtime.global.prod.js',
+		])
+		.pipe(dest('./src/public/assets'))
+	;
+}
+
+function compileJs() {
 	return src([
 			'./src/public/assets/vue.runtime.global.prod.js',
 			'./src/public/assets/runtime.js',
@@ -42,6 +51,7 @@ function watchFiles() {
 
 // Определение задач
 task('clean', clean);
+task('vue', copyVue);
 task('css', compileCss);
 task('js', compileJs);
 task('watch', watchFiles);

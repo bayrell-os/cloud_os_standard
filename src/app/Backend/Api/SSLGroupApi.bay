@@ -97,4 +97,13 @@ class SSLGroupApi extends CrudApi
 		await parent::actionSearch();
 	}
 	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		await parent::actionSave();
+	}
 }

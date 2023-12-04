@@ -40,7 +40,7 @@ class SSLTableModel extends TableModel
 		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
 		
 		/* Create form */
-		SSLFormModel form_model = this.addWidget( new SSLFormModel );
+		SSLFormModel form_model = this.addWidget( new SSLFormModel{ "layout": this.layout } );
 		
 		/* Row number */
 		this.addField({

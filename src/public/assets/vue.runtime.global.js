@@ -15,8 +15,8 @@ var Vue = (function (exports) {
   const NOOP = () => {
   };
   const NO = () => false;
-  const onRE = /^on[^a-z]/;
-  const isOn = (key) => onRE.test(key);
+  const isOn = (key) => key.charCodeAt(0) === 111 && key.charCodeAt(1) === 110 && // uppercase letter
+  (key.charCodeAt(2) > 122 || key.charCodeAt(2) < 97);
   const isModelListener = (key) => key.startsWith("onUpdate:");
   const extend = Object.assign;
   const remove = (arr, el) => {
@@ -939,7 +939,7 @@ var Vue = (function (exports) {
           toRaw(this)
         );
       }
-      return type === "delete" ? false : this;
+      return type === "delete" ? false : type === "clear" ? void 0 : this;
     };
   }
   function createInstrumentations() {
@@ -2210,9 +2210,19 @@ var Vue = (function (exports) {
     try {
       if (vnode.shapeFlag & 4) {
         const proxyToUse = withProxy || proxy;
+        const thisProxy = setupState.__isScriptSetup ? new Proxy(proxyToUse, {
+          get(target, key, receiver) {
+            warn(
+              `Property '${String(
+              key
+            )}' was accessed via 'this'. Avoid using 'this' in templates.`
+            );
+            return Reflect.get(target, key, receiver);
+          }
+        }) : proxyToUse;
         result = normalizeVNode(
           render.call(
-            proxyToUse,
+            thisProxy,
             proxyToUse,
             renderCache,
             props,
@@ -2823,7 +2833,12 @@ If this is a native custom element, make sure to exclude it from component resol
           if (delayEnter) {
             activeBranch.transition.afterLeave = () => {
               if (pendingId === suspense.pendingId) {
-                move(pendingBranch, container2, anchor2, 0);
+                move(
+                  pendingBranch,
+                  container2,
+                  next(activeBranch),
+                  0
+                );
                 queuePostFlushCb(effects);
               }
             };
@@ -2870,7 +2885,6 @@ If this is a native custom element, make sure to exclude it from component resol
         }
         const { vnode: vnode2, activeBranch, parentComponent: parentComponent2, container: container2, isSVG: isSVG2 } = suspense;
         triggerEvent(vnode2, "onFallback");
-        const anchor2 = next(activeBranch);
         const mountFallback = () => {
           if (!suspense.isInFallback) {
             return;
@@ -2879,7 +2893,7 @@ If this is a native custom element, make sure to exclude it from component resol
             null,
             fallbackVNode,
             container2,
-            anchor2,
+            next(activeBranch),
             parentComponent2,
             null,
             // fallback tree will not have suspense context
@@ -3174,6 +3188,7 @@ If this is a native custom element, make sure to exclude it from component resol
     let onCleanup = (fn) => {
       cleanup = effect.onStop = () => {
         callWithErrorHandling(fn, instance, 4);
+        cleanup = effect.onStop = void 0;
       };
     };
     let oldValue = isMultiSource ? new Array(source.length).fill(INITIAL_WATCHER_VALUE) : INITIAL_WATCHER_VALUE;
@@ -3644,7 +3659,11 @@ If this is a native custom element, make sure to exclude it from component resol
     }
   }
   function getKeepAliveChild(vnode) {
-    return isKeepAlive(vnode) ? vnode.children ? vnode.children[0] : void 0 : vnode;
+    return isKeepAlive(vnode) ? (
+      // #7121 ensure get the child component subtree in case
+      // it's been replaced during HMR
+      vnode.component ? vnode.component.subTree : vnode.children ? vnode.children[0] : void 0
+    ) : vnode;
   }
   function setTransitionHooks(vnode, hooks) {
     if (vnode.shapeFlag & 6 && vnode.component) {
@@ -5637,6 +5656,9 @@ If you want to remount the same app, move your app creation logic into a factory
     };
   }
   function getInvalidTypeMessage(name, value, expectedTypes) {
+    if (expectedTypes.length === 0) {
+      return `Prop type [] for prop "${name}" won't match anything. Did you mean to use type Array instead?`;
+    }
     let message = `Invalid prop: type check failed for prop "${name}". Expected ${expectedTypes.map(capitalize).join(" | ")}`;
     const expectedType = expectedTypes[0];
     const receivedType = toRawType(value);
@@ -5906,6 +5928,20 @@ If you want to remount the same app, move your app creation logic into a factory
       const { type, ref, shapeFlag, patchFlag } = vnode;
       let domType = node.nodeType;
       vnode.el = node;
+      {
+        if (!("__vnode" in node)) {
+          Object.defineProperty(node, "__vnode", {
+            value: vnode,
+            enumerable: false
+          });
+        }
+        if (!("__vueParentComponent" in node)) {
+          Object.defineProperty(node, "__vueParentComponent", {
+            value: parentComponent,
+            enumerable: false
+          });
+        }
+      }
       if (patchFlag === -2) {
         optimized = false;
         vnode.dynamicChildren = null;
@@ -6067,15 +6103,16 @@ If you want to remount the same app, move your app creation logic into a factory
     const hydrateElement = (el, vnode, parentComponent, parentSuspense, slotScopeIds, optimized) => {
       optimized = optimized || !!vnode.dynamicChildren;
       const { type, props, patchFlag, shapeFlag, dirs, transition } = vnode;
-      const forcePatchValue = type === "input" && dirs || type === "option";
+      const forcePatch = type === "input" || type === "option";
       {
         if (dirs) {
           invokeDirectiveHook(vnode, null, parentComponent, "created");
         }
         if (props) {
-          if (forcePatchValue || !optimized || patchFlag & (16 | 32)) {
+          if (forcePatch || !optimized || patchFlag & (16 | 32)) {
             for (const key in props) {
-              if (forcePatchValue && key.endsWith("value") || isOn(key) && !isReservedProp(key)) {
+              if (forcePatch && (key.endsWith("value") || key === "indeterminate") || isOn(key) && !isReservedProp(key) || // force hydrate v-bind with .prop modifiers
+              key[0] === ".") {
                 patchProp(
                   el,
                   key,
@@ -7832,6 +7869,7 @@ If you want to remount the same app, move your app creation logic into a factory
     }
   };
   const TeleportImpl = {
+    name: "Teleport",
     __isTeleport: true,
     process(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized, internals) {
       const {
@@ -8253,7 +8291,7 @@ If you want to remount the same app, move your app creation logic into a factory
     if (shapeFlag & 4 && isProxy(type)) {
       type = toRaw(type);
       warn(
-        `Vue received a Component which was made a reactive object. This can lead to unnecessary performance overhead, and should be avoided by marking the component with \`markRaw\` or using \`shallowRef\` instead of \`ref\`.`,
+        `Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with \`markRaw\` or using \`shallowRef\` instead of \`ref\`.`,
         `
 Component that was made reactive: `,
         type
@@ -8872,9 +8910,9 @@ Component that was made reactive: `,
       return;
     }
     const vueStyle = { style: "color:#3ba776" };
-    const numberStyle = { style: "color:#0b1bc9" };
-    const stringStyle = { style: "color:#b62e24" };
-    const keywordStyle = { style: "color:#9d288c" };
+    const numberStyle = { style: "color:#1677ff" };
+    const stringStyle = { style: "color:#f5222d" };
+    const keywordStyle = { style: "color:#eb2f96" };
     const formatter = {
       header(obj) {
         if (!isObject(obj)) {
@@ -9068,7 +9106,7 @@ Component that was made reactive: `,
     return true;
   }
 
-  const version = "3.3.8";
+  const version = "3.3.10";
   const ssrUtils = null;
   const resolveFilter = null;
   const compatUtils = null;
@@ -9680,7 +9718,8 @@ Component that was made reactive: `,
     }
   }
 
-  const nativeOnRE = /^on[a-z]/;
+  const isNativeOn = (key) => key.charCodeAt(0) === 111 && key.charCodeAt(1) === 110 && // lowercase letter
+  key.charCodeAt(2) > 96 && key.charCodeAt(2) < 123;
   const patchProp = (el, key, prevValue, nextValue, isSVG = false, prevChildren, parentComponent, parentSuspense, unmountChildren) => {
     if (key === "class") {
       patchClass(el, nextValue, isSVG);
@@ -9714,7 +9753,7 @@ Component that was made reactive: `,
       if (key === "innerHTML" || key === "textContent") {
         return true;
       }
-      if (key in el && nativeOnRE.test(key) && isFunction(value)) {
+      if (key in el && isNativeOn(key) && isFunction(value)) {
         return true;
       }
       return false;
@@ -9731,7 +9770,11 @@ Component that was made reactive: `,
     if (key === "type" && el.tagName === "TEXTAREA") {
       return false;
     }
-    if (nativeOnRE.test(key) && isString(value)) {
+    if (key === "width" || key === "height") {
+      const tag = el.tagName;
+      return !(tag === "IMG" || tag === "VIDEO" || tag === "CANVAS" || tag === "SOURCE");
+    }
+    if (isNativeOn(key) && isString(value)) {
       return false;
     }
     return key in el;
@@ -10201,21 +10244,20 @@ Component that was made reactive: `,
       el[assignKey] = getModelAssigner(vnode);
       if (el.composing)
         return;
+      const elValue = number || el.type === "number" ? looseToNumber(el.value) : el.value;
+      const newValue = value == null ? "" : value;
+      if (elValue === newValue) {
+        return;
+      }
       if (document.activeElement === el && el.type !== "range") {
         if (lazy) {
           return;
         }
-        if (trim && el.value.trim() === value) {
-          return;
-        }
-        if ((number || el.type === "number") && looseToNumber(el.value) === value) {
+        if (trim && el.value.trim() === newValue) {
           return;
         }
       }
-      const newValue = value == null ? "" : value;
-      if (el.value !== newValue) {
-        el.value = newValue;
-      }
+      el.value = newValue;
     }
   };
   const vModelCheckbox = {
@@ -10401,14 +10443,14 @@ Component that was made reactive: `,
     exact: (e, modifiers) => systemModifiers.some((m) => e[`${m}Key`] && !modifiers.includes(m))
   };
   const withModifiers = (fn, modifiers) => {
-    return (event, ...args) => {
+    return fn._withMods || (fn._withMods = (event, ...args) => {
       for (let i = 0; i < modifiers.length; i++) {
         const guard = modifierGuards[modifiers[i]];
         if (guard && guard(event, modifiers))
           return;
       }
       return fn(event, ...args);
-    };
+    });
   };
   const keyNames = {
     esc: "escape",
@@ -10420,7 +10462,7 @@ Component that was made reactive: `,
     delete: "backspace"
   };
   const withKeys = (fn, modifiers) => {
-    return (event) => {
+    return fn._withKeys || (fn._withKeys = (event) => {
       if (!("key" in event)) {
         return;
       }
@@ -10428,7 +10470,7 @@ Component that was made reactive: `,
       if (modifiers.some((k) => k === eventKey || keyNames[k] === eventKey)) {
         return fn(event);
       }
-    };
+    });
   };
 
   const rendererOptions = /* @__PURE__ */ extend({ patchProp }, nodeOps);
