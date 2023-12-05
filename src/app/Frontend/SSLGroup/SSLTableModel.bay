@@ -23,6 +23,7 @@ use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Table.DeleteWidgetModel;
 use Runtime.Widget.Table.SaveWidgetModel;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.SSLGroup.SSLFormModel;
@@ -35,8 +36,6 @@ class SSLTableModel extends TableModel
 	 */
 	void constructor(Dict params = null)
 	{
-		ButtonModel button;
-		
 		parent(params);
 		
 		/* Setup api storage */
@@ -44,12 +43,22 @@ class SSLTableModel extends TableModel
 		
 		/* Create form */
 		SSLFormModel form_model = this.addWidget( new SSLFormModel{ "layout": this.layout } );
+		
+		/* Create save wiget */
 		SaveWidgetModel save_widget = this.addWidget( new SaveWidgetModel{
 			"form": form_model,
 			"layout": this.layout,
 			"table": this,
 		} );
 		this.addRender(save_widget.getWidgetName());
+		
+		/* Create delete widget */
+		DeleteWidgetModel delete_widget = this.addWidget( new DeleteWidgetModel{
+			"form": form_model,
+			"layout": this.layout,
+			"table": this,
+		} );
+		this.addRender(delete_widget.getWidgetName());
 		
 		/* Row number */
 		this.addField({
@@ -72,23 +81,24 @@ class SSLTableModel extends TableModel
 		RowButtonsModel row_buttons = new RowButtonsModel();
 		
 		/* Edit button */
-		button = row_buttons.add(new ButtonModel{
+		ButtonModel edit_button = row_buttons.add(new ButtonModel{
 			"content": "Edit",
 			"styles": [
 				"default",
 				"small",
 			],
 		});
-		button.events.add("onClick", new Callback(save_widget, "onClick"));
+		edit_button.events.add("onClick", new Callback(save_widget, "onClick"));
 		
 		/* Delete button */
-		row_buttons.add(new ButtonModel{
+		ButtonModel delete_button = row_buttons.add(new ButtonModel{
 			"content": "Delete",
 			"styles": [
 				"danger",
 				"small",
 			],
 		});
+		delete_button.events.add("onClick", new Callback(delete_widget, "onClick"));
 		
 		/* Add buttons */
 		this.addField({
@@ -102,12 +112,12 @@ class SSLTableModel extends TableModel
 		this.styles.add("w_auto");
 		
 		/* Add button */
-		button = this.top_buttons.add(new ButtonModel{
+		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
 			"content": "Add",
 			"styles": [
 				"success",
 			],
 		});
-		button.events.add("onClick", new Callback(save_widget, "onClick"));
+		add_button.events.add("onClick", new Callback(save_widget, "onClick"));
 	}
 }
