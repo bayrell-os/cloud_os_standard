@@ -18,11 +18,12 @@
 
 namespace Bayrell.CloudOS.Frontend.SSLGroup;
 
+use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Table.AddButtonModel;
+use Runtime.Widget.Table.SaveWidgetModel;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.SSLGroup.SSLFormModel;
 
@@ -34,6 +35,8 @@ class SSLTableModel extends TableModel
 	 */
 	void constructor(Dict params = null)
 	{
+		ButtonModel button;
+		
 		parent(params);
 		
 		/* Setup api storage */
@@ -41,6 +44,12 @@ class SSLTableModel extends TableModel
 		
 		/* Create form */
 		SSLFormModel form_model = this.addWidget( new SSLFormModel{ "layout": this.layout } );
+		SaveWidgetModel save_widget = this.addWidget( new SaveWidgetModel{
+			"form": form_model,
+			"layout": this.layout,
+			"table": this,
+		} );
+		this.addRender(save_widget.getWidgetName());
 		
 		/* Row number */
 		this.addField({
@@ -63,12 +72,14 @@ class SSLTableModel extends TableModel
 		RowButtonsModel row_buttons = new RowButtonsModel();
 		
 		/* Edit button */
-		row_buttons.add(new ButtonModel{
+		button = row_buttons.add(new ButtonModel{
 			"content": "Edit",
 			"styles": [
+				"default",
 				"small",
 			],
 		});
+		button.events.add("onClick", new Callback(save_widget, "onClick"));
 		
 		/* Delete button */
 		row_buttons.add(new ButtonModel{
@@ -91,9 +102,12 @@ class SSLTableModel extends TableModel
 		this.styles.add("w_auto");
 		
 		/* Add button */
-		this.top_buttons.add(new AddButtonModel{
-			"table": this,
-			"form": form_model,
+		button = this.top_buttons.add(new ButtonModel{
+			"content": "Add",
+			"styles": [
+				"success",
+			],
 		});
+		button.events.add("onClick", new Callback(save_widget, "onClick"));
 	}
 }

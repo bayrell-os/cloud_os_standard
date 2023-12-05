@@ -29,6 +29,12 @@ use Runtime.Widget.Form.FormModel;
 class SSLFormModel extends FormModel
 {
 	/**
+	 * Primary keys
+	 */
+	Vector getPrimaryKeys() => ["id"];
+	
+	
+	/**
 	 * Constructor
 	 */
 	void constructor(Dict params = null)
