@@ -35,15 +35,16 @@ class SSLFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Create data storage
 	 */
-	void constructor(Dict params = null)
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.ssl_group");
+	
+	
+	/**
+	 * Init fields
+	 */
+	void initFields()
 	{
-		parent(params);
-		
-		/* Setup api storage */
-		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
-		
 		/* Field name */
 		this.addField({
 			"name": "name",

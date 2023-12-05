@@ -23,43 +23,77 @@ use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Table.DeleteWidgetModel;
-use Runtime.Widget.Table.SaveWidgetModel;
+use Runtime.Widget.Table.DeleteDialogModel;
+use Runtime.Widget.Table.SaveDialogModel;
 use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.SSLGroup.SSLFormModel;
 
 
 class SSLTableModel extends TableModel
-{
+{	
 	/**
-	 * Constructor
+	 * Create data storage
 	 */
-	void constructor(Dict params = null)
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.ssl_group");
+	
+	
+	/**
+	 * Init styles
+	 */
+	void initStyles()
 	{
-		parent(params);
-		
-		/* Setup api storage */
-		this.setDataStorage( new CrudApiStorage(this.layout, "app.ssl_group") );
-		
+		this.styles.add("border");
+		this.styles.add("w_auto");
+	}
+	
+	
+	/**
+	 * Init table widgets
+	 */
+	void initWidgets()
+	{
 		/* Create form */
 		SSLFormModel form_model = this.addWidget( new SSLFormModel{ "layout": this.layout } );
 		
 		/* Create save wiget */
-		SaveWidgetModel save_widget = this.addWidget( new SaveWidgetModel{
+		SaveDialogModel save_dialog = this.addWidget( new SaveDialogModel{
 			"form": form_model,
 			"layout": this.layout,
 			"table": this,
 		} );
-		this.addRender(save_widget.getWidgetName());
+		this.addRender(save_dialog.getWidgetName());
 		
 		/* Create delete widget */
-		DeleteWidgetModel delete_widget = this.addWidget( new DeleteWidgetModel{
+		DeleteDialogModel delete_dialog = this.addWidget( new DeleteDialogModel{
 			"form": form_model,
 			"layout": this.layout,
 			"table": this,
 		} );
-		this.addRender(delete_widget.getWidgetName());
-		
+		this.addRender(delete_dialog.getWidgetName());
+	}
+	
+	
+	/**
+	 * Init top buttons
+	 */
+	void initTopButtons()
+	{
+		/* Add button */
+		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
+			"content": "Add",
+			"styles": [
+				"success",
+			],
+		});
+		add_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
+	}
+	
+	
+	/**
+	 * Init fields
+	 */
+	void initFields()
+	{
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -88,7 +122,7 @@ class SSLTableModel extends TableModel
 				"small",
 			],
 		});
-		edit_button.events.add("onClick", new Callback(save_widget, "onClick"));
+		edit_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
 		
 		/* Delete button */
 		ButtonModel delete_button = row_buttons.add(new ButtonModel{
@@ -98,7 +132,7 @@ class SSLTableModel extends TableModel
 				"small",
 			],
 		});
-		delete_button.events.add("onClick", new Callback(delete_widget, "onClick"));
+		delete_button.events.add("onClick", new Callback(this.getWidget("delete_dialog"), "onClick"));
 		
 		/* Add buttons */
 		this.addField({
@@ -106,18 +140,5 @@ class SSLTableModel extends TableModel
 			"component": classof RowButtons,
 			"model": row_buttons,
 		});
-		
-		/* Setup table style */
-		this.styles.add("border");
-		this.styles.add("w_auto");
-		
-		/* Add button */
-		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
-			"content": "Add",
-			"styles": [
-				"success",
-			],
-		});
-		add_button.events.add("onClick", new Callback(save_widget, "onClick"));
 	}
 }
