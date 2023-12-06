@@ -24,5 +24,4 @@ use Runtime.Widget.Crud.CrudPageModel;
 
 class SSLPageModel extends CrudPageModel
 {
-	
 }

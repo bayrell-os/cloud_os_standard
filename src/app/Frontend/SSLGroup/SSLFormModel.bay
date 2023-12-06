@@ -59,4 +59,25 @@ class SSLFormModel extends FormModel
 			"component": classof Input,
 		});
 	}
+	
+	
+	/**
+	 * Get page title
+	 */
+	string getPageTitle(string action = "")
+	{
+		if (action == "add")
+		{
+			return "Add SSL group";
+		}
+		if (action == "edit")
+		{
+			return "Edit " ~ this.storage.item.get("name");
+		}
+		if (action == "delete")
+		{
+			return "Delete " ~ this.storage.item.get("name");
+		}
+		return "";
+	}
 }

@@ -1,0 +1,146 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Frontend.Routes;
+
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.Input;
+use Runtime.Widget.RowButtons;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Select;
+use Runtime.Widget.TextArea;
+use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Form.FormModel;
+use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
+
+
+class RouteFormModel extends FormModel
+{
+	/**
+	 * Primary keys
+	 */
+	Vector getPrimaryKeys() => ["id"];
+	
+	
+	/**
+	 * Create data storage
+	 */
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.route");
+	
+	
+	/**
+	 * Init fields
+	 */
+	void initFields()
+	{
+		/* Field enable */
+		this.addField({
+			"label": "Enable",
+			"name": "enable",
+			"component": classof Select,
+			"props": {
+				"options": [
+					{"label": "No", "value": "0"},
+					{"label": "Yes", "value": "1"},
+				],
+			},
+		});
+		
+		/* Field protocol */
+		this.addField({
+			"label": "Protocol",
+			"name": "protocol",
+			"component": classof Select,
+			"props": {
+				"options": [
+					{"label": "HTTP", "value": "http"},
+				],
+			},
+		});
+		
+		/* Field domain */
+		this.addField({
+			"label": "Domain name",
+			"name": "domain_id",
+			"component": classof Input,
+		});
+		
+		/* Field source port */
+		this.addField({
+			"label": "Source port",
+			"name": "source_port",
+			"component": classof Input,
+		});
+		
+		/* Field route prefix */
+		this.addField({
+			"label": "Route prefix",
+			"name": "route_prefix",
+			"component": classof Input,
+		});
+		
+		/* Field docker name */
+		this.addField({
+			"label": "Docker name",
+			"name": "docker_name",
+			"component": classof Input,
+		});
+		
+		/* Field target port */
+		this.addField({
+			"label": "Target port",
+			"name": "target_port",
+			"component": classof Input,
+		});
+		
+		/* Field target prefix */
+		this.addField({
+			"label": "Target prefix",
+			"name": "target_prefix",
+			"component": classof Input,
+		});
+		
+		/* Field nginx config */
+		this.addField({
+			"label": "Nginx config",
+			"name": "nginx_config",
+			"component": classof TextArea,
+		});
+	}
+	
+	
+	/**
+	 * Get page title
+	 */
+	string getPageTitle(string action = "")
+	{
+		if (action == "add")
+		{
+			return "Add route";
+		}
+		if (action == "edit")
+		{
+			return "Edit route " ~ RouteTableModel::getRouteName(this.storage.item);
+		}
+		if (action == "delete")
+		{
+			return "Delete route " ~ RouteTableModel::getRouteName(this.storage.item);
+		}
+		return "";
+	}
+}

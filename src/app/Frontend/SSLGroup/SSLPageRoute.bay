@@ -41,24 +41,6 @@ class SSLPageRoute extends BaseRoute
 			"name": "app:ssl:index",
 			"method": "actionIndex",
 		},
-		new RouteInfo
-		{
-			"uri": "/ssl/add/",
-			"name": "app:ssl:add",
-			"method": "actionAdd",
-		},
-		new RouteInfo
-		{
-			"uri": "/ssl/{id}/edit/",
-			"name": "app:ssl:edit",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/ssl/{id}/delete/",
-			"name": "app:ssl:delete",
-			"method": "actionDelete",
-		},
 	];
 	
 	

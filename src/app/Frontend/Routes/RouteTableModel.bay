@@ -1,0 +1,245 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Frontend.Routes;
+
+use Runtime.Callback;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.Label;
+use Runtime.Widget.RowButtons;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.SelectLabel;
+use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Table.DeleteDialogModel;
+use Runtime.Widget.Table.SaveDialogModel;
+use Runtime.Widget.Table.TableModel;
+use Bayrell.CloudOS.Frontend.Routes.RouteFormModel;
+
+
+class RouteTableModel extends TableModel
+{	
+	/**
+	 * Create data storage
+	 */
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.route");
+	
+	
+	/**
+	 * Init styles
+	 */
+	void initStyles()
+	{
+		this.styles.add("border");
+	}
+	
+	
+	/**
+	 * Init table widgets
+	 */
+	void initWidgets()
+	{
+		/* Create form */
+		RouteFormModel form_model = this.addWidget( new RouteFormModel{ "layout": this.layout } );
+		
+		/* Create save wiget */
+		SaveDialogModel save_dialog = this.addWidget( new SaveDialogModel{
+			"form": form_model,
+			"layout": this.layout,
+			"table": this,
+		} );
+		this.addRender(save_dialog.getWidgetName());
+		save_dialog.dialog.setWidth("750px");
+		
+		/* Create delete widget */
+		DeleteDialogModel delete_dialog = this.addWidget( new DeleteDialogModel{
+			"form": form_model,
+			"layout": this.layout,
+			"table": this,
+		} );
+		this.addRender(delete_dialog.getWidgetName());
+	}
+	
+	
+	/**
+	 * Init top buttons
+	 */
+	void initTopButtons()
+	{
+		/* Add button */
+		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
+			"content": "Add",
+			"styles": [
+				"success",
+			],
+		});
+		add_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
+	}
+	
+	
+	/**
+	 * Init fields
+	 */
+	void initFields()
+	{
+		/* Row number */
+		this.addField({
+			"name": "row_number",
+		});
+		
+		/* Field enable */
+		this.addField({
+			"label": "Enable",
+			"name": "enable",
+			"component": classof SelectLabel,
+			"props": {
+				"options": [
+					{"label": "No", "value": "0"},
+					{"label": "Yes", "value": "1"},
+				],
+			},
+		});
+		
+		/* Field protocol */
+		this.addField({
+			"label": "Protocol",
+			"name": "protocol",
+			"component": classof SelectLabel,
+			"props": {
+				"options": [
+					{"label": "HTTP", "value": "http"},
+				],
+			},
+		});
+		
+		/* Field source */
+		this.addField({
+			"label": "Source",
+			"name": "source",
+			"component": classof Label,
+		});
+		
+		/* Field dest */
+		this.addField({
+			"label": "Dest",
+			"name": "dest",
+			"component": classof Label,
+		});
+		
+		/* Row buttons */
+		RowButtonsModel row_buttons = new RowButtonsModel();
+		
+		/* Edit button */
+		ButtonModel edit_button = row_buttons.add(new ButtonModel{
+			"content": "Edit",
+			"styles": [
+				"default",
+				"small",
+			],
+		});
+		edit_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
+		
+		/* Delete button */
+		ButtonModel delete_button = row_buttons.add(new ButtonModel{
+			"content": "Delete",
+			"styles": [
+				"danger",
+				"small",
+			],
+		});
+		delete_button.events.add("onClick", new Callback(this.getWidget("delete_dialog"), "onClick"));
+		
+		/* Add buttons */
+		this.addField({
+			"name": "row_buttons",
+			"component": classof RowButtons,
+			"model": row_buttons,
+		});
+	}
+	
+	
+	/**
+	 * Returns item value
+	 */
+	var getItemValue(Map item, string field_name)
+	{
+		if (field_name == "source")
+		{
+			return static::getSourceName(item);
+		}
+		if (field_name == "dest")
+		{
+			return static::getDestName(item);
+		}
+		return item.get(field_name);
+	}
+	
+	
+	/**
+	 * Returns route name
+	 */
+	pure string getRouteName(Map item) =>
+		static::getSourceName(item) ~ "' => " ~ static::getDestName(item)
+	;
+	
+	
+	/**
+	 * Returns source
+	 */
+	pure string getSourceName(Map item)
+	{
+		string res = "";
+		string domain_name = "";
+		
+		res ~= item["domain_name"];
+		
+		if (item["source_port"] != 80)
+		{
+			res ~= ":" ~ item["source_port"];
+		}
+		
+		if (item["route_prefix"] != "/")
+		{
+			res ~= item["route_prefix"];
+		}
+		
+		return res;
+	}
+	
+	
+	/**
+	 * Returns dest
+	 */
+	pure string getDestName(Map item)
+	{
+		string res = "";
+		
+		res ~= item["docker_name"];
+		
+		if (item["target_port"] != 80)
+		{
+			res ~= ":" ~ item["target_port"];
+		}
+		
+		if (item["target_prefix"] != "/")
+		{
+			res ~= item["target_prefix"];
+		}
+		
+		return res;
+	}
+}
