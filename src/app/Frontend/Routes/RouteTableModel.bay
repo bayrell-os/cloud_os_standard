@@ -27,11 +27,11 @@ use Runtime.Widget.SelectLabel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.DeleteDialogModel;
 use Runtime.Widget.Table.SaveDialogModel;
-use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Routes.RouteFormModel;
 
 
-class RouteTableModel extends TableModel
+class RouteTableModel extends TableDialogModel
 {	
 	/**
 	 * Create data storage
@@ -54,40 +54,9 @@ class RouteTableModel extends TableModel
 	void initWidgets()
 	{
 		/* Create form */
-		RouteFormModel form_model = this.addWidget( new RouteFormModel{ "layout": this.layout } );
+		this.addWidget( new RouteFormModel{ "layout": this.layout } );
 		
-		/* Create save wiget */
-		SaveDialogModel save_dialog = this.addWidget( new SaveDialogModel{
-			"form": form_model,
-			"layout": this.layout,
-			"table": this,
-		} );
-		this.addRender(save_dialog.getWidgetName());
-		save_dialog.dialog.setWidth("750px");
-		
-		/* Create delete widget */
-		DeleteDialogModel delete_dialog = this.addWidget( new DeleteDialogModel{
-			"form": form_model,
-			"layout": this.layout,
-			"table": this,
-		} );
-		this.addRender(delete_dialog.getWidgetName());
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		/* Add button */
-		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
-			"content": "Add",
-			"styles": [
-				"success",
-			],
-		});
-		add_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
+		parent();
 	}
 	
 	
@@ -141,34 +110,7 @@ class RouteTableModel extends TableModel
 		});
 		
 		/* Row buttons */
-		RowButtonsModel row_buttons = new RowButtonsModel();
-		
-		/* Edit button */
-		ButtonModel edit_button = row_buttons.add(new ButtonModel{
-			"content": "Edit",
-			"styles": [
-				"default",
-				"small",
-			],
-		});
-		edit_button.events.add("onClick", new Callback(this.getWidget("save_dialog"), "onClick"));
-		
-		/* Delete button */
-		ButtonModel delete_button = row_buttons.add(new ButtonModel{
-			"content": "Delete",
-			"styles": [
-				"danger",
-				"small",
-			],
-		});
-		delete_button.events.add("onClick", new Callback(this.getWidget("delete_dialog"), "onClick"));
-		
-		/* Add buttons */
-		this.addField({
-			"name": "row_buttons",
-			"component": classof RowButtons,
-			"model": row_buttons,
-		});
+		this.addFieldRowButtons();
 	}
 	
 	

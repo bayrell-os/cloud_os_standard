@@ -18,12 +18,16 @@
 
 namespace Bayrell.CloudOS.Frontend.DockerStack;
 
+use Runtime.Web.BaseRoute;
+use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Crud.CrudPage;
+use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.DockerStack.StackPageModel;
+use Bayrell.CloudOS.Frontend.DockerStack.StackTableModel;
 
 
-class StackPageRoute extends CrudRoute
+class StackPageRoute extends BaseRoute
 {
 	/**
 	 * Returns routes
@@ -36,30 +40,41 @@ class StackPageRoute extends CrudRoute
 			"name": "app:docker:stack:index",
 			"method": "actionIndex",
 		},
-		new RouteInfo
-		{
-			"uri": "/docker/stack/add/",
-			"name": "app:docker:stack:add",
-			"method": "actionAdd",
-		},
-		new RouteInfo
-		{
-			"uri": "/docker/stack/{stack_name}/edit/",
-			"name": "app:docker:stack:edit",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/docker/stack/{stack_name}/delete/",
-			"name": "app:docker:stack:delete",
-			"method": "actionDelete",
-		},
 	];
 	
 	
 	/**
-	 * Returns page model
+	 * Returns page model name
 	 */
 	string getPageModelName() => classof StackPageModel;
+	
+	
+	/**
+	 * Index
+	 */
+	async void actionIndex()
+	{
+		StackPageModel page_model = this.layout.getPageModel();
+		
+		/* Set action */
+		page_model.setAction("index");
+		
+		/* Create table widget */
+		TableModel table = page_model.addWidget( new StackTableModel{
+			"layout": this.layout,
+		});
+		
+		/* Set page */
+		table.storage.setPage(this.layout.request_query.get("page", 1));
+		
+		/* Load page model data */
+		await page_model.loadData();
+		
+		/* Title */
+		this.layout.setPageTitle("List of docker stacks");
+		
+		/* Render page */
+		this.render( classof CrudPage );
+	}
 	
 }

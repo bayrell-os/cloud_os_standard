@@ -16,27 +16,25 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.NginxFiles;
+namespace Bayrell.CloudOS.Frontend.DockerStack;
 
 use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
-use Runtime.Widget.Label;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
-use Runtime.Widget.SelectLabel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.DeleteDialogModel;
 use Runtime.Widget.Table.SaveDialogModel;
 use Runtime.Widget.Table.TableDialogModel;
-use Bayrell.CloudOS.Frontend.NginxFiles.NginxFormModel;
+use Bayrell.CloudOS.Frontend.DockerStack.StackFormModel;
 
 
-class NginxTableModel extends TableDialogModel
+class StackTableModel extends TableDialogModel
 {	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.nginx_files");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.docker.stack");
 	
 	
 	/**
@@ -54,7 +52,7 @@ class NginxTableModel extends TableDialogModel
 	void initWidgets()
 	{
 		/* Create form */
-		this.addWidget( new NginxFormModel{ "layout": this.layout } );
+		this.addWidget( new StackFormModel{ "layout": this.layout } );
 		
 		parent();
 	}
@@ -72,22 +70,8 @@ class NginxTableModel extends TableDialogModel
 		
 		/* Field name */
 		this.addField({
-			"name": "name",
-			"label": "File name",
-			"component": classof Label,
-		});
-		
-		/* Field container name */
-		this.addField({
-			"name": "enable",
-			"label": "Enable",
-			"component": classof SelectLabel,
-			"props": {
-				"options": [
-					{"label": "No", "value": "0"},
-					{"label": "Yes", "value": "1"},
-				],
-			},
+			"name": "stack_name",
+			"label": "Stack name",
 		});
 		
 		/* Row buttons */

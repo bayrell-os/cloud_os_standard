@@ -16,18 +16,19 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerStack;
+namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
 
 
 class StackApi extends CrudApi
@@ -35,27 +36,13 @@ class StackApi extends CrudApi
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack";
+	pure string getApiName() => "app.docker.stack::crud";
 	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "stacks";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "crud.save") return "actionSave";
-		if (api_name == "crud.delete") return "actionDelete";
-		return "";
-	}
 	
 	
 	/**
@@ -97,4 +84,33 @@ class StackApi extends CrudApi
 		return q;
 	}
 	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		await parent::actionSave();
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	@ApiMethod
+	async void actionDelete()
+	{
+		await parent::actionDelete();
+	}
 }
