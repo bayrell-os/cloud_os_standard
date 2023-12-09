@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.Routes;
+namespace Bayrell.CloudOS.Frontend.NginxFiles;
 
 use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
@@ -28,15 +28,15 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.DeleteDialogModel;
 use Runtime.Widget.Table.SaveDialogModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Frontend.Routes.RouteFormModel;
+use Bayrell.CloudOS.Frontend.NginxFiles.NginxFormModel;
 
 
-class RouteTableModel extends TableModel
+class NginxTableModel extends TableModel
 {	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.route");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.nginx_files");
 	
 	
 	/**
@@ -45,6 +45,7 @@ class RouteTableModel extends TableModel
 	void initStyles()
 	{
 		this.styles.add("border");
+		this.styles.add("w_auto");
 	}
 	
 	
@@ -54,7 +55,7 @@ class RouteTableModel extends TableModel
 	void initWidgets()
 	{
 		/* Create form */
-		RouteFormModel form_model = this.addWidget( new RouteFormModel{ "layout": this.layout } );
+		NginxFormModel form_model = this.addWidget( new NginxFormModel{ "layout": this.layout } );
 		
 		/* Create save wiget */
 		SaveDialogModel save_dialog = this.addWidget( new SaveDialogModel{
@@ -101,10 +102,17 @@ class RouteTableModel extends TableModel
 			"name": "row_number",
 		});
 		
-		/* Field enable */
+		/* Field name */
 		this.addField({
-			"label": "Enable",
+			"name": "name",
+			"label": "File name",
+			"component": classof Label,
+		});
+		
+		/* Field container name */
+		this.addField({
 			"name": "enable",
+			"label": "Enable",
 			"component": classof SelectLabel,
 			"props": {
 				"options": [
@@ -112,32 +120,6 @@ class RouteTableModel extends TableModel
 					{"label": "Yes", "value": "1"},
 				],
 			},
-		});
-		
-		/* Field protocol */
-		this.addField({
-			"label": "Protocol",
-			"name": "protocol",
-			"component": classof SelectLabel,
-			"props": {
-				"options": [
-					{"label": "HTTP", "value": "http"},
-				],
-			},
-		});
-		
-		/* Field source */
-		this.addField({
-			"label": "Source",
-			"name": "source",
-			"component": classof Label,
-		});
-		
-		/* Field dest */
-		this.addField({
-			"label": "Dest",
-			"name": "dest",
-			"component": classof Label,
 		});
 		
 		/* Row buttons */
@@ -169,77 +151,5 @@ class RouteTableModel extends TableModel
 			"component": classof RowButtons,
 			"model": row_buttons,
 		});
-	}
-	
-	
-	/**
-	 * Returns item value
-	 */
-	var getItemValue(Map item, string field_name)
-	{
-		if (field_name == "source")
-		{
-			return static::getSourceName(item);
-		}
-		if (field_name == "dest")
-		{
-			return static::getDestName(item);
-		}
-		return item.get(field_name);
-	}
-	
-	
-	/**
-	 * Returns route name
-	 */
-	pure string getRouteName(Map item) =>
-		static::getSourceName(item) ~ " => " ~ static::getDestName(item)
-	;
-	
-	
-	/**
-	 * Returns source
-	 */
-	pure string getSourceName(Map item)
-	{
-		string res = "";
-		string domain_name = "";
-		
-		res ~= item["domain_name"];
-		
-		if (item["source_port"] != 80)
-		{
-			res ~= ":" ~ item["source_port"];
-		}
-		
-		if (item["route_prefix"] != "/")
-		{
-			res ~= item["route_prefix"];
-		}
-		
-		return res;
-	}
-	
-	
-	/**
-	 * Returns dest
-	 */
-	pure string getDestName(Map item)
-	{
-		string res = "";
-		
-		res ~= item["docker_name"];
-		
-		if (item["target_port"] != 80)
-		{
-			res ~= ":" ~ item["target_port"];
-		}
-		
-		if (item["target_prefix"] != "/")
-		{
-			res ~= item["target_prefix"];
-		}
-		
-		return res;
 	}
 }
