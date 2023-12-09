@@ -57,6 +57,9 @@ class NginxTableModel extends TableDialogModel
 		this.addWidget( new NginxFormModel{ "layout": this.layout } );
 		
 		parent();
+		
+		/* Set save dialog width */
+		this.getWidget("save_dialog").dialog.setWidth("750px");
 	}
 	
 	
