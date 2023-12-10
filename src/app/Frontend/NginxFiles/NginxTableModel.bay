@@ -25,8 +25,6 @@ use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectLabel;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Table.DeleteDialogModel;
-use Runtime.Widget.Table.SaveDialogModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.NginxFiles.NginxFormModel;
 

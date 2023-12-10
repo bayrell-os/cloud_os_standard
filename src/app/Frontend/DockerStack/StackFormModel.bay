@@ -65,11 +65,11 @@ class StackFormModel extends FormModel
 		}
 		if (action == "edit")
 		{
-			return "Edit " ~ this.storage.item.get("name");
+			return "Edit " ~ this.storage.item.get("stack_name");
 		}
 		if (action == "delete")
 		{
-			return "Delete " ~ this.storage.item.get("name");
+			return "Delete " ~ this.storage.item.get("stack_name");
 		}
 		return "";
 	}

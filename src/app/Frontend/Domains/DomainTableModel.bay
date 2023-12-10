@@ -16,30 +16,47 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.NginxFiles;
+namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Widget.ButtonModel;
-use Runtime.Widget.Input;
+use Runtime.Widget.Label;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Table.TableDialogModel;
 use Runtime.Widget.Form.FormModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainFormModel;
 
 
-class NginxFormModel extends FormModel
+class DomainTableModel extends TableDialogModel
 {
-	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.nginx_files");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.domain");
+	
+	
+	/**
+	 * Init styles
+	 */
+	void initStyles()
+	{
+		this.styles.add("border");
+	}
+	
+	
+	/**
+	 * Init table widgets
+	 */
+	void initWidgets()
+	{
+		/* Create form */
+		this.addWidget( new DomainFormModel{ "layout": this.layout } );
+		
+		parent();
+	}
 	
 	
 	/**
@@ -47,52 +64,26 @@ class NginxFormModel extends FormModel
 	 */
 	void initFields()
 	{
+        /* Row number */
+		this.addField({
+			"name": "row_number",
+		});
+        
 		/* Field name */
 		this.addField({
-			"name": "name",
-			"label": "Name",
-			"component": classof Input,
+			"label": "Domain name",
+			"name": "domain_name",
+			"component": classof Label,
 		});
 		
-		/* Field container name */
+		/* Field space name */
 		this.addField({
-			"name": "enable",
-			"label": "Enable",
-			"component": classof Select,
-			"props": {
-				"options": [
-					{"label": "No", "value": "0"},
-					{"label": "Yes", "value": "1"},
-				],
-			},
+			"label": "Space name",
+			"name": "space_name",
+			"component": classof Label,
 		});
 		
-		/* Field name */
-		this.addField({
-			"name": "content",
-			"label": "Content",
-			"component": classof TextArea,
-		});
-	}
-	
-	
-	/**
-	 * Get page title
-	 */
-	string getPageTitle(string action = "")
-	{
-		if (action == "add")
-		{
-			return "Add nginx file";
-		}
-		if (action == "edit")
-		{
-			return "Edit nginx file " ~ this.storage.item.get("name");
-		}
-		if (action == "delete")
-		{
-			return "Delete nginx file " ~ this.storage.item.get("name");
-		}
-		return "";
+		/* Row buttons */
+		this.addFieldRowButtons();
 	}
 }

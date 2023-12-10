@@ -18,15 +18,15 @@
 
 namespace Bayrell.CloudOS.Frontend.Domains;
 
+use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Crud.CrudPage;
 use Bayrell.CloudOS.Frontend.Domains.DomainPageModel;
-use Bayrell.CloudOS.Frontend.Domains.DomainSavePage;
+use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
 
 
-class DomainPageRoute extends CrudRoute
+class DomainPageRoute extends BaseRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -38,6 +38,7 @@ class DomainPageRoute extends CrudRoute
 			"name": "app:domains:index",
 			"method": "actionIndex",
 		},
+		/*
 		new RouteInfo
 		{
 			"uri": "/domains/add/",
@@ -55,7 +56,7 @@ class DomainPageRoute extends CrudRoute
 			"uri": "/domains/{id}/delete/",
 			"name": "app:domains:delete",
 			"method": "actionDelete",
-		},
+		},*/
 	];
 	
 	
@@ -66,9 +67,30 @@ class DomainPageRoute extends CrudRoute
 	
 	
 	/**
-	 * Returns save page name
+	 * Index
 	 */
-	string getSavePageName() => classof DomainSavePage;
-	
-	
+	async void actionIndex()
+	{
+		DomainPageModel page_model = this.layout.getPageModel();
+		
+		/* Set action */
+		page_model.setAction("index");
+		
+		/* Create table widget */
+		DomainTableModel table = page_model.addWidget(new DomainTableModel{
+			"layout": this.layout,
+		});
+		
+		/* Set page */
+		table.storage.setPage(this.layout.request_query.get("page", 1));
+		
+		/* Load page model data */
+		await page_model.loadData();
+		
+		/* Title */
+		this.layout.setPageTitle("List of domains");
+		
+		/* Render page */
+		this.render( classof CrudPage );
+	}
 }

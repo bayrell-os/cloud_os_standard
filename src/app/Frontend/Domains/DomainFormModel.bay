@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.NginxFiles;
+namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.Input;
@@ -28,7 +28,7 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Form.FormModel;
 
 
-class NginxFormModel extends FormModel
+class DomainFormModel extends FormModel
 {
 	/**
 	 * Primary keys
@@ -39,7 +39,7 @@ class NginxFormModel extends FormModel
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.nginx_files");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.domain");
 	
 	
 	/**
@@ -49,29 +49,16 @@ class NginxFormModel extends FormModel
 	{
 		/* Field name */
 		this.addField({
-			"name": "name",
-			"label": "Name",
+			"label": "Domain name",
+			"name": "domain_name",
 			"component": classof Input,
 		});
 		
-		/* Field container name */
+		/* Field space name */
 		this.addField({
-			"name": "enable",
-			"label": "Enable",
-			"component": classof Select,
-			"props": {
-				"options": [
-					{"label": "No", "value": "0"},
-					{"label": "Yes", "value": "1"},
-				],
-			},
-		});
-		
-		/* Field name */
-		this.addField({
-			"name": "content",
-			"label": "Content",
-			"component": classof TextArea,
+			"label": "Space name",
+			"name": "space_name",
+			"component": classof Input,
 		});
 	}
 	
@@ -83,15 +70,15 @@ class NginxFormModel extends FormModel
 	{
 		if (action == "add")
 		{
-			return "Add nginx file";
+			return "Add domain";
 		}
 		if (action == "edit")
 		{
-			return "Edit nginx file " ~ this.storage.item.get("name");
+			return "Edit domain " ~ this.storage.item.get("domain_name");
 		}
 		if (action == "delete")
 		{
-			return "Delete nginx file " ~ this.storage.item.get("name");
+			return "Delete domain " ~ this.storage.item.get("domain_name");
 		}
 		return "";
 	}

@@ -57,6 +57,7 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		new Api("Bayrell.CloudOS.Backend.Api.DomainApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.RouteApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),

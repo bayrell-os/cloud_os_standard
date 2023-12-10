@@ -19,7 +19,6 @@
 namespace Bayrell.CloudOS.Frontend.NginxFiles;
 
 use Runtime.Web.BaseRoute;
-use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPage;
 use Runtime.Widget.Table.TableModel;
@@ -60,7 +59,7 @@ class NginxPageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		TableModel table = page_model.addWidget( new NginxTableModel{
+		TableModel table = page_model.addWidget(new NginxTableModel{
 			"layout": this.layout,
 		});
 		
@@ -76,5 +75,4 @@ class NginxPageRoute extends BaseRoute
 		/* Render page */
 		this.render( classof CrudPage );
 	}
-	
 }
