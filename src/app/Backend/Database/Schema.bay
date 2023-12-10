@@ -558,7 +558,7 @@ class Schema extends DatabaseSchema
 			string uid = item.get("uid");
 			if (uid == "")
 			{
-				item.set("uid", rtl::uid());
+				item.set("uid", rs::uid());
 			}
 		}
 		
