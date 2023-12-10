@@ -18,25 +18,16 @@
 
 namespace Bayrell.CloudOS.Frontend.DockerYamlFiles;
 
-use Runtime.ModelProxy;
-use Runtime.Web.BaseModel;
-use Runtime.Web.BaseWidget;
+use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
-use Runtime.Widget.Table.TableCrudModel;
-use Runtime.Widget.Form.FormCrudModel;
-use Runtime.Widget.Button;
-use Runtime.Widget.FieldComponent;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.TextArea;
+use Runtime.Widget.Crud.CrudPage;
+use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageModel;
+use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFileTableModel;
 
 
-class YamlFilePageRoute extends CrudRoute
+class YamlFilePageRoute extends BaseRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -48,30 +39,40 @@ class YamlFilePageRoute extends CrudRoute
 			"name": "app:docker:yaml:index",
 			"method": "actionIndex",
 		},
-		new RouteInfo
-		{
-			"uri": "/docker/yaml/add/",
-			"name": "app:docker:yaml:add",
-			"method": "actionAdd",
-		},
-		new RouteInfo
-		{
-			"uri": "/docker/yaml/{id}/edit/",
-			"name": "app:docker:yaml:edit",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/docker/yaml/{id}/delete/",
-			"name": "app:docker:yaml:delete",
-			"method": "actionDelete",
-		},
 	];
 	
 	
 	/**
-	 * Returns page model
+	 * Returns page model name
 	 */
 	string getPageModelName() => classof YamlFilePageModel;
 	
+	
+	/**
+	 * Index
+	 */
+	async void actionIndex()
+	{
+		YamlFileTableModel page_model = this.layout.getPageModel();
+		
+		/* Set action */
+		page_model.setAction("index");
+		
+		/* Create table widget */
+		TableModel table = page_model.addWidget(new YamlFileTableModel{
+			"layout": this.layout,
+		});
+		
+		/* Set page */
+		table.storage.setPage(this.layout.request_query.get("page", 1));
+		
+		/* Load page model data */
+		await page_model.loadData();
+		
+		/* Title */
+		this.layout.setPageTitle("List of yaml files");
+		
+		/* Render page */
+		this.render( classof CrudPage );
+	}
 }

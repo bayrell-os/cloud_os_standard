@@ -62,6 +62,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Backend.Api.RouteApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.StackApi"),
+		new Api("Bayrell.CloudOS.Backend.Api.YamlFileApi"),
 		new Database("Bayrell.CloudOS.Backend.Database.Schema"),
 		new Hook("Bayrell.CloudOS.Backend.Hooks.RuntimeHook"),
 		new Hook("Bayrell.CloudOS.Backend.Database.Schema"),
