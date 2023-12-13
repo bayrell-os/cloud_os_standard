@@ -52,7 +52,7 @@ class SSLTableModel extends TableDialogModel
 	void initWidgets()
 	{
 		/* Create form */
-		this.addWidget( new SSLFormModel{ "layout": this.layout } );
+		SSLFormModel form = new SSLFormModel{ "parent_widget": this };
 		
 		parent();
 	}

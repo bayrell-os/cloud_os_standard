@@ -52,7 +52,7 @@ class WorkspaceTableModel extends TableDialogModel
 	void initWidgets()
 	{
 		/* Create form */
-		this.addWidget( new WorkspaceFormModel{ "layout": this.layout } );
+		WorkspaceFormModel form = new WorkspaceFormModel{ "parent_widget": this };
 		
 		parent();
 	}

@@ -62,7 +62,6 @@ class RoutePageRoute extends BaseRoute
 		
 		/* Create table widget */
 		TableModel table = new RouteTableModel{
-			"layout": this.layout,
 			"parent_widget": page_model,
 		};
 		

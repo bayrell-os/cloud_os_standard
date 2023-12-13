@@ -52,7 +52,7 @@ class YamlFileTableModel extends TableDialogModel
 	void initWidgets()
 	{
 		/* Create form */
-		this.addWidget( new YamlFileFormModel{ "layout": this.layout } );
+		YamlFileFormModel form = new YamlFileFormModel{ "parent_widget": this };
 		
 		parent();
 		

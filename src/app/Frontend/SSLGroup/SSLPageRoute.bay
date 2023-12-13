@@ -61,9 +61,9 @@ class SSLPageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		TableModel table = page_model.addWidget( new SSLTableModel{
-			"layout": this.layout,
-		});
+		TableModel table = new SSLTableModel{
+			"parent_widget": page_model
+		};
 		
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));

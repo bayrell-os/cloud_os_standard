@@ -59,9 +59,9 @@ class StackPageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		StackTableModel table = page_model.addWidget( new StackTableModel{
-			"layout": this.layout,
-		});
+		StackTableModel table = new StackTableModel{
+			"parent_widget": page_model
+		};
 		
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));

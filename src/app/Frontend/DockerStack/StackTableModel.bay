@@ -52,7 +52,7 @@ class StackTableModel extends TableDialogModel
 	void initWidgets()
 	{
 		/* Create form */
-		this.addWidget( new StackFormModel{ "layout": this.layout } );
+		StackFormModel form = new StackFormModel{ "parent_widget": this };
 		
 		parent();
 	}

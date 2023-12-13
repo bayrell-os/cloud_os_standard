@@ -77,9 +77,9 @@ class DomainPageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		DomainTableModel table = page_model.addWidget(new DomainTableModel{
-			"layout": this.layout,
-		});
+		DomainTableModel table = new DomainTableModel{
+			"parent_widget": page_model,
+		};
 		
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));

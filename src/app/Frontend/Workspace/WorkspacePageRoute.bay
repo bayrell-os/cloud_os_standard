@@ -59,9 +59,9 @@ class WorkspacePageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		WorkspaceTableModel table = page_model.addWidget(new WorkspaceTableModel{
-			"layout": this.layout,
-		});
+		WorkspaceTableModel table = new WorkspaceTableModel{
+			"parent_widget": page_model
+		};
 		
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));
