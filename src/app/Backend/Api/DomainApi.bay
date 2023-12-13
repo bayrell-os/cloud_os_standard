@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Backend.Api;
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.CrudApi;
@@ -86,15 +87,20 @@ class DomainApi extends CrudApi
 	 */
 	async Query buildSearchQuery(Query q)
 	{
-		/*int space_id = (int)this.post_data.get("space_id");
+		int space_id = (int)this.post_data.get("space_id");
 		if (space_id > 0)
 		{
 			q.where("space_id", "=", space_id);
 		}
 		
-		q.addField("spaces.name as space_name");*/
+		q.addField("spaces.name as space_name");
 		q.orderBy("domains.domain_name", "asc");
-		/*q.leftJoinKey("domains__spaces");*/
+		q.leftJoin(
+			"spaces",
+			[
+				new QueryFilter("domains.space_id, "=", spaces.id")
+			]
+		);
 		
 		return q;
 	}

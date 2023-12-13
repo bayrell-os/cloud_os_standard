@@ -61,9 +61,10 @@ class RoutePageRoute extends BaseRoute
 		page_model.setAction("index");
 		
 		/* Create table widget */
-		TableModel table = page_model.addWidget( new RouteTableModel{
+		TableModel table = new RouteTableModel{
 			"layout": this.layout,
-		});
+			"parent_widget": page_model,
+		};
 		
 		/* Set page */
 		table.storage.setPage(this.layout.request_query.get("page", 1));

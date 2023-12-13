@@ -25,6 +25,7 @@ use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
 
@@ -73,11 +74,23 @@ class RouteFormModel extends FormModel
 			},
 		});
 		
+		/* Domains */
+		Dictionary domain_id = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.domain"),
+			"widget_name": "domain_id",
+			"parent_widget": this,
+			"transform": Map (Dict item) => {
+				"label": item.get("domain_name"),
+				"value": item.get("id"),
+			},
+		};
+		
 		/* Field domain */
 		this.addField({
 			"label": "Domain name",
 			"name": "domain_id",
-			"component": classof Input,
+			"component": classof Select,
+			"model": domain_id,
 		});
 		
 		/* Field source port */

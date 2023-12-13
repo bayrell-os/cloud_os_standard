@@ -53,13 +53,6 @@ class DomainFormModel extends FormModel
 			"name": "domain_name",
 			"component": classof Input,
 		});
-		
-		/* Field space name */
-		this.addField({
-			"label": "Space name",
-			"name": "space_name",
-			"component": classof Input,
-		});
 	}
 	
 	
