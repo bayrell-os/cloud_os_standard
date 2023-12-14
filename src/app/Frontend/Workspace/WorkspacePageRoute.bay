@@ -18,16 +18,12 @@
 
 namespace Bayrell.CloudOS.Frontend.Workspace;
 
-use Runtime.Web.BaseRoute;
-use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudPage;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
 
 
-class WorkspacePageRoute extends BaseRoute
+class WorkspacePageRoute extends CrudPageRoute
 {
 	/**
 	 * Returns routes
@@ -53,41 +49,4 @@ class WorkspacePageRoute extends BaseRoute
 	 * Returns page model name
 	 */
 	string getPageModelName() => classof WorkspacePageModel;
-	
-	
-	/**
-	 * Index
-	 */
-	async void actionIndex()
-	{
-		WorkspacePageModel page_model = this.layout.getPageModel();
-		
-		/* Load page model data */
-		await page_model.loadData();
-		
-		/* Title */
-		this.layout.setPageTitle("List of workspaces");
-		
-		/* Render page */
-		this.render( classof CrudPage );
-	}
-	
-	
-	/**
-	 * Index
-	 */
-	async void actionEdit()
-	{
-		WorkspacePageModel page_model = this.layout.getPageModel();
-		
-		/* Load page model data */
-		await page_model.loadData();
-		
-		/* Title */
-		this.layout.setPageTitle(page_model.getWidget("form").getPageTitle("edit"));
-		
-		/* Render page */
-		this.render( classof CrudPage );
-	}
-	
 }

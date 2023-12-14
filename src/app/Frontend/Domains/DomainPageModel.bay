@@ -20,8 +20,43 @@ namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
 
 
 class DomainPageModel extends CrudPageModel
 {
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.layout.route.name == "app:domains:index")
+		{
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			DomainTableModel table = new DomainTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
+		}
+	}
+	
+	
+	/**
+	 * Route After
+	 */
+	async void onRouteAfter()
+	{
+		/* Set title */
+		if (this.action == "index")
+		{
+			this.layout.setPageTitle("List of domains");
+		}
+	}
 }

@@ -64,6 +64,23 @@ class WorkspacePageModel extends CrudPageModel
 				"id": this.layout.route.matches.get("id"),
 			});
 		}
-		
+	}
+	
+	
+	/**
+	 * Route After
+	 */
+	async void onRouteAfter()
+	{
+		/* Set title */
+		if (this.action == "index")
+		{
+			this.layout.setPageTitle("List of workspaces");
+		}
+		else if (this.action == "edit")
+		{
+			WorkspaceFormModel form = this.getWidget("form");
+			this.layout.setPageTitle(form.getPageTitle("edit"));
+		}
 	}
 }

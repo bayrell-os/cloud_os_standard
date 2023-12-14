@@ -20,8 +20,43 @@ namespace Bayrell.CloudOS.Frontend.DockerYamlFiles;
 
 use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFileTableModel;
 
 
 class YamlFilePageModel extends CrudPageModel
 {
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.layout.route.name == "app:docker:yaml:index")
+		{
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			YamlFileTableModel table = new YamlFileTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
+		}
+	}
+	
+	
+	/**
+	 * Route After
+	 */
+	async void onRouteAfter()
+	{
+		/* Set title */
+		if (this.action == "index")
+		{
+			this.layout.setPageTitle("List of yaml files");
+		}
+	}
 }

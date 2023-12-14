@@ -18,14 +18,12 @@
 
 namespace Bayrell.CloudOS.Frontend.Domains;
 
-use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudPage;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.Domains.DomainPageModel;
-use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
 
 
-class DomainPageRoute extends BaseRoute
+class DomainPageRoute extends CrudPageRoute
 {
 	/**
 	 * Returns routes
@@ -64,33 +62,4 @@ class DomainPageRoute extends BaseRoute
 	 * Returns page model
 	 */
 	string getPageModelName() => classof DomainPageModel;
-	
-	
-	/**
-	 * Index
-	 */
-	async void actionIndex()
-	{
-		DomainPageModel page_model = this.layout.getPageModel();
-		
-		/* Set action */
-		page_model.setAction("index");
-		
-		/* Create table widget */
-		DomainTableModel table = new DomainTableModel{
-			"parent_widget": page_model,
-		};
-		
-		/* Set page */
-		table.storage.setPage(this.layout.request_query.get("page", 1));
-		
-		/* Load page model data */
-		await page_model.loadData();
-		
-		/* Title */
-		this.layout.setPageTitle("List of domains");
-		
-		/* Render page */
-		this.render( classof CrudPage );
-	}
 }

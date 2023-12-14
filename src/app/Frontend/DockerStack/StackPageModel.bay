@@ -20,8 +20,43 @@ namespace Bayrell.CloudOS.Frontend.DockerStack;
 
 use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.DockerStack.StackTableModel;
 
 
 class StackPageModel extends CrudPageModel
 {
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.layout.route.name == "app:docker:stack:index")
+		{
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			StackTableModel table = new StackTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
+		}
+	}
+	
+	
+	/**
+	 * Route After
+	 */
+	async void onRouteAfter()
+	{
+		/* Set title */
+		if (this.action == "index")
+		{
+			this.layout.setPageTitle("List of docker stacks");
+		}
+	}
 }

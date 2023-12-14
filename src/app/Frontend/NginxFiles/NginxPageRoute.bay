@@ -18,15 +18,12 @@
 
 namespace Bayrell.CloudOS.Frontend.NginxFiles;
 
-use Runtime.Web.BaseRoute;
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudPage;
-use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.NginxFiles.NginxPageModel;
-use Bayrell.CloudOS.Frontend.NginxFiles.NginxTableModel;
 
 
-class NginxPageRoute extends BaseRoute
+class NginxPageRoute extends CrudPageRoute
 {
 	/**
 	 * Returns routes
@@ -46,33 +43,4 @@ class NginxPageRoute extends BaseRoute
 	 * Returns page model name
 	 */
 	string getPageModelName() => classof NginxPageModel;
-	
-	
-	/**
-	 * Index
-	 */
-	async void actionIndex()
-	{
-		NginxPageModel page_model = this.layout.getPageModel();
-		
-		/* Set action */
-		page_model.setAction("index");
-		
-		/* Create table widget */
-		TableModel table = new NginxTableModel{
-			"parent_widget": page_model
-		};
-		
-		/* Set page */
-		table.storage.setPage(this.layout.request_query.get("page", 1));
-		
-		/* Load page model data */
-		await page_model.loadData();
-		
-		/* Title */
-		this.layout.setPageTitle("List of nginx files");
-		
-		/* Render page */
-		this.render( classof CrudPage );
-	}
 }
