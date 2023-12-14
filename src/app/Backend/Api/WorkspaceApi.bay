@@ -102,6 +102,16 @@ class WorkspaceApi extends CrudApi
 	
 	
 	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		await parent::actionItem();
+	}
+	
+	
+	/**
 	 * Action save
 	 */
 	@ApiMethod

@@ -20,8 +20,50 @@ namespace Bayrell.CloudOS.Frontend.Workspace;
 
 use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
 
 
 class WorkspacePageModel extends CrudPageModel
 {
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.layout.route.name == "app:workspace:index")
+		{
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			WorkspaceTableModel table = new WorkspaceTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
+		}
+		
+		else if (this.layout.route.name == "app:workspace:edit")
+		{
+			/* Set action */
+			this.setAction("edit");
+			
+			/* Create table widget */
+			WorkspaceFormModel form = new WorkspaceFormModel{
+				"action": "edit",
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			form.storage.setPrimaryKey({
+				"id": this.layout.route.matches.get("id"),
+			});
+		}
+		
+	}
 }

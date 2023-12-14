@@ -22,6 +22,7 @@ use Runtime.Web.BaseRoute;
 use Runtime.Web.PageModel;
 use Runtime.Web.RouteInfo;
 use Runtime.Widget.Crud.CrudPage;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
 
@@ -39,6 +40,12 @@ class WorkspacePageRoute extends BaseRoute
 			"name": "app:workspace:index",
 			"method": "actionIndex",
 		},
+		new RouteInfo
+		{
+			"uri": "/workspace/{id}/edit/",
+			"name": "app:workspace:edit",
+			"method": "actionEdit",
+		},
 	];
 	
 	
@@ -55,22 +62,29 @@ class WorkspacePageRoute extends BaseRoute
 	{
 		WorkspacePageModel page_model = this.layout.getPageModel();
 		
-		/* Set action */
-		page_model.setAction("index");
-		
-		/* Create table widget */
-		WorkspaceTableModel table = new WorkspaceTableModel{
-			"parent_widget": page_model
-		};
-		
-		/* Set page */
-		table.storage.setPage(this.layout.request_query.get("page", 1));
-		
 		/* Load page model data */
 		await page_model.loadData();
 		
 		/* Title */
 		this.layout.setPageTitle("List of workspaces");
+		
+		/* Render page */
+		this.render( classof CrudPage );
+	}
+	
+	
+	/**
+	 * Index
+	 */
+	async void actionEdit()
+	{
+		WorkspacePageModel page_model = this.layout.getPageModel();
+		
+		/* Load page model data */
+		await page_model.loadData();
+		
+		/* Title */
+		this.layout.setPageTitle(page_model.getWidget("form").getPageTitle("edit"));
 		
 		/* Render page */
 		this.render( classof CrudPage );

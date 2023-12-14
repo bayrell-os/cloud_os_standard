@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Frontend.Workspace;
 
+use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.Input;
 use Runtime.Widget.RowButtons;
@@ -38,6 +39,35 @@ class WorkspaceFormModel extends FormModel
 	 * Create data storage
 	 */
 	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace");
+	
+	
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.action == "edit")
+		{
+			this.top_buttons.add(new ButtonModel{
+				"content": "Back",
+				"styles": [
+					"default",
+				],
+				"href": this.layout.url("app:workspace:index"),
+			});
+			
+			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
+				"content": "Save",
+				"styles": [
+					"primary",
+					"large",
+				],
+			});
+			save_button.events.add("onClick", new Callback(this, "save"));
+		}
+	}
 	
 	
 	/**
