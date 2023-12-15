@@ -71,12 +71,15 @@ class DomainPageModel extends CrudPageModel
 			RenderListModel render_list = this.getWidget("render_list");
 			render_list.addRender(route_table.getWidgetName());
 			
-			/* Set form id */
+			/* Set primary key */
 			form.storage.setPrimaryKey({
 				"id": this.layout.route.matches.get("id"),
 			});
-			route_table.storage.setPostData("domain_id", form.storage.item_pk.get("id"));
-			
+			route_table.storage.setForeignKey("domain_id", form.storage.item_pk.get("id"));
+			route_table.getWidget("form").storage.setForeignKey(
+				"domain_id", form.storage.item_pk.get("id")
+			);
+			route_table.getWidget("form").removeField("domain_id");
 		}
 	}
 	

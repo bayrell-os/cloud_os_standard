@@ -26,6 +26,7 @@ use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 
 
@@ -83,6 +84,26 @@ class DomainFormModel extends FormModel
 			"name": "domain_name",
 			"component": classof Input,
 		});
+		
+		/* Spaces */
+		Dictionary space_id = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.workspace"),
+			"widget_name": "space_id",
+			"parent_widget": this,
+			"transform": Map (Dict item) => {
+				"label": item.get("name"),
+				"value": item.get("id"),
+			},
+		};
+		
+		/* Field space */
+		this.addField({
+			"label": "Space name",
+			"name": "space_id",
+			"component": classof Select,
+			"model": space_id,
+		});
+		
 	}
 	
 	
