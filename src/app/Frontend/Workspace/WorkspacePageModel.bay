@@ -19,7 +19,9 @@
 namespace Bayrell.CloudOS.Frontend.Workspace;
 
 use Runtime.Web.PageModel;
+use Runtime.Widget.RenderListModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
@@ -53,16 +55,28 @@ class WorkspacePageModel extends CrudPageModel
 			/* Set action */
 			this.setAction("edit");
 			
-			/* Create table widget */
+			/* Create form widget */
 			WorkspaceFormModel form = new WorkspaceFormModel{
 				"action": "edit",
 				"parent_widget": this
 			};
 			
-			/* Set page */
+			/* Create domains table widget */
+			DomainTableModel domain_table = new DomainTableModel{
+				"parent_widget": this
+			};
+			domain_table.removeField("space_name");
+			domain_table.storage.setPage(1);
+			
+			/* Add table to render list */
+			RenderListModel render_list = this.getWidget("render_list");
+			render_list.addRender(domain_table.getWidgetName());
+			
+			/* Set form id */
 			form.storage.setPrimaryKey({
 				"id": this.layout.route.matches.get("id"),
 			});
+			domain_table.storage.setPostData("space_id", form.storage.item_pk.get("id"));
 		}
 	}
 	

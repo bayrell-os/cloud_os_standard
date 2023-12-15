@@ -60,6 +60,28 @@ class DomainTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Add edit field row buttons
+	 */
+	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
+	{
+		ButtonModel edit_button = row_buttons.add(new ButtonModel{
+			"content": "Edit",
+			"styles": [
+				"default",
+				"small",
+			],
+			"href": string (Dict data)
+			{
+				int row_number = data.get("row_number");
+				Dict item = this.getItemByRowNumber(row_number);
+				return this.layout.url("app:domains:edit", {"id":item.get("id")});
+			},
+		});
+		return edit_button;
+	}
+	
+	
+	/**
 	 * Init fields
 	 */
 	void initFields()

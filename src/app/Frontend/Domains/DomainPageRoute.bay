@@ -36,25 +36,12 @@ class DomainPageRoute extends CrudPageRoute
 			"name": "app:domains:index",
 			"method": "actionIndex",
 		},
-		/*
-		new RouteInfo
-		{
-			"uri": "/domains/add/",
-			"name": "app:domains:add",
-			"method": "actionAdd",
-		},
 		new RouteInfo
 		{
 			"uri": "/domains/{id}/edit/",
 			"name": "app:domains:edit",
 			"method": "actionEdit",
 		},
-		new RouteInfo
-		{
-			"uri": "/domains/{id}/delete/",
-			"name": "app:domains:delete",
-			"method": "actionDelete",
-		},*/
 	];
 	
 	

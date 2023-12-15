@@ -19,8 +19,11 @@
 namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Web.PageModel;
+use Runtime.Widget.RenderListModel;
 use Runtime.Widget.Crud.CrudPageModel;
+use Bayrell.CloudOS.Frontend.Domains.DomainFormModel;
 use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
+use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
 
 
 class DomainPageModel extends CrudPageModel
@@ -45,6 +48,36 @@ class DomainPageModel extends CrudPageModel
 			/* Set page */
 			table.storage.setPage(this.layout.request_query.get("page", 1));
 		}
+		
+		else if (this.layout.route.name == "app:domains:edit")
+		{
+			/* Set action */
+			this.setAction("edit");
+			
+			/* Create form widget */
+			DomainFormModel form = new DomainFormModel{
+				"action": "edit",
+				"parent_widget": this
+			};
+			
+			/* Create routes table widget */
+			RouteTableModel route_table = new RouteTableModel{
+				"parent_widget": this
+			};
+			/*route_table.removeField("space_name");*/
+			route_table.storage.setPage(1);
+			
+			/* Add table to render list */
+			RenderListModel render_list = this.getWidget("render_list");
+			render_list.addRender(route_table.getWidgetName());
+			
+			/* Set form id */
+			form.storage.setPrimaryKey({
+				"id": this.layout.route.matches.get("id"),
+			});
+			route_table.storage.setPostData("domain_id", form.storage.item_pk.get("id"));
+			
+		}
 	}
 	
 	
@@ -57,6 +90,11 @@ class DomainPageModel extends CrudPageModel
 		if (this.action == "index")
 		{
 			this.layout.setPageTitle("List of domains");
+		}
+		else if (this.action == "edit")
+		{
+			DomainFormModel form = this.getWidget("form");
+			this.layout.setPageTitle(form.getPageTitle("edit"));
 		}
 	}
 }

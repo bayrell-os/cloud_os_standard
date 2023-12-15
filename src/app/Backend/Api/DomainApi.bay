@@ -90,7 +90,7 @@ class DomainApi extends CrudApi
 		int space_id = (int)this.post_data.get("space_id");
 		if (space_id > 0)
 		{
-			q.where("space_id", "=", space_id);
+			q.where("domains.space_id", "=", space_id);
 		}
 		
 		q.addField("spaces.name as space_name");
@@ -98,7 +98,7 @@ class DomainApi extends CrudApi
 		q.leftJoin(
 			"spaces",
 			[
-				new QueryFilter("domains.space_id, "=", spaces.id")
+				new QueryFilter("domains.space_id", "=", "spaces.id")
 			]
 		);
 		
@@ -113,6 +113,16 @@ class DomainApi extends CrudApi
 	async void actionSearch()
 	{
 		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		await parent::actionItem();
 	}
 	
 	
