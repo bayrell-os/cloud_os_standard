@@ -21,7 +21,7 @@ namespace Bayrell.CloudOS.Frontend.Workspace;
 use Runtime.Web.PageModel;
 use Runtime.Widget.RenderListModel;
 use Runtime.Widget.Crud.CrudPageModel;
-use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
+use Bayrell.CloudOS.Frontend.Workspace.DomainTableModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
 use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
@@ -63,20 +63,21 @@ class WorkspacePageModel extends CrudPageModel
 			
 			/* Create domains table widget */
 			DomainTableModel domain_table = new DomainTableModel{
-				"parent_widget": this
+				"parent_widget": this,
+				"widget_name": "domain_table",
 			};
-			domain_table.removeField("space_name");
 			domain_table.storage.setPage(1);
 			
 			/* Add table to render list */
-			RenderListModel render_list = this.getWidget("render_list");
-			render_list.addRender(domain_table.getWidgetName());
+			this.getWidget("render_list").addRender(domain_table);
 			
-			/* Set form id */
+			/* Set space id */
 			form.storage.setPrimaryKey({
 				"id": this.layout.route.matches.get("id"),
 			});
-			domain_table.storage.setPostData("space_id", form.storage.item_pk.get("id"));
+			domain_table.storage.setForeignKey("space_id", form.storage.item_pk.get("id"));
+			domain_table.getWidget("form")
+				.storage.setForeignKey("space_id", form.storage.item_pk.get("id"));
 		}
 	}
 	

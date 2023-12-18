@@ -26,6 +26,8 @@
 		"Frontend/SSLGroup/SSLTableModel.bay",
 		"Frontend/Settings/DatabasePage.bay",
 		"Frontend/Settings/SettingsPage.bay",
+		"Frontend/Workspace/DomainFormModel.bay",
+		"Frontend/Workspace/DomainTableModel.bay",
 		"Frontend/Workspace/WorkspaceFormModel.bay",
 		"Frontend/Workspace/WorkspacePageModel.bay",
 		"Frontend/Workspace/WorkspaceTableModel.bay",

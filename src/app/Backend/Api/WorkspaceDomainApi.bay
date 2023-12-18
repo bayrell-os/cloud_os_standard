@@ -16,49 +16,36 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Workspace;
+namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
 use Runtime.DateTime;
-use Runtime.Exceptions.ApiException;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.ItemNotFound;
+use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.Dictionary;
-use Runtime.Widget.Crud.Api.Filter;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
 
 
-class DomainApi extends CrudApi
+class WorkspaceDomainApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.workspace.domain";
+	pure string getApiName() => "app.workspace.domain::crud";
 	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "domains";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.dictionary") return "actionDictionary";
-		if (api_name == "crud.save") return "actionSave";
-		if (api_name == "crud.delete") return "actionDelete";
-		return "";
-	}
 	
 	
 	/**
@@ -88,24 +75,6 @@ class DomainApi extends CrudApi
 		new Purify{ "name": "domain_id" },
 		new LowerCase{ "name": "domain_id" },
 		new Required{ "name": "domain_id" },
-		
-		/* ForeignKey */
-		new Dictionary{
-			"dictionary_name": "domains",
-			"table_name": "domains",
-			"fields": [
-				"id",
-				"space_id",
-				"is_deleted",
-				"domain_name",
-			],
-			"query": Query (DomainApi api, Dictionary d, Query q)
-			{
-				q.where("space_id", "=", null);
-				q.orderBy("domain_name", "asc");
-				return q;
-			},
-		},
 	];
 	
 	
@@ -126,42 +95,83 @@ class DomainApi extends CrudApi
 	/**
 	 * Update item
 	 */
-	async void updateItem(Relation item, Dict update_data)
+	async void updateItem(Map update_data)
 	{
-		Connection conn = this.getDatabaseConnection();
+		if (not this.item.isNew())
+		{
+			throw new ApiError(new RuntimeException("Edit item are not allowed"));
+		}
 		
 		int space_id = update_data["space_id"];
 		int domain_id = update_data["domain_id"];
 		
-		Relation space = Relation::findById("spaces", conn, space_id);
+		Relation space = this.connection.findRelationById("spaces", space_id);
 		if (!space)
 		{
-			throw new ApiException("Space not found");
+			throw new ApiError(new ItemNotFound("Space"));
 		}
 		
-		Relation domain = Relation::findById("domains", conn, domain_id);
+		Relation domain = this.connection.findRelationById("domains", domain_id);
 		if (!domain)
 		{
-			throw new ApiException("Domain not found");
+			throw new ApiError(new ItemNotFound("Domain"));
 		}
 		if (domain.get("space_id") != 0)
 		{
-			throw new ApiException("Domain not found");
+			throw new ApiError(new ItemNotFound("Domain"));
 		}
 		
 		domain.set("space_id", space_id);
-		domain.save(conn);
+		domain.save(this.connection);
 	}
 	
 	
 	/**
 	 * Delete item
 	 */
-	async void deleteItem(Relation item)
+	async void deleteItem()
 	{
-		Connection conn = this.getDatabaseConnection();
-		item.set("space_id", null);
-		item.save(conn);
+		this.item.set("space_id", null);
+		this.item.save(this.connection);
 	}
 	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		await parent::actionItem();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		await parent::actionSave();
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	@ApiMethod
+	async void actionDelete()
+	{
+		await parent::actionDelete();
+	}
 }
