@@ -16,25 +16,24 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Backend.Api;
+namespace Bayrell.CloudOS.Components.Templates;
 
+use Runtime.re;
 use Runtime.DateTime;
-use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Web.BaseApi;
-use Runtime.Widget.Crud.CrudApi;
-use Runtime.Widget.Crud.CrudRule;
-use Runtime.Widget.Crud.LowerCase;
-use Runtime.Widget.Crud.Purify;
-use Runtime.Widget.Crud.Required;
-use Runtime.Widget.Crud.Unique;
+use Runtime.Widget.Crud.Api.CrudApi;
+use Runtime.Widget.Crud.Api.CrudRule;
+use Runtime.Widget.Crud.Api.Dictionary;
+use Runtime.Widget.Crud.Api.LowerCase;
+use Runtime.Widget.Crud.Api.Purify;
+use Runtime.Widget.Crud.Api.Required;
+use Runtime.Widget.Crud.Api.Unique;
 use Runtime.XML.XML;
 
 
-class TemplateApi extends BaseApi
+class TemplateApi extends CrudApi
 {
 	/**
 	 * Returns api name
@@ -49,9 +48,68 @@ class TemplateApi extends BaseApi
 	
 	
 	/**
+	 * Returns api methods
+	 */
+	pure string getApiMethod(string api_name)
+	{
+		if (api_name == "crud.search") return "actionSearch";
+		if (api_name == "crud.search_one") return "actionSearchOne";
+		if (api_name == "crud.item") return "actionItem";
+		if (api_name == "crud.save") return "actionSave";
+		if (api_name == "crud.delete") return "actionDelete";
+		if (api_name == "import") return "actionImport";
+		return "";
+	}
+	
+	
+	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"id",
+		"uid",
+		"name",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"uid",
+		"name",
+	];
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Collection<CrudRule> getRules() =>
+	[
+		new Purify{ "name": "uid" },
+		new LowerCase{ "name": "uid" },
+		new Required{ "name": "uid" },
+		new Purify{ "name": "name" },
+		new Required{ "name": "name" },
+		new Unique{"keys": ["uid"]},
+	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async Query buildSearchQuery(Query q)
+	{
+		q = q.orderBy("name", "asc");
+		return q;
+	}
+	
+	
+	/**
 	 * Action import
 	 */
-    @ApiMethod
 	async void actionImport()
 	{
 		string content = this.post_data["content"];
@@ -63,11 +121,11 @@ class TemplateApi extends BaseApi
 			if (xml.errors.count() > 0)
 			{
 				string error_message = rs::join("\n", xml.errors);
-				return this.result.fail({
+				return this.container.fail({
 					"message": error_message,
 				});
 			}
-			return this.result.fail({
+			return this.container.fail({
 				"message": "XML is empty",
 			});
 		}
@@ -80,23 +138,23 @@ class TemplateApi extends BaseApi
 		
 		if (uid == "" or version == "" or name == "")
 		{
-			return this.result.fail({
+			return this.container.fail({
 				"message": "uid, name, version or type is empty",
 			});
 		}
 		
 		if (type != "template" and type != "modificator")
 		{
-			return this.result.fail({
+			return this.container.fail({
 				"message": "XML must be template or modificator",
 			});
 		}
 		
-		Connection conn = Connection::getConnection();
+		Connection conn = this.getDatabaseConnection();
 		
 		if (type == "modificator")
 		{
-			Relation modificator = conn.findRelationByObject("modificators", {
+			Relation modificator = Relation::findItem("modificators", conn, {
 				"uid": uid,
 			});
 			
@@ -113,12 +171,14 @@ class TemplateApi extends BaseApi
 			modificator.save(conn);
 			modificator.refresh(conn);
 			
-			return this.result.success({
+			this.container.success({
 				"message": "Ok",
 			});
+			
+			return;
 		}
 		
-		Relation template_item = conn.findRelationByObject("templates", {
+		Relation template_item = Relation::findItem("templates", conn, {
 			"uid": uid,
 		});
 		
@@ -132,7 +192,7 @@ class TemplateApi extends BaseApi
 		}
 		
 		int template_id = template_item.get("id");
-		Relation version_item = conn.findRelationByObject("templates_versions", {
+		Relation version_item = Relation::findItem("templates_versions", conn, {
 			"template_id": template_id,
 			"version": version,
 		});
@@ -150,7 +210,7 @@ class TemplateApi extends BaseApi
 		
 		template_item.save(conn);
 		
-		return this.result.success({
+		this.container.success({
 			"message": "Ok",
 		});
 	}

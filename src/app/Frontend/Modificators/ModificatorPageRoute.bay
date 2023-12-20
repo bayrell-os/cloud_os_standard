@@ -19,13 +19,12 @@
 namespace Bayrell.CloudOS.Frontend.Modificators;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.Modificators.ModificatorPageModel;
 
 
-class ModificatorPageRoute extends CrudRoute
+class ModificatorPageRoute extends CrudPageRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -33,27 +32,15 @@ class ModificatorPageRoute extends CrudRoute
 	[
 		new RouteInfo
 		{
-			"uri": "/modificators/",
+			"uri": "/routes/",
 			"name": "app:modificators:index",
 			"method": "actionIndex",
-		},
-		new RouteInfo
-		{
-			"uri": "/modificators/{id}/",
-			"name": "app:modificators:edit",
-			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/modificators/{id}/delete/",
-			"name": "app:modificators:delete",
-			"method": "actionDelete",
 		},
 	];
 	
 	
 	/**
-	 * Returns page model
+	 * Returns page model name
 	 */
 	string getPageModelName() => classof ModificatorPageModel;
 }

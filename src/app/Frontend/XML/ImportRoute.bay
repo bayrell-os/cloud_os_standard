@@ -26,7 +26,6 @@ use Bayrell.CloudOS.Frontend.XML.ImportPageModel;
 
 class ImportRoute extends BaseRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -46,9 +45,8 @@ class ImportRoute extends BaseRoute
 	 */
 	void actionImport()
 	{
-		this.setPageTitle("Import XML");
-		this.setPageModel( new ImportPageModel );
-		this.render( classof ImportPage );
+		this.layout.setPageTitle("Import XML");
+		this.layout.setPageModel( classof ImportPageModel );
+		this.render(classof ImportPage);
 	}
-	
 }

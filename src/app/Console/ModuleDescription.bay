@@ -29,7 +29,7 @@ static class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "Bayrell.CloudOS.Test";
+	pure string getModuleName() => "Bayrell.CloudOS.Console";
 	
 	
 	/**

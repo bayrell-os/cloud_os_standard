@@ -73,11 +73,13 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Domains.DomainPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Main.MainRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Modificators.ModificatorPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.NginxFiles.NginxPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Routes.RoutePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.SSLGroup.SSLPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Settings.SettingsRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Workspace.WorkspacePageRoute"),
+		new Route("Bayrell.CloudOS.Frontend.XML.ImportRoute"),
 		#endif
 	];
 	

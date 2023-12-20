@@ -49,6 +49,7 @@ static class ModuleDescription
 	pure Dict<string> requiredModules() =>
 	{
 		"Runtime.ORM": "*",
+		"Runtime.XML": "*",
 	};
 	
 	
@@ -58,10 +59,12 @@ static class ModuleDescription
 	pure Collection<Dict> entities() =>
 	[
 		new Api("Bayrell.CloudOS.Backend.Api.DomainApi"),
+		new Api("Bayrell.CloudOS.Backend.Api.ModificatorApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.NginxFileApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.RouteApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.StackApi"),
+		new Api("Bayrell.CloudOS.Backend.Api.TemplateApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceDomainApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.YamlFileApi"),

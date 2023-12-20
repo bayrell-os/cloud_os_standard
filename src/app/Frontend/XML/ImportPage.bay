@@ -18,12 +18,6 @@
 
 <class name="Bayrell.CloudOS.Frontend.XML.ImportPage">
 
-<use name="Runtime.ModelProxy" />
-<use name="Runtime.Web.ApiResult" />
-<use name="Runtime.Web.Bus" />
-<use name="Runtime.Web.LayoutModel" />
-<use name="Runtime.Web.Message" />
-<use name="Runtime.Web.Events.MouseClickEvent" />
 <use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.TextArea" component="true" />
 <use name="Bayrell.Admin.Components.CloudOS.ImportPageModel" />
@@ -32,21 +26,35 @@
 <style>
 .web_form__buttons{
 	padding-top: 10px;
+	text-align: center;
+}
+.web_form__result{
+	text-align: center;
+	margin-top: var(--widget-space);
+}
+.web_form__result--success{
+	color: var(--widget-color-success);
+}
+.web_form__result--error{
+	color: var(--widget-color-danger);
+}
+.web_form__result--hide{
+	display: none;
 }
 </style>
 
 
 <template>
 	<div class="import_xml_page">
-		<TextArea
-			@model=["content"] />
+		<TextArea value={{ this.model.content }}
+			@event:onChange={{ this.onChange }}
+		/>
 		<div class="web_form__buttons">
-			<Button type="primary"
-				@event:MouseClickEvent="onImportClick"
-			>Import</Button>
+			<Button styles=["success", "large"]
+				@event:onClick={{ this.onImportClick }}>Import</Button>
 		</div>
-		<div class="web_form__result" class={{ model.getErrorClass() }}>
-			{{ model.error_message }}
+		<div class="web_form__result" class={{ this.getErrorClass() }}>
+			{{ this.model.error.message }}
 		</div>
 	</div>
 </template>
@@ -55,14 +63,32 @@
 <script>
 
 /**
+ * Returns form class
+ */
+string getErrorClass()
+{
+	if (this.model.error.message == "") return "web_form__result--hide";
+	if (this.model.error.code > 0) return "web_form__result--success";
+	if (this.model.error.code < 0) return "web_form__result--error";
+	return "";
+}
+
+
+/**
  * Import click
  */
-async void onImportClick(Message<MouseClickEvent> msg)
+async void onImportClick()
 {
-	ModelProxy model = this.modelProxy();
-	
-	/* Do import */
-	model.commitAsync("callImport");
+	await this.model.doImport();
+}
+
+
+/**
+ * Change item
+ */
+void onChange(var e)
+{
+	this.model.content = e.target.value;
 }
 
 </script>

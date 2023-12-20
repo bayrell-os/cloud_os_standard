@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
 
-exit(0);
-
 ini_set('display_errors', 'on');
 ini_set('html_errors', 'on');
 set_time_limit(-1);
@@ -23,8 +21,8 @@ $exit_code = \Runtime\rtl::runApp(
     $init["modules"],
     
     /* Context parameters */
-    [
+    \Runtime\Map::from([
         'cli_args' => \Runtime\Collection::from($argv),
-    ]
+    ])
 );
 exit($exit_code);

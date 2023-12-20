@@ -24,38 +24,4 @@ use Runtime.Console.App;
 
 class ConsoleApp extends App
 {
-	/**
-	 * Modules
-	 */
-	async Context modules(Context c)
-	{
-		return c;
-	}
-	
-	
-	/**
-	 * Init app
-	 */
-	async Context init(Context c)
-	{
-		return await parent::init(c);
-	}
-	
-	
-	/**
-	 * Start app
-	 */
-	async void start()
-	{
-		await parent::start();
-	}
-	
-	
-	/**
-	 * Main entry point
-	 */
-	async int main()
-	{
-		return await parent::main();
-	}
 }
