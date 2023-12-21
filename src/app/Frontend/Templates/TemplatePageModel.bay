@@ -22,6 +22,7 @@ use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
 use Bayrell.CloudOS.Frontend.Templates.TemplateFormModel;
 use Bayrell.CloudOS.Frontend.Templates.TemplateTableModel;
+use Bayrell.CloudOS.Frontend.Templates.VersionTableModel;
 
 
 class TemplatePageModel extends CrudPageModel
@@ -57,6 +58,21 @@ class TemplatePageModel extends CrudPageModel
 				"action": "edit",
 				"parent_widget": this
 			};
+			
+			/* Create versions table widget */
+			VersionTableModel version_table = new VersionTableModel{
+				"parent_widget": this,
+				"widget_name": "version_table",
+			};
+			version_table.storage.setPage(1);
+			
+			/* Add table to render list */
+			this.getWidget("render_list").addRender(version_table);
+			
+			/* Set space id */
+			int id = this.layout.route.matches.get("id");
+			version_table.storage.setForeignKey("template_id", id);
+			version_table.getWidget("form").storage.setForeignKey("template_id", id);
 		}
 	}
 	

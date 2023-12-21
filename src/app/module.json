@@ -32,6 +32,8 @@
 		"Frontend/Templates/TemplateFormModel.bay",
 		"Frontend/Templates/TemplatePageModel.bay",
 		"Frontend/Templates/TemplateTableModel.bay",
+		"Frontend/Templates/VersionFormModel.bay",
+		"Frontend/Templates/VersionTableModel.bay",
 		"Frontend/Workspace/DomainFormModel.bay",
 		"Frontend/Workspace/DomainTableModel.bay",
 		"Frontend/Workspace/WorkspaceFormModel.bay",
