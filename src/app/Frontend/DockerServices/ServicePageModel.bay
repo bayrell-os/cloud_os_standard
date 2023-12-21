@@ -18,162 +18,45 @@
 
 namespace Bayrell.CloudOS.Frontend.DockerServices;
 
-use Runtime.Callback;
-use Runtime.ModelProxy;
-use Runtime.Web.BaseModel;
-use Runtime.Web.BaseRoute;
-use Runtime.Web.Layout;
-use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudDataStorage;
+use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
-use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Table.Table;
-use Runtime.Widget.Table.TableDialogModel;
-use Runtime.Widget.Table.TableModel;
-use Runtime.Widget.Table.TopRefreshButton;
-use Runtime.Widget.Table.TopRefreshModel;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.FieldList;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.TopButtonModel;
-use Bayrell.CloudOS.Frontend.Applications.ServiceInfo;
-use Bayrell.CloudOS.Frontend.DockerServices.ServiceTable;
-use Bayrell.CloudOS.Frontend.DockerServices.StopButton;
-use Bayrell.CloudOS.Frontend.DockerServices.StopModel;
+use Bayrell.CloudOS.Frontend.DockerServices.ServiceTableModel;
 
 
-struct ServicePageModel extends CrudPageModel
+class ServicePageModel extends CrudPageModel
 {
-    /**
-	 * Fields
+	/**
+	 * Constructor
 	 */
-	pure static Dict fields(string type) =>
+	void constructor(Dict params = null)
 	{
-		"row_number": new FieldInfo{
-			"name": "row_number",
-		},
-		"docker_name": new FieldInfo{
-			"label": "Docker name",
-			"name": "docker_name",
-			"render_method": new Callback(static::getClassName(), "renderRow"),
-		},
-		"docker_image": new FieldInfo{
-			"label": "Docker image",
-			"name": "docker_image",
-			"component": classof Label,
-		},
-		"replicas": new FieldInfo{
-			"label": "Replicas",
-			"name": "replicas",
-			"render_method": new Callback(static::getClassName(), "renderRow"),
-		},
-		"stop_button": new FieldInfo{
-			"name": "stop_button",
-		},
-	};
-	
-	
-	/**
-	 * Factory table
-	 */
-	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
-		=> new TableModel{
-			"component_name": classof ServiceTable,
-		};
-	
-	
-	/**
-	 * Primary keys
-	 */
-	pure static Collection getPrimaryKeys() => ["service_id"];
-	
-	
-	/**
-	 * Api name
-	 */
-	pure static Dict getApiName(string type) => "app.docker.services";
-	
-	
-	/**
-	 * Init widget
-	 */
-	async static void initWidget(ModelProxy<CrudPageModel> model, ModelProxy<Layout> layout)
-	{
-		await parent::initWidget(model, layout);
-	}
-	
-	
-	/**
-	 * Init table
-	 */
-	async static void initTableWidget(
-		ModelProxy<CrudPageModel> model,
-		ModelProxy<TableModel> table,
-		ModelProxy<Layout> layout
-	)
-	{
-		await parent::initTableWidget(model, table, layout);
+		parent(params);
 		
-		/* Set fields list */
-		ModelProxy<FieldList> fields = table.proxy("fields");
-		fields.commit("setFieldsList", [
-			"row_number",
-			"docker_name",
-			"docker_image",
-			"replicas",
-			"stop_button",
-		]);
-		
-		/* Add save top button */
-		table.commit("clearTopButtons");
-		table.commit("addTopButton",
-			new TopRefreshModel{}
-		);
-		
-		/* Add Service */
-		table.commit("addWidget", new ServiceInfo{});
-		
-		/* Stop widget */
-		table.commit("addWidget", new StopModel() );
-		
-		/* Add components */
-		layout.commit("addComponent", classof Label);
-		layout.commit("addComponent", classof ServiceTable);
-		layout.commit("addComponent", classof TopRefreshButton);
-	}
-	
-	
-	/**
-	 * Render row buttons
-	 */
-	static html renderRow(int row_number, FieldInfo field, Dict item)
-	{
-		%if (field.name == "docker_name")
+		if (this.layout.route.name == "app:docker:services:index")
 		{
-			{{ item["stack_name"] ~ "_" ~ item["service_name"] }}
-		}
-		%elseif (field.name == "replicas")
-		{
-			{{ item["count_work"] ~ "/" ~ item["count_total"] }}
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			ServiceTableModel table = new ServiceTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
 		}
 	}
 	
 	
 	/**
-	 * Get page title
+	 * Route After
 	 */
-	string getPageTitle(string action)
+	async void onRouteAfter()
 	{
-		if (action == "name")
+		/* Set title */
+		if (this.action == "index")
 		{
-			return "service";
+			this.layout.setPageTitle("List of services");
 		}
-		if (action == "names")
-		{
-			return "services";
-		}
-		return parent::getPageTitle(action);
 	}
-	
 }

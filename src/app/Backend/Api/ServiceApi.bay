@@ -16,20 +16,23 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.DockerServices;
+namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
-use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
-use Bayrell.CloudOS.Lib.DockerService;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.ItemNotFound;
+use Runtime.Exceptions.RuntimeException;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
+use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
 class ServiceApi extends CrudApi
@@ -37,26 +40,13 @@ class ServiceApi extends CrudApi
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.services";
+	pure string getApiName() => "app.docker.services::crud";
 	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "docker_services";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "service_stop") return "actionServiceStop";
-		return "";
-	}
 	
 	
 	/**
@@ -103,23 +93,28 @@ class ServiceApi extends CrudApi
 	
 	
 	/**
-	 * Action service stop
+	 * Action search
 	 */
-	async void actionServiceStop()
+	@ApiMethod
+	async void actionSearch()
 	{
-		/* Init api */
-		await this.initApi("actionCompose");
-		if (this.container.response.error_name != "") return;
+		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action stop
+	 */
+	@ApiMethod
+	async void actionStop()
+	{
+		Dict pk = this.post_data["pk"];
 		
 		/* Find item */
-		Dict pk = this.post_data["pk"];
-		this.item = await this.findItem(pk);
-		
-		/* Item not found */
+		await this.findItem(pk);
 		if (this.item == null)
 		{
-			this.container.fail( new ApiException("Item not found") );
-			return;
+			throw new ApiError(new ItemNotFound());
 		}
 		
 		/* Stop service */
@@ -133,7 +128,7 @@ class ServiceApi extends CrudApi
 		this.item.save();
 		
 		/* Set api result */
-		this.container.success({
+		this.result.success({
 			"message": message,
 			"data":
 			{
@@ -141,5 +136,4 @@ class ServiceApi extends CrudApi
 			}
 		});
 	}
-	
 }

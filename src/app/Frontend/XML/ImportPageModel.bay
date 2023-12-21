@@ -20,13 +20,13 @@ namespace Bayrell.CloudOS.Frontend.XML;
 
 use Runtime.Web.ApiResult;
 use Runtime.Web.PageModel;
-use Runtime.Widget.WidgetError;
+use Runtime.Widget.WidgetResultModel;
 
 
 class ImportPageModel extends PageModel
 {
 	string content = "";
-	WidgetError error = new WidgetError;
+	WidgetResultModel result = new WidgetResultModel;
 	
 	
 	/**
@@ -35,7 +35,7 @@ class ImportPageModel extends PageModel
 	async ApiResult doImport()
 	{
 		/* Set wait mesage */
-		this.error.setWaitMessage();
+		this.result.setWaitMessage();
 		
 		/* Call api */
 		ApiResult res = await this.layout.callApi({
@@ -48,7 +48,7 @@ class ImportPageModel extends PageModel
 		});
 		
 		/* Set result */
-		this.error.setApiResult(res);
+		this.result.setApiResult(res);
 		
 		return res;
 	}

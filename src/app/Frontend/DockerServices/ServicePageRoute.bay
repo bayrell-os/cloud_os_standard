@@ -19,11 +19,11 @@
 namespace Bayrell.CloudOS.Frontend.DockerServices;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.DockerServices.ServicePageModel;
 
 
-class ServicePageRoute extends CrudRoute
+class ServicePageRoute extends CrudPageRoute
 {
 	/**
 	 * Returns routes
@@ -43,5 +43,4 @@ class ServicePageRoute extends CrudRoute
 	 * Returns page model
 	 */
 	string getPageModelName() => classof ServicePageModel;
-	
 }

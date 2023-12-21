@@ -1,23 +1,10 @@
 const { src, dest, series, parallel, task, watch } = require('gulp');
-const sass = require('gulp-sass')(require('sass'));
-const minifyCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
 
 function clean(cb) {
 	cb();
-}
-
-function compileCss() {
-	return src('./src/app/app.scss')
-		.pipe(sourcemaps.init())
-		.pipe(sass().on('error', sass.logError))
-		.pipe(minifyCSS())
-		.pipe(concat('app.min.css'))
-		.pipe(sourcemaps.write('./'))
-		.pipe(dest('./src/public/assets'))
-	;
 }
 
 function copyVue() {
@@ -45,16 +32,16 @@ function compileJs() {
 
 function watchFiles() {
 	watch([
-		'./src/app/app.scss'
-	], compileCss);
+		'./src/public/assets/runtime.js',
+		'./src/public/assets/app.js'
+	], compileJs);
 }
 
 // Определение задач
 task('clean', clean);
 task('vue', copyVue);
-task('css', compileCss);
 task('js', compileJs);
 task('watch', watchFiles);
 
 // Основная задача сборки
-exports.build = series(clean, parallel('css', 'js'));
+exports.build = series('clean', 'vue', parallel('js'));

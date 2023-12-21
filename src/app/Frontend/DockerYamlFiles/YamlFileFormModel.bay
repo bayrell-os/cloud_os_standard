@@ -25,6 +25,7 @@ use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 
 
@@ -47,11 +48,23 @@ class YamlFileFormModel extends FormModel
 	 */
 	void initFields()
 	{
+		/* Stacks */
+		Dictionary stack_name = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.docker.stack"),
+			"widget_name": "stack_name",
+			"parent_widget": this,
+			"transform": Map (Dict item) => {
+				"label": item.get("stack_name"),
+				"value": item.get("stack_name"),
+			},
+		};
+		
 		/* Stack name */
 		this.addField({
 			"label": "Stack name",
 			"name": "stack_name",
-			"component": classof Input,
+			"component": classof Select,
+			"model": stack_name,
 		});
 		
 		/* File name */

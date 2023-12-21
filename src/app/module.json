@@ -3,6 +3,10 @@
 	"assets":
 	[
 		"Frontend/Hooks/AppHook.bay",
+		"Frontend/DockerServices/ServicePageModel.bay",
+		"Frontend/DockerServices/ServiceTableModel.bay",
+		"Frontend/DockerServices/StopDialog.bay",
+		"Frontend/DockerServices/StopDialogModel.bay",
 		"Frontend/DockerStack/StackFormModel.bay",
 		"Frontend/DockerStack/StackPageModel.bay",
 		"Frontend/DockerStack/StackTableModel.bay",
