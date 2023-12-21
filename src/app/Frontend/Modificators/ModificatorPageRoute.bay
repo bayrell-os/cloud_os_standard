@@ -32,7 +32,7 @@ class ModificatorPageRoute extends CrudPageRoute
 	[
 		new RouteInfo
 		{
-			"uri": "/routes/",
+			"uri": "/modificators/",
 			"name": "app:modificators:index",
 			"method": "actionIndex",
 		},
