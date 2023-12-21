@@ -1,0 +1,127 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Frontend.Templates;
+
+use Runtime.Callback;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.Label;
+use Runtime.Widget.RowButtons;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Table.DeleteDialogModel;
+use Runtime.Widget.Table.SaveDialogModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Templates.TemplateFormModel;
+
+
+class TemplateTableModel extends TableDialogModel
+{	
+	/**
+	 * Create data storage
+	 */
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.template");
+	
+	
+	/**
+	 * Init styles
+	 */
+	void initStyles()
+	{
+		this.styles.add("border");
+	}
+	
+	
+	/**
+	 * Init table widgets
+	 */
+	void initWidgets()
+	{
+		/* Create form */
+		TemplateFormModel form = new TemplateFormModel{ "parent_widget": this };
+		
+		parent();
+	}
+	
+	
+	/**
+	 * Init top buttons
+	 */
+	void initTopButtons()
+	{
+		/* Add button */
+		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
+			"content": "Add",
+			"href": this.layout.url("app:templates:import"),
+			"styles": [
+				"success",
+			],
+		});
+	}
+	
+	
+	/**
+	 * Add edit field row buttons
+	 */
+	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
+	{
+		/* Edit button */
+		ButtonModel edit_button = row_buttons.add(new ButtonModel{
+			"content": "Edit",
+			"href": string (Dict data)
+			{
+				int row_number = data.get("row_number");
+				Dict item = this.getItemByRowNumber(row_number);
+				return this.layout.url("app:templates:edit", {"id":item.get("id")});
+			},
+			"styles": [
+				"default",
+				"small",
+			],
+		});
+	}
+	
+	
+	/**
+	 * Init fields
+	 */
+	void initFields()
+	{
+		/* Row number */
+		this.addField({
+			"name": "row_number",
+		});
+		
+		/* Field name */
+		this.addField({
+			"label": "Name",
+			"name": "name",
+			"component": classof Label,
+		});
+		
+		/* Field uid */
+		this.addField({
+			"label": "UID",
+			"name": "uid",
+			"component": classof Label,
+		});
+		
+		/* Row buttons */
+		this.addFieldRowButtons();
+	}
+}

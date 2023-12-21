@@ -16,50 +16,37 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Templates;
+namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.Dictionary;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.RuntimeException;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
 use Runtime.XML.XML;
 
 
-class TemplateApi extends CrudApi
+class TemplateCrudApi extends CrudApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.template";
+	pure string getApiName() => "app.template::crud";
 	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "templates";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "crud.save") return "actionSave";
-		if (api_name == "crud.delete") return "actionDelete";
-		if (api_name == "import") return "actionImport";
-		return "";
-	}
 	
 	
 	/**
@@ -121,11 +108,11 @@ class TemplateApi extends CrudApi
 			if (xml.errors.count() > 0)
 			{
 				string error_message = rs::join("\n", xml.errors);
-				return this.container.fail({
+				return this.result.fail({
 					"message": error_message,
 				});
 			}
-			return this.container.fail({
+			return this.result.fail({
 				"message": "XML is empty",
 			});
 		}
@@ -138,23 +125,23 @@ class TemplateApi extends CrudApi
 		
 		if (uid == "" or version == "" or name == "")
 		{
-			return this.container.fail({
+			return this.result.fail({
 				"message": "uid, name, version or type is empty",
 			});
 		}
 		
 		if (type != "template" and type != "modificator")
 		{
-			return this.container.fail({
+			return this.result.fail({
 				"message": "XML must be template or modificator",
 			});
 		}
 		
-		Connection conn = this.getDatabaseConnection();
+		Connection conn = Connection::getConnection();
 		
 		if (type == "modificator")
 		{
-			Relation modificator = Relation::findItem("modificators", conn, {
+			Relation modificator = conn.findRelationByObject("modificators", {
 				"uid": uid,
 			});
 			
@@ -171,14 +158,14 @@ class TemplateApi extends CrudApi
 			modificator.save(conn);
 			modificator.refresh(conn);
 			
-			this.container.success({
+			this.result.success({
 				"message": "Ok",
 			});
 			
 			return;
 		}
 		
-		Relation template_item = Relation::findItem("templates", conn, {
+		Relation template_item = conn.findRelationByObject("templates", {
 			"uid": uid,
 		});
 		
@@ -192,7 +179,7 @@ class TemplateApi extends CrudApi
 		}
 		
 		int template_id = template_item.get("id");
-		Relation version_item = Relation::findItem("templates_versions", conn, {
+		Relation version_item = conn.findRelationByObject("templates_versions", {
 			"template_id": template_id,
 			"version": version,
 		});
@@ -210,9 +197,57 @@ class TemplateApi extends CrudApi
 		
 		template_item.save(conn);
 		
-		this.container.success({
+		this.result.success({
 			"message": "Ok",
 		});
 	}
 	
+	
+	/**
+	 * Create new relation
+	 */
+	async Relation newRelation()
+	{
+		throw new ApiError( new RuntimeException("Create items are not allowed") );
+	}
+	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		await parent::actionItem();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		await parent::actionSave();
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	@ApiMethod
+	async void actionDelete()
+	{
+		await parent::actionDelete();
+	}
 }

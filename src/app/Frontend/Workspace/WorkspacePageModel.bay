@@ -72,12 +72,9 @@ class WorkspacePageModel extends CrudPageModel
 			this.getWidget("render_list").addRender(domain_table);
 			
 			/* Set space id */
-			form.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
-			domain_table.storage.setForeignKey("space_id", form.storage.item_pk.get("id"));
+			domain_table.storage.setForeignKey("space_id", this.layout.route.matches.get("id"));
 			domain_table.getWidget("form")
-				.storage.setForeignKey("space_id", form.storage.item_pk.get("id"));
+				.storage.setForeignKey("space_id", this.layout.route.matches.get("id"));
 		}
 	}
 	

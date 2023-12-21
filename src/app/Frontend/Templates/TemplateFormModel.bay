@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.Workspace;
+namespace Bayrell.CloudOS.Frontend.Templates;
 
 use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
@@ -27,7 +27,7 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Form.FormModel;
 
 
-class WorkspaceFormModel extends FormModel
+class TemplateFormModel extends FormModel
 {
 	/**
 	 * Primary keys
@@ -38,7 +38,7 @@ class WorkspaceFormModel extends FormModel
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.template");
 	
 	
 	/**
@@ -55,7 +55,7 @@ class WorkspaceFormModel extends FormModel
 				"styles": [
 					"default",
 				],
-				"href": this.layout.url("app:workspace:index"),
+				"href": this.layout.url("app:templates:index"),
 			});
 			
 			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
@@ -80,14 +80,14 @@ class WorkspaceFormModel extends FormModel
 	 */
 	void initFields()
 	{
-		/* UID */
+		/* Field name */
 		this.addField({
 			"label": "Name",
 			"name": "name",
 			"component": classof Input,
 		});
 		
-		/* UID */
+		/* Field uid */
 		this.addField({
 			"label": "UID",
 			"name": "uid",
@@ -101,10 +101,6 @@ class WorkspaceFormModel extends FormModel
 	 */
 	string getPageTitle(string action = "")
 	{
-		if (action == "add")
-		{
-			return "Add workspace";
-		}
 		if (action == "edit")
 		{
 			return "Edit " ~ this.storage.item.get("name");

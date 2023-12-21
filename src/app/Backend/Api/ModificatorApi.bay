@@ -22,6 +22,8 @@ use Runtime.re;
 use Runtime.DateTime;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.RuntimeException;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.CrudApi;
 use Runtime.Widget.Crud.CrudRule;
@@ -85,6 +87,15 @@ class ModificatorApi extends CrudApi
 	{
 		q = q.orderBy("name", "asc");
 		return q;
+	}
+	
+	
+	/**
+	 * Create new relation
+	 */
+	async Relation newRelation()
+	{
+		throw new ApiError( new RuntimeException("Create items are not allowed") );
 	}
 	
 	

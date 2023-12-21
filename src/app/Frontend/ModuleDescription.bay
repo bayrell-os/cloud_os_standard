@@ -78,6 +78,7 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Frontend.Routes.RoutePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.SSLGroup.SSLPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Settings.SettingsRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Templates.TemplatePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.Workspace.WorkspacePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.XML.ImportRoute"),
 		#endif

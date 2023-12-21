@@ -65,6 +65,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.StackApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.TemplateApi"),
+		new Api("Bayrell.CloudOS.Backend.Api.TemplateCrudApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceDomainApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.YamlFileApi"),

@@ -19,14 +19,12 @@
 namespace Bayrell.CloudOS.Frontend.Templates;
 
 use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudRoute;
+use Runtime.Widget.Crud.CrudPageRoute;
 use Bayrell.CloudOS.Frontend.Templates.TemplatePageModel;
-use Bayrell.CloudOS.Frontend.Templates.TemplateSavePage;
 
 
-class TemplatePageRoute extends CrudRoute
+class TemplatePageRoute extends CrudPageRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -43,13 +41,7 @@ class TemplatePageRoute extends CrudRoute
 			"uri": "/templates/{id}/edit/",
 			"name": "app:templates:edit",
 			"method": "actionEdit",
-		},
-		new RouteInfo
-		{
-			"uri": "/templates/{id}/delete/",
-			"name": "app:templates:delete",
-			"method": "actionDelete",
-		},
+		}
 	];
 	
 	
@@ -57,11 +49,4 @@ class TemplatePageRoute extends CrudRoute
 	 * Returns page model
 	 */
 	string getPageModelName() => classof TemplatePageModel;
-	
-	
-	/**
-	 * Returns save page name
-	 */
-	string getSavePageName() => classof TemplateSavePage;
-	
 }
