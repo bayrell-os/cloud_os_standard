@@ -18,11 +18,14 @@
 
 namespace Bayrell.CloudOS.Frontend.Applications;
 
+use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.Input;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 
 
@@ -38,6 +41,35 @@ class AppFormModel extends FormModel
 	 * Create data storage
 	 */
 	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.application");
+	
+	
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		
+		if (this.action == "edit")
+		{
+			this.top_buttons.add(new ButtonModel{
+				"content": "Back",
+				"styles": [
+					"default",
+				],
+				"href": this.layout.url("app:applications:index"),
+			});
+			
+			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
+				"content": "Save",
+				"styles": [
+					"primary",
+					"large",
+				],
+			});
+			save_button.events.add("onClick", new Callback(this, "save"));
+		}
+	}
 	
 	
 	/**
@@ -57,6 +89,50 @@ class AppFormModel extends FormModel
 			"label": "App name",
 			"name": "name",
 			"component": classof Input,
+		});
+		
+		/* Templates */
+		Dictionary template_id = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.template"),
+			"widget_name": "template_id",
+			"parent_widget": this,
+			"transform": Map (Dict item) => {
+				"label": item.get("name") ~ " <" ~ item.get("uid") ~ ">",
+				"value": item.get("id"),
+			},
+		};
+		
+		/* Field template id */
+		this.addField({
+			"label": "Template",
+			"name": "template_id",
+			"component": classof Select,
+			"model": template_id,
+		});
+		
+		/* Versions */
+		Dictionary version_id = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.template.version"),
+			"widget_name": "version_id",
+			"parent_widget": this,
+			"filter": bool (Dict item)
+			{
+				int template_id = this.storage.item.get("template_id");
+				return item.get("template_id") == template_id;
+			},
+			"transform": Map (Dict item) => {
+				"label": item.get("version"),
+				"value": item.get("id"),
+			},
+		};
+		template_id.events.add("onChanged", new Callback(version_id, "reloadOptions"));
+		
+		/* Field version id */
+		this.addField({
+			"label": "Version",
+			"name": "template_version_id",
+			"component": classof Select,
+			"model": version_id,
 		});
 	}
 	

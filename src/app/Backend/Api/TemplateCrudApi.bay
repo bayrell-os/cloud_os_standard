@@ -50,6 +50,12 @@ class TemplateCrudApi extends CrudApi
 	
 	
 	/**
+	 * Returns default limit
+	 */
+	int getDefaultLimit() => -1;
+	
+	
+	/**
 	 * Returns item fields
 	 */
 	Collection getItemFields() => [

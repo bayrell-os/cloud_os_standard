@@ -46,6 +46,7 @@ class AppPageModel extends CrudPageModel
 			/* Set page */
 			table.storage.setPage(this.layout.request_query.get("page", 1));
 		}
+		
 		else if (this.layout.route.name == "app:applications:edit")
 		{
 			/* Set action */
@@ -56,6 +57,11 @@ class AppPageModel extends CrudPageModel
 				"action": "edit",
 				"parent_widget": this
 			};
+			
+			int id = this.layout.route.matches.get("id");
+			
+			/* Set primary key for id */
+			form.storage.setPrimaryKey({ "id": id });
 		}
 	}
 	

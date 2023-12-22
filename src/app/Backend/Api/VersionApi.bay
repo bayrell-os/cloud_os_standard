@@ -51,12 +51,19 @@ class VersionApi extends CrudApi
 	
 	
 	/**
+	 * Returns default limit
+	 */
+	int getDefaultLimit() => -1;
+	
+	
+	/**
 	 * Returns item fields
 	 */
 	Collection getItemFields() => [
 		"id",
-		"version",
 		"content",
+		"template_id",
+		"version",
 		"gmtime_created",
 		"gmtime_updated",
 	];

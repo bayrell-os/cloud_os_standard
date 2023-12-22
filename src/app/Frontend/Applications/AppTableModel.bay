@@ -25,15 +25,15 @@ use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectLabel;
-use Runtime.Widget.Show;
-use Runtime.Widget.ShowModel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
-use Runtime.Widget.Table.TableModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Applications.AppFormModel;
 use Bayrell.CloudOS.Frontend.Applications.ComposeDialogModel;
+use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
 
 
-class AppTableModel extends TableModel
+class AppTableModel extends TableDialogModel
 {	
 	/**
 	 * Create data storage
@@ -55,6 +55,9 @@ class AppTableModel extends TableModel
 	 */
 	void initWidgets()
 	{
+		/* Create form */
+		AppFormModel form = new AppFormModel{ "parent_widget": this };
+		
 		parent();
 		
 		/* Get render list widget */
@@ -108,39 +111,8 @@ class AppTableModel extends TableModel
 		this.addField({
 			"label": "Admin",
 			"name": "admin",
-			"component": classof Show,
-			"model": new ShowModel{
-				"component": classof Button,
-				"model": new ButtonModel{
-					"content": "Admin",
-					"styles": [
-						"default",
-						"small",
-					],
-					"href": string (Dict data)
-					{
-						return "";
-					},
-				},
-				"condition": string (Dict data)
-				{
-					int row_number = (data != null and data.has("row_number"))
-						? data.get("row_number")
-						: -1
-					;
-					
-					Dict item = this.getItemByRowNumber(row_number);
-					if (item == null) return false;
-					
-					int status = (int)item.get("status");
-					if (status == 0) return false;
-					
-					int is_admin = (int)item.get("is_admin");
-					if (is_admin != 1) return false;
-					
-					return true;
-				},
-			},
+			"component": classof TableFieldAdmin,
+			"model": this,
 		});
         
 		/* Row buttons */
@@ -153,10 +125,36 @@ class AppTableModel extends TableModel
 	 */
 	void initTopButtons()
 	{
+		parent();
+		
 		/* Refresh button */
 		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{
 			"table": this,
 		});
+		
+		/*this.top_buttons.styles.add("no-gap");*/
+	}
+	
+	
+	/**
+	 * Add edit field row buttons
+	 */
+	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
+	{
+		ButtonModel edit_button = row_buttons.add(new ButtonModel{
+			"content": "Edit",
+			"styles": [
+				"default",
+				"small",
+			],
+			"href": string (Dict data)
+			{
+				int row_number = data.get("row_number");
+				Dict item = this.getItemByRowNumber(row_number);
+				return this.layout.url("app:applications:edit", {"id":item.get("id")});
+			},
+		});
+		return edit_button;
 	}
 	
 	
