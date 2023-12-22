@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.DockerServices;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.BaseObject;
 use Runtime.Callback;
@@ -27,14 +27,16 @@ use Runtime.Widget.WidgetResultModel;
 use Runtime.Widget.Dialog.DialogModel;
 use Runtime.Widget.Dialog.DialogModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Frontend.DockerServices.StopDialog;
+use Bayrell.CloudOS.Frontend.Applications.AppFormModel;
+use Bayrell.CloudOS.Frontend.Applications.ComposeDialog;
 
 
-class StopDialogModel extends BaseModel
+class ComposeDialogModel extends BaseModel
 {
-	string widget_name = "stop_dialog";
-	string component = classof StopDialog;
+	string widget_name = "compose_dialog";
+	string component = classof ComposeDialog;
 	WidgetResultModel result = new WidgetResultModel;
+	AppFormModel form = new AppFormModel;
 	DialogModel dialog = new DialogModel;
 	Dict item = null;
 	
@@ -49,10 +51,11 @@ class StopDialogModel extends BaseModel
 		if (params)
 		{
 			if (params.has("table")) this.table = params.get("table");
+			if (params.has("form")) this.form = params.get("form");
 		}
 		
 		/* Setup dialog */
-		this.dialog.title = "Stop item";
+		this.dialog.title = "Compose item";
 		this.dialog.buttons.styles.add("align-end");
 		
 		/* Setup close buttons */
@@ -124,6 +127,5 @@ class StopDialogModel extends BaseModel
 	 */
 	async void stop()
 	{
-		
 	}
 }

@@ -1,4 +1,4 @@
-/*!
+<!--
  *  Bayrell Cloud OS
  *
  *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
@@ -14,32 +14,20 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+-->
 
-namespace Bayrell.CloudOS.Frontend.Applications;
+<class name="Bayrell.CloudOS.Frontend.Applications.ComposeDialog">
 
-use Runtime.Web.BaseModel;
+<use name="Runtime.Widget.WidgetResult" component="true" />
+<use name="Runtime.Widget.Dialog.Dialog" component="true" />
+<use name="Runtime.Widget.Form.Form" component="true" />
 
 
-struct AppTotalPatchesModel extends BaseModel
-{
-    int active = 0;
-    Collection<Dict> items = [];
-    
-    
-    /**
-     * Set items
-     */
-    AppTotalPatchesModel setItems(Collection items) => this.clone{
-        "items": items,
-    };
-    
-    
-    /**
-     * Set active
-     */
-    AppTotalPatchesModel setActive(int active) => this.clone{
-        "active": active,
-    };
-    
-}
+<template name="render">
+	<Dialog @model={{ this.model.dialog }}>
+		<WidgetResult @model={{ this.model.result }} />
+	</Dialog>
+</template>
+
+
+</class>

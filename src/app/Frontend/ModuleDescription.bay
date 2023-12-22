@@ -69,6 +69,7 @@ static class ModuleDescription
 		
 		#ifdef BACKEND then
 		new Route("Bayrell.CloudOS.Frontend.Adminer.AdminerRoute"),
+		new Route("Bayrell.CloudOS.Frontend.Applications.AppPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.DockerServices.ServicePageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.DockerStack.StackPageRoute"),
 		new Route("Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageRoute"),

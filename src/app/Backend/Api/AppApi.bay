@@ -16,22 +16,22 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Components.Applications;
+namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
-use Runtime.BaseStruct;
-use Runtime.Exceptions.ApiException;
-use Runtime.ORM.Connection;
+use Runtime.DateTime;
 use Runtime.ORM.Query;
-use Runtime.ORM.QueryResult;
+use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
-use Runtime.Widget.Crud.Api.CrudApi;
-use Runtime.Widget.Crud.Api.CrudRule;
-use Runtime.Widget.Crud.Api.Dictionary;
-use Runtime.Widget.Crud.Api.LowerCase;
-use Runtime.Widget.Crud.Api.Purify;
-use Runtime.Widget.Crud.Api.Required;
-use Runtime.Widget.Crud.Api.Unique;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.Filter;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.ReadOnly;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
 use Runtime.XML.XML;
 use Bayrell.CloudOS.Lib.AppXml;
 use Bayrell.CloudOS.Lib.DockerService;
@@ -42,30 +42,13 @@ class AppApi extends CrudApi
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.application";
+	pure string getApiName() => "app.application::crud";
 	
 	
 	/**
 	 * Returns table name
 	 */
 	pure string getTableName() => "applications";
-	
-	
-	/**
-	 * Returns api methods
-	 */
-	pure string getApiMethod(string api_name)
-	{
-		if (api_name == "crud.search") return "actionSearch";
-		if (api_name == "crud.search_one") return "actionSearchOne";
-		if (api_name == "crud.item") return "actionItem";
-		if (api_name == "crud.save") return "actionSave";
-		if (api_name == "crud.delete") return "actionDelete";
-		if (api_name == "crud.dictionary") return "actionDictionary";
-		if (api_name == "compose") return "actionCompose";
-		if (api_name == "stop") return "actionStop";
-		return "";
-	}
 	
 	
 	/**
@@ -125,27 +108,6 @@ class AppApi extends CrudApi
 	 */
 	Collection<CrudRule> getRules() =>
 	[
-		new Dictionary{
-			"dictionary_name": "stacks",
-			"table_name": "stacks",
-			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("stack_name", "asc"),
-		},
-		new Dictionary{
-			"dictionary_name": "templates_versions",
-			"table_name": "templates_versions",
-			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("version", "asc"),
-		},
-		new Dictionary{
-			"dictionary_name": "templates",
-			"table_name": "templates",
-			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("name", "asc"),
-		},
-		new Dictionary{
-			"dictionary_name": "modificators",
-			"table_name": "modificators",
-			"query": Query (AppApi api, Dictionary d, Query q) => q.orderBy("name", "asc"),
-		},
-		
 		/* Stack name */
 		new Purify{ "name": "stack_name" },
 		new LowerCase{ "name": "stack_name" },
@@ -172,12 +134,6 @@ class AppApi extends CrudApi
 		else if (status == "stop") q.where("applications.status", "=", 0);
 		
 		q = q
-			.orderBy("applications.stack_name", "asc")
-			.orderBy("applications.name", "asc")
-			
-			.innerJoinKey("applications__templates_versions")
-			.innerJoinKey("templates_versions__templates")
-			
 			.addFields([
 				"templates_versions.version as template_version",
 				"templates.name as template_name",
@@ -187,6 +143,23 @@ class AppApi extends CrudApi
 				"docker_services.count_total as count_total",
 				"docker_services.docker_tasks as docker_tasks",
 			])
+			
+			.orderBy("applications.stack_name", "asc")
+			.orderBy("applications.name", "asc")
+			
+			.innerJoin(
+				"templates_versions",
+				[
+					"applications.template_version_id=templates_versions.id"
+				]
+			)
+			
+			.innerJoin(
+				"templates",
+				[
+					"templates_versions.template_id=templates.id"
+				]
+			)
 			
 			.leftJoin(
 				"docker_services",
@@ -204,194 +177,41 @@ class AppApi extends CrudApi
 	
 	
 	/**
-	 * Convert item
+	 * Action search
 	 */
-	async Dict convertItem(string action, Relation item)
+	@ApiMethod
+	async void actionSearch()
 	{
-		Dict res = parent::convertItem(action, item);
-		
-		bool is_admin = false;
-		XML xml = XML::loadXml(item.get("content"));
-		if (xml and xml.exists())
-		{
-			XML xml_admin = xml.get("admin").get(0);
-			if (xml_admin)
-			{
-				is_admin = true;
-			}
-		}
-		
-		res <= is_admin <= is_admin;
-		
-		return res;
+		await parent::actionSearch();
 	}
 	
 	
 	/**
-	 * Before update item event
+	 * Action item
 	 */
-	async void onSaveAfter(Relation item, Dict update_data)
+	@ApiMethod
+	async void actionItem()
 	{
-		await parent::onSaveAfter(item, update_data);
-		
-		/* Get item variables */
-		Map item_variables = item.get("variables");
-		if (item_variables == null) item_variables = {};
-		item_variables = item_variables.toMap();
-		
-		/* Save variables */
-		Collection variables = update_data["variables"];
-		if (variables)
-		{
-			for (int i=0; i<variables.count(); i++)
-			{
-				Dict variable = variables.get(i);
-				item_variables.setValue(
-					variable.get("name"),
-					variable.get("value")
-				);
-			}
-		}
-		
-		/* Set variables */
-		item.set("variables", item_variables.toDict());
-		
-		/* Create AppXml */
-		AppXml xml = new AppXml();
-		xml.item = item;
-		xml.conn = this.getDatabaseConnection();
-		
-		/* Build xml and yaml content */
-		Dict pk = this.post_data["pk"];
-		await xml.buildContent(pk == null);
-		
-		item.set("content", xml.xml_content);
-		item.set("yaml", xml.yaml_content);
-		await item.save(xml.conn);
+		await parent::actionItem();
 	}
 	
 	
 	/**
-	 * Search final
+	 * Action save
 	 */
-	async void onSearchFinal()
+	@ApiMethod
+	async void actionSave()
 	{
-		await parent::onSearchFinal();
-		
-		if (this.action == "actionItem")
-		{
-			await this.buildVariables();
-		}
+		await parent::actionSave();
 	}
 	
 	
 	/**
-	 * Save final
+	 * Action delete
 	 */
-	async void onSaveFinal()
+	@ApiMethod
+	async void actionDelete()
 	{
-		await parent::onSaveFinal();
-		await this.buildVariables();
+		await parent::actionDelete();
 	}
-	
-	
-	/**
-	 * Build values
-	 */
-	async void buildVariables()
-	{
-		string xml_content = this.item.get("content");
-		XML template = XML::loadXml(xml_content);
-		
-		if (not template.exists()) return;
-		
-		/* Get variables */
-		AppXml xml = new AppXml();
-		xml.item = this.item;
-		xml.template = template;
-		xml.xml_content = xml_content;
-		xml.conn = this.getDatabaseConnection();
-		
-		/* Load template */
-		await xml.loadModificators();
-		
-		/* Get ariables */
-		xml.buildVariables();
-		Collection patches = xml.getPatches();
-		
-		/* Set variables to response */
-		Dict data = this.container.response.data;
-		data <= item <= variables <= xml.variables.toCollection();
-		data <= patches <= patches;
-		this.container.setApiData(data);
-	}
-	
-	
-	/**
-	 * Compose app
-	 */
-	async void actionCompose()
-	{
-		Dict pk = this.post_data["pk"];
-		
-		/* Init api */
-		await this.initApi("actionCompose");
-		if (this.container.response.error_name != "") return;
-		
-		/* Save before */
-		await static::actionSaveBefore({
-			"create": false,
-		});
-		if (this.container.response.error_name != "") return;
-		
-		/* Update item */
-		await this.updateItem(this.item, this.update_data);
-		if (this.container.response.error_name != "") return;
-		
-		/* Compose app */
-		string message = DockerService::composeApp(this.item);
-		
-		/* Save after */
-		await static::actionSaveAfter();
-		if (this.container.response.error_name != "") return;
-		
-		/* Set message */
-		this.container.setErrorMessage(message);
-	}
-	
-	
-	/**
-	 * Stop app
-	 */
-	async void actionStop()
-	{
-		/* Init api */
-		await this.initApi("actionCompose");
-		if (this.container.response.error_name != "") return;
-		
-		/* Find item */
-		Dict pk = this.post_data["pk"];
-		this.item = await this.findItem(pk);
-		
-		/* Item not found */
-		if (this.item == null)
-		{
-			this.container.fail( new ApiException("Item not found") );
-			return;
-		}
-		
-		/* Stop app */
-		string message = DockerService::stopApp(this.item);
-		Dict item_pk = this.item.getPrimaryKey();
-		
-		/* Set api result */
-		this.container.success({
-			"message": message,
-			"data":
-			{
-				"pk": item_pk,
-			}
-		});
-	}
-	
 }

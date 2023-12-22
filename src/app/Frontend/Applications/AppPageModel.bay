@@ -18,413 +18,62 @@
 
 namespace Bayrell.CloudOS.Frontend.Applications;
 
-use Runtime.Callback;
-use Runtime.ModelProxy;
-use Runtime.Web.ApiResult;
-use Runtime.Web.BaseModel;
-use Runtime.Web.BaseRoute;
-use Runtime.Web.Layout;
-use Runtime.Web.RouteInfo;
-use Runtime.Widget.Crud.CrudModelStorage;
+use Runtime.Web.PageModel;
 use Runtime.Widget.Crud.CrudPageModel;
-use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.TopSaveButton;
-use Runtime.Widget.Tab.TabModel;
-use Runtime.Widget.Table.TableDialogModel;
-use Runtime.Widget.Table.TableModel;
-use Runtime.Widget.Table.TopAddDialog;
-use Runtime.Widget.Table.TopRefreshButton;
-use Runtime.Widget.Table.TopRefreshModel;
-use Runtime.Widget.FieldInfo;
-use Runtime.Widget.FieldList;
-use Runtime.Widget.Input;
-use Runtime.Widget.Label;
-use Runtime.Widget.Select;
-use Runtime.Widget.SelectLabel;
-use Runtime.Widget.TopButtonModel;
-use Bayrell.CloudOS.Frontend.Applications.AppEnvironmentsCrudModel;
-use Bayrell.CloudOS.Frontend.Applications.AppModCrudModel;
-use Bayrell.CloudOS.Frontend.Applications.AppTable;
-use Bayrell.CloudOS.Frontend.Applications.AppTotalPatchesModel;
-use Bayrell.CloudOS.Frontend.Applications.AppVolumesCrudModel;
-use Bayrell.CloudOS.Frontend.Applications.ComposeButton;
-use Bayrell.CloudOS.Frontend.Applications.ComposeModel;
-use Bayrell.CloudOS.Frontend.Applications.ServiceInfo;
+use Bayrell.CloudOS.Frontend.Applications.AppFormModel;
+use Bayrell.CloudOS.Frontend.Applications.AppTableModel;
 
 
-struct AppPageModel extends CrudPageModel
+class AppPageModel extends CrudPageModel
 {
 	/**
-	 * Fields
+	 * Constructor
 	 */
-	pure static Dict fields(string type) =>
+	void constructor(Dict params = null)
 	{
-		"row_number": new FieldInfo{
-			"name": "row_number",
-		},
-		"status": new FieldInfo{
-			"label": "Status",
-			"name": "status",
-			"options": [
-				{"label": "STOP", "value": "0"},
-				{"label": "RUN", "value": "1"},
-			],
-			"component": type == "form" ? classof Select : classof SelectLabel,
-		},
-		"stack_name": new FieldInfo{
-			"label": "Stack name",
-			"name": "stack_name",
-			"options": [
-			],
-			"component": type == "form" ? classof Select : classof SelectLabel,
-		},
-		"name": new FieldInfo{
-			"label": "Name",
-			"name": "name",
-			"component": type == "form" ? classof Input : classof Label,
-		},
-		"template_id": new FieldInfo{
-			"label": "Template",
-			"name": "template_id",
-			"options": [
-			],
-			"component": type == "form" ? classof Select : classof SelectLabel,
-		},
-		"template_version_id": new FieldInfo{
-			"label": "Version",
-			"name": "template_version_id",
-			"options": [
-			],
-			"component": type == "form" ? classof Select : classof SelectLabel,
-		},
-		"service_name": new FieldInfo{
-			"label": "Service name",
-			"name": "service_name",
-			"component": classof Label,
-		},
-		"replicas": new FieldInfo{
-			"label": "Replicas",
-			"name": "replicas",
-			"component": classof Label,
-		},
-		"admin_button": new FieldInfo{
-			"label": "Admin",
-			"name": "admin_button",
-		},
-		"row_buttons": new FieldInfo{
-			"name": "row_buttons",
-		},
-	};
-	
-	
-	TabModel tabs = new TabModel{
-		"active": "run",
-	};
-	
-	
-	/**
-	 * Primary keys
-	 */
-	pure static Collection getPrimaryKeys() => ["id"];
-	
-	
-	/**
-	 * Api name
-	 */
-	pure static Dict getApiName(string type) => "app.application";
-	
-	
-	/**
-	 * Factory table
-	 */
-	static TableModel createTableModel(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
-		=> new TableDialogModel{};
-	
-	
-	/**
-	 * Init widget
-	 */
-	async static void initWidget(ModelProxy<BaseModel> model, ModelProxy<Layout> layout)
-	{
-		string action = model.data("action");
-		if (action == "index")
+		parent(params);
+		
+		if (this.layout.route.name == "app:applications:index")
 		{
-			model.commit("setAction", "dialog");
+			/* Set action */
+			this.setAction("index");
+			
+			/* Create table widget */
+			AppTableModel table = new AppTableModel{
+				"parent_widget": this
+			};
+			
+			/* Set page */
+			table.storage.setPage(this.layout.request_query.get("page", 1));
 		}
-		await parent::initWidget(model, layout);
-	}
-	
-	
-	/**
-	 * Init table
-	 */
-	async static void initTableWidget(
-		ModelProxy<CrudPageModel> model,
-		ModelProxy<TableModel> table,
-		ModelProxy<Layout> layout
-	)
-	{
-		await parent::initTableWidget(model, table, layout);
-		
-		/* Set component name */
-		table.commit("setComponentName", classof AppTable);
-		
-		/* Set fields list */
-		ModelProxy<FieldList> fields = table.proxy("fields");
-		fields.commit("setFieldsList", [
-			"row_number",
-			"service_name",
-			"status",
-			"replicas",
-			"admin_button",
-			"row_buttons",
-		]);
-		
-		/* Set tab status */
-		string status = layout.data("request_query").get("status", "run");
-		table.commit("setSearchData", {
-			"status": status,
-		});
-		model.proxy("tabs").commit("setActive", status);
-		
-		/* Remove field replicas */
-		if (status == "stop")
+		else if (this.layout.route.name == "app:applications:edit")
 		{
-			fields.commit("removeFieldFromList", "admin_button");
-			fields.commit("removeFieldFromList", "replicas");
-		}
-		
-		/* Add Widget */
-		table.commit("addWidget", new ServiceInfo{});
-		
-		/* Top Buttons */
-		table.commit("clearTopButtons");
-		table.commit("addTopButton", new TopButtonModel{ "component_name": classof TopAddDialog });
-		table.commit("addTopButton", new TopRefreshModel{});
-		
-		/* Add components */
-		layout.commit("addComponent", classof AppTable);
-		layout.commit("addComponent", classof Label);
-		layout.commit("addComponent", classof TopAddDialog);
-		layout.commit("addComponent", classof TopRefreshButton);
-	}
-	
-	
-	/**
-	 * Init form
-	 */
-	async static void initFormWidget(
-		ModelProxy<CrudPageModel> model,
-		ModelProxy<FormModel> form,
-		ModelProxy<Layout> layout
-	)
-	{
-		await parent::initFormWidget(model, form, layout);
-		
-		/* Set fields list */
-		ModelProxy<FieldList> fields = form.proxy("fields");
-		fields.commit("setFieldsList", [
-			"stack_name",
-			"name",
-			"template_id",
-			"template_version_id",
-		]);
-		
-		/* Add domain dictionary */
-		fields.commit("addDictionaryField", {
-			"from": "stacks",
-			"to": "stack_name",
-			"option": new Callback(static::getClassName(), "getStackOption"),
-		});
-		
-		/* Add template dictionary */
-		fields.commit("addDictionaryField", {
-			"from": "templates",
-			"to": "template_id",
-			"option": new Callback(static::getClassName(), "getTemplateOption"),
-		});
-		
-		/* Add template version dictionary */
-		fields.commit("addDictionaryField", {
-			"auto": true,
-			"from": "templates_versions",
-			"to": "template_version_id",
-			"filter": new Callback(static::getClassName(), "getTemplateVersionFilter"),
-			"option": new Callback(static::getClassName(), "getTemplateVersionOption"),
-		});
-		
-		/* Hide form buttons */
-		form.commit("setShowTopButtons", false);
-		form.commit("setShowFormButtons", false);
-		
-		/* Add save top button */
-		form.commit("addTopButton", new ComposeModel{ "name": "compose" });
-		form.commit("addTopButton", new ComposeModel{ "name": "stop" });
-		form.commit("addTopButton",
-			new TopButtonModel{ "name": "save", "component_name": classof TopSaveButton })
-		;
-		
-		/* Add components */
-		layout.commit("addComponent", classof Input);
-		layout.commit("addComponent", classof Select);
-		layout.commit("addComponent", classof ComposeButton);
-		layout.commit("addComponent", classof TopSaveButton);
-		
-		/* Add tabs */
-		form.commit("addWidget", new TabModel{ "widget_name": "tabs", "active": "info" });
-		
-		/* Add total patches */
-		form.commit("addWidget", new AppTotalPatchesModel{ "widget_name": "total_patches" });
-		form.commit("addEventCallback", new Callback(static::getClassName(), "formEvent"));
-		
-		/* Add modificators */
-		if (not form.proxy("data").call("isNew"))
-		{
-			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
-				"widget_name": "modificators",
-				"crud_model_name": classof AppModCrudModel,
-				"foreign_key": "app_id",
-			});
-		}
-		
-		/* Add environments */
-		if (not form.proxy("data").call("isNew"))
-		{
-			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
-				"widget_name": "environments",
-				"crud_model_name": classof AppEnvironmentsCrudModel,
-				"crud_model_params": {
-					"data_path": model.path.concat([
-						"widgets", "form", "data", "item", "environments"
-					]),
-				},
-				"foreign_key": "app_id",
-			});
-		}
-		
-		/* Add volumes */
-		if (not form.proxy("data").call("isNew"))
-		{
-			ModelProxy crud_widget = await form.commitAsync("addCrudWidget", layout, {
-				"widget_name": "volumes",
-				"crud_model_name": classof AppVolumesCrudModel,
-				"crud_model_params": {
-					"data_path": model.path.concat([
-						"widgets", "form", "data", "item", "volumes"
-					]),
-				},
-				"foreign_key": "app_id",
-			});
+			/* Set action */
+			this.setAction("edit");
+			
+			/* Create form widget */
+			AppFormModel form = new AppFormModel{
+				"action": "edit",
+				"parent_widget": this
+			};
 		}
 	}
 	
 	
 	/**
-	 * Form event
+	 * Route After
 	 */
-	static void formEvent(ModelProxy<BaseModel> form, string action, Dict obj, var tag = null)
+	async void onRouteAfter()
 	{
-		if (
-			action == FormModel::ON_LOAD_ITEM_AFTER or
-			action == FormModel::ON_SAVE_AFTER or
-			action == "app_compose_after"
-		)
+		/* Set title */
+		if (this.action == "index")
 		{
-			ApiResult api = obj["api"];
-			if (api.isSuccess())
-			{
-				Collection patches = obj["api", "data", "patches"];
-				form.proxy(["widgets", "total_patches"]).commit("setItems", patches);
-			}
+			this.layout.setPageTitle("List of services");
 		}
-		return obj;
-	}
-	
-	
-	/**
-	 * Dictionary stack
-	 */
-	static Dict getStackOption(ModelProxy<FieldList> model, Dict item) =>
-	{
-		"label": item["stack_name"],
-		"value": item["stack_name"]
-	};
-	
-	
-	/**
-	 * Dictionary template
-	 */
-	static Dict getTemplateOption(ModelProxy<FieldList> model, Dict item) =>
-	{
-		"label": item["name"],
-		"value": item["id"]
-	};
-	
-	
-	/**
-	 * Dictionary template version
-	 */
-	static Dict getTemplateVersionOption(ModelProxy<FieldList> model, Dict item) =>
-	{
-		"label": item["version"],
-		"value": item["id"]
-	};
-	
-	
-	/**
-	 * Dictionary template version filter
-	 */
-	static bool getTemplateVersionFilter(ModelProxy<FieldList> model, Dict item)
-	{
-		ModelProxy<FieldList> model_data = model.parentProxy().proxy("data");
-		int template_id = (int)model_data.data(["item", "template_id"]);
-		return item["template_id"] == template_id;
-	}
-	
-	
-	/**
-	 * Returns route href
-	 */
-	string getRouteHref(string name, Dict obj = null)
-	{
-		if (name == "index")
+		else if (this.action == "edit")
 		{
-			return static::url("app:applications:index");
+			AppFormModel form = this.getWidget("form");
+			this.layout.setPageTitle(form.getPageTitle("edit"));
 		}
-		if (name == "add")
-		{
-			return static::url("app:applications:add");
-		}
-		if (name == "edit")
-		{
-			return static::url("app:applications:edit", {"id": obj["item", "id"]});
-		}
-		if (name == "delete")
-		{
-			return static::url("app:applications:delete", {"id": obj["item", "id"]});
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * Get names
-	 */
-	string getPageTitle(string action)
-	{
-		if (action == "name")
-		{
-			return "application";
-		}
-		if (action == "names")
-		{
-			return "applications";
-		}
-		else if (action == "item_name")
-		{
-			Dict item = this.getWidget("form").data.item;
-			return item["stack_name"] ~ "_" ~ item["name"];
-		}
-		return parent::getPageTitle(action);
 	}
 }

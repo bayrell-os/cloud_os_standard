@@ -16,25 +16,29 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.DockerServices;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.Callback;
+use Runtime.Widget.Button;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.SelectLabel;
+use Runtime.Widget.Show;
+use Runtime.Widget.ShowModel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.TableModel;
-use Bayrell.CloudOS.Frontend.DockerServices.StopDialogModel;
+use Bayrell.CloudOS.Frontend.Applications.ComposeDialogModel;
 
 
-class ServiceTableModel extends TableModel
+class AppTableModel extends TableModel
 {	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.docker.services");
+	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.application");
 	
 	
 	/**
@@ -56,11 +60,11 @@ class ServiceTableModel extends TableModel
 		/* Get render list widget */
 		RenderListModel render_list = this.getWidget("render_list");
 		
-		/* Create stop wiget */
-		StopDialogModel stop_dialog = new StopDialogModel{
+		/* Create compose wiget */
+		ComposeDialogModel compose_dialog = new ComposeDialogModel{
 			"parent_widget": this,
 		};
-		render_list.addRender(stop_dialog);
+		render_list.addRender(compose_dialog);
 	}
 	
 	
@@ -74,22 +78,69 @@ class ServiceTableModel extends TableModel
 			"name": "row_number",
 		});
 		
-		/* Field docker_name */
+		 /* Field replicas */
 		this.addField({
-			"label": "Docker name",
-			"name": "docker_name",
+			"label": "Service name",
+			"name": "service_name",
 		});
 		
-        /* Field docker_image */
+		/* Field status */
 		this.addField({
-			"label": "Docker image",
-			"name": "docker_image",
+			"label": "Status",
+			"name": "status",
+			"props":
+			{
+				"options": [
+					{"label": "STOP", "value": "0"},
+					{"label": "RUN", "value": "1"},
+				],
+			}
+			"component": classof SelectLabel,
 		});
-        
+		
         /* Field replicas */
 		this.addField({
 			"label": "Replicas",
 			"name": "replicas",
+		});
+        
+        /* Field admin */
+		this.addField({
+			"label": "Admin",
+			"name": "admin",
+			"component": classof Show,
+			"model": new ShowModel{
+				"component": classof Button,
+				"model": new ButtonModel{
+					"content": "Admin",
+					"styles": [
+						"default",
+						"small",
+					],
+					"href": string (Dict data)
+					{
+						return "";
+					},
+				},
+				"condition": string (Dict data)
+				{
+					int row_number = (data != null and data.has("row_number"))
+						? data.get("row_number")
+						: -1
+					;
+					
+					Dict item = this.getItemByRowNumber(row_number);
+					if (item == null) return false;
+					
+					int status = (int)item.get("status");
+					if (status == 0) return false;
+					
+					int is_admin = (int)item.get("is_admin");
+					if (is_admin != 1) return false;
+					
+					return true;
+				},
+			},
 		});
         
 		/* Row buttons */
@@ -110,49 +161,24 @@ class ServiceTableModel extends TableModel
 	
 	
 	/**
-	 * Add field row buttons
-	 */
-	Map addFieldRowButtons()
-	{
-		/* Row buttons */
-		RowButtonsModel row_buttons = new RowButtonsModel();
-		
-		/* Stop button */
-		ButtonModel stop_button = row_buttons.add(new ButtonModel{
-			"content": "Stop",
-			"styles": [
-				"danger",
-				"small",
-			],
-		});
-		stop_button.events.add("onClick", new Callback(this.getWidget("stop_dialog"), "onClick"));
-		
-		/* Add buttons */
-		Map field = this.addField({
-			"name": "row_buttons",
-			"component": classof RowButtons,
-			"model": row_buttons,
-		});
-		
-		return field;
-	}
-	
-	
-	/**
 	 * Returns item value
 	 */
 	var getItemValue(Map item, string field_name)
 	{
-		if (field_name == "docker_name")
+		if (field_name == "service_name")
 		{
-			string service_name = item.get("service_name");
+			string app_name = item.get("name");
 			string stack_name = item.get("stack_name");
-			return stack_name ~ "_" ~ service_name;
+			return stack_name ~ "_" ~ app_name;
 		}
 		else if (field_name == "replicas")
 		{
 			string count_total = item.get("count_total");
 			string count_work = item.get("count_work");
+			if (count_total == null or count_work == null)
+			{
+				return "";
+			}
 			return count_total ~ "/" ~ count_work;
 		}
 		return parent(item, field_name);
