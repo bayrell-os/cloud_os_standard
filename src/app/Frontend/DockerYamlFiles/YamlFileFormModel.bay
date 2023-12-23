@@ -32,15 +32,13 @@ use Runtime.Widget.Form.FormModel;
 class YamlFileFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.docker.yaml");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.docker.yaml",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**
@@ -50,7 +48,10 @@ class YamlFileFormModel extends FormModel
 	{
 		/* Stacks */
 		Dictionary stack_name = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.docker.stack"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.docker.stack",
+			},
 			"widget_name": "stack_name",
 			"parent_widget": this,
 			"transform": Map (Dict item) => {

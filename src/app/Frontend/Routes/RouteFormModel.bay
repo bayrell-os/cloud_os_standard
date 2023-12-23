@@ -33,15 +33,13 @@ use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
 class RouteFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.route");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.route",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**
@@ -76,7 +74,10 @@ class RouteFormModel extends FormModel
 		
 		/* Domains */
 		Dictionary domain_id = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.domain"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.domain",
+			},
 			"widget_name": "domain_id",
 			"parent_widget": this,
 			"transform": Map (Dict item) => {

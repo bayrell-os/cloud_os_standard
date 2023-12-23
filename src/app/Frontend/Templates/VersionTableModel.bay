@@ -35,7 +35,11 @@ class VersionTableModel extends TableDialogModel
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.template.version");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.template.version",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

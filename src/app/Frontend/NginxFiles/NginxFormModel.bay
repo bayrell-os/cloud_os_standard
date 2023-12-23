@@ -29,17 +29,15 @@ use Runtime.Widget.Form.FormModel;
 
 
 class NginxFormModel extends FormModel
-{
-	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
+{	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.nginx_files");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.nginx_files",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

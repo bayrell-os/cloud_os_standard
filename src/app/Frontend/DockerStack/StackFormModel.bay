@@ -29,15 +29,13 @@ use Runtime.Widget.Form.FormModel;
 class StackFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["stack_name"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.docker.stack");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.docker.stack",
+		"primary_keys": ["stack_name"],
+	};
 	
 	
 	/**

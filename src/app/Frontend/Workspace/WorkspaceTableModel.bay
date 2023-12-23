@@ -30,11 +30,15 @@ use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
 
 
 class WorkspaceTableModel extends TableDialogModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.workspace",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

@@ -30,15 +30,13 @@ use Runtime.Widget.Form.FormModel;
 class WorkspaceFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.workspace",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

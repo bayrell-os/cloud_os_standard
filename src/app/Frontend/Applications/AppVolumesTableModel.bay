@@ -51,9 +51,6 @@ class AppVolumesTableModel extends TableDialogModel
 		/* Add fields */
 		this.addWidgetFields(form);
 		
-		/* Set primary keys */
-		form.setPrimaryKeys(["key"]);
-		
 		parent();
 	}
 	

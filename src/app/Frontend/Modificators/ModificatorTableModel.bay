@@ -36,7 +36,11 @@ class ModificatorTableModel extends TableDialogModel
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.modificators");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.modificators",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

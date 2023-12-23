@@ -31,15 +31,13 @@ use Runtime.Widget.Form.FormModel;
 class VersionFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.template.version");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.template.version",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

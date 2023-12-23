@@ -33,17 +33,13 @@ use Bayrell.CloudOS.Frontend.Applications.AppForm;
 class AppModFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["app_id", "modificator_id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() =>
-		new CrudApiStorage(this.layout, "app.application.modificator")
-	;
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.application.modificator",
+		"primary_keys": ["app_id", "modificator_id"],
+	};
 	
 	
 	/**
@@ -62,7 +58,10 @@ class AppModFormModel extends FormModel
 	{
         /* Versions */
 		Dictionary modificators = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.modificators"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.modificators",
+			},
 			"widget_name": "modificators",
 			"parent_widget": this,
             "transform": Map (Dict item) => {

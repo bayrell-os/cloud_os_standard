@@ -31,11 +31,15 @@ use Bayrell.CloudOS.Frontend.Templates.TemplateFormModel;
 
 
 class TemplateTableModel extends TableDialogModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.template");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.template",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

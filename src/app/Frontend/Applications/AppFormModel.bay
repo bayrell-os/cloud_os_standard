@@ -39,16 +39,15 @@ class AppFormModel extends FormModel
 {
 	string component = classof AppForm;
 	
-	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
 	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.application");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.application",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**
@@ -75,7 +74,6 @@ class AppFormModel extends FormModel
 				"parent_widget": this,
 				"widget_name": "modificators",
 			};
-			modificators.storage.setPage(1);
 			
 			/* Set foreign key */
 			int app_id = this.layout.route.matches.get("id");
@@ -86,14 +84,24 @@ class AppFormModel extends FormModel
 			AppEnvironmentsTableModel environments = new AppEnvironmentsTableModel{
 				"parent_widget": this,
 				"widget_name": "environments",
-				"storage": new CrudProxyStorage(this.layout, this.storage, ["item", "environments"]),
+				"storage": new CrudProxyStorage{
+					"layout": this.layout,
+					"primary_keys": ["key"],
+					"container": this.storage,
+					"path": ["item", "environments"],
+				},
 			};
 			
 			/* Volumes */
 			AppVolumesTableModel volumes = new AppVolumesTableModel{
 				"parent_widget": this,
 				"widget_name": "volumes",
-				"storage": new CrudProxyStorage(this.layout, this.storage, ["item", "volumes"]),
+				"storage": new CrudProxyStorage{
+					"layout": this.layout,
+					"primary_keys": ["key"],
+					"container": this.storage,
+					"path": ["item", "volumes"],
+				},
 			};
 		}
 	}
@@ -133,7 +141,10 @@ class AppFormModel extends FormModel
 	{
 		/* Stacks */
 		Dictionary stack_id = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.docker.stack"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.docker.stack",
+			},
 			"widget_name": "stack_id",
 			"parent_widget": this,
 			"transform": Map (Dict item) => {
@@ -159,7 +170,10 @@ class AppFormModel extends FormModel
 		
 		/* Templates */
 		Dictionary template_id = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.template"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.template",
+			},
 			"widget_name": "template_id",
 			"parent_widget": this,
 			"transform": Map (Dict item) => {
@@ -178,7 +192,10 @@ class AppFormModel extends FormModel
 		
 		/* Versions */
 		Dictionary version_id = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.template.version"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.template.version",
+			},
 			"widget_name": "version_id",
 			"parent_widget": this,
 			"filter": bool (Dict item)

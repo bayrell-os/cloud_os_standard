@@ -27,13 +27,15 @@ use Bayrell.CloudOS.Frontend.Applications.AppModFormModel;
 
 
 class AppModTableModel extends TableDialogModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() =>
-		new CrudApiStorage(this.layout, "app.application.modificator")
-	;
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.application.modificator",
+		"primary_keys": ["app_id", "modificator_id"],
+	};
 	
 	
 	/**

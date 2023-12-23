@@ -32,11 +32,15 @@ use Bayrell.CloudOS.Frontend.Routes.RouteFormModel;
 
 
 class RouteTableModel extends TableDialogModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.route");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.route",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

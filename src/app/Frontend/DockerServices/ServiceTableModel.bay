@@ -30,11 +30,15 @@ use Bayrell.CloudOS.Frontend.DockerServices.StopDialogModel;
 
 
 class ServiceTableModel extends TableModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.docker.services");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.docker.services",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

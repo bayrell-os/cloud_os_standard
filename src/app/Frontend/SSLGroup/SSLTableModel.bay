@@ -34,7 +34,11 @@ class SSLTableModel extends TableDialogModel
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.ssl_group");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.ssl_group",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**

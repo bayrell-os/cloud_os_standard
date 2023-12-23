@@ -33,15 +33,13 @@ use Runtime.Widget.Form.FormModel;
 class DomainFormModel extends FormModel
 {
 	/**
-	 * Primary keys
-	 */
-	Vector getPrimaryKeys() => ["id"];
-	
-	
-	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace.domain");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.workspace.domain",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**
@@ -60,7 +58,10 @@ class DomainFormModel extends FormModel
 	{
         /* Domains */
 		Dictionary domain_id = new Dictionary{
-			"storage": new CrudApiStorage(this.layout, "app.domain"),
+			"storage": new CrudApiStorage{
+				"layout": this.layout,
+				"class_name": "app.domain",
+			},
 			"widget_name": "domain_id",
 			"parent_widget": this,
 			"transform": Map (Dict item) => {

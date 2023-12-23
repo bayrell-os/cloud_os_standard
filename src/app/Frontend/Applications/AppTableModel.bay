@@ -34,11 +34,15 @@ use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
 
 
 class AppTableModel extends TableDialogModel
-{	
+{
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.application");
+	CrudApiStorage createDataStorage() => new CrudApiStorage{
+		"layout": this.layout,
+		"class_name": "app.application",
+		"primary_keys": ["id"],
+	};
 	
 	
 	/**
