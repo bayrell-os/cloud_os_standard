@@ -47,7 +47,14 @@ class WorkspaceFormModel extends FormModel
 	void initWidgets()
 	{
 		parent();
-		
+	}
+	
+	
+	/**
+	 * Init buttons
+	 */
+	void initButtons()
+	{
 		if (this.action == "edit")
 		{
 			this.top_buttons.add(new ButtonModel{

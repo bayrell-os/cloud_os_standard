@@ -25,10 +25,14 @@ use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.CrudProxyStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Applications.AppEnvironmentsTableModel;
 use Bayrell.CloudOS.Frontend.Applications.AppForm;
 use Bayrell.CloudOS.Frontend.Applications.AppModTableModel;
+use Bayrell.CloudOS.Frontend.Applications.AppVolumesTableModel;
 
 
 class AppFormModel extends FormModel
@@ -48,12 +52,58 @@ class AppFormModel extends FormModel
 	
 	
 	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		this.layout.addComponent(classof AppForm);
+	}
+	
+	
+	/**
 	 * Init table widgets
 	 */
 	void initWidgets()
 	{
 		parent();
 		
+		if (this.action == "edit")
+		{
+			/* Add modificators table */
+			AppModTableModel modificators = new AppModTableModel{
+				"parent_widget": this,
+				"widget_name": "modificators",
+			};
+			modificators.storage.setPage(1);
+			
+			/* Set foreign key */
+			int app_id = this.layout.route.matches.get("id");
+			modificators.storage.setForeignKey("app_id", app_id );
+			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
+			
+			/* Environments */
+			AppEnvironmentsTableModel environments = new AppEnvironmentsTableModel{
+				"parent_widget": this,
+				"widget_name": "environments",
+				"storage": new CrudProxyStorage(this.layout, this.storage, ["item", "environments"]),
+			};
+			
+			/* Volumes */
+			AppVolumesTableModel volumes = new AppVolumesTableModel{
+				"parent_widget": this,
+				"widget_name": "volumes",
+				"storage": new CrudProxyStorage(this.layout, this.storage, ["item", "volumes"]),
+			};
+		}
+	}
+	
+	
+	/**
+	 * Init buttons
+	 */
+	void initButtons()
+	{
 		if (this.action == "edit")
 		{
 			this.top_buttons.add(new ButtonModel{
@@ -72,18 +122,6 @@ class AppFormModel extends FormModel
 				],
 			});
 			save_button.events.add("onClick", new Callback(this, "save"));
-			
-			/* Add modificators table */
-			AppModTableModel modificators = new AppModTableModel{
-				"parent_widget": this,
-				"widget_name": "modificators",
-			};
-			modificators.storage.setPage(1);
-			
-			/* Set foreign key */
-			int app_id = this.layout.route.matches.get("id");
-			modificators.storage.setForeignKey("app_id", app_id );
-			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
 		}
 	}
 	
@@ -93,11 +131,23 @@ class AppFormModel extends FormModel
 	 */
 	void initFields()
 	{
+		/* Stacks */
+		Dictionary stack_id = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.docker.stack"),
+			"widget_name": "stack_id",
+			"parent_widget": this,
+			"transform": Map (Dict item) => {
+				"label": item.get("stack_name"),
+				"value": item.get("stack_name"),
+			},
+		};
+		
 		/* Field stack_name */
 		this.addField({
 			"label": "Stack name",
 			"name": "stack_name",
-			"component": classof Input,
+			"component": classof Select,
+			"model": stack_id,
 		});
 		
 		/* Field app name */

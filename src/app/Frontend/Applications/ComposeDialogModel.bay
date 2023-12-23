@@ -36,7 +36,7 @@ class ComposeDialogModel extends BaseModel
 	string widget_name = "compose_dialog";
 	string component = classof ComposeDialog;
 	WidgetResultModel result = new WidgetResultModel;
-	AppFormModel form = new AppFormModel;
+	AppFormModel form = null;
 	DialogModel dialog = new DialogModel;
 	Dict item = null;
 	

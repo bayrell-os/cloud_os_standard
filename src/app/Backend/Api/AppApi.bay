@@ -209,6 +209,11 @@ class AppApi extends CrudApi
 			for (int i=0; i<variables.count(); i++)
 			{
 				Dict variable = variables.get(i);
+				string variable_name = variable.get("name");
+				
+				if (variable_name == "_var_app_name_") continue;
+				if (variable_name == "_var_service_name_") continue;
+				
 				item_variables.set(
 					variable.get("name"),
 					variable.get("value")

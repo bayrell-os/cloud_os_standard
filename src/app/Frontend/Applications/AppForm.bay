@@ -21,9 +21,43 @@
 >
 
 <use name="Runtime.Web.BaseModel" />
+<use name="Runtime.Widget.Input" component="true" />
+
 
 <style>
+.app_variables{
+	margin-right: 20px;
+}
 </style>
+
+
+<template name="renderVariables">
+	%set Vector variables = this.model.storage.item.get('variables');
+	<div class="app_variables">
+		%for (int i=0; i<variables.count(); i++)
+		{
+			%set Map variable = variables.get(i);
+			%set Map variable_name = variable.get('name');
+			%set Map variable_label = variable.get('label');
+			%set Map variable_value = variable.get('value');
+			%if (
+				variable_name != "_var_app_name_" and
+				variable_name != "_var_service_name_"
+			)
+			{
+				<div class="widget_form__row" @key={{ variable_name }} data-name={{ variable_name }}>
+					<label class="widget_form__row_label">{{ variable_label }}</label>
+					<div class="widget_form__field">
+						<Input name={{ variable_name }}
+							value={{ variable_value }}
+							@event:onChange={{ this.onChangeVariable(i, variable_name) }}
+						/>
+					</div>
+				</div>
+			}
+		}
+	</div>
+</template>
 
 
 <template name="renderWidgets">
@@ -34,6 +68,7 @@
 	<h2>Modificators</h2>
 	<div class="d-flex">
 		<div class="w-50">
+			%render this.renderVariables();
 		</div>
 		<div class="w-50">
 			%set widget = this.model.getWidget('modificators');
@@ -44,13 +79,35 @@
 	<div class="d-flex">
 		<div class="w-50">
 			<h2>Environments</h2>
+			%set widget = this.model.getWidget('environments');
+			%set component = widget.component;
+			<{component} @model={{ widget }} />
 		</div>
 		<div class="w-50">
 			<h2>Volumes</h2>
+			%set widget = this.model.getWidget('volumes');
+			%set component = widget.component;
+			<{component} @model={{ widget }} />
 		</div>
 	</div>
 	
 </template>
+
+
+<script>
+
+void onChangeVariable(int i, string variable_name)
+{
+	return void (var e) use (i)
+	{
+		string value = e.target.value;
+		Vector variables = this.model.storage.item.get('variables');
+		Map variable = variables.get(i);
+		variable.set("value", value);
+	};
+}
+
+</script>
 
 
 </class>
