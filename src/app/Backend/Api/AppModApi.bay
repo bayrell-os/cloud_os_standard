@@ -1,0 +1,154 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.Api;
+
+use Runtime.re;
+use Runtime.DateTime;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.Relation;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.CrudRule;
+use Runtime.Widget.Crud.Filter;
+use Runtime.Widget.Crud.LowerCase;
+use Runtime.Widget.Crud.Purify;
+use Runtime.Widget.Crud.ReadOnly;
+use Runtime.Widget.Crud.Required;
+use Runtime.Widget.Crud.Unique;
+
+
+class AppModApi extends CrudApi
+{
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.application.modificator::crud";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	pure string getTableName() => "app_modificators";
+	
+	
+	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"app_id",
+		"modificator_id",
+		"modificator_name",
+		"modificator_priority",
+		"modificator_uid",
+		"modificator_version",
+		"priority",
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() => [
+		"app_id",
+		"modificator_id",
+	];
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Collection<CrudRule> getRules() =>
+	[
+		new Purify{ "name": "modificator_id" },
+		new LowerCase{ "name": "modificator_id" },
+		new Required{ "name": "modificator_id" },
+	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async Query buildSearchQuery(Query q)
+	{
+		int app_id = (int)this.post_data["app_id"];
+		q.where("app_modificators.app_id", "=", app_id);
+		
+		q = q            
+			.innerJoin(
+				"modificators",
+				[
+					"modificators.id=app_modificators.modificator_id"
+				]
+			)
+			
+			.orderBy("modificators.priority", "asc")
+			.orderBy("modificators.name", "asc")
+			
+			.addFields([
+				"modificators.name as modificator_name",
+				"modificators.priority as modificator_priority",
+				"modificators.uid as modificator_uid",
+				"modificators.version as modificator_version",
+			])
+		;
+		
+		return q;
+	}
+	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent::actionSearch();
+	}
+	
+	
+	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		await parent::actionItem();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		await parent::actionSave();
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	@ApiMethod
+	async void actionDelete()
+	{
+		await parent::actionDelete();
+	}
+}

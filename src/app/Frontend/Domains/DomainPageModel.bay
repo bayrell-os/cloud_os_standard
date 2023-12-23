@@ -60,25 +60,24 @@ class DomainPageModel extends CrudPageModel
 				"parent_widget": this
 			};
 			
+			/* Set primary key for id */
+			form.storage.setPrimaryKey({
+				"id": this.layout.route.matches.get("id"),
+			});
+			
 			/* Create routes table widget */
 			RouteTableModel route_table = new RouteTableModel{
 				"parent_widget": this
 			};
-			/*route_table.removeField("space_name");*/
 			route_table.storage.setPage(1);
 			
 			/* Add table to render list */
-			RenderListModel render_list = this.getWidget("render_list");
-			render_list.addRender(route_table.getWidgetName());
+			this.getWidget("render_list").addRender(route_table);
 			
-			/* Set primary key */
-			form.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
-			route_table.storage.setForeignKey("domain_id", form.storage.item_pk.get("id"));
-			route_table.getWidget("form").storage.setForeignKey(
-				"domain_id", form.storage.item_pk.get("id")
-			);
+			/* Set foreign key */
+			int id = this.layout.route.matches.get("id");
+			route_table.storage.setForeignKey("domain_id", id);
+			route_table.getWidget("form").storage.setForeignKey("domain_id", id);
 			route_table.getWidget("form").removeField("domain_id");
 		}
 	}

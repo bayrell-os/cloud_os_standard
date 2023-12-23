@@ -45,11 +45,11 @@ class DomainFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Init table widgets
 	 */
-	void constructor(Dict params = null)
+	void initWidgets()
 	{
-		parent(params);
+		parent();
 		
 		if (this.action == "edit")
 		{

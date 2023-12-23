@@ -27,10 +27,14 @@ use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
+use Bayrell.CloudOS.Frontend.Applications.AppForm;
+use Bayrell.CloudOS.Frontend.Applications.AppModTableModel;
 
 
 class AppFormModel extends FormModel
 {
+	string component = classof AppForm;
+	
 	/**
 	 * Primary keys
 	 */
@@ -44,11 +48,11 @@ class AppFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Init table widgets
 	 */
-	void constructor(Dict params = null)
+	void initWidgets()
 	{
-		parent(params);
+		parent();
 		
 		if (this.action == "edit")
 		{
@@ -68,6 +72,18 @@ class AppFormModel extends FormModel
 				],
 			});
 			save_button.events.add("onClick", new Callback(this, "save"));
+			
+			/* Add modificators table */
+			AppModTableModel modificators = new AppModTableModel{
+				"parent_widget": this,
+				"widget_name": "modificators",
+			};
+			modificators.storage.setPage(1);
+			
+			/* Set foreign key */
+			int app_id = this.layout.route.matches.get("id");
+			modificators.storage.setForeignKey("app_id", app_id );
+			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
 		}
 	}
 	

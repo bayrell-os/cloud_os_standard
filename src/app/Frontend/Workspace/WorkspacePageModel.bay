@@ -61,6 +61,11 @@ class WorkspacePageModel extends CrudPageModel
 				"parent_widget": this
 			};
 			
+			/* Set primary key for id */
+			form.storage.setPrimaryKey({
+				"id": this.layout.route.matches.get("id"),
+			});
+			
 			/* Create domains table widget */
 			DomainTableModel domain_table = new DomainTableModel{
 				"parent_widget": this,
@@ -71,10 +76,10 @@ class WorkspacePageModel extends CrudPageModel
 			/* Add table to render list */
 			this.getWidget("render_list").addRender(domain_table);
 			
-			/* Set space id */
-			domain_table.storage.setForeignKey("space_id", this.layout.route.matches.get("id"));
-			domain_table.getWidget("form")
-				.storage.setForeignKey("space_id", this.layout.route.matches.get("id"));
+			/* Set foreign key */
+			int id = this.layout.route.matches.get("id");
+			domain_table.storage.setForeignKey("space_id", id);
+			domain_table.getWidget("form").storage.setForeignKey("space_id", id);
 		}
 	}
 	

@@ -33,12 +33,28 @@ use Runtime.Widget.Crud.ReadOnly;
 use Runtime.Widget.Crud.Required;
 use Runtime.Widget.Crud.Unique;
 use Runtime.XML.XML;
-use Bayrell.CloudOS.Lib.AppXml;
-use Bayrell.CloudOS.Lib.DockerService;
+use Bayrell.CloudOS.Backend.Lib.AppXml;
+use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
 class AppApi extends CrudApi
 {
+	AppXml xml;
+	
+	
+	/**
+	 * Constructor
+	 */
+	void constructor()
+	{
+		parent();
+		
+		/* Create xml */
+		this.xml = new AppXml();
+		this.xml.connection = this.getConnection();
+	}
+	
+	
 	/**
 	 * Returns api name
 	 */
@@ -177,6 +193,65 @@ class AppApi extends CrudApi
 	
 	
 	/**
+	 * After save
+	 */
+	async void onSaveAfter()
+	{
+		await parent();
+		
+		Map item_variables = {};
+		Map update_data = this.post_data["item"];
+		
+		/* Save variables */
+		Collection variables = update_data.get("variables");
+		if (variables)
+		{
+			for (int i=0; i<variables.count(); i++)
+			{
+				Dict variable = variables.get(i);
+				item_variables.set(
+					variable.get("name"),
+					variable.get("value")
+				);
+			}
+		}
+		
+		/* Set variables */
+		this.item.set("variables", item_variables);
+		
+		/* Build xml and yaml */
+		this.xml.app = this.item;
+		this.xml.buildContent(this.isCreate());
+		
+		/* Save item */
+		this.item.set("content", this.xml.xml_content);
+		this.item.set("yaml", this.xml.yaml_content);
+		this.item.save(this.getConnection());
+	}
+	
+	
+	/**
+	 * Build variables
+	 */
+	async void buildVariables()
+	{
+		if (this.xml.app == null)
+		{
+			this.xml.app = this.item;
+			this.xml.template = XML::loadXml(this.item.get("content"));
+			this.xml.buildVariables();
+		}
+		
+		Map data_item = this.result.data.get("item");
+		data_item.set("variables", this.xml.variables);
+		if (data_item.get("environments") == null)
+		{
+			data_item.set("environments", []);
+		}
+	}
+	
+	
+	/**
 	 * Action search
 	 */
 	@ApiMethod
@@ -193,6 +268,7 @@ class AppApi extends CrudApi
 	async void actionItem()
 	{
 		await parent::actionItem();
+		await this.buildVariables();
 	}
 	
 	
@@ -203,6 +279,7 @@ class AppApi extends CrudApi
 	async void actionSave()
 	{
 		await parent::actionSave();
+		await this.buildVariables();
 	}
 	
 	

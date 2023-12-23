@@ -16,29 +16,34 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.Workspace;
+namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.Input;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudApiStorage;
+use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
+use Bayrell.CloudOS.Frontend.Applications.AppForm;
 
 
-class WorkspaceFormModel extends FormModel
+class AppModFormModel extends FormModel
 {
 	/**
 	 * Primary keys
 	 */
-	Vector getPrimaryKeys() => ["id"];
+	Vector getPrimaryKeys() => ["app_id", "modificator_id"];
 	
 	
 	/**
 	 * Create data storage
 	 */
-	CrudApiStorage createDataStorage() => new CrudApiStorage(this.layout, "app.workspace");
+	CrudApiStorage createDataStorage() =>
+		new CrudApiStorage(this.layout, "app.application.modificator")
+	;
 	
 	
 	/**
@@ -47,26 +52,6 @@ class WorkspaceFormModel extends FormModel
 	void initWidgets()
 	{
 		parent();
-		
-		if (this.action == "edit")
-		{
-			this.top_buttons.add(new ButtonModel{
-				"content": "Back",
-				"styles": [
-					"default",
-				],
-				"href": this.layout.url("app:workspace:index"),
-			});
-			
-			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
-				"content": "Save",
-				"styles": [
-					"primary",
-					"large",
-				],
-			});
-			save_button.events.add("onClick", new Callback(this, "save"));
-		}
 	}
 	
 	
@@ -75,18 +60,23 @@ class WorkspaceFormModel extends FormModel
 	 */
 	void initFields()
 	{
-		/* UID */
+        /* Versions */
+		Dictionary modificators = new Dictionary{
+			"storage": new CrudApiStorage(this.layout, "app.modificators"),
+			"widget_name": "modificators",
+			"parent_widget": this,
+            "transform": Map (Dict item) => {
+				"label": item.get("name"),
+				"value": item.get("id"),
+			},
+		};
+        
+		/* Field name */
 		this.addField({
 			"label": "Name",
-			"name": "name",
-			"component": classof Input,
-		});
-		
-		/* UID */
-		this.addField({
-			"label": "UID",
-			"name": "uid",
-			"component": classof Input,
+			"name": "modificator_id",
+			"component": classof Select,
+            "model": modificators,
 		});
 	}
 	
@@ -98,15 +88,15 @@ class WorkspaceFormModel extends FormModel
 	{
 		if (action == "add")
 		{
-			return "Add workspace";
+			return "Add modificator";
 		}
 		if (action == "edit")
 		{
-			return "Edit " ~ this.storage.item.get("name");
+			return "Edit " ~ this.storage.item.get("modificator_name");
 		}
 		if (action == "delete")
 		{
-			return "Delete " ~ this.storage.item.get("name");
+			return "Delete " ~ this.storage.item.get("modificator_name");
 		}
 		return "";
 	}

@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Lib;
+namespace Bayrell.CloudOS.Backend.Lib;
 
 use Runtime.fs;
 use Runtime.ORM.Connection;

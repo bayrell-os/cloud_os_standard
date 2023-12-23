@@ -3,7 +3,10 @@
 	"assets":
 	[
 		"Frontend/Hooks/AppHook.bay",
+		"Frontend/Applications/AppForm.bay",
 		"Frontend/Applications/AppFormModel.bay",
+		"Frontend/Applications/AppModFormModel.bay",
+		"Frontend/Applications/AppModTableModel.bay",
 		"Frontend/Applications/AppPageModel.bay",
 		"Frontend/Applications/AppTableModel.bay",
 		"Frontend/Applications/ComposeDialog.bay",
