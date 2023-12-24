@@ -108,6 +108,7 @@ class ServiceTableModel extends TableModel
 	{
 		/* Refresh button */
 		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{
+			"layout": this.layout,
 			"table": this,
 		});
 	}
