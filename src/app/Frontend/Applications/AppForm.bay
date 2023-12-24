@@ -22,6 +22,9 @@
 
 <use name="Runtime.Web.BaseModel" />
 <use name="Runtime.Widget.Input" component="true" />
+<use name="Runtime.Widget.Tab.Tab" component="true" />
+<use name="Runtime.Widget.Tab.Tabs" component="true" />
+<use name="Runtime.Widget.Tab.TabsModel" />
 
 
 <style>
@@ -61,6 +64,10 @@
 
 
 <template name="renderWidgets">
+</template>
+
+
+<template name="renderWidgetsInfo">
 	
 	%set string component = "";
 	%set BaseModel widget = null;
@@ -94,7 +101,59 @@
 </template>
 
 
+<template name="renderForm">
+	<form method="POST"
+		enctype="multipart/form-data" onsubmit="return false;"
+	>
+		<Tabs @model={{ this.tabs }}>
+			<Tab name="info" @model={{ this.tabs }}>
+				%render this.renderContent();
+				%render this.renderWidgetsInfo();
+			</Tab>
+			<Tab name="custom_patch" @model={{ this.tabs }}>
+				Custom patch
+			</Tab>
+			<Tab name="total_patches" @model={{ this.tabs }}>
+				Total patches
+			</Tab>
+			<Tab name="result" @model={{ this.tabs }}>
+				Result
+			</Tab>
+			<Tab name="yaml" @model={{ this.tabs }}>
+				Yaml
+			</Tab>
+		</Tabs>
+	</form>
+</template>
+
+
 <script>
+
+TabsModel tabs = new TabsModel{
+	"active": "info",
+	"tabs": [
+		{
+			"name": "info",
+			"label": "Info",
+		},
+		{
+			"name": "custom_patch",
+			"label": "Custom patch",
+		},
+		{
+			"name": "total_patches",
+			"label": "Total patches",
+		},
+		{
+			"name": "result",
+			"label": "Result",
+		},
+		{
+			"name": "yaml",
+			"label": "Yaml",
+		},
+	],
+};
 
 void onChangeVariable(int i, string variable_name)
 {

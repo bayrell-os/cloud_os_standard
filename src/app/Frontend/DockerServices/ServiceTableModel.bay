@@ -102,9 +102,9 @@ class ServiceTableModel extends TableModel
 	
 	
 	/**
-	 * Init top buttons
+	 * Init buttons
 	 */
-	void initTopButtons()
+	void initButtons()
 	{
 		/* Refresh button */
 		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{

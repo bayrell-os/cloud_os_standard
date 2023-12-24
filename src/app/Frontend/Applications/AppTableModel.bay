@@ -125,9 +125,9 @@ class AppTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init top buttons
+	 * Init buttons
 	 */
-	void initTopButtons()
+	void initButtons()
 	{
 		parent();
 		

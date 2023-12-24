@@ -20,11 +20,18 @@ namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.Context;
 use Runtime.Web.BaseApp;
+use Runtime.Web.LayoutModel;
 use Runtime.Web.RenderProvider;
 
 
 class WebApp extends BaseApp
 {
+	/**
+	 * Create render container
+	 */
+	LayoutModel createLayout() => new LayoutModel();
+	
+	
 	/**
 	 * Init app
 	 */

@@ -28,6 +28,7 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Crud.CrudProxyStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.SaveButtonModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.AppEnvironmentsTableModel;
 use Bayrell.CloudOS.Frontend.Applications.AppForm;
@@ -38,6 +39,7 @@ use Bayrell.CloudOS.Frontend.Applications.AppVolumesTableModel;
 class AppFormModel extends FormModel
 {
 	string component = classof AppForm;
+	bool show_result = false;
 	
 	
 	/**
@@ -121,15 +123,10 @@ class AppFormModel extends FormModel
 				],
 				"href": this.layout.url("app:applications:index"),
 			});
-			
-			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
-				"content": "Save",
-				"styles": [
-					"primary",
-					"large",
-				],
+			this.top_buttons.add(new SaveButtonModel{
+				"parent_widget": this,
 			});
-			save_button.events.add("onClick", new Callback(this, "save"));
+			this.top_buttons.styles.add("no-gap");
 		}
 	}
 	
