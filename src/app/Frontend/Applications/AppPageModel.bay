@@ -42,9 +42,6 @@ class AppPageModel extends CrudPageModel
 			AppTableModel table = new AppTableModel{
 				"parent_widget": this
 			};
-			
-			/* Set page */
-			table.storage.setPage(this.layout.request_query.get("page", 1));
 		}
 		
 		else if (this.layout.route.name == "app:applications:edit")

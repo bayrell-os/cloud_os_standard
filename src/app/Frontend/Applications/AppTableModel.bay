@@ -29,12 +29,18 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.AppFormModel;
+use Bayrell.CloudOS.Frontend.Applications.AppTable;
 use Bayrell.CloudOS.Frontend.Applications.ComposeDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
+use Runtime.Widget.Tab.TabsModel;
 
 
 class AppTableModel extends TableDialogModel
 {
+	string component = classof AppTable;
+	TabsModel tabs = null;
+	
+	
 	/**
 	 * Create data storage
 	 */
@@ -72,6 +78,38 @@ class AppTableModel extends TableDialogModel
 			"parent_widget": this,
 		};
 		render_list.addRender(compose_dialog);
+		
+		/* Add tabs */
+		this.tabs = new TabsModel{
+			"active": "run",
+			"tabs": [
+				{
+					"name": "run",
+					"label": "Run",
+					"href": this.layout.url("app:applications:index", {"status": "run"}),
+				},
+				{
+					"name": "stop",
+					"label": "Stopped",
+					"href": this.layout.url("app:applications:index", {"status": "stop"}),
+				}
+			],
+		};
+		
+		/* Filter status */
+		string status = this.layout.request_query.get("status", "");
+		if (status == "stop")
+		{
+			this.tabs.active = "stop";
+			this.storage.setPostData("status", "stop");
+		}
+		else
+		{
+			this.storage.setPostData("status", "run");
+		}
+		
+		/* Set page */
+		this.storage.setPage(this.layout.request_query.get("page", 1));
 	}
 	
 	
@@ -133,6 +171,7 @@ class AppTableModel extends TableDialogModel
 		
 		/* Refresh button */
 		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{
+			"layout": this.layout,
 			"table": this,
 		});
 		
