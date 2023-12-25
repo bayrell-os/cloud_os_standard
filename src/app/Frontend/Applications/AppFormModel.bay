@@ -25,7 +25,6 @@ use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.Crud.CrudApiStorage;
-use Runtime.Widget.Crud.CrudProxyStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.SaveButtonModel;
@@ -85,25 +84,11 @@ class AppFormModel extends FormModel
 			/* Environments */
 			AppEnvironmentsTableModel environments = new AppEnvironmentsTableModel{
 				"parent_widget": this,
-				"widget_name": "environments",
-				"storage": new CrudProxyStorage{
-					"layout": this.layout,
-					"primary_keys": ["key"],
-					"container": this.storage,
-					"path": ["item", "environments"],
-				},
 			};
 			
 			/* Volumes */
 			AppVolumesTableModel volumes = new AppVolumesTableModel{
 				"parent_widget": this,
-				"widget_name": "volumes",
-				"storage": new CrudProxyStorage{
-					"layout": this.layout,
-					"primary_keys": ["key"],
-					"container": this.storage,
-					"path": ["item", "volumes"],
-				},
 			};
 		}
 	}

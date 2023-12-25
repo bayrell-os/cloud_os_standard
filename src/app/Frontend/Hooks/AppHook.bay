@@ -51,6 +51,7 @@ class AppHook extends BaseAppHook
 	{
 		/* Restore SSR content in Frontend */
 		params.set("ssr", true);
+		params.set("break", 0);
 	}
 	
 	

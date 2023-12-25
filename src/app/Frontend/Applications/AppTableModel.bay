@@ -144,10 +144,14 @@ class AppTableModel extends TableDialogModel
 		});
 		
         /* Field replicas */
-		this.addField({
-			"label": "Replicas",
-			"name": "replicas",
-		});
+		string status = this.layout.request_query.get("status", "");
+		if (status != "stop")
+		{
+			this.addField({
+				"label": "Replicas",
+				"name": "replicas",
+			});
+		}
         
         /* Field admin */
 		this.addField({
@@ -216,7 +220,7 @@ class AppTableModel extends TableDialogModel
 		{
 			string count_total = item.get("count_total");
 			string count_work = item.get("count_work");
-			if (count_total == null or count_work == null)
+			if (count_total === null or count_work === null)
 			{
 				return "";
 			}

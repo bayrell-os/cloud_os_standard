@@ -19,15 +19,31 @@
 namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.Callback;
+use Runtime.Web.BaseObject;
 use Runtime.Web.BaseModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.SelectLabel;
+use Runtime.Widget.Crud.CrudProxyStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Table.TableDialogModel;
 
 
 class AppEnvironmentsTableModel extends TableDialogModel
-{	
+{
+	string widget_name = "environments";
+	
+	
+	/**
+	 * Create data storage
+	 */
+	BaseObject createDataStorage() => new CrudProxyStorage{
+		"layout": this.layout,
+		"primary_keys": ["key"],
+		"container": this.parent_widget.storage,
+		"path": ["item", "environments"],
+	};
+	
+	
 	/**
 	 * Init styles
 	 */
@@ -45,7 +61,7 @@ class AppEnvironmentsTableModel extends TableDialogModel
 		/* Create form */
 		FormModel form = new FormModel{
 			"parent_widget": this,
-			"storage": this.storage,
+			"storage": this.createDataStorage(),
 		};
 		
 		/* Add fields */
