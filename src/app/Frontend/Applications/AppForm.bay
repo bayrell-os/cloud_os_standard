@@ -22,27 +22,50 @@
 
 <use name="Runtime.Web.BaseModel" />
 <use name="Runtime.Widget.Input" component="true" />
+<use name="Runtime.Widget.TextArea" component="true" />
 <use name="Runtime.Widget.Tab.Tab" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabsModel" />
 
 
 <style>
+.app %(TextArea)widget_textarea{
+	min-height: 500px;
+}
 .app_variables{
 	margin-right: 20px;
+}
+.app_total_patches
+{
+	display: flex;
+}
+.app_total_patches__items{
+	width: 200px;
+	padding-right: 20px;
+}
+.app_total_patches__item{
+	padding: 5px 10px;
+	cursor: pointer;
+}
+.app_total_patches__item--active{
+    background-color: #337ab7;
+    color: #fff;
+}
+.app_total_patches__content{
+	width: calc(100% - 200px);
 }
 </style>
 
 
 <template name="renderVariables">
-	%set Vector variables = this.model.storage.item.get('variables');
+	%set Vector variables = this.model.storage.item.get("variables");
 	<div class="app_variables">
 		%for (int i=0; i<variables.count(); i++)
 		{
 			%set Map variable = variables.get(i);
-			%set Map variable_name = variable.get('name');
-			%set Map variable_label = variable.get('label');
-			%set Map variable_value = variable.get('value');
+			%set Map variable_name = variable.get("name");
+			%set Map variable_label = variable.get("label");
+			%set Map variable_value = variable.get("value");
 			%if (
 				variable_name != "_var_app_name_" and
 				variable_name != "_var_service_name_"
@@ -59,6 +82,35 @@
 				</div>
 			}
 		}
+	</div>
+</template>
+
+
+<template name="renderPatches">
+	%set Vector patches = this.model.storage.item.get("patches");
+	<div class="app_total_patches">
+		<div class="app_total_patches__items">
+		%if (patches != null)
+		{
+			%for (int i=0; i<patches.count(); i++)
+			{
+				%set Dict item = patches.get(i);
+				<div class="app_total_patches__item" @key={{ i }} data-index={{ i }}
+					class={{ this.patch_selected == i ? "app_total_patches__item--active" : "" }}
+					@event:onClick={{ this.onPatchSelect(i) }}
+				>
+					{{ item.get("name") }}
+				</div>
+			}
+		}
+		</div>
+		<div class="app_total_patches__content">
+		%if (this.patch_selected >= 0 and this.patch_selected < patches.count())
+		{
+			%set Dict item = patches.get(this.patch_selected);
+			<TextArea value={{ item.get("content") }} readonly="true" />
+		}
+		</div>
 	</div>
 </template>
 
@@ -102,32 +154,54 @@
 
 
 <template name="renderForm">
-	<Tabs @model={{ this.tabs }}>
-		<Tab name="info" @model={{ this.tabs }}>
-			<form method="POST"
-				enctype="multipart/form-data" onsubmit="return false;"
-			>
-				%render this.renderContent();
-			</form>
-			%render this.renderWidgetsInfo();
-		</Tab>
-		<Tab name="custom_patch" @model={{ this.tabs }}>
-			Custom patch
-		</Tab>
-		<Tab name="total_patches" @model={{ this.tabs }}>
-			Total patches
-		</Tab>
-		<Tab name="result" @model={{ this.tabs }}>
-			Result
-		</Tab>
-		<Tab name="yaml" @model={{ this.tabs }}>
-			Yaml
-		</Tab>
-	</Tabs>
+	%if (this.model.action == "edit")
+	{
+		<div class="app">
+			<Tabs @model={{ this.tabs }}>
+				<Tab name="info" @model={{ this.tabs }}>
+					<form method="POST"
+						enctype="multipart/form-data" onsubmit="return false;"
+					>
+						%render this.renderContent();
+					</form>
+					%render this.renderWidgetsInfo();
+				</Tab>
+				<Tab name="custom_patch" @model={{ this.tabs }}>
+					<TextArea
+						@event:onChange={{ this.onChangeValue("custom_patch") }}
+						value={{ this.model.storage.item.get("custom_patch") }}
+					/>
+				</Tab>
+				<Tab name="total_patches" @model={{ this.tabs }}>
+					%render this.renderPatches();
+				</Tab>
+				<Tab name="result" @model={{ this.tabs }}>
+					<TextArea
+						@event:onChange={{ this.onChangeValue("content") }}
+						value={{ this.model.storage.item.get("content") }}
+						readonly="true"
+					/>
+				</Tab>
+				<Tab name="yaml" @model={{ this.tabs }}>
+					<TextArea
+						@event:onChange={{ this.onChangeValue("yaml") }}
+						value={{ this.model.storage.item.get("yaml") }}
+						readonly="true"
+					/>
+				</Tab>
+			</Tabs>
+		</div>
+	}
+	%else
+	{
+		%render parent();
+	}
 </template>
 
 
 <script>
+
+int patch_selected = -1;
 
 TabsModel tabs = new TabsModel{
 	"active": "info",
@@ -164,6 +238,25 @@ void onChangeVariable(int i, string variable_name)
 		Map variable = variables.get(i);
 		variable.set("value", value);
 	};
+}
+
+void onChangeValue(string api_name)
+{
+	return void (var e) use (api_name)
+	{
+		string value = e.target.value;
+		if (api_name == "custom_patch") this.model.storage.item.set("custom_patch", value);
+		if (api_name == "content") this.model.storage.item.set("content", value);
+		if (api_name == "yaml") this.model.storage.item.set("yaml", value);
+	};
+}
+
+void onPatchSelect(int index)
+{
+	return void (var e) use (index)
+	{
+		this.patch_selected = index;
+	}
 }
 
 </script>

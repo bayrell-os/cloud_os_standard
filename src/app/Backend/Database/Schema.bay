@@ -60,6 +60,7 @@ class Schema extends DatabaseSchema
 		new StringType{"name": "stack_name"},
 		new StringType{"name": "name"},
 		new StringType{"name": "content"},
+		new StringType{"name": "custom_patch"},
 		new StringType{"name": "yaml"},
 		new BigIntType{"name": "yaml_file_id"},
 		new BigIntType{"name": "template_version_id"},

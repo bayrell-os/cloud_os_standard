@@ -107,7 +107,9 @@ class AppXml
 		}
 		
 		/* Save new content */
-		this.xml_content = this.template.toString();
+		this.xml_content = this.template.toString({
+			"indent-spaces": 2,
+		});
 	}
 	
 	
@@ -209,6 +211,11 @@ class AppXml
 			});
 		}
 		
+		patches.push({
+			"name": "Custom patch",
+			"content": this.app.get("custom_patch"),
+		});
+		
 		return patches.toCollection();
 	}
 	
@@ -247,7 +254,9 @@ class AppXml
 		Dict variables = this.getVariables();
 		
 		YamlConverter converter = new YamlConverter(yaml, variables);
-		this.yaml_content = converter.convert();
+		this.yaml_content = converter.convert({
+			"indent-spaces": 2,
+		});
 	}
 	
 	

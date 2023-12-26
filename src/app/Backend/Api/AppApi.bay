@@ -244,10 +244,18 @@ class AppApi extends CrudApi
 		{
 			this.xml.app = this.item;
 			this.xml.template = XML::loadXml(this.item.get("content"));
+			this.xml.loadTemplateFromDatabase();
+			this.xml.loadModificators();
 			this.xml.buildVariables();
 		}
 		
 		Map data_item = this.result.data.get("item");
+		
+		/* Set patches */
+		Collection patches = this.xml.getPatches();
+		data_item.set("patches", patches);
+		
+		/* Set variables */
 		data_item.set("variables", this.xml.variables);
 		if (data_item.get("environments") == null)
 		{
