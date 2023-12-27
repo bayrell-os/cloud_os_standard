@@ -76,6 +76,8 @@ class AppTableModel extends TableDialogModel
 		/* Create compose wiget */
 		ComposeDialogModel compose_dialog = new ComposeDialogModel{
 			"parent_widget": this,
+			"table": this,
+			"form": form,
 		};
 		render_list.addRender(compose_dialog);
 		
@@ -143,7 +145,7 @@ class AppTableModel extends TableDialogModel
 			"component": classof SelectLabel,
 		});
 		
-        /* Field replicas */
+		/* Field replicas */
 		string status = this.layout.request_query.get("status", "");
 		if (status != "stop")
 		{
@@ -151,16 +153,23 @@ class AppTableModel extends TableDialogModel
 				"label": "Replicas",
 				"name": "replicas",
 			});
+		
+			/* Field admin */
+			this.addField({
+				"label": "Admin",
+				"name": "admin",
+				"component": classof TableFieldAdmin,
+				"model": this,
+			});
 		}
-        
-        /* Field admin */
-		this.addField({
-			"label": "Admin",
-			"name": "admin",
-			"component": classof TableFieldAdmin,
-			"model": this,
-		});
-        
+		
+		/* Compose buttons */
+		string status = this.layout.request_query.get("status", "");
+		if (status != "stop")
+		{
+			this.addComposeButtons();
+		}
+		
 		/* Row buttons */
 		this.addFieldRowButtons();
 	}
@@ -184,12 +193,77 @@ class AppTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Add compose buttons
+	 */
+	Map addComposeButtons()
+	{
+		/* Row buttons */
+		RowButtonsModel row_buttons = new RowButtonsModel();
+		
+		this.addRecomposeButton(row_buttons);
+		
+		/* Add buttons */
+		Map field = this.addField({
+			"name": "row_buttons",
+			"component": classof RowButtons,
+			"model": row_buttons,
+		});
+		
+		return field;
+	}
+	
+	
+	/**
+	 * Add field row buttons
+	 */
+	Map addFieldRowButtons()
+	{
+		/* Row buttons */
+		RowButtonsModel row_buttons = new RowButtonsModel();
+		
+		this.addEditFieldRowButtons(row_buttons);
+		this.addDeleteFieldRowButtons(row_buttons);
+		
+		/* Add buttons */
+		Map field = this.addField({
+			"name": "row_buttons",
+			"component": classof RowButtons,
+			"model": row_buttons,
+		});
+		
+		return field;
+	}
+	
+	
+	/**
+	 * Add recompose button
+	 */
+	ButtonModel addRecomposeButton(RowButtonsModel row_buttons)
+	{
+		/* Edit button */
+		ButtonModel recompose_button = row_buttons.add(new ButtonModel{
+			"content": "Recompose",
+			"widget_name": "recompose_button",
+			"styles": [
+				"default",
+				"small",
+			],
+		});
+		
+		/* Add edit onClick */
+		ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
+		recompose_button.events.add("onClick", new Callback(compose_dialog, "onRecompose"));
+	}
+	
+	
+	/**
 	 * Add edit field row buttons
 	 */
 	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
 	{
 		ButtonModel edit_button = row_buttons.add(new ButtonModel{
 			"content": "Edit",
+			"widget_name": "edit_button",
 			"styles": [
 				"default",
 				"small",

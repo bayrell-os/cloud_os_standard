@@ -18,15 +18,11 @@
 
 <class name="Bayrell.CloudOS.Frontend.Applications.ComposeDialog">
 
-<use name="Runtime.Widget.WidgetResult" component="true" />
 <use name="Runtime.Widget.Dialog.Dialog" component="true" />
-<use name="Runtime.Widget.Form.Form" component="true" />
 
 
 <template name="render">
-	<Dialog @model={{ this.model.dialog }}>
-		<WidgetResult @model={{ this.model.result }} />
-	</Dialog>
+	<Dialog @model={{ this.model.dialog }} />
 </template>
 
 

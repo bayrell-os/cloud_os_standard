@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Frontend.Applications;
 use Runtime.Callback;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.Input;
+use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
@@ -33,6 +34,7 @@ use Bayrell.CloudOS.Frontend.Applications.AppEnvironmentsTableModel;
 use Bayrell.CloudOS.Frontend.Applications.AppForm;
 use Bayrell.CloudOS.Frontend.Applications.AppModTableModel;
 use Bayrell.CloudOS.Frontend.Applications.AppVolumesTableModel;
+use Bayrell.CloudOS.Frontend.Applications.ComposeDialogModel;
 
 
 class AppFormModel extends FormModel
@@ -90,6 +92,16 @@ class AppFormModel extends FormModel
 			AppVolumesTableModel volumes = new AppVolumesTableModel{
 				"parent_widget": this,
 			};
+			
+			/* Get render list widget */
+			RenderListModel render_list = this.getWidget("render_list");
+			
+			/* Add compose dialog */
+			ComposeDialogModel compose_dialog = new ComposeDialogModel{
+				"parent_widget": this,
+				"form": this,
+			};
+			render_list.addRender(compose_dialog);
 		}
 	}
 	
@@ -101,6 +113,8 @@ class AppFormModel extends FormModel
 	{
 		if (this.action == "edit")
 		{
+			ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
+			
 			this.top_buttons.add(new ButtonModel{
 				"content": "Back",
 				"styles": [
@@ -108,8 +122,28 @@ class AppFormModel extends FormModel
 				],
 				"href": this.layout.url("app:applications:index"),
 			});
+			
+			ButtonModel compose_button = this.top_buttons.add(new ButtonModel{
+				"content": "Compose",
+				"styles": [
+					"default",
+				],
+			});
+			compose_button.events.add("onClick", new Callback(compose_dialog, "onCompose"));
+			
+			ButtonModel stop_button = this.top_buttons.add(new ButtonModel{
+				"content": "Stop",
+				"styles": [
+					"default",
+				],
+			});
+			stop_button.events.add("onClick", new Callback(compose_dialog, "onStop"));
+			
 			this.top_buttons.add(new SaveButtonModel{
 				"parent_widget": this,
+				"styles": [
+					"last"
+				],
 			});
 			this.top_buttons.styles.add("no-gap");
 		}
@@ -210,6 +244,24 @@ class AppFormModel extends FormModel
 		if (action == "add")
 		{
 			return "Add app";
+		}
+		if (action == "compose")
+		{
+			return "Compose " ~ this.storage.item.get("stack_name") ~
+				"_" ~ this.storage.item.get("name")
+			;
+		}
+		if (action == "stop")
+		{
+			return "Stop " ~ this.storage.item.get("stack_name") ~
+				"_" ~ this.storage.item.get("name")
+			;
+		}
+		if (action == "recompose")
+		{
+			return "Recompose " ~ this.storage.item.get("stack_name") ~
+				"_" ~ this.storage.item.get("name")
+			;
 		}
 		if (action == "edit")
 		{

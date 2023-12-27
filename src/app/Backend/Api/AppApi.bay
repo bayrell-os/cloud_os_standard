@@ -304,4 +304,49 @@ class AppApi extends CrudApi
 	{
 		await parent::actionDelete();
 	}
+	
+	
+	/**
+	 * Action compose
+	 */
+	@ApiMethod
+	async void actionCompose()
+	{
+		Dict item_pk = this.post_data["item_pk"];
+		return this.result.success({
+			"data": {
+				"item_pk": item_pk,
+			},
+		});
+	}
+	
+	
+	/**
+	 * Action stop
+	 */
+	@ApiMethod
+	async void actionStop()
+	{
+		Dict item_pk = this.post_data["item_pk"];
+		return this.result.success({
+			"data": {
+				"item_pk": item_pk,
+			},
+		});
+	}
+	
+	
+	/**
+	 * Action recompose
+	 */
+	@ApiMethod
+	async void actionRecompose()
+	{
+		Dict item_pk = this.post_data["item_pk"];
+		return this.result.success({
+			"data": {
+				"item_pk": item_pk,
+			},
+		});
+	}
 }
