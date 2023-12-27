@@ -22,12 +22,11 @@ use Runtime.fs;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Bayrell.CloudOS.Lib.DockerApi;
+use Bayrell.CloudOS.Backend.Lib.DockerApi;
 
 
 class DockerService
 {
-	
 	/**
 	 * Returns ip addresses
 	 */
@@ -79,8 +78,8 @@ class DockerService
 		Connection conn = Connection::getConnection();
 		
 		/* Find yaml file */
-		Relation yaml = await Relation::findOrCreate(
-			"docker_yaml_files", conn,
+		Relation yaml = await conn.findOrCreate(
+			"docker_yaml_files",
 			{
 				"file_name": app.get("name") ~ ".conf",
 				"stack_name": app.get("stack_name"),

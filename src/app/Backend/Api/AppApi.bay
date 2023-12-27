@@ -20,6 +20,8 @@ namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.ItemNotFound;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
@@ -34,6 +36,7 @@ use Runtime.Widget.Crud.Required;
 use Runtime.Widget.Crud.Unique;
 use Runtime.XML.XML;
 use Bayrell.CloudOS.Backend.Lib.AppXml;
+use Bayrell.CloudOS.Backend.Lib.DockerException;
 use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
@@ -257,9 +260,17 @@ class AppApi extends CrudApi
 		
 		/* Set variables */
 		data_item.set("variables", this.xml.variables);
+		
+		/* Set environments if null */
 		if (data_item.get("environments") == null)
 		{
 			data_item.set("environments", []);
+		}
+		
+		/* Set volumes if null */
+		if (data_item.get("volumes") == null)
+		{
+			data_item.set("volumes", []);
 		}
 	}
 	
@@ -312,11 +323,40 @@ class AppApi extends CrudApi
 	@ApiMethod
 	async void actionCompose()
 	{
-		Dict item_pk = this.post_data["item_pk"];
-		return this.result.success({
+		Dict pk = this.post_data["pk"];
+		Map update_data = this.post_data["item"];
+		
+		/* Find item */
+		await this.findItem(pk);
+		if (this.item == null)
+		{
+			throw new ApiError(new ItemNotFound());
+		}
+		
+		/* Update item */
+		await this.updateItem(update_data);
+		
+		/* Convert item */
+		Map model = this.convertItem("item", this.item);
+		Map pk = this.item.getPrimaryKey();
+		
+		/* Compose app */
+		string message = "";
+		try
+		{
+			message = DockerService::composeApp(this.item);
+		}
+		catch (DockerException e)
+		{
+			throw new ApiError(e);
+		}
+		
+		this.result.success({
 			"data": {
-				"item_pk": item_pk,
+				"pk": pk,
+				"item": model,
 			},
+			"message": message,
 		});
 	}
 	
@@ -327,11 +367,34 @@ class AppApi extends CrudApi
 	@ApiMethod
 	async void actionStop()
 	{
-		Dict item_pk = this.post_data["item_pk"];
+		Dict pk = this.post_data["pk"];
+		
+		/* Find item */
+		await this.findItem(pk);
+		if (this.item == null)
+		{
+			throw new ApiError(new ItemNotFound());
+		}
+		
+		/* Convert item */
+		Map pk = this.item.getPrimaryKey();
+		
+		/* Stop app */
+		string message = "";
+		try
+		{
+			message = DockerService::stopApp(this.item);
+		}
+		catch (DockerException e)
+		{
+			throw new ApiError(e);
+		}
+		
 		return this.result.success({
 			"data": {
-				"item_pk": item_pk,
+				"pk": pk,
 			},
+			"message": message,
 		});
 	}
 	
@@ -342,11 +405,35 @@ class AppApi extends CrudApi
 	@ApiMethod
 	async void actionRecompose()
 	{
-		Dict item_pk = this.post_data["item_pk"];
+		Dict pk = this.post_data["pk"];
+		
+		/* Find item */
+		await this.findItem(pk);
+		if (this.item == null)
+		{
+			throw new ApiError(new ItemNotFound());
+		}
+		
+		/* Convert item */
+		Map pk = this.item.getPrimaryKey();
+		
+		/* Recompose app */
+		string message = "";
+		try
+		{
+			message = DockerService::stopApp(this.item);
+			message = DockerService::composeApp(this.item);
+		}
+		catch (DockerException e)
+		{
+			throw new ApiError(e);
+		}
+		
 		return this.result.success({
 			"data": {
-				"item_pk": item_pk,
+				"pk": pk,
 			},
+			"message": message,
 		});
 	}
 }

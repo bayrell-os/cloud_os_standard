@@ -19,13 +19,13 @@
 namespace Bayrell.CloudOS.Backend.Lib;
 
 use Runtime.re;
-use Runtime.Exceptions.ApiException;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
 use Runtime.XML.XML;
 use Runtime.XML.YamlConverter;
+use Bayrell.CloudOS.Backend.Lib.DockerException;
 
 
 class DockerApi
@@ -47,7 +47,7 @@ class DockerApi
 		
 		if ($ret_var != 0)
 		{
-			throw new \Runtime\Exceptions\ApiException($content);
+			throw new \Bayrell\CloudOS\Backend\Lib\DockerException($content);
 		}
 		
 		return $content;
@@ -144,11 +144,9 @@ class DockerApi
 		string error_message = obj["message"];
 		if (error_message != "")
 		{
-			throw new ApiException(error_message);
+			throw new DockerException(error_message);
 		}
 		
 		return obj["message"];
 	}
-	
-	
 }
