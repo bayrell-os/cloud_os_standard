@@ -123,6 +123,10 @@ class ComposeDialogModel extends BaseModel
 			item = Serializer::copy(item);
 			this.form.storage.setItem(item);
 			
+			/* Set button label */
+			ButtonModel confirm_button = this.dialog.buttons.find("confirm_button");
+			confirm_button.content = "Recompose";
+			
 			/* Set title */
 			this.action = "recompose";
 			this.dialog.title = this.form.getPageTitle("recompose");
@@ -203,6 +207,7 @@ class ComposeDialogModel extends BaseModel
 				"item": item,
 			}
 		});
+		
 		this.dialog.result.setApiResult(res);
 	}
 	
@@ -222,6 +227,7 @@ class ComposeDialogModel extends BaseModel
 				"pk": item_pk,
 			}
 		});
+		
 		this.dialog.result.setApiResult(res);
 	}
 	
@@ -241,6 +247,7 @@ class ComposeDialogModel extends BaseModel
 				"pk": item_pk,
 			}
 		});
+		
 		this.dialog.result.setApiResult(res);
 	}
 }

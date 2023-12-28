@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Frontend.DockerServices;
 use Runtime.BaseObject;
 use Runtime.Callback;
 use Runtime.Serializer;
+use Runtime.Web.ApiResult;
 use Runtime.Web.BaseModel;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.WidgetResultModel;
@@ -111,7 +112,7 @@ class StopDialogModel extends BaseModel
 	async void onConfirmButtonClick()
 	{
 		await this.stop();
-		if (this.error.isSuccess())
+		if (this.dialog.result.isSuccess())
 		{
 			this.dialog.hide();
 			await this.parent_widget.refresh();
@@ -124,6 +125,17 @@ class StopDialogModel extends BaseModel
 	 */
 	async void stop()
 	{
+		this.dialog.result.setWaitMessage();
+		ApiResult res = await this.layout.callApi({
+			"api_name": "app.docker.services::crud",
+			"method": "actionStop",
+			"data": {
+				"pk": {
+					"service_id": this.item.get("service_id"),
+				},
+			}
+		});
 		
+		this.dialog.result.setApiResult(res);
 	}
 }

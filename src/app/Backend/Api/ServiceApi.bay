@@ -20,6 +20,7 @@ namespace Bayrell.CloudOS.Backend.Api;
 
 use Runtime.re;
 use Runtime.DateTime;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Exceptions.ApiError;
@@ -109,6 +110,7 @@ class ServiceApi extends CrudApi
 	async void actionStop()
 	{
 		Dict pk = this.post_data["pk"];
+		Connection conn = this.getConnection();
 		
 		/* Find item */
 		await this.findItem(pk);
@@ -125,7 +127,7 @@ class ServiceApi extends CrudApi
 		/* Set is delete */
 		this.item.set("enable", 0);
 		this.item.set("is_deleted", 1);
-		this.item.save();
+		this.item.save(conn);
 		
 		/* Set api result */
 		this.result.success({

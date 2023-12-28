@@ -37,7 +37,7 @@ class ServiceTableModel extends TableModel
 	CrudApiStorage createDataStorage() => new CrudApiStorage{
 		"layout": this.layout,
 		"class_name": "app.docker.services",
-		"primary_keys": ["id"],
+		"primary_keys": ["service_id"],
 	};
 	
 	

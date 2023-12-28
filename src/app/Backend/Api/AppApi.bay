@@ -417,17 +417,24 @@ class AppApi extends CrudApi
 		/* Convert item */
 		Map pk = this.item.getPrimaryKey();
 		
-		/* Recompose app */
+		/* Stop app */
 		string message = "";
 		try
 		{
-			message = DockerService::stopApp(this.item);
+			DockerService::stopApp(this.item);
+		}
+		catch (DockerException e){}
+		
+		/* Compose app */
+		try
+		{
 			message = DockerService::composeApp(this.item);
 		}
 		catch (DockerException e)
 		{
 			throw new ApiError(e);
 		}
+		
 		
 		return this.result.success({
 			"data": {
