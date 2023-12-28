@@ -60,7 +60,7 @@ class DockerService
 					{
 						string address = addresses[addresses_i];
 						Collection arr = rs::split("/", address);
-						ip_res.pushValue(arr[0]);
+						ip_res.push(arr[0]);
 					}
 				}
 			}
@@ -189,9 +189,8 @@ class DockerService
 		string stack_name = service["Spec", "Labels", "com.docker.stack.namespace"];
 		string service_short_name = rs::substr(service["Spec", "Name"], rs::strlen(stack_name) + 1);
 		
-		Relation item = Relation::findItem(
+		Relation item = await conn.findRelationByObject(
 			"docker_services",
-			conn,
 			{
 				"docker_name": service_name,
 			}

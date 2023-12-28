@@ -21,8 +21,8 @@ namespace Bayrell.CloudOS.Console.Commands;
 use Runtime.io;
 use Runtime.Console.BaseCommand;
 use Runtime.Console.CommandsList;
-use Bayrell.CloudOS.Lib.DockerApi;
-use Bayrell.CloudOS.Lib.DockerService;
+use Bayrell.CloudOS.Backend.Lib.DockerApi;
+use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
 class UpdateServices extends BaseCommand

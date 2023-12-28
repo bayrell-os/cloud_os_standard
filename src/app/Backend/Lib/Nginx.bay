@@ -26,8 +26,8 @@ use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
 use Runtime.ORM.Relation;
 use Runtime.XML.XML;
-use Bayrell.CloudOS.Lib.AppXml;
-use Bayrell.CloudOS.Lib.DockerService;
+use Bayrell.CloudOS.Backend.Lib.AppXml;
+use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
 class Nginx
@@ -46,13 +46,13 @@ class Nginx
 		Collection ip_arr = DockerService::getIpAddresses(service, network_name);
 		if (ip_arr.count() > 0)
 		{
-			res.pushValue("upstream " ~ upstream_name ~ " {");
+			res.push("upstream " ~ upstream_name ~ " {");
 			for (int i=0; i<ip_arr.count(); i++)
 			{
 				string ip = ip_arr.get(i);
-				res.pushValue("  server " ~ ip ~ ":" ~ target_port ~ ";");
+				res.push("  server " ~ ip ~ ":" ~ target_port ~ ";");
 			}
-			res.pushValue("}");
+			res.push("}");
 		}
 		
 		return {
@@ -118,8 +118,8 @@ class Nginx
 				string upstream_name = upstream["name"];
 				if (not upstreams_names.has(upstream_name))
 				{
-					upstreams_names.setValue(upstream_name, 1);
-					upstreams.pushValue(upstream["res"]);
+					upstreams_names.set(upstream_name, 1);
+					upstreams.push(upstream["res"]);
 				}
 			}
 		}
@@ -196,7 +196,7 @@ class Nginx
 					has_root_route = true;
 				}
 				
-				nginx_routes.pushValue("  location " ~ domain_route_prefix ~ "/ {");
+				nginx_routes.push("  location " ~ domain_route_prefix ~ "/ {");
 				
 				/* Proxy params */
 				string domain_target_prefix_last_slash = "/";
@@ -204,44 +204,44 @@ class Nginx
 				{
 					domain_target_prefix_last_slash = "";
 				}
-				nginx_routes.pushValue("    proxy_pass http://" ~ upstream_name ~
+				nginx_routes.push("    proxy_pass http://" ~ upstream_name ~
 					domain_target_prefix ~ domain_target_prefix_last_slash ~ ";");
-				nginx_routes.pushValue("    include proxy_params;");
+				nginx_routes.push("    include proxy_params;");
 				
 				/* Add websocket settings */
 				if (has_websocket)
 				{
-					nginx_routes.pushValue("    proxy_http_version 1.1;");
-					nginx_routes.pushValue("    proxy_set_header Upgrade $http_upgrade;");
-					nginx_routes.pushValue("    proxy_set_header Connection \"upgrade\";");
+					nginx_routes.push("    proxy_http_version 1.1;");
+					nginx_routes.push("    proxy_set_header Upgrade $http_upgrade;");
+					nginx_routes.push("    proxy_set_header Connection \"upgrade\";");
 				}
 				
 				/* Add route prefix */
 				if (has_rewrite)
 				{
-					nginx_routes.pushValue("    proxy_set_header X-FORWARDED-PREFIX \"" ~
+					nginx_routes.push("    proxy_set_header X-FORWARDED-PREFIX \"" ~
 						domain_route_prefix ~ "\";");
 				}
 				else
 				{
-					nginx_routes.pushValue("    proxy_set_header X-FORWARDED-PREFIX \"\";");
+					nginx_routes.push("    proxy_set_header X-FORWARDED-PREFIX \"\";");
 				}
 				
 				/* Add space id */
 				if (domain["space_uid"] != "")
 				{
-					nginx_routes.pushValue("    proxy_set_header X-SPACE-UID \"" ~
+					nginx_routes.push("    proxy_set_header X-SPACE-UID \"" ~
 						domain["space_uid"] ~ "\";");
 				}
 				else
 				{
-					nginx_routes.pushValue("    proxy_set_header X-SPACE-UID \"0\";");
+					nginx_routes.push("    proxy_set_header X-SPACE-UID \"0\";");
 				}
 				
 				/* Add rewrite */
 				if (domain_route_prefix != "" and has_rewrite)
 				{
-					nginx_routes.pushValue("    rewrite " ~ domain_route_prefix ~
+					nginx_routes.push("    rewrite " ~ domain_route_prefix ~
 						"/(.*) " ~ "/$1 break;");
 				}
 				
@@ -254,10 +254,10 @@ class Nginx
 						string (string s) => "    " ~ s
 					);
 					nginx_config = rs::join("\n", nginx_config);
-					nginx_routes.pushValue(nginx_config);
+					nginx_routes.push(nginx_config);
 				}
 				
-				nginx_routes.pushValue("  }");
+				nginx_routes.push("  }");
 			}
 			
 			/* Convert nginx routes to string */
@@ -296,7 +296,7 @@ class Nginx
 	async static void updateFile(string file_name, string content)
 	{
 		Connection conn = Connection::getConnection();
-		Relation nginx_file = await Relation::findOrCreate("nginx_files", conn, {
+		Relation nginx_file = await conn.findOrCreate("nginx_files", {
 			"name": file_name,
 		});
 		
@@ -369,7 +369,7 @@ class Nginx
 			if (not xml_port.exists()) continue;
 			
 			AppXml xml = new AppXml();
-			xml.item = service;
+			xml.app = service;
 			xml.conn = conn;
 			xml.template = xml_content;
 			xml.buildVariables();
@@ -383,8 +383,8 @@ class Nginx
 			nginx_content = AppXml::patchContent(nginx_content, variables);
 			
 			string docker_name = service["docker_name"];
-			service_admin_page.pushValue("# Service " ~ docker_name);
-			service_admin_page.pushValue(nginx_content);
+			service_admin_page.push("# Service " ~ docker_name);
+			service_admin_page.push(nginx_content);
 			
 			string target_port = xml_port.value();
 			Dict upstream = static::getUpstream(service, target_port, network_name);
@@ -392,8 +392,8 @@ class Nginx
 			string upstream_name = upstream["name"];
 			if (not upstreams_names.has(upstream_name))
 			{
-				upstreams_names.setValue(upstream_name, 1);
-				upstreams.pushValue(upstream["res"]);
+				upstreams_names.set(upstream_name, 1);
+				upstreams.push(upstream["res"]);
 			}
 		}
 		
