@@ -24,7 +24,7 @@
 <template name="render">
 	%if (this.condition())
 	{
-		<Button>Admin</Button>
+		<Button href={{ this.getUrl() }}>Admin</Button>
 	}
 	%else
 	{
@@ -37,7 +37,11 @@
 
 props var value = null;
 
-bool condition()
+
+/**
+ * Returns item
+ */
+Dict getItem()
 {
 	int row_number = (this.data != null and this.data.has("row_number"))
 		? this.data.get("row_number")
@@ -45,6 +49,28 @@ bool condition()
 	;
 	
 	Dict item = this.model.getItemByRowNumber(row_number);
+	return item;
+}
+
+
+/**
+ * Returns button url
+ */
+string getUrl()
+{
+	Dict item = this.getItem();
+	string stack_name = item.get("stack_name");
+	string app_name = item.get("name");
+	return "/applications/admin/" ~ stack_name ~ "_" ~ app_name ~ "/";
+}
+
+
+/**
+ * Condition show button
+ */
+bool condition()
+{
+	Dict item = this.getItem();
 	if (item == null) return false;
 	
 	int status = item.get("status");

@@ -16,6 +16,7 @@
 		"Frontend/Applications/ComposeDialogModel.bay",
 		"Frontend/Applications/TableFieldAdmin.bay",
 		"Frontend/DockerServices/ServicePageModel.bay",
+		"Frontend/DockerServices/ServiceTable.bay",
 		"Frontend/DockerServices/ServiceTableModel.bay",
 		"Frontend/DockerServices/StopDialog.bay",
 		"Frontend/DockerServices/StopDialogModel.bay",

@@ -83,6 +83,7 @@ class AppApi extends CrudApi
 		"count_work",
 		"count_total",
 		"docker_tasks",
+		"content",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -192,6 +193,30 @@ class AppApi extends CrudApi
 		;
 		
 		return q;
+	}
+	
+	
+	/**
+	 * Convert item
+	 */
+	Map convertItem(string action, Relation item)
+	{
+		item = parent::convertItem(action, item);
+		
+		bool is_admin = false;
+		XML xml = XML::loadXml(item.get("content"));
+		if (xml and xml.exists())
+		{
+			XML xml_admin = xml.get("admin").get(0);
+			if (xml_admin)
+			{
+				is_admin = true;
+			}
+		}
+		
+		item.set("is_admin", is_admin);
+		
+		return item;
 	}
 	
 	

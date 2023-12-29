@@ -26,11 +26,15 @@ use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.TableModel;
+use Bayrell.CloudOS.Frontend.DockerServices.ServiceTable;
 use Bayrell.CloudOS.Frontend.DockerServices.StopDialogModel;
 
 
 class ServiceTableModel extends TableModel
 {
+	string component = classof ServiceTable;
+	
+	
 	/**
 	 * Create data storage
 	 */

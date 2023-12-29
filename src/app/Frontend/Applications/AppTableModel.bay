@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Frontend.Applications;
 
 use Runtime.Callback;
+use Runtime.DateTime;
 use Runtime.Widget.Button;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RenderListModel;
@@ -38,7 +39,7 @@ use Runtime.Widget.Tab.TabsModel;
 class AppTableModel extends TableDialogModel
 {
 	string component = classof AppTable;
-	TabsModel tabs = null;
+	TabsModel tabs = null;	
 	
 	
 	/**
@@ -204,7 +205,7 @@ class AppTableModel extends TableDialogModel
 		
 		/* Add buttons */
 		Map field = this.addField({
-			"name": "row_buttons",
+			"name": "compose_buttons",
 			"component": classof RowButtons,
 			"model": row_buttons,
 		});
@@ -218,10 +219,16 @@ class AppTableModel extends TableDialogModel
 	 */
 	Map addFieldRowButtons()
 	{
+		string status = this.layout.request_query.get("status", "");
+		
 		/* Row buttons */
 		RowButtonsModel row_buttons = new RowButtonsModel();
 		
 		this.addEditFieldRowButtons(row_buttons);
+		if (status != "stop")
+		{
+			this.addShowStatusButton(row_buttons);
+		}
 		this.addDeleteFieldRowButtons(row_buttons);
 		
 		/* Add buttons */
@@ -240,7 +247,7 @@ class AppTableModel extends TableDialogModel
 	 */
 	ButtonModel addRecomposeButton(RowButtonsModel row_buttons)
 	{
-		/* Edit button */
+		/* Recompose button */
 		ButtonModel recompose_button = row_buttons.add(new ButtonModel{
 			"content": "Recompose",
 			"widget_name": "recompose_button",
@@ -253,6 +260,23 @@ class AppTableModel extends TableDialogModel
 		/* Add edit onClick */
 		ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
 		recompose_button.events.add("onClick", new Callback(compose_dialog, "onRecompose"));
+	}
+	
+	
+	/**
+	 * Add show status button
+	 */
+	ButtonModel addShowStatusButton(RowButtonsModel row_buttons)
+	{
+		ButtonModel show_status_button = row_buttons.add(new ButtonModel{
+			"content": "Status",
+			"widget_name": "show_status_button",
+			"styles": [
+				"default",
+				"small",
+			],
+		});
+		show_status_button.events.add("onClick", new Callback(this, "onShowServiceInfo"));
 	}
 	
 	
@@ -302,4 +326,60 @@ class AppTableModel extends TableDialogModel
 		}
 		return parent(item, field_name);
 	}
+	
+	
+	int service_info_row_number = -1;
+	
+	
+	/**
+	 * Show service info
+	 */
+	void onShowServiceInfo(Dict data)
+	{
+		this.service_info_row_number = data.get("row_number");
+	}
+	
+	
+	/**
+	 * Returns service info item
+	 */
+	Dict getServiceInfo() => this.storage.getItemByRowNumber(this.service_info_row_number);
+	
+	
+	/**
+	 * Update docker tasks
+	 */
+	Vector updateDockerTasks(Vector docker_tasks)
+	{
+		if (docker_tasks == null) return null;
+		docker_tasks = docker_tasks.copy();
+		
+		for (int i=0; i<docker_tasks.count(); i++)
+		{
+			Map task = docker_tasks[i].copy();
+			
+			DateTime CreatedAt = DateTime::from(task.get("CreatedAt"));
+			DateTime UpdatedAt = DateTime::from(task.get("UpdatedAt"));
+			
+			CreatedAt.tz = "UTC";
+			UpdatedAt.tz = "UTC";
+					
+			task.set("CreatedAt", CreatedAt);
+			task.set("UpdatedAt", UpdatedAt);
+			
+			docker_tasks.set(i, task);
+		}
+		
+		docker_tasks = docker_tasks.sort(
+			int (Dict a, Dict b)
+			{
+				int time_a = a.get("UpdatedAt").getTimestamp();
+				int time_b = b.get("UpdatedAt").getTimestamp();
+				return time_b - time_a;
+			}
+		);
+		
+		return docker_tasks;
+	}
+	
 }

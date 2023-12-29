@@ -20,27 +20,99 @@
 	extends="Runtime.Widget.Table.Table"
 >
 
+<use name="Runtime.DateTime" />
 <use name="Runtime.Web.BaseModel" />
 <use name="Runtime.Widget.Tab.Tab" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabsModel" />
 
 
+<style>
+.app_table %(Tabs)tabs, .app_table .service_info{
+	display: inline-block;
+	vertical-align: top;
+}
+.app_table .service_info{
+	padding-left: 10px;
+}
+.widget_table .widget_table__tr{
+	cursor: pointer;
+}
+.service_info{
+	padding-left: 10px;
+}
+.service_info__name{
+	font-weight: bold;
+	text-align: center;
+}
+.service_info__row{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px #ccc solid;
+}
+.service_info__row:first-child{
+	padding-top: 0px;
+}
+.service_info__row:last-child{
+	padding-bottom: 0px;
+	border-bottom: 0px;
+}
+.service_info__item{
+	padding-bottom: 5px;
+}
+</style>
+
+
+<template name="renderServiceInfo">
+	%set Dict item = this.model.getServiceInfo();
+	%if (item != null)
+	{
+		<div class="service_info__name">{{ item["stack_name"] ~ "_" ~ item["name"] }}</div>
+		%set Collection docker_tasks = item.get("docker_tasks");
+		%set docker_tasks = this.model.updateDockerTasks(docker_tasks);
+		%if (docker_tasks)
+		{
+			%for (int i=0; i<docker_tasks.count(); i++)
+			{
+				%set Dict task = docker_tasks.get(i);
+				<div class="service_info__row">
+					<div class="service_info__item">
+						{{ "ID: " ~ task["ID"] }}
+					</div>
+					<div class="service_info__item">
+						{{ "State: " ~ task["Status", "State"] }}
+					</div>
+					<div class="service_info__item">
+						{{ "DesiredState: " ~ task["DesiredState"] }}
+					</div>
+					<div class="service_info__item">
+						{{ "Updated: " ~ task["UpdatedAt"].toString() ~ " UTC" }}
+					</div>
+				</div>
+			}
+		}
+	}
+</template>
+
+
 <template name="renderTable">
-	<Tabs @model={{ this.model.tabs }}>
-		<Tab name="run" @model={{ this.model.tabs }}>
-			%render parent();
-		</Tab>
-		<Tab name="stop" @model={{ this.model.tabs }}>
-			%render parent();
-		</Tab>
-	</Tabs>
+	<div class="app_table">
+		<Tabs @model={{ this.model.tabs }}>
+			<Tab name="run" @model={{ this.model.tabs }}>
+				%render parent();
+			</Tab>
+			<Tab name="stop" @model={{ this.model.tabs }}>
+				%render parent();
+			</Tab>
+		</Tabs>
+		<div class="service_info">
+			%render this.renderServiceInfo();
+		</div>
+	</div>
 </template>
 
 
 <script>
-
-
 </script>
 
 

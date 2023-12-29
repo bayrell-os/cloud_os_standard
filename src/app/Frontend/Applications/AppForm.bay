@@ -48,8 +48,8 @@
 	cursor: pointer;
 }
 .app_total_patches__item--active{
-    background-color: #337ab7;
-    color: #fff;
+    background-color: var(--widget-color-selected);
+    color: var(--widget-color-selected-text);
 }
 .app_total_patches__content{
 	width: calc(100% - 200px);
