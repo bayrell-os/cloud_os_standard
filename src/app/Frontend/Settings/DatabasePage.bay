@@ -42,11 +42,9 @@
 
 <script>
 
-var adminer_form;
-
-void onRepaint()
+void onMounted()
 {
-	this.adminer_form.elem.submit();
+	this.getRef("adminer_form").submit();
 }
 
 </script>

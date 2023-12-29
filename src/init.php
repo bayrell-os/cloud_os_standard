@@ -34,11 +34,19 @@ $modules = [
     "Bayrell.CloudOS.Frontend",
 ];
 
+function get_env($env_name, $def_value)
+{
+    $value = getenv($env_name);
+    return $value !== false ? $value : $def_value;
+}
+
+$env = [
+    "DEBUG" => get_env("DEBUG", false),
+    "CLOUD_ENV" => get_env("CLOUD_ENV", "prod"),
+];
+
 $obj = [
-    "environments" => [
-        "DEBUG" => true,
-        "CLOUD_ENV" => "dev",
-    ],
+    "environments" => $env,
     "modules" => $modules,
     "loader" => $loader,
 ];

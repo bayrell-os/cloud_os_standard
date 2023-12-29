@@ -135,7 +135,7 @@
 		<div class='app_layout_wrap'>
 			<div class='app_layout_menu_wrap'>
 				<div class='app_layout_site_name'>
-					<a class='nolink' href='/'>{{ this.getHostname() }}</a>
+					<a class='nolink' href='/'>{{ this.layout.hostname }}</a>
 				</div>
 				<div class='app_layout_menu'>
 					%set Collection menu = this.getMenu();
@@ -187,12 +187,6 @@ void updateParams(Collection model_path, Dict params, var content)
 	
 	this.route_name_old = this.provider.layout.route.name;
 }
-
-
-/**
- * Returns hostname
- */
-string getHostname() => "Hostname";
 
 
 /**

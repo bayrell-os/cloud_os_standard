@@ -2,22 +2,24 @@ version: "3.3"
 
 services:
     
-    standard_dev:
+    standard_data:
         image: bayrell/cloud_os_standard:0.5.0
         hostname: "cloud_os_standard.local"
         volumes:
-            - "standard_dev:/data"
-            - "/home/ubuntu/bayrell/cloud_os_standard_0.5_dev/src:/srv"
+            - "standard_data:/data"
+            - "/home/ubuntu/bayrell/cloud_os_standard_0.5/src:/srv"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "/etc/hostname:/etc/hostname_orig:ro"
         ports:
-            - "8081:80"
+            - "8080:80"
         env_file:
             - ./env.conf
         environment:
             TZ: "Asia/Almaty"
             WWW_UID: 1000
             WWW_GID: 1000
+            DEBUG: true
+            CLOUD_ENV: dev
         restart: unless-stopped
         networks:
             - cloud_network
@@ -25,7 +27,7 @@ services:
             driver: journald
     
 volumes:
-    standard_dev:
+    standard_data:
     
 networks:
     cloud_network:

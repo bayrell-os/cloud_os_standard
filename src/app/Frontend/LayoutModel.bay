@@ -18,43 +18,33 @@
 
 namespace Bayrell.CloudOS.Frontend;
 
-use Runtime.Context;
-use Runtime.Web.BaseApp;
-use Runtime.Web.RenderProvider;
-use Bayrell.CloudOS.Frontend.LayoutModel;
+use Runtime.Serializer;
+use Runtime.Web.LayoutModel as BaseLayoutModel;
 
 
-class WebApp extends BaseApp
+class LayoutModel extends BaseLayoutModel
 {
-	/**
-	 * Create render container
-	 */
-	LayoutModel createLayout() => new LayoutModel();
+	string hostname = "";
 	
 	
 	/**
-	 * Init app
+	 * Init layout
 	 */
-	async void init()
+	void init()
 	{
-		await parent::init();
+		#ifcode PHP then
+		$hostname = file_get_contents("/etc/hostname_orig");
+		$this->hostname = $hostname;
+		#endif
 	}
 	
 	
 	/**
-	 * Start app
+	 * Process frontend data
 	 */
-	async void start()
+	void processFrontendData(Serializer serializer, Map data)
 	{
-		await parent::start();
-	}
-	
-	
-	/**
-	 * Main entry point
-	 */
-	async int main()
-	{
-		return await parent::main();
+		serializer.process(this, "hostname", data);
+		parent(serializer, data);
 	}
 }

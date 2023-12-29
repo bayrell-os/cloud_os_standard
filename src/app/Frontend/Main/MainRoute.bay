@@ -79,7 +79,7 @@ class MainRoute extends BaseRoute
 	async void actionAbout()
 	{
 		/* Set title */
-		this.setPageTitle("About page");
+		this.layout.setPageTitle("About page");
 		
 		/* Render page */
 		this.render(classof AboutPage);

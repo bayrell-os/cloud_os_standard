@@ -59,6 +59,7 @@
 		"Frontend/XML/ImportPage.bay",
 		"Frontend/XML/ImportPageModel.bay",
 		"Frontend/DefaultLayout.bay",
+		"Frontend/LayoutModel.bay",
 		"Frontend/NotFoundPage.bay",
 		"Frontend/WebApp.bay",
 		"Frontend/ModuleDescription.bay"
