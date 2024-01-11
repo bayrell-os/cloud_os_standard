@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,14 @@
 	display: inline-block;
 	vertical-align: top;
 }
+.app_table table{
+	width: 100%;
+}
+.app_table %(Tabs)tabs{
+	width: calc(100% - 400px);
+}
 .app_table .service_info{
+	width: 400px;
 	padding-left: 10px;
 }
 .widget_table .widget_table__tr{
@@ -88,6 +95,13 @@
 					<div class="service_info__item">
 						{{ "Updated: " ~ task["UpdatedAt"].toString() ~ " UTC" }}
 					</div>
+					%set string error = task["Status", "Err"];
+					%if (error)
+					{
+						<div class="service_info__item">
+							{{ "Error: " ~ task["Status", "Err"] }}
+						</div>
+					}
 				</div>
 			}
 		}

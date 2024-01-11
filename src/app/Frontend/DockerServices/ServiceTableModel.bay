@@ -1,7 +1,7 @@
 /*!
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ class ServiceTableModel extends TableModel
 		{
 			string count_total = item.get("count_total");
 			string count_work = item.get("count_work");
-			return count_total ~ "/" ~ count_work;
+			return count_work ~ "/" ~ count_total;
 		}
 		return parent(item, field_name);
 	}

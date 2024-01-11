@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Cloud OS
  *
- *  (c) Copyright 2020-2023 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,15 @@
 .service_table .widget_table_wrap, .service_table .service_info{
 	display: inline-block;
 	vertical-align: top;
+}
+.service_table .widget_table_wrap{
+	width: calc(100% - 450px);
+}
+.service_table .widget_table_wrap table{
+	width: 100%;
+}
+.service_table .service_info{
+	width: 450px;
 }
 .service_table .service_info{
 	padding-left: 10px;
@@ -76,6 +85,13 @@
 				<div class="service_info__item">
 					{{ "Updated: " ~ task["UpdatedAt"].toString() ~ " UTC" }}
 				</div>
+				%set string error = task["Status", "Err"];
+				%if (error)
+				{
+					<div class="service_info__item">
+						{{ "Error: " ~ task["Status", "Err"] }}
+					</div>
+				}
 			</div>
 		}
 	}

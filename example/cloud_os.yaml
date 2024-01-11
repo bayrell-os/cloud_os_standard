@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
     
-    standard_data:
+    standard:
         image: bayrell/cloud_os_standard:0.5.0
         hostname: "cloud_os_standard.local"
         volumes:
@@ -18,8 +18,8 @@ services:
             TZ: "Asia/Almaty"
             WWW_UID: 1000
             WWW_GID: 1000
-            DEBUG: true
-            CLOUD_ENV: dev
+            DEBUG: "true"
+            CLOUD_ENV: "dev"
         restart: unless-stopped
         networks:
             - cloud_network
