@@ -27,7 +27,6 @@ use Bayrell.CloudOS.Frontend.Main.IndexPageModel;
 
 class MainRoute extends BaseRoute
 {
-	
 	/**
 	 * Returns layout name
 	 */

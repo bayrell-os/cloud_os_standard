@@ -7,17 +7,20 @@ set_time_limit(30);
 /* Init context */
 $init = require_once dirname(__DIR__) . "/init.php";
 
+/* Add modules */
+$init["modules"][] = "Bayrell.CloudOS.Frontend";
+
 /* Run web app */
 \Runtime\rtl::runApp(
-    
-    /* Entry point */
-    'Bayrell.CloudOS.Frontend.WebApp',
-    
-    /* Modules */
-    $init["modules"],
-    
-    /* Params */
-    \Runtime\Map::from([
-        "environments" => \Runtime\Map::from($init["environments"]),
-    ])
+	
+	/* Entry point */
+	'Bayrell.CloudOS.Frontend.WebApp',
+	
+	/* Modules */
+	$init["modules"],
+	
+	/* Params */
+	\Runtime\Map::from([
+		"environments" => \Runtime\Map::from($init["environments"]),
+	])
 );

@@ -89,7 +89,7 @@ case "$1" in
 	;;
 	
 	*)
-		echo "Usage: $0 {project|amd64|arm64v8|manifest|all|test|test-arm64v8|upload-image}"
+		echo "Usage: $0 {all|amd64|arm64v8|manifest|test|test-arm64v8|upload-image}"
 		RETVAL=1
 
 esac

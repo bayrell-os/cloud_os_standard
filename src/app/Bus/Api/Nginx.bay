@@ -16,66 +16,59 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Bus.Routes;
+namespace Bayrell.CloudOS.Bus.Api;
 
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
 use Runtime.Web.ApiResult;
 use Runtime.Web.BaseRoute;
+use Runtime.Web.JsonResponse;
 use Runtime.Web.RouteInfo;
-use Bayrell.CloudOS.Bus.Routes.BusCheck;
 
 
 class Nginx extends BaseRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
-	pure Collection<RouteInfo> getRoutes() =>
-	[
-		new RouteInfo
-		{
-			"uri": "/api/bus/nginx/changes/",
-			"name": "app:bus:nginx:changes",
-			"method": "actionNginxChanges",
-			"middleware": [
-				classof BusCheck,
-			],
-		},
-		new RouteInfo
-		{
-			"uri": "/api/bus/ssl/changes/",
-			"name": "app:bus:ssl:changes",
-			"method": "actionSSLChanges",
-			"middleware": [
-				classof BusCheck,
-			],
-		},
-		new RouteInfo
-		{
-			"uri": "/api/bus/ssl/get_changes/",
-			"name": "app:bus:ssl:get_changes",
-			"method": "actionSSLChanges",
-			"middleware": [
-				classof BusCheck,
-			],
-		},
-	];
+	pure Collection<RouteInfo> getRoutes()
+	{
+		return
+		[
+			new RouteInfo
+			{
+				"uri": "/api/bus/nginx/changes/",
+				"name": "app:bus:nginx:changes",
+				"method": "actionNginxChanges",
+			},
+			new RouteInfo
+			{
+				"uri": "/api/bus/ssl/changes/",
+				"name": "app:bus:ssl:changes",
+				"method": "actionSSLChanges",
+			},
+			new RouteInfo
+			{
+				"uri": "/api/bus/ssl/get_changes/",
+				"name": "app:bus:ssl:get_changes",
+				"method": "actionSSLChanges",
+			},
+		];
+	}
 	
 	
 	/**
 	 * Nginx changes
 	 */
-	void actionNginxChanges()
+	async void actionNginxChanges()
 	{
 		Connection conn = Connection::getConnection();
 		int timestamp = (int)this.container.request.payload["data", "timestamp"];
 		
 		Query q = (new Query)
 			.select("nginx_files")
-			.where("timestamp", ">=", timestamp)
+			.where("nginx_files.timestamp", ">=", timestamp)
 		;
 		
 		QueryResult items = await conn.fetchAll(q);
@@ -106,21 +99,20 @@ class Nginx extends BaseRoute
 		);
 		
 		ApiResult api_result = new ApiResult;
-		api_result = api_result.success({
-			"data": items,
+		api_result.success({
+			"data": items.toCollection(),
 		});
-		this.container.setResponse(api_result);
+		this.container.setResponse(new JsonResponse(api_result.getContent()));
 	}
 	
 	
 	/**
 	 * SSL changes
 	 */
-	void actionSSLChanges()
+	async void actionSSLChanges()
 	{
 		ApiResult api_result = new ApiResult;
 		api_result = api_result.success();
 		this.container.setResponse(api_result);
 	}
-	
 }

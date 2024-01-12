@@ -5,17 +5,22 @@ ini_set('html_errors', 'on');
 set_time_limit(30);
 
 /* Init context */
-require_once dirname(__DIR__) . "/init.php";
+$init = require_once dirname(__DIR__) . "/init.php";
+
+/* Add modules */
+$init["modules"][] = "Bayrell.CloudOS.Bus";
 
 /* Run web app */
 \Runtime\rtl::runApp(
-    
-    /* Entry point */
-    'Bayrell.CloudOS.Main',
-    
-    /* Modules */
-    [
-        'Bayrell.CloudOS',
-        'Bayrell.CloudOS.Bus',
-    ]
+	
+	/* Entry point */
+	'Bayrell.CloudOS.Frontend.WebApp',
+	
+	/* Modules */
+	$init["modules"],
+	
+	/* Params */
+	\Runtime\Map::from([
+		"environments" => \Runtime\Map::from($init["environments"]),
+	])
 );

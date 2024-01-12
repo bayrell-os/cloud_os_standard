@@ -30,8 +30,6 @@ $loader->addPsr4("Bayrell\\CloudOS\\",  __DIR__ . "/source/php");
 /* Modules */
 $modules = [
     "Runtime",
-    "Bayrell.CloudOS.Backend",
-    "Bayrell.CloudOS.Frontend",
 ];
 
 function get_env($env_name, $def_value)
