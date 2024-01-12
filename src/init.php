@@ -14,6 +14,7 @@ $loader->addPsr4("Runtime\\Render\\",  __DIR__ . "/lib/Runtime.Render/php");
 $loader->addPsr4("Runtime\\Unit\\",  __DIR__ . "/lib/Runtime.Unit/php");
 $loader->addPsr4("Runtime\\Web\\",  __DIR__ . "/lib/Runtime.Web/php");
 $loader->addPsr4("Runtime\\Widget\\",  __DIR__ . "/lib/Runtime.Widget/php");
+$loader->addPsr4("Runtime\\Widget\\CodeMirror\\",  __DIR__ . "/lib/Runtime.Widget.CodeMirror/php");
 $loader->addPsr4("Runtime\\Widget\\Crud\\",  __DIR__ . "/lib/Runtime.Widget.Crud/php");
 $loader->addPsr4("Runtime\\Widget\\Dialog\\",  __DIR__ . "/lib/Runtime.Widget.Dialog/php");
 $loader->addPsr4("Runtime\\Widget\\Form\\",  __DIR__ . "/lib/Runtime.Widget.Form/php");

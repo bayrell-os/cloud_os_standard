@@ -24,6 +24,7 @@ use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
+use Runtime.Widget.CodeMirror.CodeMirror;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
@@ -79,8 +80,13 @@ class YamlFileFormModel extends FormModel
 		this.addField({
 			"name": "content",
 			"label": "Content",
-			"component": classof TextArea,
+			"component": classof CodeMirror,
+			"props": {
+				"min_height": "450px",
+				"mode": "yaml",
+			},
 		});
+		this.layout.addComponent(classof CodeMirror);
 	}
 	
 	

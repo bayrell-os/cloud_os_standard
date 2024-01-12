@@ -23,6 +23,7 @@
 <use name="Runtime.Web.BaseModel" />
 <use name="Runtime.Widget.Input" component="true" />
 <use name="Runtime.Widget.TextArea" component="true" />
+<use name="Runtime.Widget.CodeMirror.CodeMirror" component="true" />
 <use name="Runtime.Widget.Tab.Tab" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Tab.TabsModel" />
@@ -30,6 +31,9 @@
 
 <style>
 .app %(TextArea)widget_textarea{
+	min-height: 500px;
+}
+.app %(CodeMirror)CodeMirror{
 	min-height: 500px;
 }
 .app_variables{
@@ -108,7 +112,9 @@
 		%if (this.patch_selected >= 0 and this.patch_selected < patches.count())
 		{
 			%set Dict item = patches.get(this.patch_selected);
-			<TextArea value={{ item.get("content") }} readonly="true" />
+			<CodeMirror @ref="code_mirror_total_patches"
+				value={{ item.get("content") }} readonly="true"
+			/>
 		}
 		</div>
 	</div>
@@ -153,7 +159,7 @@
 	%if (this.model.action == "edit")
 	{
 		<div class="app">
-			<Tabs @model={{ this.tabs }}>
+			<Tabs @model={{ this.tabs }} @event:onSelect={{ this.onTabSelect }}>
 				<Tab name="info" @model={{ this.tabs }}>
 					<form method="POST"
 						enctype="multipart/form-data" onsubmit="return false;"
@@ -163,8 +169,8 @@
 					%render this.renderWidgetsInfo();
 				</Tab>
 				<Tab name="custom_patch" @model={{ this.tabs }}>
-					<TextArea
-						@event:onChange={{ this.onChangeValue("custom_patch") }}
+					<CodeMirror
+						@event:onValueChanged={{ this.onValueChanged("custom_patch") }}
 						value={{ this.model.storage.item.get("custom_patch") }}
 					/>
 				</Tab>
@@ -172,17 +178,19 @@
 					%render this.renderPatches();
 				</Tab>
 				<Tab name="result" @model={{ this.tabs }}>
-					<TextArea
-						@event:onChange={{ this.onChangeValue("content") }}
+					<CodeMirror
+						@ref="code_mirror_result"
+						@event:onValueChanged={{ this.onValueChanged("content") }}
 						value={{ this.model.storage.item.get("content") }}
 						readonly="true"
 					/>
 				</Tab>
 				<Tab name="yaml" @model={{ this.tabs }}>
-					<TextArea
-						@event:onChange={{ this.onChangeValue("yaml") }}
+					<CodeMirror
+						@ref="code_mirror_yaml"
+						@event:onValueChanged={{ this.onValueChanged("yaml") }}
 						value={{ this.model.storage.item.get("yaml") }}
-						readonly="true"
+						readonly="true" mode="yaml"
 					/>
 				</Tab>
 			</Tabs>
@@ -225,6 +233,23 @@ TabsModel tabs = new TabsModel{
 	],
 };
 
+/* Tab select */
+void onTabSelect(string tab_name)
+{
+	#ifcode JAVASCRIPT then
+	
+	var code_mirror = this.getRef("code_mirror_" + tab_name);
+	if (code_mirror)
+	{
+		this.$nextTick(()=>{
+			code_mirror.instance.refresh();
+		});
+	}
+	
+	#endif
+}
+
+
 void onChangeVariable(int i, string variable_name)
 {
 	return void (var e) use (i)
@@ -236,16 +261,17 @@ void onChangeVariable(int i, string variable_name)
 	};
 }
 
-void onChangeValue(string api_name)
+
+void onValueChanged(string api_name)
 {
-	return void (var e) use (api_name)
+	return void (string value) use (api_name)
 	{
-		string value = e.target.value;
 		if (api_name == "custom_patch") this.model.storage.item.set("custom_patch", value);
-		if (api_name == "content") this.model.storage.item.set("content", value);
-		if (api_name == "yaml") this.model.storage.item.set("yaml", value);
+		/*if (api_name == "content") this.model.storage.item.set("content", value);
+		if (api_name == "yaml") this.model.storage.item.set("yaml", value);*/
 	};
 }
+
 
 void onPatchSelect(int index)
 {

@@ -1,4 +1,5 @@
 const { src, dest, series, parallel, task, watch } = require('gulp');
+const minifyCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
@@ -12,6 +13,18 @@ function copyVue() {
 			'./node_modules/vue/dist/vue.runtime.global.js',
 			'./node_modules/vue/dist/vue.runtime.global.prod.js',
 		])
+		.pipe(dest('./src/public/assets'))
+	;
+}
+
+function compileCss() {
+	return src([
+			'./src/lib/Runtime.Widget.CodeMirror/resources/codemirror/lib/codemirror.css',
+		])
+		.pipe(sourcemaps.init())
+		.pipe(minifyCSS())
+		.pipe(concat('app.min.css'))
+		.pipe(sourcemaps.write('./'))
 		.pipe(dest('./src/public/assets'))
 	;
 }
@@ -41,7 +54,8 @@ function watchFiles() {
 task('clean', clean);
 task('vue', copyVue);
 task('js', compileJs);
+task('css', compileCss);
 task('watch', watchFiles);
 
 // Основная задача сборки
-exports.build = series('clean', 'vue', parallel('js'));
+exports.build = series('clean', 'vue', parallel('css', 'js'));

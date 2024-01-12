@@ -24,6 +24,7 @@ use Runtime.Widget.RowButtons;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Select;
 use Runtime.Widget.TextArea;
+use Runtime.Widget.CodeMirror.CodeMirror;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
@@ -50,8 +51,12 @@ class ModificatorFormModel extends FormModel
 		this.addField({
 			"label": "Content",
 			"name": "content",
-			"component": classof TextArea,
+			"component": classof CodeMirror,
+			"props": {
+				"min_height": "450px",
+			},
 		});
+		this.layout.addComponent(classof CodeMirror);
 	}
 	
 	

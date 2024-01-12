@@ -20,6 +20,7 @@
 
 <use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.TextArea" component="true" />
+<use name="Runtime.Widget.CodeMirror.CodeMirror" component="true" />
 <use name="Runtime.Widget.WidgetResult" component="true" />
 <use name="Bayrell.Admin.Components.CloudOS.ImportPageModel" />
 
@@ -34,8 +35,8 @@
 
 <template>
 	<div class="import_xml_page">
-		<TextArea value={{ this.model.content }}
-			@event:onChange={{ this.onChange }}
+		<CodeMirror value={{ this.model.content }}
+			@event:onValueChanged={{ this.onValueChanged }}
 		/>
 		<div class="web_form__buttons">
 			<Button styles=["success", "large"]
@@ -58,11 +59,11 @@ async void onImportClick()
 
 
 /**
- * Change item
+ * Change value
  */
-void onChange(var e)
+void onValueChanged(string value)
 {
-	this.model.content = e.target.value;
+	this.model.content = value;
 }
 
 </script>

@@ -37,3 +37,6 @@
 [submodule "src/lib/Runtime.Widget.Tab"]
 	path = src/lib/Runtime.Widget.Tab
 	url = https://github.com/bayrell/Runtime.Widget.Tab
+[submodule "src/lib/Runtime.Widget.CodeMirror"]
+	path = src/lib/Runtime.Widget.CodeMirror
+	url = https://github.com/bayrell/Runtime.Widget.CodeMirror
