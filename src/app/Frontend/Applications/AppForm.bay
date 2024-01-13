@@ -113,7 +113,7 @@
 		{
 			%set Dict item = patches.get(this.patch_selected);
 			<CodeMirror @ref="code_mirror_total_patches"
-				value={{ item.get("content") }} readonly="true"
+				value={{ item.get("content") }} readonly="true" height="500px"
 			/>
 		}
 		</div>
@@ -172,6 +172,7 @@
 					<CodeMirror
 						@event:onValueChanged={{ this.onValueChanged("custom_patch") }}
 						value={{ this.model.storage.item.get("custom_patch") }}
+						height="500px"
 					/>
 				</Tab>
 				<Tab name="total_patches" @model={{ this.tabs }}>
@@ -182,7 +183,7 @@
 						@ref="code_mirror_result"
 						@event:onValueChanged={{ this.onValueChanged("content") }}
 						value={{ this.model.storage.item.get("content") }}
-						readonly="true"
+						readonly="true" height="500px"
 					/>
 				</Tab>
 				<Tab name="yaml" @model={{ this.tabs }}>
@@ -190,7 +191,7 @@
 						@ref="code_mirror_yaml"
 						@event:onValueChanged={{ this.onValueChanged("yaml") }}
 						value={{ this.model.storage.item.get("yaml") }}
-						readonly="true" mode="yaml"
+						readonly="true" height="500px"
 					/>
 				</Tab>
 			</Tabs>
@@ -241,9 +242,9 @@ void onTabSelect(string tab_name)
 	var code_mirror = this.getRef("code_mirror_" + tab_name);
 	if (code_mirror)
 	{
-		this.$nextTick(()=>{
+		/*this.$nextTick(()=>{
 			code_mirror.instance.refresh();
-		});
+		});*/
 	}
 	
 	#endif

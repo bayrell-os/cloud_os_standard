@@ -72,8 +72,7 @@ class NginxFormModel extends FormModel
 			"label": "Content",
 			"component": classof CodeMirror,
 			"props": {
-				"min_height": "450px",
-				"mode": "yaml",
+				"height": "450px",
 			},
 		});
 		this.layout.addComponent(classof CodeMirror);

@@ -48,6 +48,7 @@ static class ModuleDescription
 		"Runtime": ">=0.11",
 		"Runtime.Console": ">=0.11",
 		"Runtime.XML.Test": ">=0.11",
+		"Bayrell.CloudOS.Backend": ">=0.5",
 	};
 	
 	

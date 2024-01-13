@@ -30,8 +30,6 @@
 	%set string version = ModuleDescription::getModuleVersion();
 	%set Collection components = this.layout.getComponents();
 	%set string css = this.layout::getCss(components);
-	<link rel='stylesheet' id='app-css' type='text/css' media='all'
-		href='/assets/app.min.css' />
 	<style>@raw{{ css }}</style>
 </template>
 

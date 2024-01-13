@@ -52,7 +52,7 @@ class VersionFormModel extends FormModel
 			"name": "content",
 			"component": classof CodeMirror,
 			"props": {
-				"min_height": "450px",
+				"height": "450px",
 			},
 		});
 		this.layout.addComponent(classof CodeMirror);

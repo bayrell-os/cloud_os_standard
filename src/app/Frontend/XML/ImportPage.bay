@@ -37,6 +37,7 @@
 	<div class="import_xml_page">
 		<CodeMirror value={{ this.model.content }}
 			@event:onValueChanged={{ this.onValueChanged }}
+			height="500px"
 		/>
 		<div class="web_form__buttons">
 			<Button styles=["success", "large"]
