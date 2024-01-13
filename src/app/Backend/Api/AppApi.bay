@@ -460,7 +460,6 @@ class AppApi extends CrudApi
 			throw new ApiError(e);
 		}
 		
-		
 		return this.result.success({
 			"data": {
 				"pk": pk,

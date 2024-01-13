@@ -64,26 +64,29 @@
 <template name="renderVariables">
 	%set Vector variables = this.model.storage.item.get("variables");
 	<div class="app_variables">
-		%for (int i=0; i<variables.count(); i++)
+		%if (variables != null)
 		{
-			%set Map variable = variables.get(i);
-			%set Map variable_name = variable.get("name");
-			%set Map variable_label = variable.get("label");
-			%set Map variable_value = variable.get("value");
-			%if (
-				variable_name != "_var_app_name_" and
-				variable_name != "_var_service_name_"
-			)
+			%for (int i=0; i<variables.count(); i++)
 			{
-				<div class="widget_form__row" @key={{ variable_name }} data-name={{ variable_name }}>
-					<label class="widget_form__row_label">{{ variable_label }}</label>
-					<div class="widget_form__field">
-						<Input name={{ variable_name }}
-							value={{ variable_value }}
-							@event:onChange={{ this.onChangeVariable(i, variable_name) }}
-						/>
+				%set Map variable = variables.get(i);
+				%set Map variable_name = variable.get("name");
+				%set Map variable_label = variable.get("label");
+				%set Map variable_value = variable.get("value");
+				%if (
+					variable_name != "_var_app_name_" and
+					variable_name != "_var_service_name_"
+				)
+				{
+					<div class="widget_form__row" @key={{ variable_name }} data-name={{ variable_name }}>
+						<label class="widget_form__row_label">{{ variable_label }}</label>
+						<div class="widget_form__field">
+							<Input name={{ variable_name }}
+								value={{ variable_value }}
+								@event:onChange={{ this.onChangeVariable(i, variable_name) }}
+							/>
+						</div>
 					</div>
-				</div>
+				}
 			}
 		}
 	</div>
@@ -170,7 +173,7 @@
 				</Tab>
 				<Tab name="custom_patch" @model={{ this.tabs }}>
 					<CodeMirror
-						@event:onValueChanged={{ this.onValueChanged("custom_patch") }}
+						@event:onValueChanged={{ this.onCodeMirrorValueChanged("custom_patch") }}
 						value={{ this.model.storage.item.get("custom_patch") }}
 						height="500px"
 					/>
@@ -181,7 +184,7 @@
 				<Tab name="result" @model={{ this.tabs }}>
 					<CodeMirror
 						@ref="code_mirror_result"
-						@event:onValueChanged={{ this.onValueChanged("content") }}
+						@event:onValueChanged={{ this.onCodeMirrorValueChanged("content") }}
 						value={{ this.model.storage.item.get("content") }}
 						readonly="true" height="500px"
 					/>
@@ -189,7 +192,7 @@
 				<Tab name="yaml" @model={{ this.tabs }}>
 					<CodeMirror
 						@ref="code_mirror_yaml"
-						@event:onValueChanged={{ this.onValueChanged("yaml") }}
+						@event:onValueChanged={{ this.onCodeMirrorValueChanged("yaml") }}
 						value={{ this.model.storage.item.get("yaml") }}
 						readonly="true" height="500px"
 					/>
@@ -263,7 +266,7 @@ void onChangeVariable(int i, string variable_name)
 }
 
 
-void onValueChanged(string api_name)
+void onCodeMirrorValueChanged(string api_name)
 {
 	return void (string value) use (api_name)
 	{

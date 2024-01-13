@@ -118,6 +118,8 @@ class AppXml
 	 */
 	void buildVariables()
 	{
+		this.variables = new Vector();
+		
 		if (not this.template) return;
 		if (not this.template.exists()) return;
 		
@@ -129,7 +131,6 @@ class AppXml
 		
 		if (xml_variables == null) return;
 		
-		this.variables = new Vector();
 		Dict item_variables_values = this.app.get("variables");
 		
 		for (int i=0; i<xml_variables.count(); i++)

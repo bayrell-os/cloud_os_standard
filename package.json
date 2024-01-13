@@ -8,7 +8,7 @@
 		"watch": "./node_modules/.bin/gulp watch"
 	},
 	"dependencies": {
-		"vue": "^3.3.10"
+		"vue": "3.3.10"
 	},
 	"devDependencies": {
 		"gulp": "^4.0.2",

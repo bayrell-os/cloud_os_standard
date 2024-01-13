@@ -26,7 +26,7 @@
 	%if (@.env("CLOUD_ENV") == "prod")
 	{
 		<script type='text/javascript' id='app-min-js'
-			src={{ '/assets/app.min.js' ~ version }}></script>
+			src={{ '/assets/app.min.js?ver=' ~ version }}></script>
 	}
 	%else
 	{

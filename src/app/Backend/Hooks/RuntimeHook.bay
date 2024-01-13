@@ -42,13 +42,17 @@ class RuntimeHook extends BaseRuntimeHook
 	{
 		Provider provider = @.provider("Runtime.ORM.Provider");
 		
+		/* Connect to database */
 		ConnectionSQLite conn = new ConnectionSQLite("default");
 		conn.database = "/data/db/cloud_os.db";
 		await conn.connect();
 		
+		/* Set journal_mode wal */
+		conn.executeSQL("PRAGMA journal_mode = WAL;");
+		
+		/* Add connection */
 		provider.addConnection(conn);
 		
 		return d;
 	}
-	
 }
