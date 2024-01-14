@@ -39,10 +39,7 @@ function get_env($env_name, $def_value)
     return $value !== false ? $value : $def_value;
 }
 
-$env = [
-    "DEBUG" => get_env("DEBUG", false),
-    "CLOUD_ENV" => get_env("CLOUD_ENV", "prod"),
-];
+$env = require_once BASE_PATH . "/env.php";
 
 $obj = [
     "environments" => $env,

@@ -207,7 +207,7 @@ INSERT INTO "modificators" ("id", "uid", "version", "name", "content", "priority
 			<path>/template/yaml/services/*/deploy</path>
 			<value>
 				<placement>
-					<constraints type="array">node.hostname == _var_hostname_</constraints>
+					<constraints array="true">node.hostname == _var_hostname_</constraints>
 				</placement>
 			</value>
 		</operation>

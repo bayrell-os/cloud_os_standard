@@ -32,7 +32,7 @@
 	display: inline-block;
 	vertical-align: top;
 }
-.app_table table{
+.app_table .wiget_table__table{
 	width: 100%;
 }
 .app_table %(Tabs)tabs{

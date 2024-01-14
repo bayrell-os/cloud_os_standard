@@ -1,4 +1,5 @@
 .git/*
 example/
+images/
 node_modules/
 test/*

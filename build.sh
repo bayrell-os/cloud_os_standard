@@ -73,10 +73,12 @@ case "$1" in
 		
 		mkdir -p images
 		
-		echo "Save image"
-		docker image save bayrell/cloud_os_standard:$version | gzip \
-		    > ./images/cloud_os_standard-$version.tar.gz
-
+		if [ ! -f ./images/cloud_os_standard-$version.tar.gz ]; then
+			echo "Save image"
+			docker image save bayrell/cloud_os_standard:$version | gzip \
+				> ./images/cloud_os_standard-$version.tar.gz
+		fi
+		
 		echo "Upload image"
 		ssh $ssh_host "mkdir -p ~/images"
 		ssh $ssh_host "yes | rm -f ~/images/cloud_os_standard-$version.tar.gz"

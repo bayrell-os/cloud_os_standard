@@ -206,6 +206,7 @@ class AppXml
 			
 			/* Push modificator */
 			string name = modificator.get("name") |> .get(0) |> .value() |> default string "";
+			if (name == "") name = "Unknown";
 			patches.push({
 				"name": name,
 				"content": modificator.toString(),
@@ -373,6 +374,7 @@ class AppXml
 	 */
 	void addModificator(XML xml)
 	{
+		if (xml == null) return;
 		this.addOperations(xml);
 		this.modificators.push(xml);
 	}
@@ -537,7 +539,15 @@ class AppXml
 		if (not this.template_orig) return null;
 		if (not this.template_orig.exists()) return null;
 		
-		return this.template_orig.get("patch").get(0);
+		XML template_patch = this.template_orig.get("patch").get(0);
+		if (template_patch != null)
+		{
+			Vector names = template_patch.get("name");
+			for (int i=0; i<names.count(); i++) names.get(i).remove();
+			template_patch.prepend(XML::loadXml("<name>Template patch</name>"));
+		}
+		
+		return template_patch;
 	}
 	
 	

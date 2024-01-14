@@ -75,7 +75,8 @@ COMMIT;
 -- Add count_work, count_total fields
 
 BEGIN;
-CREATE TABLE "adminer_docker_services" (
+DROP TABLE "docker_services";
+CREATE TABLE "docker_services" (
   "service_id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "stack_name" text NOT NULL,
   "service_name" text NOT NULL,
@@ -99,15 +100,12 @@ CREATE TABLE "adminer_docker_services" (
   "gmtime_created" numeric NOT NULL,
   "gmtime_updated" numeric NOT NULL
 );
-INSERT INTO "adminer_docker_services" ("service_id", "stack_name", "service_name", "software_api_name", "have_admin_page", "admin_port", "admin_route", "admin_custom_nginx", "enable", "is_deleted", "data", "docker_name", "docker_image", "docker_content", "docker_json", "docker_tasks", "docker_balancer", "timestamp", "gmtime_created", "gmtime_updated") SELECT "service_id", "stack_name", "service_name", "software_api_name", "have_admin_page", "admin_port", "admin_route", "admin_custom_nginx", "enable", "is_deleted", "data", "docker_name", "docker_image", "docker_content", "docker_json", "docker_tasks", "docker_balancer", "timestamp", "gmtime_created", "gmtime_updated" FROM "docker_services";
-DROP TABLE "docker_services";
-ALTER TABLE "adminer_docker_services" RENAME TO "docker_services";
 CREATE UNIQUE INDEX "services_docker_name" ON "docker_services" ("docker_name");
 CREATE UNIQUE INDEX "services_stack_name_service_name" ON "docker_services" ("stack_name", "service_name");
 COMMIT;
 
 
--- Update modificators
+-- Update modificators cloud_os
 
 UPDATE modificators
 SET `version`='1.6', `content`='<?xml version="1.1" encoding="UTF-8" ?>
@@ -278,4 +276,44 @@ SET `version`='1.6', `content`='<?xml version="1.1" encoding="UTF-8" ?>
 </modificator>'
 
 WHERE `uid`="org.bayrell.modificator.cloud_os";
+
+
+
+-- Update modificators cloud_os
+
+UPDATE modificators
+SET `version`='1.1', `content`='<?xml version="1.0" encoding="UTF-8" ?>
+<modificator>
+	<uid>org.bayrell.modificator.deploy_hostname</uid>
+	<name>Deploy hostname</name>
+	<version>1.1</version>
+	<xml name="bayrell.org" priority="10">https://cloud.bayrell.org/marketplace/org.bayrell.modificator.deploy_hostname.xml</xml>
+	<xml name="github.com" priority="20">https://raw.githubusercontent.com/bayrell-os/marketplace/main/org.bayrell.modificator.deploy_hostname.xml</xml>
+	<date>2022-08-09T17:15:00+06:00</date>
+	<operations>
+		<operation type="remove">
+			<path>/template/yaml/services/*/deploy/placement</path>
+		</operation>
+		<operation type="add">
+			<path>/template/yaml/services/*/deploy</path>
+			<value>
+				<placement>
+					<constraints array="true">node.hostname == _var_hostname_</constraints>
+				</placement>
+			</value>
+		</operation>
+		<operation type="add">
+			<path>/template/variables[not(variable[name="_var_hostname_"])]</path>
+			<value>
+				<variable>
+					<name>_var_hostname_</name>
+					<label>Hostname</label>
+					<type>string</type>
+				</variable>
+			</value>
+		</operation>
+	</operations>
+</modificator>'
+
+WHERE `uid`="org.bayrell.modificator.deploy_hostname";
 

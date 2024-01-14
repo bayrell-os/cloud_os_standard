@@ -23,27 +23,20 @@
 
 
 <style>
-.service_table .widget_table_wrap, .service_table .service_info{
-	display: inline-block;
-	vertical-align: top;
+.service_table{
+	display: flex;
+	align-items: flex-start;
 }
-.service_table .widget_table_wrap{
+.service_table .wiget_table__table{
+	position: relative;
 	width: calc(100% - 450px);
-}
-.service_table .widget_table_wrap table{
-	width: 100%;
 }
 .service_table .service_info{
 	width: 450px;
-}
-.service_table .service_info{
 	padding-left: 10px;
 }
 .widget_table .widget_table__tr{
 	cursor: pointer;
-}
-.service_info{
-	padding-left: 10px;
 }
 .service_info__row{
 	padding-top: 10px;
