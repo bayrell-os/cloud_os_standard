@@ -35,6 +35,9 @@
 .app_table .wiget_table__table{
 	width: 100%;
 }
+.app_table %(Tab)tabs__item[data-tab='stop'] .wiget_table__table{
+	width: auto;
+}
 .app_table %(Tabs)tabs{
 	width: calc(100% - 400px);
 }
