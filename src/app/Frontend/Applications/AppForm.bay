@@ -82,7 +82,10 @@
 						<div class="widget_form__field">
 							<Input name={{ variable_name }}
 								value={{ variable_value }}
-								@event:onChange={{ this.onChangeVariable(i, variable_name) }}
+								@event:onChange={{
+									void (var e) use (i, variable_name) =>
+										this.onChangeVariable(i, variable_name, e.target.value)
+								}}
 							/>
 						</div>
 					</div>
@@ -254,15 +257,11 @@ void onTabSelect(string tab_name)
 }
 
 
-void onChangeVariable(int i, string variable_name)
+void onChangeVariable(int i, string variable_name, string value)
 {
-	return void (var e) use (i)
-	{
-		string value = e.target.value;
-		Vector variables = this.model.storage.item.get('variables');
-		Map variable = variables.get(i);
-		variable.set("value", value);
-	};
+	Vector variables = this.model.storage.item.get('variables');
+	Map variable = variables.get(i);
+	variable.set("value", value);
 }
 
 

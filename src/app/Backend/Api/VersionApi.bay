@@ -89,7 +89,8 @@ class VersionApi extends CrudApi
 			q.where("template_id", "=", template_id);
 		}
 		
-		q = q.orderBy("version", "asc");
+		q.orderBy("version", "asc");
+		
 		return q;
 	}
 	

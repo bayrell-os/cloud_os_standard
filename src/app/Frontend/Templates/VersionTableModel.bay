@@ -62,6 +62,9 @@ class VersionTableModel extends TableDialogModel
 		
 		/* Set save dialog width */
 		this.getWidget("save_dialog").dialog.setWidth("750px");
+		
+		/* Set dynamic pagination */
+		this.pagination.set("is_href", false);
 	}
 	
 	

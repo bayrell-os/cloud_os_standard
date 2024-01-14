@@ -60,6 +60,9 @@ class DomainTableModel extends TableDialogModel
 		DomainFormModel form = new DomainFormModel{ "parent_widget": this };
 		
 		parent();
+		
+		/* Set dynamic pagination */
+		this.pagination.set("is_href", false);
 	}
 	
 	

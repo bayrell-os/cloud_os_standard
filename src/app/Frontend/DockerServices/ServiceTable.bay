@@ -115,9 +115,7 @@
  */
 void onRowClick(int row_number)
 {
-	return void () use (row_number){
-        this.row_selected = row_number;
-	};
+	this.row_selected = row_number;
 }
 
 
