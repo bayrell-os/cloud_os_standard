@@ -46,6 +46,23 @@ case "$1" in
 		docker manifest push --purge bayrell/cloud_os_standard:$VERSION
 	;;
 	
+	upload-github)
+		docker tag bayrell/cloud_os_standard:$VERSION-arm64v8 \
+		    ghcr.io/bayrell-os/cloud_os_standard:$VERSION-arm64v8
+		
+		docker tag bayrell/cloud_os_standard:$VERSION-amd64 \
+		    ghcr.io/bayrell-os/cloud_os_standard:$VERSION-amd64
+		
+		docker push ghcr.io/bayrell-os/cloud_os_standard:$VERSION-amd64
+		docker push ghcr.io/bayrell-os/cloud_os_standard:$VERSION-arm64v8
+		
+		docker manifest create --amend \
+		    ghcr.io/bayrell-os/cloud_os_standard:$VERSION \
+			ghcr.io/bayrell-os/cloud_os_standard:$VERSION-amd64 \
+			ghcr.io/bayrell-os/cloud_os_standard:$VERSION-arm64v8
+		docker manifest push --purge ghcr.io/bayrell-os/cloud_os_standard:$VERSION
+	;;
+	
 	all)
 		$0 amd64
 		$0 arm64v8
