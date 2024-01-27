@@ -151,7 +151,7 @@ class AppApi extends CrudApi
 		string status = this.post_data["status"];
 		
 		if (status == "run") q.where("applications.status", "=", 1);
-		else if (status == "stop") q.where("applications.status", "=", 0);
+		else if (status == "stop") q.where("applications.status", "!=", 1);
 		
 		q = q
 			.addFields([
@@ -167,14 +167,14 @@ class AppApi extends CrudApi
 			.orderBy("applications.stack_name", "asc")
 			.orderBy("applications.name", "asc")
 			
-			.innerJoin(
+			.leftJoin(
 				"templates_versions",
 				[
 					"applications.template_version_id=templates_versions.id"
 				]
 			)
 			
-			.innerJoin(
+			.leftJoin(
 				"templates",
 				[
 					"templates_versions.template_id=templates.id"

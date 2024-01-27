@@ -261,7 +261,7 @@ class AppFormModel extends FormModel
 				"value": item.get("id"),
 			},
 		};
-		template_id.events.add("onChanged", new Callback(version_id, "reloadOptions"));
+		template_id.events.add("onValueChanged", new Callback(version_id, "reloadOptions"));
 		
 		/* Field version id */
 		this.addField({
