@@ -19,11 +19,11 @@
 namespace Bayrell.CloudOS.Frontend.XML;
 
 use Runtime.Web.ApiResult;
-use Runtime.Web.PageModel;
+use Runtime.Web.BasePageModel;
 use Runtime.Widget.WidgetResultModel;
 
 
-class ImportPageModel extends PageModel
+class ImportPageModel extends BasePageModel
 {
 	string content = "";
 	WidgetResultModel result = new WidgetResultModel;

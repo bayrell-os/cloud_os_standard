@@ -30,6 +30,7 @@
 				"Runtime",
 				"Runtime.Web",
 				"Runtime.Widget",
+				"Runtime.Widget.ContextMenu",
 				"Runtime.Widget.Crud",
 				"Runtime.Widget.Dialog",
 				"Runtime.Widget.Form",

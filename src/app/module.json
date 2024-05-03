@@ -34,7 +34,6 @@
 		"Frontend/Modificators/ModificatorTableModel.bay",
 		"Frontend/Main/AboutPage.bay",
 		"Frontend/Main/IndexPage.bay",
-		"Frontend/Main/IndexPageModel.bay",
 		"Frontend/Routes/RouteFormModel.bay",
 		"Frontend/Routes/RoutePageModel.bay",
 		"Frontend/Routes/RouteTableModel.bay",

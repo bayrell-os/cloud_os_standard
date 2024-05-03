@@ -31,15 +31,8 @@ class AppHook extends BaseAppHook
 	 */
 	void register_hooks()
 	{
-		#ifdef BACKEND then
-		this.register( static::RENDER_HEAD, 9999 );
-		this.register( static::RENDER_FOOTER );
-		#endif
-		
 		this.register( static::COMPONENTS, 1000 );
-		this.register( static::CSS_VARS );
-		this.register( static::EXPORT_DATA );
-		this.register( static::LAYOUT_CLASS_NAME );
+		this.register( static::EXPORT_CONTAINER_DATA );
 		this.register( static::RENDER_PROVIDER_SETTINGS );
 	}
 	
@@ -56,22 +49,9 @@ class AppHook extends BaseAppHook
 	
 	
 	/**
-	 * Layout class name
+	 * Export container data
 	 */
-	void layout_class_name(Map params)
-	{
-		string layout_name = params.get("layout_name");
-		if (layout_name == "default")
-		{
-			params.set("class_name", classof DefaultLayout);
-		}
-	}
-	
-	
-	/**
-	 * Export data
-	 */
-	void export_data(Map params)
+	void export_container_data(Map params)
 	{
 		Map data = params.get("data");
 		
@@ -80,15 +60,6 @@ class AppHook extends BaseAppHook
 		data.set("modules", [
 			"Bayrell.CloudOS.Frontend"
 		]);
-		
-		/* Setup environments */
-		Map environments = data.get("environments");
-		Collection arr = ["CLOUD_ENV", "DEBUG"];
-		for (int i=0; i<arr.count(); i++)
-		{
-			string name = arr.get(i);
-			environments.set(name, @.env(name));
-		}
 	}
 	
 	
@@ -98,29 +69,7 @@ class AppHook extends BaseAppHook
 	void components(Map params)
 	{
 		params["components"].appendItems([
-			"Bayrell.CloudOS.Frontend.CSS",
-		]);
-	}
-	
-	
-	/**
-	 * Header components
-	 */
-	void render_head(Map params)
-	{
-		params["components"].appendItems([
-			"Bayrell.CloudOS.Frontend.CSS",
-		]);
-	}
-	
-	
-	/**
-	 * Footer components
-	 */
-	void render_footer(Map params)
-	{
-		params["components"].appendItems([
-			"Bayrell.CloudOS.Frontend.Scripts",
+			/*"Bayrell.CloudOS.Frontend.CSS",*/
 		]);
 	}
 }

@@ -19,7 +19,8 @@
 namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.Serializer;
-use Runtime.Web.LayoutModel as BaseLayoutModel;
+use Runtime.Web.BaseLayoutModel;
+use Runtime.Web.RenderContainer;
 
 
 class LayoutModel extends BaseLayoutModel
@@ -30,7 +31,7 @@ class LayoutModel extends BaseLayoutModel
 	/**
 	 * Init layout
 	 */
-	void init()
+	async void init(RenderContainer container)
 	{
 		#ifcode PHP then
 		$hostname = file_get_contents("/etc/hostname_orig");

@@ -16,11 +16,14 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Frontend.DefaultLayout">
+<class name="Bayrell.CloudOS.Frontend.DefaultLayout"
+	extends="Runtime.Web.DefaultLayout"
+>
 
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.LayoutModel" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Bayrell.CloudOS.Frontend.CSS" component="true" />
 <use name="Bayrell.CloudOS.ModuleDescription" />
 
 
@@ -148,9 +151,7 @@
 			<div class='app_layout_content_wrap'>
 				<div class='app_layout_title'>{{ this.layout.title }}</div>
 				<div class='app_layout_content'>
-					%var string current_page = this.layout.current_page;
-					%var string current_page_model = this.layout.current_page_model;
-					<{current_page} @model=[ "widgets", current_page_model ] />
+					%render this.renderCurrentPage();
 				</div>
 			</div>
 		</div>

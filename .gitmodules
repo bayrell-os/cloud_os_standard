@@ -22,21 +22,6 @@
 [submodule "src/lib/Runtime.Widget"]
 	path = src/lib/Runtime.Widget
 	url = https://github.com/bayrell/Runtime.Widget
-[submodule "src/lib/Runtime.Widget.Crud"]
-	path = src/lib/Runtime.Widget.Crud
-	url = https://github.com/bayrell/Runtime.Widget.Crud
-[submodule "src/lib/Runtime.Widget.Table"]
-	path = src/lib/Runtime.Widget.Table
-	url = https://github.com/bayrell/Runtime.Widget.Table
-[submodule "src/lib/Runtime.Widget.Dialog"]
-	path = src/lib/Runtime.Widget.Dialog
-	url = https://github.com/bayrell/Runtime.Widget.Dialog
-[submodule "src/lib/Runtime.Widget.Form"]
-	path = src/lib/Runtime.Widget.Form
-	url = https://github.com/bayrell/Runtime.Widget.Form
-[submodule "src/lib/Runtime.Widget.Tab"]
-	path = src/lib/Runtime.Widget.Tab
-	url = https://github.com/bayrell/Runtime.Widget.Tab
 [submodule "src/lib/Runtime.Widget.CodeMirror"]
 	path = src/lib/Runtime.Widget.CodeMirror
 	url = https://github.com/bayrell/Runtime.Widget.CodeMirror

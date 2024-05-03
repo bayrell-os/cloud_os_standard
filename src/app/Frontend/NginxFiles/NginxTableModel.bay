@@ -42,34 +42,15 @@ class NginxTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		NginxFormModel form = new NginxFormModel{ "parent_widget": this };
+		this.addWidget(classof NginxFormModel);
 		
 		parent();
 		
-		/* Set save dialog width */
-		this.getWidget("save_dialog").dialog.setWidth("750px");
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -95,7 +76,13 @@ class NginxTableModel extends TableDialogModel
 			},
 		});
 		
-		/* Row buttons */
-		this.addFieldRowButtons();
+		/* Row button */
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		/* Set save dialog width */
+		this.getWidget("save_dialog").setWidth("750px");
 	}
 }

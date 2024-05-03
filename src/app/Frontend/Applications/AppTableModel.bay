@@ -28,6 +28,7 @@ use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectLabel;
 use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Table.RefreshButtonModel;
+use Runtime.Widget.Table.SaveDialogModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.AppFormModel;
 use Bayrell.CloudOS.Frontend.Applications.AppTable;
@@ -113,6 +114,13 @@ class AppTableModel extends TableDialogModel
 		
 		/* Set page */
 		this.storage.setPage(this.layout.request_query.get("page", 1));
+		
+		/* Set form result */
+		form.show_result = true;
+		/*
+		SaveDialogModel save_dialog = this.getWidget("save_dialog");
+		save_dialog.dialog.result = form.storage.result;
+		*/
 	}
 	
 	

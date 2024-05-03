@@ -16,24 +16,22 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.Main;
+namespace Bayrell.CloudOS.Frontend;
 
 use Runtime.Web.BaseRoute;
+use Runtime.Web.RenderContainer;
 use Runtime.Web.RouteInfo;
-use Bayrell.CloudOS.Frontend.Main.AboutPage;
-use Bayrell.CloudOS.Frontend.Main.IndexPage;
-use Bayrell.CloudOS.Frontend.Main.IndexPageModel;
 
 
-class MainRoute extends BaseRoute
+class Routes extends BaseRoute
 {
 	/**
 	 * Returns layout name
 	 */
 	string getLayoutName() => "default";
 	
-    
-    /**
+	
+	/**
 	 * Returns routes
 	 */
 	pure Collection<RouteInfo> getRoutes()
@@ -44,44 +42,50 @@ class MainRoute extends BaseRoute
 			{
 				"uri": "/",
 				"name": "app:page:index",
-				"method": "actionIndex",
+				"component": "Bayrell.CloudOS.Frontend.Main.IndexPage",
+				"data": {
+					"title": "Index page",
+				},
+			},
+			new RouteInfo
+			{
+				"uri": "/nginx_files/",
+				"name": "app:nginx_files:index",
+				"model": "Bayrell.CloudOS.Frontend.NginxFiles.NginxPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/routes/",
+				"name": "app:routes:index",
+				"model": "Bayrell.CloudOS.Frontend.Routes.RoutePageModel",
 			},
 			new RouteInfo
 			{
 				"uri": "/about/",
 				"name": "app:page:about",
-				"method": "actionAbout",
+				"component": "Bayrell.CloudOS.Frontend.Main.AboutPage",
+				"data": {
+					"title": "About page",
+				},
+			},
+			new RouteInfo
+			{
+				"uri": "/settings/",
+				"name": "app:settings:index",
+				"component": "Bayrell.CloudOS.Frontend.Settings.SettingsPage",
+				"data": {
+					"title": "Settings",
+				},
+			},
+			new RouteInfo
+			{
+				"uri": "/settings/database/",
+				"name": "app:settings:database",
+				"component": "Bayrell.CloudOS.Frontend.Settings.DatabasePage",
+				"data": {
+					"title": "Database",
+				},
 			},
 		];
 	}
-    
-	
-	/**
-	 * Action index
-	 */
-	async void actionIndex()
-	{
-		/* Set page model */
-		this.layout.setPageModel(classof IndexPageModel);
-		
-		/* Set title */
-		this.layout.setPageTitle("Index page");
-		
-		/* Render page */
-		this.render(classof IndexPage);
-	}
-	
-	
-	/**
-	 * Action about
-	 */
-	async void actionAbout()
-	{
-		/* Set title */
-		this.layout.setPageTitle("About page");
-		
-		/* Render page */
-		this.render(classof AboutPage);
-	}
-	
 }

@@ -43,10 +43,12 @@ class RouteFormModel extends FormModel
 	
 	
 	/**
-	 * Init fields
+	 * Init widget settings
 	 */
-	void initFields()
+	void initWidget()
 	{
+		parent();
+		
 		/* Field enable */
 		this.addField({
 			"label": "Enable",

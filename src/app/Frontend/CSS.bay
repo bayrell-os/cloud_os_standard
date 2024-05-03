@@ -18,20 +18,43 @@
 
 <class name="Bayrell.CloudOS.Frontend.CSS">
 
-<use name="Runtime.Web.App" />
-<use name="Bayrell.CloudOS.Frontend.ModuleDescription" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Input" component="true" />
+<use name="Runtime.Widget.RowButtons" component="true" />
+<use name="Runtime.Widget.Select" component="true" />
+<use name="Runtime.Widget.TextArea" component="true" />
+<use name="Runtime.Widget.Dialog.Dialog" component="true" />
+<use name="Runtime.Widget.Table.Table" component="true" />
 
 
-<style>
+<style global="true">
+body, html {
+	font-family: var(--widget-font-family);
+	font-size: var(--widget-font-size);
+	line-height: var(--widget-line-height);
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+%(Table)widget_table{
+	%(RowButtons)widget_table__top_buttons{
+		margin-bottom: calc(var(--widget-space) * 2);
+	}
+	.widget_table__table{
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+	.widget_table__th{
+		text-align: left;
+	}
+	.widget_table__th, .widget_table__td{
+		border-bottom: 1px solid #ccc;
+		padding: 10px;
+	}
+}
+%(Select)widget_select{
+	max-width: 100%;
+}
 </style>
-
-
-<template multiblock="false">
-	%set string version = ModuleDescription::getModuleVersion();
-	%set Collection components = this.layout.getComponents();
-	%set string css = this.layout::getCss(components);
-	<style>@raw{{ css }}</style>
-</template>
-
 
 </class>

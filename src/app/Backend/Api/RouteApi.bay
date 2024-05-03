@@ -24,11 +24,11 @@ use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
 use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.CrudApi;
-use Runtime.Widget.Crud.CrudRule;
-use Runtime.Widget.Crud.LowerCase;
-use Runtime.Widget.Crud.Purify;
-use Runtime.Widget.Crud.Required;
-use Runtime.Widget.Crud.Unique;
+use Runtime.Widget.Crud.Rules.CrudRule;
+use Runtime.Widget.Crud.Rules.LowerCase;
+use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.Required;
+use Runtime.Widget.Crud.Rules.Unique;
 
 
 class RouteApi extends CrudApi

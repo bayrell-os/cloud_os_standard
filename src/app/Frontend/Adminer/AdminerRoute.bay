@@ -25,7 +25,6 @@ use Runtime.Web.RouteInfo;
 
 class AdminerRoute extends BaseRoute
 {
-	
 	/**
 	 * Returns routes
 	 */
@@ -35,7 +34,7 @@ class AdminerRoute extends BaseRoute
 		{
 			"uri": "/settings/database/adminer/",
 			"name": "app:adminer:index",
-			"method": "actionIndex",
+			"action": "actionIndex",
 		},
 	];
 	
@@ -64,5 +63,4 @@ class AdminerRoute extends BaseRoute
 		response.content = content;
 		this.container.setResponse(response);
 	}
-	
 }

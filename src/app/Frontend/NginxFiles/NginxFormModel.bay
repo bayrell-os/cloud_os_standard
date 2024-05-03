@@ -42,10 +42,12 @@ class NginxFormModel extends FormModel
 	
 	
 	/**
-	 * Init fields
+	 * Init widget settings
 	 */
-	void initFields()
+	void initWidget()
 	{
+		parent();
+		
 		/* Field name */
 		this.addField({
 			"name": "name",
