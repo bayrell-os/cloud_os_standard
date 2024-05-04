@@ -29,6 +29,7 @@ use Runtime.Widget.Crud.CrudApiStorage;
 use Runtime.Widget.Crud.Dictionary;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.SaveButtonModel;
+use Runtime.Widget.Tab.TabsModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.AppEnvironmentsTableModel;
 use Bayrell.CloudOS.Frontend.Applications.AppForm;
@@ -91,120 +92,27 @@ class AppFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
-	{
-		parent(params);
-		this.layout.addComponent(classof AppForm);
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		parent();
 		
-		if (this.action == "edit")
-		{
-			/* Add modificators table */
-			AppModTableModel modificators = new AppModTableModel{
-				"parent_widget": this,
-				"widget_name": "modificators",
-			};
-			
-			/* Set foreign key */
-			int app_id = this.layout.route.matches.get("id");
-			modificators.storage.setForeignKey("app_id", app_id );
-			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
-			
-			/* Environments */
-			AppEnvironmentsTableModel environments = new AppEnvironmentsTableModel{
-				"parent_widget": this,
-			};
-			
-			/* Volumes */
-			AppVolumesTableModel volumes = new AppVolumesTableModel{
-				"parent_widget": this,
-			};
-			
-			/* Get render list widget */
-			RenderListModel render_list = this.getWidget("render_list");
-			
-			/* Add compose dialog */
-			ComposeDialogModel compose_dialog = new ComposeDialogModel{
-				"parent_widget": this,
-				"form": this,
-			};
-			render_list.addRender(compose_dialog);
-		}
-	}
-	
-	
-	/**
-	 * Init buttons
-	 */
-	void initButtons()
-	{
-		if (this.action == "edit")
-		{
-			ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
-			
-			this.top_buttons.add(new ButtonModel{
-				"content": "Back",
-				"styles": [
-					"default",
-				],
-				"href": this.layout.url("app:applications:index"),
-			});
-			
-			ButtonModel compose_button = this.top_buttons.add(new ButtonModel{
-				"content": "Compose",
-				"styles": [
-					"default",
-				],
-			});
-			compose_button.events.add("onClick", new Callback(compose_dialog, "onCompose"));
-			
-			ButtonModel stop_button = this.top_buttons.add(new ButtonModel{
-				"content": "Stop",
-				"styles": [
-					"default",
-				],
-			});
-			stop_button.events.add("onClick", new Callback(compose_dialog, "onStop"));
-			
-			this.top_buttons.add(new SaveButtonModel{
-				"parent_widget": this,
-				"styles": [
-					"last"
-				],
-			});
-			this.top_buttons.styles.add("no-gap");
-		}
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Stacks */
-		Dictionary stack_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.docker.stack",
-			},
-			"widget_name": "stack_id",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("stack_name"),
-				"value": item.get("stack_name"),
-			},
-		};
+		Dictionary stack_id = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.docker.stack",
+				},
+				"widget_name": "stack_id",
+				"transform": Map (Dict item) => {
+					"label": item.get("stack_name"),
+					"value": item.get("stack_name"),
+				},
+			}
+		);
 		
 		/* Field stack_name */
 		this.addField({
@@ -222,18 +130,20 @@ class AppFormModel extends FormModel
 		});
 		
 		/* Templates */
-		Dictionary template_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.template",
-			},
-			"widget_name": "template_id",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("name") ~ " <" ~ item.get("uid") ~ ">",
-				"value": item.get("id"),
-			},
-		};
+		Dictionary template_id = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.template",
+				},
+				"widget_name": "template_id",
+				"transform": Map (Dict item) => {
+					"label": item.get("name") ~ " <" ~ item.get("uid") ~ ">",
+					"value": item.get("id"),
+				},
+			}
+		);
 		
 		/* Field template id */
 		this.addField({
@@ -244,23 +154,25 @@ class AppFormModel extends FormModel
 		});
 		
 		/* Versions */
-		Dictionary version_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.template.version",
-			},
-			"widget_name": "version_id",
-			"parent_widget": this,
-			"filter": bool (Dict item)
+		Dictionary version_id = this.addWidget(
+			classof Dictionary,
 			{
-				int template_id = this.storage.item.get("template_id");
-				return item.get("template_id") == template_id;
-			},
-			"transform": Map (Dict item) => {
-				"label": item.get("version"),
-				"value": item.get("id"),
-			},
-		};
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.template.version",
+				},
+				"widget_name": "version_id",
+				"filter": bool (Dict item)
+				{
+					int template_id = this.storage.item.get("template_id");
+					return item.get("template_id") == template_id;
+				},
+				"transform": Map (Dict item) => {
+					"label": item.get("version"),
+					"value": item.get("id"),
+				},
+			}
+		);
 		template_id.events.add("onValueChanged", new Callback(version_id, "reloadOptions"));
 		
 		/* Field version id */
@@ -270,6 +182,122 @@ class AppFormModel extends FormModel
 			"component": classof Select,
 			"model": version_id,
 		});
+		
+		if (this.action == "edit")
+		{
+			/* Add compose dialog */
+			ComposeDialogModel compose_dialog = this.addWidget(
+				classof ComposeDialogModel,
+				{
+					"form": this,
+				}
+			);
+			this.render_list.addItem(compose_dialog);
+			
+			/* Modificators */
+			AppModTableModel modificators = this.addWidget(
+				classof AppModTableModel,
+				{
+					"widget_name": "modificators",
+				}
+			);
+			
+			/* Set foreign key */
+			int app_id = this.layout.route.matches.get("id");
+			modificators.storage.setForeignKey("app_id", app_id );
+			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
+			
+			/* Environments */
+			AppEnvironmentsTableModel environments = this.addWidget(
+				classof AppEnvironmentsTableModel
+			);
+			
+			/* Volumes */
+			AppVolumesTableModel volumes = this.addWidget(
+				classof AppVolumesTableModel
+			);
+			
+			/* Top buttons */
+			this.top_buttons.styles.add("no-gap");
+			
+			/* Back button */
+			this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Back",
+					"styles": [
+						"default",
+					],
+					"href": this.layout.url("app:applications:index"),
+				}
+			);
+			
+			/* Compose button */
+			ButtonModel compose_button = this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Compose",
+					"styles": [
+						"default",
+					],
+				}
+			);
+			compose_button.events.add("onClick", new Callback(compose_dialog, "onCompose"));
+			
+			/* Stop button */
+			ButtonModel stop_button = this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Stop",
+					"styles": [
+						"default",
+					],
+				}
+			);
+			stop_button.events.add("onClick", new Callback(compose_dialog, "onStop"));
+			
+			/* Save button */
+			this.top_buttons.addWidget(
+				classof SaveButtonModel,
+				{
+					"styles": [
+						"last"
+					],
+				}
+			);
+			
+			/* Tabs */
+			this.tabs = this.addWidget(
+				classof TabsModel,
+				{
+					"active": "info",
+					"tabs": [
+						{
+							"name": "info",
+							"label": "Info",
+						},
+						{
+							"name": "custom_patch",
+							"label": "Custom patch",
+						},
+						{
+							"name": "total_patches",
+							"label": "Total patches",
+						},
+						{
+							"name": "result",
+							"label": "Result",
+						},
+						{
+							"name": "yaml",
+							"label": "Yaml",
+						},
+					],
+				}
+			);
+		}
+		
+		this.layout.addComponent(classof AppForm);
 	}
 	
 	

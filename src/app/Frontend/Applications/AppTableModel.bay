@@ -54,81 +54,25 @@ class AppTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		AppFormModel form = new AppFormModel{ "parent_widget": this };
+		AppFormModel form = this.addWidget(classof AppFormModel);
 		
 		parent();
 		
-		/* Get render list widget */
-		RenderListModel render_list = this.getWidget("render_list");
-		
 		/* Create compose wiget */
-		ComposeDialogModel compose_dialog = new ComposeDialogModel{
-			"parent_widget": this,
-			"table": this,
-			"form": form,
-		};
-		render_list.addRender(compose_dialog);
+		ComposeDialogModel compose_dialog = this.addWidget(
+			classof ComposeDialogModel,
+			{
+				"table": this,
+				"form": form,
+			}
+		);
+		this.render_list.addItem(compose_dialog);
 		
-		/* Add tabs */
-		this.tabs = new TabsModel{
-			"active": "run",
-			"tabs": [
-				{
-					"name": "run",
-					"label": "Run",
-					"href": this.layout.url("app:applications:index", {"status": "run"}),
-				},
-				{
-					"name": "stop",
-					"label": "Stopped",
-					"href": this.layout.url("app:applications:index", {"status": "stop"}),
-				}
-			],
-		};
-		
-		/* Filter status */
-		string status = this.layout.request_query.get("status", "");
-		if (status == "stop")
-		{
-			this.tabs.active = "stop";
-			this.storage.setPostData("status", "stop");
-		}
-		else
-		{
-			this.storage.setPostData("status", "run");
-		}
-		
-		/* Set page */
-		this.storage.setPage(this.layout.request_query.get("page", 1));
-		
-		/* Set form result */
-		form.show_result = true;
-		/*
-		SaveDialogModel save_dialog = this.getWidget("save_dialog");
-		save_dialog.dialog.result = form.storage.result;
-		*/
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -172,32 +116,104 @@ class AppTableModel extends TableDialogModel
 			});
 		}
 		
+		/* Row buttons */
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		/* Edit button */
+		ButtonModel edit_button = this.row_buttons.getWidget("edit_button");
+		edit_button.href = string (Dict data)
+		{
+			int row_number = data.get("row_number");
+			Dict item = this.getItemByRowNumber(row_number);
+			return this.layout.url("app:applications:edit", {"id":item.get("id")});
+		};
+		edit_button.events.clear("onClick");
+		
 		/* Compose buttons */
 		string status = this.layout.request_query.get("status", "");
 		if (status != "stop")
 		{
-			this.addComposeButtons();
+			/* Recompose button */
+			ButtonModel recompose_button = this.row_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Recompose",
+					"widget_name": "recompose_button",
+					"styles": [
+						"default",
+						"small",
+					],
+				}
+			);
+			
+			/* Recompose onClick */
+			ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
+			recompose_button.events.add("onClick", new Callback(compose_dialog, "onRecompose"));
+			
+			ButtonModel show_status_button = this.row_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Status",
+					"widget_name": "show_status_button",
+					"styles": [
+						"default",
+						"small",
+					],
+				}
+			);
+			show_status_button.events.add("onClick", new Callback(this, "onShowServiceInfo"));
 		}
 		
-		/* Row buttons */
-		this.addFieldRowButtons();
-	}
-	
-	
-	/**
-	 * Init buttons
-	 */
-	void initButtons()
-	{
-		parent();
-		
 		/* Refresh button */
-		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{
-			"layout": this.layout,
-			"table": this,
-		});
+		ButtonModel refresh_button = this.top_buttons.addWidget(
+			classof RefreshButtonModel,
+			{
+				"layout": this.layout,
+				"table": this,
+			}
+		);
 		
-		/*this.top_buttons.styles.add("no-gap");*/
+		/* Add tabs */
+		this.tabs = this.addWidget(
+			classof TabsModel,
+				{
+				"active": "run",
+				"tabs": [
+					{
+						"name": "run",
+						"label": "Run",
+						"href": this.layout.url("app:applications:index", {"status": "run"}),
+					},
+					{
+						"name": "stop",
+						"label": "Stopped",
+						"href": this.layout.url("app:applications:index", {"status": "stop"}),
+					}
+				],
+			}
+		);
+		
+		/* Filter status */
+		string status = this.layout.request_query.get("status", "");
+		if (status == "stop")
+		{
+			this.tabs.active = "stop";
+			this.storage.setPostData("status", "stop");
+		}
+		else
+		{
+			this.storage.setPostData("status", "run");
+		}
+		
+		/* Set form result */
+		form.show_result = true;
+		/*
+		SaveDialogModel save_dialog = this.getWidget("save_dialog");
+		save_dialog.dialog.result = form.storage.result;
+		*/
 	}
 	
 	
@@ -247,67 +263,6 @@ class AppTableModel extends TableDialogModel
 		});
 		
 		return field;
-	}
-	
-	
-	/**
-	 * Add recompose button
-	 */
-	ButtonModel addRecomposeButton(RowButtonsModel row_buttons)
-	{
-		/* Recompose button */
-		ButtonModel recompose_button = row_buttons.add(new ButtonModel{
-			"content": "Recompose",
-			"widget_name": "recompose_button",
-			"styles": [
-				"default",
-				"small",
-			],
-		});
-		
-		/* Add edit onClick */
-		ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
-		recompose_button.events.add("onClick", new Callback(compose_dialog, "onRecompose"));
-	}
-	
-	
-	/**
-	 * Add show status button
-	 */
-	ButtonModel addShowStatusButton(RowButtonsModel row_buttons)
-	{
-		ButtonModel show_status_button = row_buttons.add(new ButtonModel{
-			"content": "Status",
-			"widget_name": "show_status_button",
-			"styles": [
-				"default",
-				"small",
-			],
-		});
-		show_status_button.events.add("onClick", new Callback(this, "onShowServiceInfo"));
-	}
-	
-	
-	/**
-	 * Add edit field row buttons
-	 */
-	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
-	{
-		ButtonModel edit_button = row_buttons.add(new ButtonModel{
-			"content": "Edit",
-			"widget_name": "edit_button",
-			"styles": [
-				"default",
-				"small",
-			],
-			"href": string (Dict data)
-			{
-				int row_number = data.get("row_number");
-				Dict item = this.getItemByRowNumber(row_number);
-				return this.layout.url("app:applications:edit", {"id":item.get("id")});
-			},
-		});
-		return edit_button;
 	}
 	
 	
@@ -366,8 +321,8 @@ class AppTableModel extends TableDialogModel
 		{
 			Map task = docker_tasks[i].copy();
 			
-			DateTime CreatedAt = DateTime::from(task.get("CreatedAt"));
-			DateTime UpdatedAt = DateTime::from(task.get("UpdatedAt"));
+			DateTime CreatedAt = DateTime::fromString(rs::substr(task.get("CreatedAt"), 0, 19));
+			DateTime UpdatedAt = DateTime::fromString(rs::substr(task.get("UpdatedAt"), 0, 19));
 			
 			CreatedAt.tz = "UTC";
 			UpdatedAt.tz = "UTC";

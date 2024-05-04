@@ -39,31 +39,15 @@ class AppModTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		AppModFormModel form = new AppModFormModel{ "parent_widget": this };
+		AppModFormModel form = this.addWidget(classof AppModFormModel);
 		
 		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -82,24 +66,12 @@ class AppModTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		parent();
-	}
-	
-	
-	/**
-	 * Add edit field row buttons
-	 */
-	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
-	{
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		this.row_buttons.removeItemByName("edit_button");
 	}
 	
 	

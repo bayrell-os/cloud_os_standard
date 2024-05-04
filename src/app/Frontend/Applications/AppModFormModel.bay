@@ -43,39 +43,35 @@ class AppModFormModel extends FormModel
 	
 	
 	/**
-	 * Init table widgets
+	 * Init widget settings
 	 */
-	void initWidgets()
+	void initWidget()
 	{
 		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
-        /* Versions */
-		Dictionary modificators = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.modificators",
-			},
-			"widget_name": "modificators",
-			"parent_widget": this,
-            "transform": Map (Dict item) => {
-				"label": item.get("name"),
-				"value": item.get("id"),
-			},
-		};
-        
+		
+		/* Versions */
+		Dictionary modificators = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.modificators",
+				},
+				"widget_name": "modificators",
+				"parent_widget": this,
+				"transform": Map (Dict item) => {
+					"label": item.get("name"),
+					"value": item.get("id"),
+				},
+			}
+		);
+		
 		/* Field name */
 		this.addField({
 			"label": "Name",
 			"name": "modificator_id",
 			"component": classof Select,
-            "model": modificators,
+			"model": modificators,
 		});
 	}
 	

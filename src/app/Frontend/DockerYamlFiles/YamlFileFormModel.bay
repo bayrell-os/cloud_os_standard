@@ -58,7 +58,6 @@ class YamlFileFormModel extends FormModel
 					"class_name": "app.docker.stack",
 				},
 				"widget_name": "stack_name",
-				"parent_widget": this,
 				"transform": Map (Dict item) => {
 					"label": item.get("stack_name"),
 					"value": item.get("stack_name"),

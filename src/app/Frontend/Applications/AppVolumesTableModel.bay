@@ -45,47 +45,22 @@ class AppVolumesTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		FormModel form = new FormModel{
-			"parent_widget": this,
-			"storage": this.createDataStorage(),
-		};
+		FormModel form = this.addWidget(
+			classof FormModel,
+			{
+				"storage": this.createDataStorage(),
+			}
+		);
+		
+		parent();
 		
 		/* Add fields */
 		this.addWidgetFields(form);
-		
-		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
-		/* Row number */
-		this.addField({
-			"name": "row_number",
-		});
-		
-		/* Add fields */
-		this.addWidgetFields(this);
-		
-		/* Row buttons */
-		this.addFieldRowButtons();
 	}
 	
 	
@@ -118,15 +93,6 @@ class AppVolumesTableModel extends TableDialogModel
 			},
 			"component": widget == this ? classof SelectLabel : classof Select,
 		});
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		parent();
 	}
 	
 	

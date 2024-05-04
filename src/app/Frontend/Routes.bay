@@ -49,6 +49,20 @@ class Routes extends BaseRoute
 				},
 			},
 			
+			/* Applications */
+			new RouteInfo
+			{
+				"uri": "/applications/",
+				"name": "app:applications:index",
+				"model": "Bayrell.CloudOS.Frontend.Applications.AppPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/applications/{id}/",
+				"name": "app:applications:edit",
+				"model": "Bayrell.CloudOS.Frontend.Applications.AppPageModel",
+			},
+			
 			/* Template */
 			new RouteInfo
 			{

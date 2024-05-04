@@ -39,44 +39,58 @@ class ComposeDialogModel extends BaseModel
 	string component = classof ComposeDialog;
 	AppFormModel form = null;
 	AppTableModel table = null;
-	DialogModel dialog = new DialogModel;
+	DialogModel dialog;
 	
 	
 	/**
-	 * Constructor
+	 * Setup widget params
 	 */
-	void constructor(Map params = null)
+	void setup(Dict params)
 	{
 		parent(params);
 		
-		if (params)
-		{
-			if (params.has("table")) this.table = params.get("table");
-			if (params.has("form")) this.form = params.get("form");
-		}
+		if (params == null) return;
+		if (params.has("table")) this.table = params.get("table");
+		if (params.has("form")) this.form = params.get("form");
+	}
+	
+	
+	/**
+	 * Init widget settings
+	 */
+	void initWidget()
+	{
+		parent();
 		
 		/* Setup dialog */
+		this.dialog = this.addWidget(classof DialogModel);
 		this.dialog.title = "Compose item";
 		this.dialog.buttons.styles.add("align-end");
 		
 		/* Setup close buttons */
-		ButtonModel close_button = this.dialog.buttons.add(new ButtonModel{
-			"content": "Close",
-			"widget_name": "close_button",
-			"styles": [
-				"gray"
-			],
-		});
+		ButtonModel close_button = this.dialog.buttons.addWidget(
+			classof ButtonModel,
+			{
+				"content": "Close",
+				"widget_name": "close_button",
+				"styles": [
+					"gray"
+				],
+			}
+		);
 		close_button.events.add("onClick", new Callback(this, "onCloseButtonClick"));
 		
 		/* Setup confirm button */
-		ButtonModel confirm_button = this.dialog.buttons.add(new ButtonModel{
-			"content": "Stop",
-			"widget_name": "confirm_button",
-			"styles": [
-				"danger"
-			],
-		});
+		ButtonModel confirm_button = this.dialog.buttons.addWidget(
+			classof ButtonModel,
+			{
+				"content": "Stop",
+				"widget_name": "confirm_button",
+				"styles": [
+					"danger"
+				],
+			}
+		);
 		confirm_button.events.add("onClick", new Callback(this, "onConfirmButtonClick"));
 	}
 	

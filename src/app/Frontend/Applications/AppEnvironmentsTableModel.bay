@@ -45,37 +45,20 @@ class AppEnvironmentsTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		FormModel form = new FormModel{
-			"parent_widget": this,
-			"storage": this.createDataStorage(),
-		};
-		
-		/* Add fields */
-		this.addWidgetFields(form);
+		FormModel form = this.addWidget(
+			classof FormModel,
+			{
+				"storage": this.createDataStorage(),
+			}
+		);
 		
 		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -85,7 +68,10 @@ class AppEnvironmentsTableModel extends TableDialogModel
 		this.addWidgetFields(this);
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
 	}
 	
 	
@@ -118,15 +104,6 @@ class AppEnvironmentsTableModel extends TableDialogModel
 			},
 			"component": widget == this ? classof SelectLabel : classof Select,
 		});
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		parent();
 	}
 	
 	

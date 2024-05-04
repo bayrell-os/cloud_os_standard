@@ -26,7 +26,6 @@
 <use name="Runtime.Widget.CodeMirror.CodeMirror" component="true" />
 <use name="Runtime.Widget.Tab.Tab" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
-<use name="Runtime.Widget.Tab.TabsModel" />
 
 
 <style>
@@ -165,8 +164,8 @@
 	%if (this.model.action == "edit")
 	{
 		<div class="app">
-			<Tabs @model={{ this.tabs }} @event:onSelect={{ this.onTabSelect }}>
-				<Tab name="info" @model={{ this.tabs }}>
+			<Tabs @model={{ this.model.tabs }} @event:onSelect={{ this.onTabSelect }}>
+				<Tab name="info" @model={{ this.model.tabs }}>
 					<form method="POST"
 						enctype="multipart/form-data" onsubmit="return false;"
 					>
@@ -174,17 +173,17 @@
 					</form>
 					%render this.renderWidgetsInfo();
 				</Tab>
-				<Tab name="custom_patch" @model={{ this.tabs }}>
+				<Tab name="custom_patch" @model={{ this.model.tabs }}>
 					<CodeMirror
 						@event:onValueChanged={{ this.onCodeMirrorValueChanged("custom_patch") }}
 						value={{ this.model.storage.item.get("custom_patch") }}
 						height="500px"
 					/>
 				</Tab>
-				<Tab name="total_patches" @model={{ this.tabs }}>
+				<Tab name="total_patches" @model={{ this.model.tabs }}>
 					%render this.renderPatches();
 				</Tab>
-				<Tab name="result" @model={{ this.tabs }}>
+				<Tab name="result" @model={{ this.model.tabs }}>
 					<CodeMirror
 						@ref="code_mirror_result"
 						@event:onValueChanged={{ this.onCodeMirrorValueChanged("content") }}
@@ -192,7 +191,7 @@
 						readonly="true" height="500px"
 					/>
 				</Tab>
-				<Tab name="yaml" @model={{ this.tabs }}>
+				<Tab name="yaml" @model={{ this.model.tabs }}>
 					<CodeMirror
 						@ref="code_mirror_yaml"
 						@event:onValueChanged={{ this.onCodeMirrorValueChanged("yaml") }}
@@ -213,32 +212,6 @@
 <script>
 
 int patch_selected = -1;
-
-TabsModel tabs = new TabsModel{
-	"active": "info",
-	"tabs": [
-		{
-			"name": "info",
-			"label": "Info",
-		},
-		{
-			"name": "custom_patch",
-			"label": "Custom patch",
-		},
-		{
-			"name": "total_patches",
-			"label": "Total patches",
-		},
-		{
-			"name": "result",
-			"label": "Result",
-		},
-		{
-			"name": "yaml",
-			"label": "Yaml",
-		},
-	],
-};
 
 /* Tab select */
 void onTabSelect(string tab_name)

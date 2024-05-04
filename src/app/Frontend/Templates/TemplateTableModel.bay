@@ -90,6 +90,6 @@ class TemplateTableModel extends TableDialogModel
 			Dict item = this.getItemByRowNumber(row_number);
 			return this.layout.url("app:templates:edit", {"id":item.get("id")});
 		};
-		edit_button.events.clear("onClick");	
+		edit_button.events.clear("onClick");
 	}
 }
