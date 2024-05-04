@@ -43,69 +43,15 @@ class TemplateTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		TemplateFormModel form = new TemplateFormModel{ "parent_widget": this };
+		this.addWidget(classof TemplateFormModel);
 		
 		parent();
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		/* Add button */
-		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
-			"content": "Add",
-			"href": this.layout.url("app:templates:import"),
-			"styles": [
-				"success",
-			],
-		});
-	}
-	
-	
-	/**
-	 * Add edit field row buttons
-	 */
-	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
-	{
-		/* Edit button */
-		ButtonModel edit_button = row_buttons.add(new ButtonModel{
-			"content": "Edit",
-			"href": string (Dict data)
-			{
-				int row_number = data.get("row_number");
-				Dict item = this.getItemByRowNumber(row_number);
-				return this.layout.url("app:templates:edit", {"id":item.get("id")});
-			},
-			"styles": [
-				"default",
-				"small",
-			],
-		});
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -126,6 +72,24 @@ class TemplateTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		/* Add button */
+		ButtonModel add_button = this.top_buttons.getWidget("add_button");
+		add_button.href = this.layout.url("app:templates:import");
+		add_button.events.clear("onClick");
+		
+		/* Edit button */
+		ButtonModel edit_button = this.row_buttons.getWidget("edit_button");
+		edit_button.href = string (Dict data)
+		{
+			int row_number = data.get("row_number");
+			Dict item = this.getItemByRowNumber(row_number);
+			return this.layout.url("app:templates:edit", {"id":item.get("id")});
+		};
+		edit_button.events.clear("onClick");	
 	}
 }

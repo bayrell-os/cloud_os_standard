@@ -46,37 +46,12 @@ class ServiceTableModel extends TableModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		parent();
 		
-		/* Get render list widget */
-		RenderListModel render_list = this.getWidget("render_list");
-		
-		/* Create stop wiget */
-		StopDialogModel stop_dialog = new StopDialogModel{
-			"parent_widget": this,
-		};
-		render_list.addRender(stop_dialog);
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -101,49 +76,41 @@ class ServiceTableModel extends TableModel
 		});
         
 		/* Row buttons */
-		this.addFieldRowButtons();
-	}
-	
-	
-	/**
-	 * Init buttons
-	 */
-	void initButtons()
-	{
-		/* Refresh button */
-		ButtonModel refresh_button = this.top_buttons.add(new RefreshButtonModel{
-			"layout": this.layout,
-			"table": this,
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
 		});
-	}
-	
-	
-	/**
-	 * Add field row buttons
-	 */
-	Map addFieldRowButtons()
-	{
-		/* Row buttons */
-		RowButtonsModel row_buttons = new RowButtonsModel();
 		
-		/* Stop button */
-		ButtonModel stop_button = row_buttons.add(new ButtonModel{
-			"content": "Stop",
-			"styles": [
-				"danger",
-				"small",
-			],
-		});
+		/* Create stop wiget */
+		StopDialogModel stop_dialog = this.addWidget(classof StopDialogModel);
+		this.render_list.addItem(stop_dialog);
+		
+		/* Edit row buttons */
+		ButtonModel stop_button = this.row_buttons.addWidget(
+			classof ButtonModel,
+			{
+				"widget_name": "stop_button",
+				"content": "Stop",
+				"styles": [
+					"danger",
+					"small",
+				],
+			}
+		);
 		stop_button.events.add("onClick", new Callback(this.getWidget("stop_dialog"), "onClick"));
 		
-		/* Add buttons */
-		Map field = this.addField({
-			"name": "row_buttons",
-			"component": classof RowButtons,
-			"model": row_buttons,
-		});
+		/* Remove items */
+		this.row_buttons.removeItemByName("edit_button");
+		this.row_buttons.removeItemByName("delete_button");
 		
-		return field;
+		/* Refresh button */
+		ButtonModel refresh_button = this.top_buttons.addWidget(
+			classof RefreshButtonModel,
+			{
+				"layout": this.layout,
+				"table": this,
+			}
+		);
 	}
 	
 	

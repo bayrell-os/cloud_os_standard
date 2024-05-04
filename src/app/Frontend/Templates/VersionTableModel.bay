@@ -43,49 +43,20 @@ class VersionTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		VersionFormModel form = new VersionFormModel{ "parent_widget": this, };
+		this.addWidget(classof VersionFormModel);
+		
 		parent();
 		
-		/* Set save dialog width */
-		this.getWidget("save_dialog").dialog.setWidth("750px");
-		
-		/* Set dynamic pagination */
-		this.pagination.set("is_href", false);
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
-        /* Row number */
+		/* Row number */
 		this.addField({
 			"name": "row_number",
 		});
-        
+		
 		/* Field name */
 		this.addField({
 			"label": "Version",
@@ -94,6 +65,18 @@ class VersionTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		/* Remove add button */
+		this.top_buttons.removeItemByName("add_button");
+		
+		/* Set save dialog width */
+		this.getWidget("save_dialog").setWidth("750px");
+		
+		/* Set dynamic pagination */
+		this.pagination.set("is_href", false);
 	}
 }

@@ -40,44 +40,12 @@ class TemplateFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
+		parent();
 		
-		if (this.action == "edit")
-		{
-			this.top_buttons.add(new ButtonModel{
-				"content": "Back",
-				"styles": [
-					"default",
-				],
-				"href": this.layout.url("app:templates:index"),
-			});
-			
-			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
-				"content": "Save",
-				"styles": [
-					"primary",
-					"large",
-				],
-			});
-			save_button.events.add("onClick", new Callback(this, "save"));
-			
-			/* Set primary key for id */
-			this.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
-		}
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Field name */
 		this.addField({
 			"label": "Name",
@@ -91,6 +59,37 @@ class TemplateFormModel extends FormModel
 			"name": "uid",
 			"component": classof Input,
 		});
+		
+		if (this.action == "edit")
+		{
+			this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Back",
+					"styles": [
+						"default",
+					],
+					"href": this.layout.url("app:templates:index"),
+				}
+			);
+			
+			ButtonModel save_button = this.bottom_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Save",
+					"styles": [
+						"primary",
+						"large",
+					],
+				}
+			);
+			save_button.events.add("onClick", new Callback(this, "save"));
+			
+			/* Set primary key for id */
+			this.storage.setPrimaryKey({
+				"id": this.layout.route.matches.get("id"),
+			});
+		}
 	}
 	
 	

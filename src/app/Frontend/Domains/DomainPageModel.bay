@@ -62,7 +62,7 @@ class DomainPageModel extends CrudPageModel
 			});
 			
 			/* Add form to render list */
-			this.getWidget("render_list").addItem(form);
+			this.render_list.addItem(form);
 			
 			/* Create routes table widget */
 			RouteTableModel route_table = this.addWidget(
@@ -75,7 +75,7 @@ class DomainPageModel extends CrudPageModel
 			route_table.storage.setPage(1);
 			
 			/* Add table to render list */
-			this.getWidget("render_list").addItem(route_table);
+			this.render_list.addItem(route_table);
 			
 			/* Set foreign key */
 			int id = this.layout.route.matches.get("id");

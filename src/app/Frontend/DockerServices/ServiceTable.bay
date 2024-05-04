@@ -76,7 +76,7 @@
 					{{ "DesiredState: " ~ task["DesiredState"] }}
 				</div>
 				<div class="service_info__item">
-					{{ "Updated: " ~ task["UpdatedAt"].toString() ~ " UTC" }}
+					{{ "Updated: " ~ task["UpdatedAt"].shiftOffset(0).getDateTimeString() ~ " UTC" }}
 				</div>
 				%set string error = task["Status", "Err"];
 				%if (error)
@@ -123,8 +123,8 @@ Vector updateDockerTasks(Vector docker_tasks)
 	{
 		Map task = docker_tasks[i].copy();
 		
-		DateTime CreatedAt = DateTime::from(task.get("CreatedAt"));
-		DateTime UpdatedAt = DateTime::from(task.get("UpdatedAt"));
+		DateTime CreatedAt = DateTime::fromString(rs::substr(task.get("CreatedAt"), 0, 19));
+		DateTime UpdatedAt = DateTime::fromString(rs::substr(task.get("UpdatedAt"), 0, 19));
 		
 		CreatedAt.tz = "UTC";
 		UpdatedAt.tz = "UTC";

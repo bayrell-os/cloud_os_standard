@@ -42,10 +42,12 @@ class VersionFormModel extends FormModel
 	
 	
 	/**
-	 * Init fields
+	 * Init widget settings
 	 */
-	void initFields()
+	void initWidget()
 	{
+		parent();
+		
 		/* Field content */
 		this.addField({
 			"label": "Content",
@@ -66,11 +68,11 @@ class VersionFormModel extends FormModel
 	{
 		if (action == "edit")
 		{
-			return "Edit " ~ this.storage.item.get("name");
+			return "Edit " ~ this.storage.item.get("version");
 		}
 		if (action == "delete")
 		{
-			return "Delete " ~ this.storage.item.get("name");
+			return "Delete " ~ this.storage.item.get("version");
 		}
 		return "";
 	}

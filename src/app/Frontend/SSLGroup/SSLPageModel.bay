@@ -27,11 +27,11 @@ use Bayrell.CloudOS.Frontend.SSLGroup.SSLTableModel;
 class SSLPageModel extends CrudPageModel
 {
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
+		parent();
 		
 		if (this.layout.route.name == "app:ssl:index")
 		{

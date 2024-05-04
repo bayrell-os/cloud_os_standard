@@ -43,10 +43,12 @@ class ModificatorFormModel extends FormModel
 	
 	
 	/**
-	 * Init fields
+	 * Init widget settings
 	 */
-	void initFields()
+	void initWidget()
 	{
+		parent();
+		
 		/* Field content */
 		this.addField({
 			"label": "Content",

@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Frontend.DockerStack;
 
 use Runtime.Web.PageModel;
+use Runtime.Web.RenderContainer;
 use Runtime.Widget.Crud.CrudPageModel;
 use Bayrell.CloudOS.Frontend.DockerStack.StackTableModel;
 
@@ -26,11 +27,11 @@ use Bayrell.CloudOS.Frontend.DockerStack.StackTableModel;
 class StackPageModel extends CrudPageModel
 {
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
+		parent();
 		
 		if (this.layout.route.name == "app:docker:stack:index")
 		{
@@ -38,20 +39,16 @@ class StackPageModel extends CrudPageModel
 			this.setAction("index");
 			
 			/* Create table widget */
-			StackTableModel table = new StackTableModel{
-				"parent_widget": this
-			};
-			
-			/* Set page */
-			table.storage.setPage(this.layout.request_query.get("page", 1));
+			StackTableModel table = this.addWidget(classof StackTableModel);
+			this.render_list.addItem(table);
 		}
 	}
 	
 	
 	/**
-	 * Route After
+	 * Build title
 	 */
-	async void onRouteAfter()
+	void buildTitle(RenderContainer container)
 	{
 		/* Set title */
 		if (this.action == "index")

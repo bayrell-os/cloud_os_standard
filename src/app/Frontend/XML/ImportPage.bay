@@ -26,6 +26,9 @@
 
 
 <style>
+.import_xml_page_code_mirror{
+	min-height: 500px;
+}
 .web_form__buttons{
 	padding-top: 10px;
 	text-align: center;
@@ -35,10 +38,12 @@
 
 <template>
 	<div class="import_xml_page">
-		<CodeMirror value={{ this.model.content }}
-			@event:onValueChanged={{ this.onValueChanged }}
-			height="500px"
-		/>
+		<div class="import_xml_page_code_mirror">
+			<CodeMirror value={{ this.model.content }}
+				@event:onValueChanged={{ this.onValueChanged }}
+				height="500px"
+			/>
+		</div>
 		<div class="web_form__buttons">
 			<Button styles=["success", "large"]
 				@event:onClick={{ this.onImportClick }}>Import</Button>

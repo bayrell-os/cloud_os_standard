@@ -20,12 +20,15 @@ namespace Bayrell.CloudOS.Frontend.XML;
 
 use Runtime.Web.ApiResult;
 use Runtime.Web.BasePageModel;
+use Runtime.Web.RenderContainer;
 use Runtime.Widget.WidgetResultModel;
+use Bayrell.CloudOS.Frontend.XML.ImportPage;
 
 
 class ImportPageModel extends BasePageModel
 {
 	string content = "";
+	string component = classof ImportPage;
 	WidgetResultModel result = new WidgetResultModel;
 	
 	
@@ -40,7 +43,7 @@ class ImportPageModel extends BasePageModel
 		/* Call api */
 		ApiResult res = await this.layout.callApi({
 			"api_name": "app.template",
-			"method": "actionImport",
+			"method_name": "actionImport",
 			"data":
 			{
 				"content": this.content,
@@ -51,5 +54,14 @@ class ImportPageModel extends BasePageModel
 		this.result.setApiResult(res);
 		
 		return res;
+	}
+	
+	
+	/**
+	 * Build title
+	 */
+	void buildTitle(RenderContainer container)
+	{
+		this.layout.setPageTitle("Import XML");
 	}
 }

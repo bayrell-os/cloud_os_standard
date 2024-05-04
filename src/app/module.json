@@ -18,7 +18,6 @@
 		"Frontend/DockerServices/ServicePageModel.bay",
 		"Frontend/DockerServices/ServiceTable.bay",
 		"Frontend/DockerServices/ServiceTableModel.bay",
-		"Frontend/DockerServices/StopDialog.bay",
 		"Frontend/DockerServices/StopDialogModel.bay",
 		"Frontend/DockerStack/StackFormModel.bay",
 		"Frontend/DockerStack/StackPageModel.bay",

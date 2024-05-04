@@ -43,23 +43,28 @@ class YamlFileFormModel extends FormModel
 	
 	
 	/**
-	 * Init fields
+	 * Init widget settings
 	 */
-	void initFields()
+	void initWidget()
 	{
+		parent();
+		
 		/* Stacks */
-		Dictionary stack_name = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.docker.stack",
-			},
-			"widget_name": "stack_name",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("stack_name"),
-				"value": item.get("stack_name"),
-			},
-		};
+		Dictionary stack_name = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.docker.stack",
+				},
+				"widget_name": "stack_name",
+				"parent_widget": this,
+				"transform": Map (Dict item) => {
+					"label": item.get("stack_name"),
+					"value": item.get("stack_name"),
+				},
+			}
+		);
 		
 		/* Stack name */
 		this.addField({

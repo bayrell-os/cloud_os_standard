@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Frontend.Templates;
 
 use Runtime.Web.PageModel;
+use Runtime.Web.RenderContainer;
 use Runtime.Widget.Crud.CrudPageModel;
 use Bayrell.CloudOS.Frontend.Templates.TemplateFormModel;
 use Bayrell.CloudOS.Frontend.Templates.TemplateTableModel;
@@ -28,11 +29,11 @@ use Bayrell.CloudOS.Frontend.Templates.VersionTableModel;
 class TemplatePageModel extends CrudPageModel
 {
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
+		parent();
 		
 		if (this.layout.route.name == "app:templates:index")
 		{
@@ -40,12 +41,8 @@ class TemplatePageModel extends CrudPageModel
 			this.setAction("index");
 			
 			/* Create table widget */
-			TemplateTableModel table = new TemplateTableModel{
-				"parent_widget": this
-			};
-			
-			/* Set page */
-			table.storage.setPage(this.layout.request_query.get("page", 1));
+			TemplateTableModel table = this.addWidget(classof TemplateTableModel);
+			this.render_list.addItem(table);
 		}
 		
 		else if (this.layout.route.name == "app:templates:edit")
@@ -53,21 +50,26 @@ class TemplatePageModel extends CrudPageModel
 			/* Set action */
 			this.setAction("edit");
 			
-			/* Create form widget */
-			TemplateFormModel form = new TemplateFormModel{
-				"action": "edit",
-				"parent_widget": this
-			};
+			/* Create table widget */
+			TemplateFormModel form = this.addWidget(
+				classof TemplateFormModel,
+				{
+					"action": "edit",
+				}
+			);
+			this.render_list.addItem(form);
 			
 			/* Create versions table widget */
-			VersionTableModel version_table = new VersionTableModel{
-				"parent_widget": this,
-				"widget_name": "version_table",
-			};
+			VersionTableModel version_table = this.addWidget(
+				classof VersionTableModel,
+				{
+					"widget_name": "version_table",
+				}
+			);
 			version_table.storage.setPage(1);
 			
 			/* Add table to render list */
-			this.getWidget("render_list").addRender(version_table);
+			this.render_list.addItem(version_table);
 			
 			/* Set space id */
 			int id = this.layout.route.matches.get("id");
@@ -78,9 +80,9 @@ class TemplatePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Route After
+	 * Build title
 	 */
-	async void onRouteAfter()
+	void buildTitle(RenderContainer container)
 	{
 		/* Set title */
 		if (this.action == "index")

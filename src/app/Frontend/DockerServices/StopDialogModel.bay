@@ -31,47 +31,60 @@ use Runtime.Widget.Table.TableModel;
 use Bayrell.CloudOS.Frontend.DockerServices.StopDialog;
 
 
-class StopDialogModel extends BaseModel
+class StopDialogModel extends DialogModel
 {
 	string widget_name = "stop_dialog";
-	string component = classof StopDialog;
-	WidgetResultModel result = new WidgetResultModel;
-	DialogModel dialog = new DialogModel;
 	Dict item = null;
 	
 	
 	/**
-	 * Constructor
+	 * Setup widget params
 	 */
-	void constructor(Map params = null)
+	void setup(Dict params)
 	{
 		parent(params);
 		
+		if (params == null) return;
 		if (params)
 		{
 			if (params.has("table")) this.table = params.get("table");
 		}
+	}
+	
+	
+	/**
+	 * Init widget settings
+	 */
+	void initWidget()
+	{
+		parent();
 		
 		/* Setup dialog */
-		this.dialog.title = "Stop item";
-		this.dialog.buttons.styles.add("align-end");
+		this.title = "Stop item";
+		this.buttons.styles.add("align-end");
 		
 		/* Setup close buttons */
-		ButtonModel close_button = this.dialog.buttons.add(new ButtonModel{
-			"content": "Cancel",
-			"styles": [
-				"gray"
-			],
-		});
+		ButtonModel close_button = this.buttons.addWidget(
+			classof ButtonModel,
+			{
+				"content": "Cancel",
+				"styles": [
+					"gray"
+				],
+			}
+		);
 		close_button.events.add("onClick", new Callback(this, "onCloseButtonClick"));
 		
 		/* Setup confirm button */
-		ButtonModel confirm_button = this.dialog.buttons.add(new ButtonModel{
-			"content": "Stop",
-			"styles": [
-				"danger"
-			],
-		});
+		ButtonModel confirm_button = this.buttons.addWidget(
+			classof ButtonModel,
+			{
+				"content": "Stop",
+				"styles": [
+					"danger"
+				],
+			}
+		);
 		confirm_button.events.add("onClick", new Callback(this, "onConfirmButtonClick"));
 	}
 	
@@ -93,7 +106,7 @@ class StopDialogModel extends BaseModel
 		this.item = Serializer::copy(item);
 		
 		/* Show dialog */
-		this.dialog.show();
+		this.show();
 	}
 	
 	
@@ -102,7 +115,7 @@ class StopDialogModel extends BaseModel
 	 */
 	void onCloseButtonClick()
 	{
-		this.dialog.hide();
+		this.hide();
 	}
 	
 	
@@ -112,9 +125,9 @@ class StopDialogModel extends BaseModel
 	async void onConfirmButtonClick()
 	{
 		await this.stop();
-		if (this.dialog.result.isSuccess())
+		if (this.result.isSuccess())
 		{
-			this.dialog.hide();
+			this.hide();
 			await this.parent_widget.refresh();
 		}
 	}
@@ -125,10 +138,10 @@ class StopDialogModel extends BaseModel
 	 */
 	async void stop()
 	{
-		this.dialog.result.setWaitMessage();
+		this.result.setWaitMessage();
 		ApiResult res = await this.layout.callApi({
 			"api_name": "app.docker.services::crud",
-			"method": "actionStop",
+			"method_name": "actionStop",
 			"data": {
 				"pk": {
 					"service_id": this.item.get("service_id"),
@@ -136,6 +149,6 @@ class StopDialogModel extends BaseModel
 			}
 		});
 		
-		this.dialog.result.setApiResult(res);
+		this.result.setApiResult(res);
 	}
 }

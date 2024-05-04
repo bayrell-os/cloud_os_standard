@@ -38,6 +38,7 @@ class Routes extends BaseRoute
 	{
 		return
 		[
+			/* Main page */
 			new RouteInfo
 			{
 				"uri": "/",
@@ -47,6 +48,54 @@ class Routes extends BaseRoute
 					"title": "Index page",
 				},
 			},
+			
+			/* Template */
+			new RouteInfo
+			{
+				"uri": "/templates/",
+				"name": "app:templates:index",
+				"model": "Bayrell.CloudOS.Frontend.Templates.TemplatePageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/templates/{id}/edit/",
+				"name": "app:templates:edit",
+				"model": "Bayrell.CloudOS.Frontend.Templates.TemplatePageModel",
+			}
+			new RouteInfo
+			{
+				"uri": "/templates/import/",
+				"name": "app:templates:import",
+				"model": "Bayrell.CloudOS.Frontend.XML.ImportPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/modificators/",
+				"name": "app:modificators:index",
+				"model": "Bayrell.CloudOS.Frontend.Modificators.ModificatorPageModel",
+			},
+			
+			/* Docker */
+			new RouteInfo
+			{
+				"uri": "/docker/service/",
+				"name": "app:docker:services:index",
+				"model": "Bayrell.CloudOS.Frontend.DockerServices.ServicePageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/docker/stack/",
+				"name": "app:docker:stack:index",
+				"model": "Bayrell.CloudOS.Frontend.DockerStack.StackPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/docker/yaml/",
+				"name": "app:docker:yaml:index",
+				"model": "Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageModel",
+			},
+			
+			/* Load balancing */
 			new RouteInfo
 			{
 				"uri": "/domains/",
@@ -89,6 +138,8 @@ class Routes extends BaseRoute
 				"name": "app:workspace:edit",
 				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel",
 			},
+			
+			/* Other */
 			new RouteInfo
 			{
 				"uri": "/about/",

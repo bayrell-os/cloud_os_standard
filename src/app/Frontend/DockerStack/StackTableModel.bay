@@ -42,31 +42,15 @@ class StackTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		StackFormModel form = new StackFormModel{ "parent_widget": this };
+		this.addWidget(classof StackFormModel);
 		
 		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -79,6 +63,9 @@ class StackTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
 	}
 }

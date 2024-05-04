@@ -44,52 +44,15 @@ class ModificatorTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		ModificatorFormModel form = new ModificatorFormModel{
-			"parent_widget": this,
-		};
+		this.addWidget(classof ModificatorFormModel);
 		
 		parent();
 		
-		/* Set save dialog width */
-		this.getWidget("save_dialog").dialog.setWidth("750px");
-	}
-	
-	
-	/**
-	 * Init top buttons
-	 */
-	void initTopButtons()
-	{
-		/* Add button */
-		ButtonModel add_button = this.top_buttons.add(new ButtonModel{
-			"content": "Add",
-			"href": this.layout.url("app:templates:import"),
-			"styles": [
-				"success",
-			],
-		});
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -124,6 +87,17 @@ class ModificatorTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
+		
+		/* Add button */
+		ButtonModel add_button = this.top_buttons.getWidget("add_button");
+		add_button.href = this.layout.url("app:templates:import");
+		add_button.events.clear("onClick");
+		
+		/* Set save dialog width */
+		this.getWidget("save_dialog").setWidth("750px");
 	}
 }
