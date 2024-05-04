@@ -76,7 +76,7 @@ class NginxTableModel extends TableDialogModel
 			},
 		});
 		
-		/* Row button */
+		/* Row buttons */
 		this.addField({
 			"name": "row_buttons",
 			"model": this.row_buttons,

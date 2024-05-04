@@ -75,18 +75,20 @@ class RouteFormModel extends FormModel
 		});
 		
 		/* Domains */
-		Dictionary domain_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.domain",
-			},
-			"widget_name": "domain_id",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("domain_name"),
-				"value": item.get("id"),
-			},
-		};
+		Dictionary domain_id = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.domain",
+				},
+				"widget_name": "domain_id",
+				"transform": Map (Dict item) => {
+					"label": item.get("domain_name"),
+					"value": item.get("id"),
+				},
+			}
+		);
 		
 		/* Field domain */
 		this.addField({

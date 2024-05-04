@@ -40,46 +40,12 @@ class WorkspaceFormModel extends FormModel
 	
 	
 	/**
-	 * Init table widgets
+	 * Init widget settings
 	 */
-	void initWidgets()
+	void initWidget()
 	{
 		parent();
-	}
-	
-	
-	/**
-	 * Init buttons
-	 */
-	void initButtons()
-	{
-		if (this.action == "edit")
-		{
-			this.top_buttons.add(new ButtonModel{
-				"content": "Back",
-				"styles": [
-					"default",
-				],
-				"href": this.layout.url("app:workspace:index"),
-			});
-			
-			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
-				"content": "Save",
-				"styles": [
-					"primary",
-					"large",
-				],
-			});
-			save_button.events.add("onClick", new Callback(this, "save"));
-		}
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* UID */
 		this.addField({
 			"label": "Name",
@@ -93,6 +59,32 @@ class WorkspaceFormModel extends FormModel
 			"name": "uid",
 			"component": classof Input,
 		});
+		
+		if (this.action == "edit")
+		{
+			this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Back",
+					"styles": [
+						"default",
+					],
+					"href": this.layout.url("app:workspace:index"),
+				}
+			);
+			
+			ButtonModel save_button = this.bottom_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Save",
+					"styles": [
+						"primary",
+						"large",
+					],
+				}
+			);
+			save_button.events.add("onClick", new Callback(this, "save"));
+		}
 	}
 	
 	

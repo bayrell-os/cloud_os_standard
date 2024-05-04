@@ -43,39 +43,34 @@ class DomainFormModel extends FormModel
 	
 	
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
-        /* Domains */
-		Dictionary domain_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.domain",
-			},
-			"widget_name": "domain_id",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("domain_name"),
-				"value": item.get("id"),
-			},
-		};
-        
+		parent();
+		
+		/* Domains */
+		Dictionary domain_id = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.domain",
+				},
+				"widget_name": "domain_id",
+				"transform": Map (Dict item) => {
+					"label": item.get("domain_name"),
+					"value": item.get("id"),
+				},
+			}
+		);
+		
 		/* Domain name */
 		this.addField({
 			"label": "Domain name",
 			"name": "domain_id",
 			"component": classof Select,
-            "model": domain_id,
+			"model": domain_id,
 		});
 	}
 	

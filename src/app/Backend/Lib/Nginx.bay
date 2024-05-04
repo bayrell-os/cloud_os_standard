@@ -32,7 +32,6 @@ use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 class Nginx
 {
-	
 	/**
 	 * Returns upstream
 	 */
@@ -72,6 +71,7 @@ class Nginx
 		/* Get services */
 		Query q = (new Query())
 			.select("docker_services")
+			.addField("docker_services.*")
 			.where("enable", "=", "1")
 			.where("is_deleted", "=", "0")
 			.where("docker_name", "!=", "")
@@ -83,6 +83,7 @@ class Nginx
 		/* Get routes */
 		Query q = (new Query())
 			.select("routes")
+			.addField("routes.*")
 			.where("enable", "=", "1")
 			.where("protocol", "=", "http")
 			.orderBy("route_prefix", "desc")
@@ -144,6 +145,7 @@ class Nginx
 		/* Get services */
 		Query q = (new Query())
 			.select("domains")
+			.addField("domains.*")
 			.addField("spaces.uid as space_uid")
 			.leftJoin(
 				"spaces",
@@ -164,6 +166,7 @@ class Nginx
 			
 			Query q = (new Query())
 				.select("routes")
+				.addField("routes.*")
 				.where("routes.enable", "=", "1")
 				.where("routes.protocol", "=", "http")
 				.where("routes.domain_id", "=", domain_id)

@@ -49,6 +49,18 @@ class Routes extends BaseRoute
 			},
 			new RouteInfo
 			{
+				"uri": "/domains/",
+				"name": "app:domains:index",
+				"model": "Bayrell.CloudOS.Frontend.Domains.DomainPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/domains/{id}/edit/",
+				"name": "app:domains:edit",
+				"model": "Bayrell.CloudOS.Frontend.Domains.DomainPageModel",
+			},
+			new RouteInfo
+			{
 				"uri": "/nginx_files/",
 				"name": "app:nginx_files:index",
 				"model": "Bayrell.CloudOS.Frontend.NginxFiles.NginxPageModel",
@@ -58,6 +70,24 @@ class Routes extends BaseRoute
 				"uri": "/routes/",
 				"name": "app:routes:index",
 				"model": "Bayrell.CloudOS.Frontend.Routes.RoutePageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/ssl/",
+				"name": "app:ssl:index",
+				"model": "Bayrell.CloudOS.Frontend.SSLGroup.SSLPageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/workspace/",
+				"name": "app:workspace:index",
+				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel",
+			},
+			new RouteInfo
+			{
+				"uri": "/workspace/{id}/edit/",
+				"name": "app:workspace:edit",
+				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel",
 			},
 			new RouteInfo
 			{

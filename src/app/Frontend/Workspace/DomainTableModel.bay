@@ -43,40 +43,16 @@ class DomainTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		DomainFormModel form = new DomainFormModel{ "parent_widget": this, };
+		this.addWidget(classof DomainFormModel);
+		
 		parent();
-	}
-	
-	
-	/**
-	 * Add edit field row buttons
-	 */
-	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
-	{
-		return null;
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
-        /* Row number */
+		
+		/* Row number */
 		this.addField({
 			"name": "row_number",
 		});
@@ -89,6 +65,9 @@ class DomainTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
 	}
 }

@@ -43,46 +43,12 @@ class DomainFormModel extends FormModel
 	
 	
 	/**
-	 * Init table widgets
+	 * Init widget settings
 	 */
-	void initWidgets()
+	void initWidget()
 	{
 		parent();
-	}
-	
-	
-	/**
-	 * Init buttons
-	 */
-	void initButtons()
-	{
-		if (this.action == "edit")
-		{
-			this.top_buttons.add(new ButtonModel{
-				"content": "Back",
-				"styles": [
-					"default",
-				],
-				"href": this.layout.url("app:domains:index"),
-			});
-			
-			ButtonModel save_button = this.bottom_buttons.add(new ButtonModel{
-				"content": "Save",
-				"styles": [
-					"primary",
-					"large",
-				],
-			});
-			save_button.events.add("onClick", new Callback(this, "save"));
-		}
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Field name */
 		this.addField({
 			"label": "Domain name",
@@ -91,18 +57,20 @@ class DomainFormModel extends FormModel
 		});
 		
 		/* Spaces */
-		Dictionary space_id = new Dictionary{
-			"storage": new CrudApiStorage{
-				"layout": this.layout,
-				"class_name": "app.workspace",
-			},
-			"widget_name": "space_id",
-			"parent_widget": this,
-			"transform": Map (Dict item) => {
-				"label": item.get("name"),
-				"value": item.get("id"),
-			},
-		};
+		Dictionary space_id = this.addWidget(
+			classof Dictionary,
+			{
+				"storage": new CrudApiStorage{
+					"layout": this.layout,
+					"class_name": "app.workspace",
+				},
+				"widget_name": "space_id",
+				"transform": Map (Dict item) => {
+					"label": item.get("name"),
+					"value": item.get("id"),
+				},
+			}
+		);
 		
 		/* Field space */
 		this.addField({
@@ -112,6 +80,31 @@ class DomainFormModel extends FormModel
 			"model": space_id,
 		});
 		
+		if (this.action == "edit")
+		{
+			this.top_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Back",
+					"styles": [
+						"default",
+					],
+					"href": this.layout.url("app:domains:index"),
+				}
+			);
+			
+			ButtonModel save_button = this.bottom_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Save",
+					"styles": [
+						"primary",
+						"large",
+					],
+				}
+			);
+			save_button.events.add("onClick", new Callback(this, "save"));
+		}
 	}
 	
 	

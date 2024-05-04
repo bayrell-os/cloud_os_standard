@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Frontend.Workspace;
 
 use Runtime.Web.PageModel;
+use Runtime.Web.RenderContainer;
 use Runtime.Widget.RenderListModel;
 use Runtime.Widget.Crud.CrudPageModel;
 use Bayrell.CloudOS.Frontend.Workspace.DomainTableModel;
@@ -30,11 +31,11 @@ use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
 class WorkspacePageModel extends CrudPageModel
 {
 	/**
-	 * Constructor
+	 * Init widget settings
 	 */
-	void constructor(Dict params = null)
+	void initWidget()
 	{
-		parent(params);
+		parent();
 		
 		if (this.layout.route.name == "app:workspace:index")
 		{
@@ -42,12 +43,8 @@ class WorkspacePageModel extends CrudPageModel
 			this.setAction("index");
 			
 			/* Create table widget */
-			WorkspaceTableModel table = new WorkspaceTableModel{
-				"parent_widget": this
-			};
-			
-			/* Set page */
-			table.storage.setPage(this.layout.request_query.get("page", 1));
+			WorkspaceTableModel table = this.addWidget(classof WorkspaceTableModel);
+			this.render_list.addItem(table);
 		}
 		
 		else if (this.layout.route.name == "app:workspace:edit")
@@ -56,25 +53,33 @@ class WorkspacePageModel extends CrudPageModel
 			this.setAction("edit");
 			
 			/* Create form widget */
-			WorkspaceFormModel form = new WorkspaceFormModel{
-				"action": "edit",
-				"parent_widget": this
-			};
+			WorkspaceFormModel form = this.addWidget(
+				classof WorkspaceFormModel,
+				{
+					"action": "edit",
+				}
+			);
 			
 			/* Set primary key for id */
 			form.storage.setPrimaryKey({
 				"id": this.layout.route.matches.get("id"),
 			});
 			
+			/* Add form to render list */
+			this.getWidget("render_list").addItem(form);
+			
 			/* Create domains table widget */
-			DomainTableModel domain_table = new DomainTableModel{
-				"parent_widget": this,
-				"widget_name": "domain_table",
-			};
+			DomainTableModel domain_table = this.addWidget(
+				classof DomainTableModel,
+				{
+					"widget_name": "domain_table",
+					"title": "Domains",
+				}
+			);
 			domain_table.storage.setPage(1);
 			
 			/* Add table to render list */
-			this.getWidget("render_list").addRender(domain_table);
+			this.getWidget("render_list").addItem(domain_table);
 			
 			/* Set foreign key */
 			int id = this.layout.route.matches.get("id");
@@ -85,9 +90,9 @@ class WorkspacePageModel extends CrudPageModel
 	
 	
 	/**
-	 * Route After
+	 * Build title
 	 */
-	async void onRouteAfter()
+	void buildTitle(RenderContainer container)
 	{
 		/* Set title */
 		if (this.action == "index")

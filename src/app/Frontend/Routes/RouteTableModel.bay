@@ -97,7 +97,7 @@ class RouteTableModel extends TableDialogModel
 			"component": classof Label,
 		});
 		
-		/* Row button */
+		/* Row buttons */
 		this.addField({
 			"name": "row_buttons",
 			"model": this.row_buttons,

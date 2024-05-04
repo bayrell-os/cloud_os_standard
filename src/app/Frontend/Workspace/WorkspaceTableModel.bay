@@ -42,31 +42,15 @@ class WorkspaceTableModel extends TableDialogModel
 	
 	
 	/**
-	 * Init styles
+	 * Init widget settings
 	 */
-	void initStyles()
-	{
-		this.styles.add("border");
-	}
-	
-	
-	/**
-	 * Init table widgets
-	 */
-	void initWidgets()
+	void initWidget()
 	{
 		/* Create form */
-		WorkspaceFormModel form = new WorkspaceFormModel{ "parent_widget": this };
+		this.addWidget(classof WorkspaceFormModel);
 		
 		parent();
-	}
-	
-	
-	/**
-	 * Init fields
-	 */
-	void initFields()
-	{
+		
 		/* Row number */
 		this.addField({
 			"name": "row_number",
@@ -85,28 +69,19 @@ class WorkspaceTableModel extends TableDialogModel
 		});
 		
 		/* Row buttons */
-		this.addFieldRowButtons();
-	}
-	
-	
-	/**
-	 * Add edit field row buttons
-	 */
-	ButtonModel addEditFieldRowButtons(RowButtonsModel row_buttons)
-	{
-		ButtonModel edit_button = row_buttons.add(new ButtonModel{
-			"content": "Edit",
-			"styles": [
-				"default",
-				"small",
-			],
-			"href": string (Dict data)
-			{
-				int row_number = data.get("row_number");
-				Dict item = this.getItemByRowNumber(row_number);
-				return this.layout.url("app:workspace:edit", {"id":item.get("id")});
-			},
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
 		});
-		return edit_button;
+		
+		/* Setup edit button */
+		ButtonModel edit_button = this.row_buttons.getWidget("edit_button");
+		edit_button.href = string (Dict data)
+		{
+			int row_number = data.get("row_number");
+			Dict item = this.getItemByRowNumber(row_number);
+			return this.layout.url("app:workspace:edit", {"id":item.get("id")});
+		};
+		edit_button.events.clear("onClick");
 	}
 }
