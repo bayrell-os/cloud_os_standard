@@ -132,7 +132,7 @@ class AppXml
 		if (xml_variables == null) return;
 		
 		Dict item_variables_values = this.app.get("variables");
-		if (item_variables_values == null) return;
+		if (item_variables_values == null) item_variables_values = {};
 		
 		for (int i=0; i<xml_variables.count(); i++)
 		{

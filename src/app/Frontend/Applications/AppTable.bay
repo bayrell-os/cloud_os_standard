@@ -45,9 +45,6 @@
 	width: 400px;
 	padding-left: 10px;
 }
-.widget_table .widget_table__tr{
-	cursor: pointer;
-}
 .service_info{
 	padding-left: 10px;
 }

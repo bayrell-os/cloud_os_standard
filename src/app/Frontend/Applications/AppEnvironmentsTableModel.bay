@@ -66,6 +66,7 @@ class AppEnvironmentsTableModel extends TableDialogModel
 		
 		/* Add fields */
 		this.addWidgetFields(this);
+		this.addWidgetFields(form);
 		
 		/* Row buttons */
 		this.addField({

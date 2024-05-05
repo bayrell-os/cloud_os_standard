@@ -23,6 +23,7 @@ use Runtime.DateTime;
 use Runtime.Exceptions.ApiError;
 use Runtime.Exceptions.ItemNotFound;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryField;
 use Runtime.ORM.QueryFilter;
 use Runtime.ORM.Relation;
 use Runtime.Web.Annotations.ApiMethod;
@@ -71,25 +72,6 @@ class AppApi extends CrudApi
 	
 	
 	/**
-	 * Returns search fields
-	 */
-	Collection getSearchFields() => [
-		"id",
-		"name",
-		"stack_name",
-		"status",
-		"template_id",
-		"template_version_id",
-		"count_work",
-		"count_total",
-		"docker_tasks",
-		"content",
-		"gmtime_created",
-		"gmtime_updated",
-	];
-	
-	
-	/**
 	 * Returns item fields
 	 */
 	Collection getItemFields() => [
@@ -101,9 +83,17 @@ class AppApi extends CrudApi
 		"stack_name",
 		"status",
 		"template_id",
+		"template_uid",
+		"template_name",
+		"template_version",
 		"template_version_id",
+		"variables",
 		"volumes",
 		"yaml",
+		"yaml_file_id",
+		"count_work",
+		"count_total",
+		"docker_tasks",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -121,6 +111,36 @@ class AppApi extends CrudApi
 		"custom_patch",
 		"volumes",
 	];
+	
+	
+	/**
+	 * Returns query field
+	 */
+	QueryField getQueryField(string field_name)
+	{
+		if (field_name == "template_version")
+			return new QueryField("templates_versions", "version", field_name);
+		
+		if (field_name == "template_name")
+			return new QueryField("templates", "name", field_name);
+		
+		if (field_name == "template_id")
+			return new QueryField("templates", "id", field_name);
+		
+		if (field_name == "template_uid")
+			return new QueryField("templates", "uid", field_name);
+		
+		if (field_name == "count_work")
+			return new QueryField("docker_services", "count_work", field_name);
+		
+		if (field_name == "count_total")
+			return new QueryField("docker_services", "count_total", field_name);
+		
+		if (field_name == "docker_tasks")
+			return new QueryField("docker_services", "docker_tasks", field_name);
+		
+		return parent(field_name);
+	}
 	
 	
 	/**
@@ -154,16 +174,6 @@ class AppApi extends CrudApi
 		else if (status == "stop") q.where("applications.status", "!=", 1);
 		
 		q = q
-			.addFields([
-				"templates_versions.version as template_version",
-				"templates.name as template_name",
-				"templates.id as template_id",
-				"templates.uid as template_uid",
-				"docker_services.count_work as count_work",
-				"docker_services.count_total as count_total",
-				"docker_services.docker_tasks as docker_tasks",
-			])
-			
 			.orderBy("applications.stack_name", "asc")
 			.orderBy("applications.name", "asc")
 			
@@ -199,9 +209,9 @@ class AppApi extends CrudApi
 	/**
 	 * Convert item
 	 */
-	Map convertItem(string action, Relation item)
+	Map convertItem(Collection fields, Relation item)
 	{
-		item = parent::convertItem(action, item);
+		item = parent::convertItem(fields, item);
 		
 		bool is_admin = false;
 		XML xml = XML::loadXml(item.get("content"));
@@ -359,10 +369,14 @@ class AppApi extends CrudApi
 		}
 		
 		/* Update item */
-		await this.updateItem(update_data);
+		if (update_data != null)
+		{
+			await this.updateItem(update_data);
+		}
 		
 		/* Convert item */
-		Map model = this.convertItem("item", this.item);
+		Collection fields = this.getAllowedFields();
+		Map model = this.convertItem(fields, this.item);
 		Map pk = this.item.getPrimaryKey();
 		
 		/* Compose app */

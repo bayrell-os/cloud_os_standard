@@ -55,6 +55,12 @@ body, html {
 %(Select)widget_select{
 	max-width: 100%;
 }
+.d-flex{
+	display: flex;
+}
+.w-50{
+	width: 50%;
+}
 </style>
 
 </class>

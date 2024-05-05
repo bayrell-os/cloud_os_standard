@@ -51,33 +51,6 @@ class AppFormModel extends FormModel
 		"layout": this.layout,
 		"class_name": "app.application",
 		"primary_keys": ["id"],
-		"search_fields": [
-			"id",
-			"name",
-			"stack_name",
-			"status",
-			"template_id",
-			"template_version_id",
-			"count_work",
-			"count_total",
-			"gmtime_created",
-			"gmtime_updated",
-		],
-		"item_fields": [
-			"id",
-			"content",
-			"custom_patch",
-			"environments",
-			"name",
-			"stack_name",
-			"status",
-			"template_id",
-			"template_version_id",
-			"volumes",
-			"yaml",
-			"gmtime_created",
-			"gmtime_updated",
-		],
 		"save_fields": [
 			"custom_patch",
 			"environments",
@@ -199,6 +172,9 @@ class AppFormModel extends FormModel
 				classof AppModTableModel,
 				{
 					"widget_name": "modificators",
+					"foreign_key": {
+						"app_id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
 			
@@ -260,8 +236,10 @@ class AppFormModel extends FormModel
 			this.top_buttons.addWidget(
 				classof SaveButtonModel,
 				{
+					"form": this,
+					"show_result": true,
 					"styles": [
-						"last"
+						"default"
 					],
 				}
 			);
@@ -324,7 +302,7 @@ class AppFormModel extends FormModel
 		}
 		if (action == "recompose")
 		{
-			return "Recompose " ~ this.storage.item.get("stack_name") ~
+			return "Restart " ~ this.storage.item.get("stack_name") ~
 				"_" ~ this.storage.item.get("name")
 			;
 		}

@@ -24,7 +24,7 @@
 <template name="render">
 	%if (this.condition())
 	{
-		<Button href={{ this.getUrl() }}>Admin</Button>
+		<Button href={{ this.getUrl() }} styles=["small"]>Admin</Button>
 	}
 	%else
 	{

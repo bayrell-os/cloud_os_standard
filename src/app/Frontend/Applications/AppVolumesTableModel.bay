@@ -59,8 +59,20 @@ class AppVolumesTableModel extends TableDialogModel
 		
 		parent();
 		
+		/* Row number */
+		this.addField({
+			"name": "row_number",
+		});
+		
 		/* Add fields */
+		this.addWidgetFields(this);
 		this.addWidgetFields(form);
+		
+		/* Row buttons */
+		this.addField({
+			"name": "row_buttons",
+			"model": this.row_buttons,
+		});
 	}
 	
 	

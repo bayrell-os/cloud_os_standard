@@ -54,13 +54,12 @@ class AppPageModel extends CrudPageModel
 				classof AppFormModel,
 				{
 					"action": "edit",
+					"primary_key": {
+						"id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
 			this.render_list.addItem(form);
-			
-			/* Set primary key for id */
-			int id = this.layout.route.matches.get("id");
-			form.storage.setPrimaryKey({ "id": id });
 		}
 	}
 	

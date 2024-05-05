@@ -38,8 +38,7 @@
 .app_variables{
 	margin-right: 20px;
 }
-.app_total_patches
-{
+.app_total_patches{
 	display: flex;
 }
 .app_total_patches__items{
@@ -76,17 +75,17 @@
 					variable_name != "_var_service_name_"
 				)
 				{
-					<div class="widget_form__row" @key={{ variable_name }} data-name={{ variable_name }}>
-						<label class="widget_form__row_label">{{ variable_label }}</label>
-						<div class="widget_form__field">
-							<Input name={{ variable_name }}
-								value={{ variable_value }}
-								@event:onChange={{
-									void (var e) use (i, variable_name) =>
-										this.onChangeVariable(i, variable_name, e.target.value)
-								}}
-							/>
-						</div>
+					<div class="widget_form_group__row h-1808"
+						@key={{ variable_name }} data-name={{ variable_name }}
+					>
+						<label class="widget_form_group__row_label h-1808">{{ variable_label }}</label>
+						<Input name={{ variable_name }}
+							value={{ variable_value }}
+							@event:onChange={{
+								void (var e) use (i, variable_name) =>
+									this.onChangeVariable(i, variable_name, e.target.value)
+							}}
+						/>
 					</div>
 				}
 			}

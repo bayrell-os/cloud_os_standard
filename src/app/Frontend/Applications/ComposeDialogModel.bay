@@ -96,31 +96,9 @@ class ComposeDialogModel extends BaseModel
 	
 	
 	/**
-	 * On compose
+	 * Setup data from table
 	 */
-	async void onCompose(Dict data = null)
-	{
-		/* Form */
-		if (this.form)
-		{
-			this.action = "compose";
-			this.dialog.title = this.form.getPageTitle("compose");
-			
-			/* Set button label */
-			ButtonModel confirm_button = this.dialog.buttons.find("confirm_button");
-			confirm_button.content = "Compose";
-			
-			/* Show dialog */
-			this.dialog.result.clear();
-			this.dialog.show();
-		}
-	}
-	
-	
-	/**
-	 * On recompose
-	 */
-	async void onRecompose(Dict data = null)
+	void setTable(Dict data = null)
 	{
 		/* Table */
 		if (this.table)
@@ -136,19 +114,48 @@ class ComposeDialogModel extends BaseModel
 			Dict item = this.table.getItemByRowNumber(row_number);
 			item = Serializer::copy(item);
 			this.form.storage.setItem(item);
-			
-			/* Set button label */
-			ButtonModel confirm_button = this.dialog.buttons.find("confirm_button");
-			confirm_button.content = "Recompose";
-			
-			/* Set title */
-			this.action = "recompose";
-			this.dialog.title = this.form.getPageTitle("recompose");
-			
-			/* Show dialog */
-			this.dialog.result.clear();
-			this.dialog.show();
 		}
+	}
+	
+	
+	/**
+	 * On compose
+	 */
+	async void onCompose(Dict data = null)
+	{
+		this.setTable(data);
+		
+		this.action = "compose";
+		this.dialog.title = this.form.getPageTitle("compose");
+		
+		/* Set button label */
+		ButtonModel confirm_button = this.dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Compose";
+		
+		/* Show dialog */
+		this.dialog.result.clear();
+		this.dialog.show();
+	}
+	
+	
+	/**
+	 * On recompose
+	 */
+	async void onRecompose(Dict data = null)
+	{
+		this.setTable(data);
+		
+		/* Set button label */
+		ButtonModel confirm_button = this.dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Restart";
+		
+		/* Set title */
+		this.action = "recompose";
+		this.dialog.title = this.form.getPageTitle("recompose");
+		
+		/* Show dialog */
+		this.dialog.result.clear();
+		this.dialog.show();
 	}
 	
 	
@@ -157,20 +164,18 @@ class ComposeDialogModel extends BaseModel
 	 */
 	async void onStop(Dict data = null)
 	{
-		/* Form */
-		if (this.form)
-		{
-			this.action = "stop";
-			this.dialog.title = this.form.getPageTitle("stop");
-			
-			/* Set button label */
-			ButtonModel confirm_button = this.dialog.buttons.find("confirm_button");
-			confirm_button.content = "Stop";
-			
-			/* Show dialog */
-			this.dialog.result.clear();
-			this.dialog.show();
-		}
+		this.setTable(data);
+		
+		this.action = "stop";
+		this.dialog.title = this.form.getPageTitle("stop");
+		
+		/* Set button label */
+		ButtonModel confirm_button = this.dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Stop";
+		
+		/* Show dialog */
+		this.dialog.result.clear();
+		this.dialog.show();
 	}
 	
 	
@@ -209,13 +214,18 @@ class ComposeDialogModel extends BaseModel
 	async void compose()
 	{
 		Dict item_pk = this.form.storage.getItemPrimaryKey();
-		Dict item = this.form.storage.getItem();
-		item = item.intersect(this.form.storage.save_fields);
+		Dict item = null;
+		
+		if (not this.table)
+		{
+			this.form.storage.getItem();
+			item = item.intersect(this.form.storage.save_fields);
+		}
 		
 		this.dialog.result.setWaitMessage();
 		ApiResult res = await this.layout.callApi({
 			"api_name": "app.application::crud",
-			"method": "actionCompose",
+			"method_name": "actionCompose",
 			"data": {
 				"pk": item_pk,
 				"item": item,
@@ -236,7 +246,7 @@ class ComposeDialogModel extends BaseModel
 		this.dialog.result.setWaitMessage();
 		ApiResult res = await this.layout.callApi({
 			"api_name": "app.application::crud",
-			"method": "actionRecompose",
+			"method_name": "actionRecompose",
 			"data": {
 				"pk": item_pk,
 			}
@@ -256,7 +266,7 @@ class ComposeDialogModel extends BaseModel
 		this.dialog.result.setWaitMessage();
 		ApiResult res = await this.layout.callApi({
 			"api_name": "app.application::crud",
-			"method": "actionStop",
+			"method_name": "actionStop",
 			"data": {
 				"pk": item_pk,
 			}

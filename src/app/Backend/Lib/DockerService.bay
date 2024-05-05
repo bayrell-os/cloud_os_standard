@@ -86,20 +86,6 @@ class DockerService
 			}
 		);
 		
-		/* Create yaml file if does not exists */
-		int yaml_file_id = (int)app.get("yaml_file_id");
-		if (yaml_file_id == 0)
-		{
-			Relation yaml = new Relation("docker_yaml_files");
-		}
-		
-		/* Replace yaml file if wrong id */
-		else if (yaml.get("id") != yaml_file_id)
-		{
-			await yaml.delete(conn);
-			Relation yaml = new Relation("docker_yaml_files");
-		}
-		
 		/* Save yaml */
 		yaml.set("file_name", app.get("name") ~ ".conf");
 		yaml.set("stack_name", app.get("stack_name"));

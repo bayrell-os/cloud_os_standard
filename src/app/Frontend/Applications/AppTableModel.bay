@@ -63,7 +63,7 @@ class AppTableModel extends TableDialogModel
 		
 		parent();
 		
-		/* Create compose wiget */
+		/* Create compose dialog */
 		ComposeDialogModel compose_dialog = this.addWidget(
 			classof ComposeDialogModel,
 			{
@@ -136,11 +136,28 @@ class AppTableModel extends TableDialogModel
 		string status = this.layout.request_query.get("status", "");
 		if (status != "stop")
 		{
+			/* Remove delete button */
+			this.row_buttons.removeItemByName("delete_button");
+			
+			/* Stop button */
+			ButtonModel stop_button = this.row_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Stop",
+					"widget_name": "stop_button",
+					"styles": [
+						"danger",
+						"small",
+					],
+				}
+			);
+			stop_button.events.add("onClick", new Callback(compose_dialog, "onStop"));
+			
 			/* Recompose button */
 			ButtonModel recompose_button = this.row_buttons.addWidget(
 				classof ButtonModel,
 				{
-					"content": "Recompose",
+					"content": "Restart",
 					"widget_name": "recompose_button",
 					"styles": [
 						"default",
@@ -148,15 +165,12 @@ class AppTableModel extends TableDialogModel
 					],
 				}
 			);
-			
-			/* Recompose onClick */
-			ComposeDialogModel compose_dialog = this.getWidget("compose_dialog");
 			recompose_button.events.add("onClick", new Callback(compose_dialog, "onRecompose"));
 			
 			ButtonModel show_status_button = this.row_buttons.addWidget(
 				classof ButtonModel,
 				{
-					"content": "Status",
+					"content": "Info",
 					"widget_name": "show_status_button",
 					"styles": [
 						"default",
@@ -165,6 +179,23 @@ class AppTableModel extends TableDialogModel
 				}
 			);
 			show_status_button.events.add("onClick", new Callback(this, "onShowServiceInfo"));
+		}
+		else
+		{
+			/* Start button */
+			ButtonModel start_button = this.row_buttons.addWidget(
+				classof ButtonModel,
+				{
+					"content": "Start",
+					"widget_name": "start_button",
+					"styles": [
+						"primary",
+						"small",
+					],
+				},
+				"delete_button"
+			);
+			start_button.events.add("onClick", new Callback(compose_dialog, "onCompose"));
 		}
 		
 		/* Refresh button */

@@ -35,7 +35,7 @@ class LayoutModel extends BaseLayoutModel
 	{
 		#ifcode PHP then
 		$hostname = file_get_contents("/etc/hostname_orig");
-		$this->hostname = $hostname;
+		$this->hostname = trim($hostname);
 		#endif
 	}
 	
