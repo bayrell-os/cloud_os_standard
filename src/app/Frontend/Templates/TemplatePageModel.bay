@@ -31,9 +31,9 @@ class TemplatePageModel extends CrudPageModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		if (this.layout.route.name == "app:templates:index")
 		{
@@ -55,6 +55,9 @@ class TemplatePageModel extends CrudPageModel
 				classof TemplateFormModel,
 				{
 					"action": "edit",
+					"primary_key": {
+						"id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
 			this.render_list.addItem(form);
@@ -64,17 +67,14 @@ class TemplatePageModel extends CrudPageModel
 				classof VersionTableModel,
 				{
 					"widget_name": "version_table",
+					"foreign_key": {
+						"template_id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
-			version_table.storage.setPage(1);
 			
 			/* Add table to render list */
 			this.render_list.addItem(version_table);
-			
-			/* Set space id */
-			int id = this.layout.route.matches.get("id");
-			version_table.storage.setForeignKey("template_id", id);
-			version_table.getWidget("form").storage.setForeignKey("template_id", id);
 		}
 	}
 	

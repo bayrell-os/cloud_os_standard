@@ -45,9 +45,9 @@ class YamlFileFormModel extends FormModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Stacks */
 		Dictionary stack_name = this.addWidget(

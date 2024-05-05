@@ -45,9 +45,9 @@ class RouteFormModel extends FormModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Field enable */
 		this.addField({

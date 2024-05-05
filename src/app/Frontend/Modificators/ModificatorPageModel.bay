@@ -29,9 +29,9 @@ class ModificatorPageModel extends CrudPageModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		if (this.layout.route.name == "app:modificators:index")
 		{

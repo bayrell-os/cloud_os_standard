@@ -42,14 +42,17 @@ class NginxTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Create form
+	 */
+	NginxFormModel createForm() => this.addWidget(classof NginxFormModel);
+	
+	
+	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		this.addWidget(classof NginxFormModel);
-		
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({

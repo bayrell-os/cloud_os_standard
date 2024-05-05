@@ -33,9 +33,9 @@ class WorkspacePageModel extends CrudPageModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		if (this.layout.route.name == "app:workspace:index")
 		{
@@ -57,13 +57,11 @@ class WorkspacePageModel extends CrudPageModel
 				classof WorkspaceFormModel,
 				{
 					"action": "edit",
+					"primary_key": {
+						"id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
-			
-			/* Set primary key for id */
-			form.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
 			
 			/* Add form to render list */
 			this.render_list.addItem(form);
@@ -74,17 +72,14 @@ class WorkspacePageModel extends CrudPageModel
 				{
 					"widget_name": "domain_table",
 					"title": "Domains",
+					"foreign_key": {
+						"space_id": this.layout.route.matches.get("id")
+					},
 				}
 			);
-			domain_table.storage.setPage(1);
 			
 			/* Add table to render list */
 			this.render_list.addItem(domain_table);
-			
-			/* Set foreign key */
-			int id = this.layout.route.matches.get("id");
-			domain_table.storage.setForeignKey("space_id", id);
-			domain_table.getWidget("form").storage.setForeignKey("space_id", id);
 		}
 	}
 	

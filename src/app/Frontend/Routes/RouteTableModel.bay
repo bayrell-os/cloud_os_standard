@@ -44,14 +44,17 @@ class RouteTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Create form
+	 */
+	RouteFormModel createForm() => this.addWidget(classof RouteFormModel);
+	
+	
+	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		this.addWidget(classof RouteFormModel);
-		
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({

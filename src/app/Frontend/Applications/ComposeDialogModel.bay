@@ -58,9 +58,9 @@ class ComposeDialogModel extends BaseModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Setup dialog */
 		this.dialog = this.addWidget(classof DialogModel);

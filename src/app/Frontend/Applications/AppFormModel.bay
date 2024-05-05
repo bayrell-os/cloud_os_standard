@@ -67,9 +67,9 @@ class AppFormModel extends FormModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Stacks */
 		Dictionary stack_id = this.addWidget(
@@ -177,11 +177,6 @@ class AppFormModel extends FormModel
 					},
 				}
 			);
-			
-			/* Set foreign key */
-			int app_id = this.layout.route.matches.get("id");
-			modificators.storage.setForeignKey("app_id", app_id );
-			modificators.getWidget("form").storage.setForeignKey("app_id", app_id );
 			
 			/* Environments */
 			AppEnvironmentsTableModel environments = this.addWidget(

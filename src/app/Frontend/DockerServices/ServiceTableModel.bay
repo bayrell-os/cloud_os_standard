@@ -48,9 +48,9 @@ class ServiceTableModel extends TableModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({

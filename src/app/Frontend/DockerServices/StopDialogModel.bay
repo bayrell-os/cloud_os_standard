@@ -55,9 +55,9 @@ class StopDialogModel extends DialogModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Setup dialog */
 		this.title = "Stop item";

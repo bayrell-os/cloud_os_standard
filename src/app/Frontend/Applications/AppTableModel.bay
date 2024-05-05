@@ -54,14 +54,17 @@ class AppTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Create form
+	 */
+	AppFormModel createForm() => this.addWidget(classof AppFormModel);
+	
+	
+	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		AppFormModel form = this.addWidget(classof AppFormModel);
-		
-		parent();
+		parent(params);
 		
 		/* Create compose dialog */
 		ComposeDialogModel compose_dialog = this.addWidget(

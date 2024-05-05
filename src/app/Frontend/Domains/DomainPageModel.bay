@@ -32,9 +32,9 @@ class DomainPageModel extends CrudPageModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		if (this.layout.route.name == "app:domains:index")
 		{
@@ -52,14 +52,15 @@ class DomainPageModel extends CrudPageModel
 			this.setAction("edit");
 			
 			/* Create form widget */
-			DomainFormModel form = this.addWidget(classof DomainFormModel, {
-				"action": "edit"
-			});
-			
-			/* Set primary key for id */
-			form.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
+			DomainFormModel form = this.addWidget(
+				classof DomainFormModel,
+				{
+					"action": "edit",
+					"primary_key": {
+						"id": this.layout.route.matches.get("id"),
+					}
+				}
+			);
 			
 			/* Add form to render list */
 			this.render_list.addItem(form);
@@ -70,18 +71,17 @@ class DomainPageModel extends CrudPageModel
 				{
 					"widget_name": "route_table",
 					"title": "Routes",
+					"foreign_key": {
+						"domain_id": this.layout.route.matches.get("id"),
+					},
 				}
 			);
-			route_table.storage.setPage(1);
+			
+			/* Remove domain id */
+			route_table.getWidget("form").removeField("domain_id");
 			
 			/* Add table to render list */
 			this.render_list.addItem(route_table);
-			
-			/* Set foreign key */
-			int id = this.layout.route.matches.get("id");
-			route_table.storage.setForeignKey("domain_id", id);
-			route_table.getWidget("form").storage.setForeignKey("domain_id", id);
-			route_table.getWidget("form").removeField("domain_id");
 		}
 	}
 	

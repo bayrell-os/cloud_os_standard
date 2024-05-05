@@ -47,17 +47,9 @@ class AppVolumesTableModel extends TableDialogModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		FormModel form = this.addWidget(
-			classof FormModel,
-			{
-				"storage": this.createDataStorage(),
-			}
-		);
-		
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({
@@ -66,7 +58,7 @@ class AppVolumesTableModel extends TableDialogModel
 		
 		/* Add fields */
 		this.addWidgetFields(this);
-		this.addWidgetFields(form);
+		this.addWidgetFields(this.form);
 		
 		/* Row buttons */
 		this.addField({

@@ -42,9 +42,9 @@ class TemplateFormModel extends FormModel
 	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		parent();
+		parent(params);
 		
 		/* Field name */
 		this.addField({
@@ -84,11 +84,6 @@ class TemplateFormModel extends FormModel
 				}
 			);
 			save_button.events.add("onClick", new Callback(this, "save"));
-			
-			/* Set primary key for id */
-			this.storage.setPrimaryKey({
-				"id": this.layout.route.matches.get("id"),
-			});
 		}
 	}
 	

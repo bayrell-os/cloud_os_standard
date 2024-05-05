@@ -43,14 +43,17 @@ class TemplateTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Create form
+	 */
+	TemplateFormModel createForm() => this.addWidget(classof TemplateFormModel);
+	
+	
+	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		this.addWidget(classof TemplateFormModel);
-		
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({

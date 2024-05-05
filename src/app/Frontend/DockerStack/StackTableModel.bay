@@ -42,14 +42,17 @@ class StackTableModel extends TableDialogModel
 	
 	
 	/**
+	 * Create form
+	 */
+	StackFormModel createForm() => this.addWidget(classof StackFormModel);
+	
+	
+	/**
 	 * Init widget settings
 	 */
-	void initWidget()
+	void initWidget(Dict params)
 	{
-		/* Create form */
-		this.addWidget(classof StackFormModel);
-		
-		parent();
+		parent(params);
 		
 		/* Row number */
 		this.addField({
