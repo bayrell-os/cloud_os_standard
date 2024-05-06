@@ -53,7 +53,7 @@ static class ModuleDescription
 		"Runtime.Widget": ">=0.12",
 		
 		#ifdef BACKEND then
-		"Bayrell.CloudOS.Backend": ">=0.5",
+		"Bayrell.CloudOS.Backend": "*",
 		#endif
 	};
 	

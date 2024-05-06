@@ -40,19 +40,19 @@ class Nginx extends BaseRoute
 			{
 				"uri": "/api/bus/nginx/changes/",
 				"name": "app:bus:nginx:changes",
-				"method": "actionNginxChanges",
+				"action": "actionNginxChanges",
 			},
 			new RouteInfo
 			{
 				"uri": "/api/bus/ssl/changes/",
 				"name": "app:bus:ssl:changes",
-				"method": "actionSSLChanges",
+				"action": "actionSSLChanges",
 			},
 			new RouteInfo
 			{
 				"uri": "/api/bus/ssl/get_changes/",
 				"name": "app:bus:ssl:get_changes",
-				"method": "actionSSLChanges",
+				"action": "actionSSLChanges",
 			},
 		];
 	}
@@ -64,13 +64,13 @@ class Nginx extends BaseRoute
 	async void actionNginxChanges()
 	{
 		Connection conn = Connection::getConnection();
-		int timestamp = (int)this.container.request.payload["data", "timestamp"];
+		int timestamp = (int)this.post_data["data", "timestamp"];
 		
 		Query q = (new Query)
 			.select("nginx_files")
+			.addField("nginx_files.*")
 			.where("nginx_files.timestamp", ">=", timestamp)
 		;
-		
 		QueryResult items = await conn.fetchAll(q);
 		
 		/* Convert datetime */
@@ -78,8 +78,8 @@ class Nginx extends BaseRoute
 			Dict (Dict item)
 			{
 				return item.copy({
-					"gmtime_created": item.get("gmtime_created").getRFC822(),
-					"gmtime_updated": item.get("gmtime_updated").getRFC822(),
+					"gmtime_created": item.get("gmtime_created").toString(),
+					"gmtime_updated": item.get("gmtime_updated").toString(),
 				})
 			}
 		);
