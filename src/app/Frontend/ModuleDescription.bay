@@ -85,20 +85,6 @@ static class ModuleDescription
 		
 		/* Routes */
 		new Route("Bayrell.CloudOS.Frontend.Adminer.AdminerRoute"),
-		/*new Route("Bayrell.CloudOS.Frontend.Applications.AppPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.DockerServices.ServicePageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.DockerStack.StackPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Domains.DomainPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Main.MainRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Modificators.ModificatorPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.NginxFiles.NginxPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Routes.RoutePageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.SSLGroup.SSLPageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Settings.SettingsRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Templates.TemplatePageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.Workspace.WorkspacePageRoute"),*/
-		/*new Route("Bayrell.CloudOS.Frontend.XML.ImportRoute"),*/
 		new Route("Bayrell.CloudOS.Frontend.Routes"),
 		#endif
 	];

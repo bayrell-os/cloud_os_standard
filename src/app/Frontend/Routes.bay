@@ -141,12 +141,14 @@ class Routes extends BaseRoute
 				"name": "app:routes:index",
 				"model": "Bayrell.CloudOS.Frontend.Routes.RoutePageModel",
 			},
+			*/
 			new RouteInfo
 			{
 				"uri": "/ssl/",
 				"name": "app:ssl:index",
 				"model": "Bayrell.CloudOS.Frontend.SSLGroup.SSLPageModel",
 			},
+			/*
 			new RouteInfo
 			{
 				"uri": "/workspace/",

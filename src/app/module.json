@@ -5,6 +5,8 @@
 		"Frontend/Hooks/AppHook.bay",
 		"Frontend/Main/AboutPage.bay",
 		"Frontend/Main/IndexPage.bay",
+		"Frontend/SSLGroup/SSLPage.bay",
+		"Frontend/SSLGroup/SSLPageModel.bay",
 		"Frontend/DefaultLayout.bay",
 		"Frontend/LayoutModel.bay",
 		"Frontend/NotFoundPage.bay",

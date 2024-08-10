@@ -1,5 +1,6 @@
 <?php
 
+error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 ini_set('html_errors', 'on');
 set_time_limit(30);

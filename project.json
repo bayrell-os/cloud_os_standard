@@ -27,7 +27,8 @@
 			"dest": "src/public/assets/runtime.js",
 			"modules":
 			[
-				"@runtime"
+				"@runtime",
+				"@widget"
 			]
 		}
 	],

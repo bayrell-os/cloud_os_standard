@@ -18,31 +18,26 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
-use Runtime.ORM.Query;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
-use Runtime.Widget.Crud.Rules.CrudRule;
-use Runtime.Widget.Crud.Rules.LowerCase;
-use Runtime.Widget.Crud.Rules.Purify;
-use Runtime.Widget.Crud.Rules.Required;
-use Runtime.Widget.Crud.Rules.Unique;
+use Runtime.Widget.Crud.SearchRelationApi;
 
 
-class SSLGroupApi extends CrudApi
+class SSLGroupSearch extends SearchRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.ssl_group::crud";
+	pure string getApiName() => "app.ssl_group::search";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains_ssl_groups";
+	string getTableName() => "domains_ssl_groups";
 	
 	
 	/**
@@ -54,28 +49,6 @@ class SSLGroupApi extends CrudApi
 		"container_name",
 		"gmtime_created",
 		"gmtime_updated",
-	];
-	
-	
-	/**
-	 * Returns save fields
-	 */
-	Collection getSaveFields() => [
-		"name",
-		"container_name",
-	];
-	
-	
-	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
-	[
-		new Purify{ "name": "name" },
-		new LowerCase{ "name": "name" },
-		new Required{ "name": "name" },
-        new Purify{ "name": "container_name" },
-		new LowerCase{ "name": "container_name" },
 	];
 	
 	
@@ -94,26 +67,7 @@ class SSLGroupApi extends CrudApi
 	@ApiMethod
 	async void actionSearch()
 	{
-		await parent::actionSearch();
-	}
-	
-	
-	/**
-	 * Action save
-	 */
-	@ApiMethod
-	async void actionSave()
-	{
-		await parent::actionSave();
-	}
-	
-	
-	/**
-	 * Action delete
-	 */
-	@ApiMethod
-	async void actionDelete()
-	{
-		await parent::actionDelete();
+		await this.searchItems();
+		await this.buildResult();
 	}
 }

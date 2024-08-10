@@ -59,6 +59,8 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupSave"),
+		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupSearch"),
 		/*
 		new Api("Bayrell.CloudOS.Backend.Api.AppApi"),
 		new Api("Bayrell.CloudOS.Backend.Api.AppModApi"),
@@ -77,6 +79,7 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Backend.Api.YamlFileApi"),
 		*/
 		new SQLiteFactory{
+			"name": "default",
 			"path": "/data/db/cloud_os.db",
 		},
 		new Database("Bayrell.CloudOS.Backend.Database.Schema"),
