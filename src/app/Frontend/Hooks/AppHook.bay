@@ -31,9 +31,7 @@ class AppHook extends BaseAppHook
 	 */
 	void register_hooks()
 	{
-		this.register( static::COMPONENTS, 1000 );
-		this.register( static::EXPORT_CONTAINER_DATA );
-		this.register( static::RENDER_PROVIDER_SETTINGS );
+		this.register(static::RENDER_PROVIDER_SETTINGS);
 	}
 	
 	
@@ -45,31 +43,5 @@ class AppHook extends BaseAppHook
 		/* Restore SSR content in Frontend */
 		params.set("ssr", true);
 		params.set("break", 0);
-	}
-	
-	
-	/**
-	 * Export container data
-	 */
-	void export_container_data(Map params)
-	{
-		Map data = params.get("data");
-		
-		/* Setup modules */
-		data.set("entry_point", "Bayrell.CloudOS.Frontend.WebApp");
-		data.set("modules", [
-			"Bayrell.CloudOS.Frontend"
-		]);
-	}
-	
-	
-	/**
-	 * App components
-	 */
-	void components(Map params)
-	{
-		params["components"].appendItems([
-			/*"Bayrell.CloudOS.Frontend.CSS",*/
-		]);
 	}
 }

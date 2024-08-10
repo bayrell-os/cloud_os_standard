@@ -19,7 +19,7 @@
 			"dest": "src/public/assets/app.js",
 			"modules":
 			[
-				"Bayrell.CloudOS"
+				"@app"
 			]
 		},
 		{
@@ -27,16 +27,7 @@
 			"dest": "src/public/assets/runtime.js",
 			"modules":
 			[
-				"Runtime",
-				"Runtime.Web",
-				"Runtime.Widget",
-				"Runtime.Widget.ContextMenu",
-				"Runtime.Widget.Crud",
-				"Runtime.Widget.Dialog",
-				"Runtime.Widget.Form",
-				"Runtime.Widget.Tab",
-				"Runtime.Widget.Table",
-				"Runtime.Widget.CodeMirror"
+				"@runtime"
 			]
 		}
 	],

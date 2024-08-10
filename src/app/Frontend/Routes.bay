@@ -28,7 +28,7 @@ class Routes extends BaseRoute
 	/**
 	 * Returns layout name
 	 */
-	string getLayoutName() => "default";
+	pure string getLayoutName() => "default";
 	
 	
 	/**
@@ -50,6 +50,7 @@ class Routes extends BaseRoute
 			},
 			
 			/* Applications */
+			/*
 			new RouteInfo
 			{
 				"uri": "/applications/",
@@ -62,8 +63,10 @@ class Routes extends BaseRoute
 				"name": "app:applications:edit",
 				"model": "Bayrell.CloudOS.Frontend.Applications.AppPageModel",
 			},
+			*/
 			
 			/* Template */
+			/*
 			new RouteInfo
 			{
 				"uri": "/templates/",
@@ -88,8 +91,10 @@ class Routes extends BaseRoute
 				"name": "app:modificators:index",
 				"model": "Bayrell.CloudOS.Frontend.Modificators.ModificatorPageModel",
 			},
+			*/
 			
 			/* Docker */
+			/*
 			new RouteInfo
 			{
 				"uri": "/docker/service/",
@@ -108,8 +113,10 @@ class Routes extends BaseRoute
 				"name": "app:docker:yaml:index",
 				"model": "Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePageModel",
 			},
+			*/
 			
 			/* Load balancing */
+			/*
 			new RouteInfo
 			{
 				"uri": "/domains/",
@@ -152,8 +159,10 @@ class Routes extends BaseRoute
 				"name": "app:workspace:edit",
 				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel",
 			},
+			*/
 			
 			/* Other */
+			/*
 			new RouteInfo
 			{
 				"uri": "/about/",
@@ -180,7 +189,7 @@ class Routes extends BaseRoute
 				"data": {
 					"title": "Database",
 				},
-			},
+			},*/
 		];
 	}
 }

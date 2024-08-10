@@ -21,17 +21,19 @@ namespace Bayrell.CloudOS.Frontend;
 use Runtime.Serializer;
 use Runtime.Web.BaseLayoutModel;
 use Runtime.Web.RenderContainer;
+use Bayrell.CloudOS.Frontend.DefaultLayout;
 
 
 class LayoutModel extends BaseLayoutModel
 {
+	string component = classof DefaultLayout;
 	string hostname = "";
 	
 	
 	/**
-	 * Init layout
+	 * Load data
 	 */
-	async void init(RenderContainer container)
+	async void loadData(RenderContainer container)
 	{
 		#ifcode PHP then
 		$hostname = file_get_contents("/etc/hostname_orig");
@@ -43,7 +45,7 @@ class LayoutModel extends BaseLayoutModel
 	/**
 	 * Process frontend data
 	 */
-	void processFrontendData(Serializer serializer, Map data)
+	void serialize(Serializer serializer, Map data)
 	{
 		serializer.process(this, "hostname", data);
 		parent(serializer, data);

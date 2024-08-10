@@ -6,7 +6,7 @@ BASE_PATH=`dirname $SCRIPT_PATH`
 
 RETVAL=0
 IMAGE="bayrell/cloud_os_standard"
-VERSION=0.5.0
+VERSION=0.5.1
 TAG=`date '+%Y%m%d_%H%M%S'`
 
 case "$1" in

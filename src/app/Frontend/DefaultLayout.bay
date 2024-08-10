@@ -27,6 +27,43 @@
 <use name="Bayrell.CloudOS.ModuleDescription" />
 
 
+<style global="true">
+body, html {
+	font-family: var(--widget-font-family);
+	font-size: var(--widget-font-size);
+	line-height: var(--widget-line-height);
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+%(Table)widget_table{
+	%(RowButtons)widget_table__top_buttons{
+		margin-bottom: calc(var(--widget-space) * 2);
+	}
+	.widget_table__table{
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+	.widget_table__th{
+		text-align: left;
+	}
+	.widget_table__th, .widget_table__td{
+		border-bottom: 1px solid #ccc;
+		padding: 10px;
+	}
+}
+%(Select)widget_select{
+	max-width: 100%;
+}
+.d-flex{
+	display: flex;
+}
+.w-50{
+	width: 50%;
+}
+</style>
+
+
 <style>
 .app_layout{
 	height: 100%;

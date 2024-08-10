@@ -22,8 +22,10 @@ use Runtime.Entity.Hook;
 use Runtime.ORM.Annotations.Database;
 use Runtime.Unit.UnitTest;
 use Runtime.Web.Annotations.Api;
+use Runtime.Web.Annotations.FooterComponents;
 use Runtime.Web.Annotations.RemoteClass;
 use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.SetupLayout;
 
 
 static class ModuleDescription
@@ -66,36 +68,20 @@ static class ModuleDescription
 		new Hook("Bayrell.CloudOS.Frontend.Hooks.AppHook"),
 		
 		/* Setup layout */
-		new Hook(
-			"Runtime.Web.Hooks.SetupLayout",
-			{
-				"model": "Bayrell.CloudOS.Frontend.LayoutModel",
-				"names": {
-					"default": "Bayrell.CloudOS.Frontend.DefaultLayout",
-				},
-			}
-		),
+		new SetupLayout
+		{
+			"default": "Bayrell.CloudOS.Frontend.LayoutModel",
+		},
 		
 		#ifdef BACKEND then
 		
 		/* Header and Footer */
-		new Hook(
-			"Runtime.Web.Hooks.Components",
-			{
-				"header": [
-					/*"Bayrell.CloudOS.Frontend.CSS",*/
-				],
-				"footer": [
-					"Bayrell.CloudOS.Frontend.Scripts",
-				],
-			}
-		),
+		new FooterComponents([
+			"Bayrell.CloudOS.Frontend.Scripts",
+		]),
 		
-		/* Page not found
-		new Hook("Runtime.Web.Hooks.PageNotFound", {
-			"model": "Bayrell.Components.NotFound.NotFoundModel"
-		}),
-		*/
+		/* Page not found */
+		/*new PageNotFound("Bayrell.Components.NotFound.NotFoundModel"),*/
 		
 		/* Routes */
 		new Route("Bayrell.CloudOS.Frontend.Adminer.AdminerRoute"),
