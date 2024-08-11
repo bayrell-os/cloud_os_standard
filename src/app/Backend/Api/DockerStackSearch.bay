@@ -44,7 +44,7 @@ class DockerStackSearch extends SearchRelationApi
 	 * Returns item fields
 	 */
 	Collection getItemFields() =>
-    [
+	[
 		"stack_name",
 		"gmtime_created",
 		"gmtime_updated",
@@ -66,7 +66,6 @@ class DockerStackSearch extends SearchRelationApi
 	@ApiMethod
 	async void actionSearch()
 	{
-		await this.searchItems();
-		await this.buildResult();
+		await parent();
 	}
 }

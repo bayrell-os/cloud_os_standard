@@ -31,21 +31,20 @@ use Runtime.Widget.Crud.Rules.Purify;
 use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
-use Bayrell.CloudOS.Lib.DockerService;
 
 
-class DockerYamlFileSave extends SaveRelationApi
+class WorkspaceSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	static string getApiName() => "app.docker.yaml::save";
+	static string getApiName() => "app.workspace::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	string getTableName() => "docker_yaml_files";
+	string getTableName() => "spaces";
 	
 	
 	/**
@@ -53,10 +52,11 @@ class DockerYamlFileSave extends SaveRelationApi
 	 */
 	Vector<CrudRule> getRules() =>
 	[
-		new Purify{ "name": "stack_name" },
-		new LowerCase{ "name": "stack_name" },
-		new Required{ "name": "stack_name" },
-		new Required{ "name": "file_name" },
+		new Purify{ "name": "name" },
+		new Required{ "name": "name" },
+		new Purify{ "name": "uid" },
+		new LowerCase{ "name": "uid" },
+		new Unique{"keys": ["uid"]},
 	];
 	
 	
@@ -66,9 +66,8 @@ class DockerYamlFileSave extends SaveRelationApi
 	Collection getItemFields() =>
 	[
 		"id",
-		"stack_name",
-		"file_name",
-		"content",
+		"name",
+		"uid",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -79,10 +78,17 @@ class DockerYamlFileSave extends SaveRelationApi
 	 */
 	Collection getSaveFields() =>
 	[
-		"stack_name",
-		"file_name",
-		"content",
+		"name",
+		"uid",
 	];
+	
+	
+	/**
+	 * Build search query
+	 */
+	async void buildSearchQuery(Query q)
+	{
+	}
 	
 	
 	/**
@@ -112,18 +118,5 @@ class DockerYamlFileSave extends SaveRelationApi
 	async void actionDelete()
 	{
 		await parent();
-	}
-	
-	
-	/**
-	 * Action save
-	 */
-	async void actionCompose()
-	{
-		await parent();
-		
-		/* Compose yaml file */
-		string message = await DockerService::composeYamlFile(this.item);
-		this.result.setErrorMessage(message);
 	}
 }

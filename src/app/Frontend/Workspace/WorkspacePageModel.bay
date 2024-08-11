@@ -18,18 +18,29 @@
 
 namespace Bayrell.CloudOS.Frontend.Workspace;
 
-use Runtime.Web.PageModel;
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
-use Runtime.Widget.RenderListModel;
-use Runtime.Widget.Crud.CrudPageModel;
-use Bayrell.CloudOS.Frontend.Workspace.DomainTableModel;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspaceFormModel;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspaceTableModel;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Workspace.WorkspacePage;
 
 
-class WorkspacePageModel extends CrudPageModel
+class WorkspacePageModel extends BasePageModel
 {
+	string component = classof WorkspacePage;
+	FormModel form = null;
+	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
+	
+	
 	/**
 	 * Init widget settings
 	 */
@@ -37,50 +48,138 @@ class WorkspacePageModel extends CrudPageModel
 	{
 		parent(params);
 		
-		if (this.layout.route.name == "app:workspace:index")
-		{
-			/* Set action */
-			this.setAction("index");
-			
-			/* Create table widget */
-			WorkspaceTableModel table = this.addWidget(classof WorkspaceTableModel);
-			this.render_list.addItem(table);
-		}
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"buttons":
+				[
+					{
+						"content": "Add",
+						"widget_name": "add_button",
+						"styles": [
+							"success",
+						]
+					},
+				],
+				"events":
+				{
+					"click": new Callback(this, "onTopButtonsClick"),
+				},
+			}
+		);
 		
-		else if (this.layout.route.name == "app:workspace:edit")
-		{
-			/* Set action */
-			this.setAction("edit");
-			
-			/* Create form widget */
-			WorkspaceFormModel form = this.addWidget(
-				classof WorkspaceFormModel,
-				{
-					"action": "edit",
-					"primary_key": {
-						"id": this.layout.route.matches.get("id"),
+		/* Add form */
+		this.form = this.addWidget(
+			classof FormModel,
+			{
+				"widget_name": "edit_form",
+				"primary_key": ["id"],
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveStorage",
+					{
+						"api_name": "app.workspace::save",
+					}
+				),
+				"fields":
+				[
+					{
+						"name": "name",
+						"label": "Name",
+						"component": "Runtime.Widget.Input",
 					},
-				}
-			);
-			
-			/* Add form to render list */
-			this.render_list.addItem(form);
-			
-			/* Create domains table widget */
-			DomainTableModel domain_table = this.addWidget(
-				classof DomainTableModel,
-				{
-					"widget_name": "domain_table",
-					"title": "Domains",
-					"foreign_key": {
-						"space_id": this.layout.route.matches.get("id")
+					{
+						"name": "uid",
+						"label": "UID",
+						"component": "Runtime.Widget.Input",
 					},
-				}
-			);
-			
-			/* Add table to render list */
-			this.render_list.addItem(domain_table);
-		}
+				],
+			}
+		);
+		
+		/* Add table */
+		this.table = this.addWidget(
+			classof TableDialogModel,
+			{
+				"widget_name": "table",
+				"get_title": void (Dict params)
+				{
+					string action = params.get("action");
+					Dict item = params.get("item");
+					if (action == "add")
+					{
+						return "Add workspace";
+					}
+					if (action == "edit")
+					{
+						return "Show workspace '" ~ item.get("name") ~ "'";
+					}
+					if (action == "delete")
+					{
+						return "Delete workspace '" ~ item.get("name") ~ "'";
+					}
+					return "";
+				},
+				"styles": ["border"],
+				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.workspace::search",
+					}
+				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
+				
+				/* Form */
+				"add_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"primary_key": ["id"],
+						"storage": new Factory(
+							classof FormDeleteStorage,
+							{
+								"api_name": "app.workspace::save"
+							}
+						),
+					}
+				),
+				
+				/* Table fields */
+				"fields":
+				[
+					{
+						"name": "row_number",
+					},
+					{
+						"name": "name",
+						"label": "Name",
+					},
+					{
+						"name": "uid",
+						"label": "UID",
+					},
+					{
+						"name": "row_buttons",
+						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
+					},
+				],
+			}
+		);
+		
+		/* Edit button */
+		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
+		ButtonModel edit_button = row_buttons.getWidget("edit_button");
+		edit_button.clearListener("click");
 	}
 	
 	
@@ -89,15 +188,18 @@ class WorkspacePageModel extends CrudPageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		/* Set title */
-		if (this.action == "index")
+		this.layout.setPageTitle("List of workspaces");
+	}
+	
+	
+	/**
+	 * Top buttons click
+	 */
+	void onTopButtonsClick(ClickMessage message)
+	{
+		if (message.widget.widget_name == "add_button")
 		{
-			this.layout.setPageTitle("List of workspaces");
-		}
-		else if (this.action == "edit")
-		{
-			WorkspaceFormModel form = this.getWidget("form");
-			this.layout.setPageTitle(form.getPageTitle("edit"));
+			this.table.save_dialog.showAdd();
 		}
 	}
 }

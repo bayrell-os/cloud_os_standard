@@ -60,10 +60,21 @@ class DockerStackSave extends SaveRelationApi
 	
 	
 	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() =>
+	[
+		"stack_name",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
 	 * Returns save fields
 	 */
 	Collection getSaveFields() =>
-    [
+	[
 		"stack_name",
 	];
 	
@@ -74,15 +85,7 @@ class DockerStackSave extends SaveRelationApi
 	@ApiMethod
 	async void actionItem()
 	{
-		/* Load data */
-		await this.loadItem();
-		await this.loadData();
-		
-		/* Build result */
-		await this.buildResult();
-		
-		/* Success */
-		this.success();
+		await parent();
 	}
 	
 	
@@ -92,19 +95,7 @@ class DockerStackSave extends SaveRelationApi
 	@ApiMethod
 	async void actionSave()
 	{
-		/* Load data */
-		await this.loadItem();
-		await this.loadData();
-		
-		/* Save item */
-		await this.processData();
-		await this.saveItem();
-		
-		/* Build result */
-		await this.buildResult();
-		
-		/* Success */
-		this.success();
+		await parent();
 	}
 	
 	
@@ -114,11 +105,6 @@ class DockerStackSave extends SaveRelationApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		/* Remove item */
-		await this.loadItem();
-		await this.removeItem();
-		
-		/* Build result */
-		await this.buildResult();
+		await parent();
 	}
 }

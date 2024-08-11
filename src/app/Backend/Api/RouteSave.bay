@@ -31,21 +31,20 @@ use Runtime.Widget.Crud.Rules.Purify;
 use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
-use Bayrell.CloudOS.Lib.DockerService;
 
 
-class DockerYamlFileSave extends SaveRelationApi
+class RouteSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	static string getApiName() => "app.docker.yaml::save";
+	static string getApiName() => "app.route::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	string getTableName() => "docker_yaml_files";
+	string getTableName() => "routes";
 	
 	
 	/**
@@ -53,10 +52,12 @@ class DockerYamlFileSave extends SaveRelationApi
 	 */
 	Vector<CrudRule> getRules() =>
 	[
-		new Purify{ "name": "stack_name" },
-		new LowerCase{ "name": "stack_name" },
-		new Required{ "name": "stack_name" },
-		new Required{ "name": "file_name" },
+		new Purify{ "name": "docker_name" },
+		new LowerCase{ "name": "docker_name" },
+		new Required{ "name": "docker_name" },
+		new Required{ "name": "domain_id" },
+		new Required{ "name": "enable" },
+		new Required{ "name": "protocol" },
 	];
 	
 	
@@ -66,9 +67,16 @@ class DockerYamlFileSave extends SaveRelationApi
 	Collection getItemFields() =>
 	[
 		"id",
-		"stack_name",
-		"file_name",
-		"content",
+		"enable",
+		"protocol",
+		"domain_id",
+		"domain_name",
+		"route_prefix",
+		"docker_name",
+		"source_port",
+		"target_port",
+		"target_prefix",
+		"nginx_config",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -79,10 +87,32 @@ class DockerYamlFileSave extends SaveRelationApi
 	 */
 	Collection getSaveFields() =>
 	[
-		"stack_name",
-		"file_name",
-		"content",
+		"enable",
+		"protocol",
+		"domain_id",
+		"route_prefix",
+		"docker_name",
+		"source_port",
+		"target_port",
+		"target_prefix",
+		"nginx_config",
 	];
+	
+	
+	/**
+	 * Process data
+	 */
+	async void processData()
+	{
+		await parent();
+		
+		/* Set domain_id */
+		int domain_id = (int)this.post_data["domain_id"];
+		if (domain_id > 0)
+		{
+			this.item.set("domain_id", domain_id);
+		}
+	}
 	
 	
 	/**
@@ -112,18 +142,5 @@ class DockerYamlFileSave extends SaveRelationApi
 	async void actionDelete()
 	{
 		await parent();
-	}
-	
-	
-	/**
-	 * Action save
-	 */
-	async void actionCompose()
-	{
-		await parent();
-		
-		/* Compose yaml file */
-		string message = await DockerService::composeYamlFile(this.item);
-		this.result.setErrorMessage(message);
 	}
 }

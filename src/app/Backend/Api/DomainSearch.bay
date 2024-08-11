@@ -26,18 +26,18 @@ use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.SearchRelationApi;
 
 
-class NginxFileSearch extends SearchRelationApi
+class DomainSearch extends SearchRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.nginx_files::search";
+	pure string getApiName() => "app.domain::search";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	string getTableName() => "nginx_files";
+	string getTableName() => "domains";
 	
 	
 	/**
@@ -46,9 +46,9 @@ class NginxFileSearch extends SearchRelationApi
 	Collection getItemFields() =>
 	[
 		"id",
-		"name",
-		"content",
-		"enable",
+		"domain_name",
+		"space_id",
+		"space_name",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -59,7 +59,20 @@ class NginxFileSearch extends SearchRelationApi
 	 */
 	async void buildSearchQuery(Query q)
 	{
-		q.orderBy("name", "asc");
+		int space_id = (int)this.post_data.get("space_id");
+		if (space_id > 0)
+		{
+			q.where("domains.space_id", "=", space_id);
+		}
+		
+		q.addField("spaces.name as space_name");
+		q.orderBy("domains.domain_name", "asc");
+		q.leftJoin(
+			"spaces",
+			[
+				"domains.space_id=spaces.id",
+			]
+		);
 	}
 	
 	

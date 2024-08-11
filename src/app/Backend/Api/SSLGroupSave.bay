@@ -60,6 +60,18 @@ class SSLGroupSave extends SaveRelationApi
 	
 	
 	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() => [
+		"id",
+		"name",
+		"container_name",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
 	 * Returns save fields
 	 */
 	Collection getSaveFields() => [

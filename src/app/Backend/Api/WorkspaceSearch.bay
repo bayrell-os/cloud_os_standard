@@ -26,18 +26,18 @@ use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.SearchRelationApi;
 
 
-class NginxFileSearch extends SearchRelationApi
+class WorkspaceSearch extends SearchRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.nginx_files::search";
+	pure string getApiName() => "app.workspace::search";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	string getTableName() => "nginx_files";
+	string getTableName() => "spaces";
 	
 	
 	/**
@@ -47,8 +47,7 @@ class NginxFileSearch extends SearchRelationApi
 	[
 		"id",
 		"name",
-		"content",
-		"enable",
+		"uid",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -59,7 +58,7 @@ class NginxFileSearch extends SearchRelationApi
 	 */
 	async void buildSearchQuery(Query q)
 	{
-		q.orderBy("name", "asc");
+		q.orderBy("id", "asc");
 	}
 	
 	

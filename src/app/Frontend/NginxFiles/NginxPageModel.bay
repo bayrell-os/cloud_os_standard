@@ -127,11 +127,11 @@ class NginxPageModel extends BasePageModel
 					}
 					if (action == "edit")
 					{
-						return "Edit nginx file " ~ item.get("name");
+						return "Edit nginx file '" ~ item.get("name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete nginx file " ~ item.get("name");
+						return "Delete nginx file '" ~ item.get("name") ~ "'";
 					}
 					return "";
 				},

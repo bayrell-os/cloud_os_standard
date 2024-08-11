@@ -18,15 +18,14 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryFilter;
-use Runtime.ORM.Relation;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.SaveRelationApi;
 use Runtime.Widget.Crud.Rules.CrudRule;
-use Runtime.Widget.Crud.Rules.Filter;
 use Runtime.Widget.Crud.Rules.LowerCase;
 use Runtime.Widget.Crud.Rules.Purify;
 use Runtime.Widget.Crud.Rules.ReadOnly;
@@ -34,24 +33,38 @@ use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
 
 
-class DomainApi extends CrudApi
+class DomainSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.domain::crud";
+	static string getApiName() => "app.domain::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains";
+	string getTableName() => "domains";
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "domain_name", "check_update": false },
+		new ReadOnly{ "name": "domain_name", "can_create": true },
+		new Unique{"keys": ["domain_name"]},
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"id",
 		"domain_name",
 		"space_id",
@@ -64,30 +77,17 @@ class DomainApi extends CrudApi
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
+	Collection getSaveFields() =>
+	[
 		"domain_name",
 		"space_id",
 	];
 	
 	
 	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
-	[
-		new Purify{ "name": "domain_name" },
-		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "domain_name", "check_update": false },
-		new ReadOnly{ "name": "domain_name", "can_create": true },
-		new Unique{"keys": ["domain_name"]},
-		new Filter{"api_name": "space_id", "field_name": "space_id"},
-	];
-	
-	
-	/**
 	 * Build search query
 	 */
-	async Query buildSearchQuery(Query q)
+	async void buildSearchQuery(Query q)
 	{
 		int space_id = (int)this.post_data.get("space_id");
 		if (space_id > 0)
@@ -96,25 +96,12 @@ class DomainApi extends CrudApi
 		}
 		
 		q.addField("spaces.name as space_name");
-		q.orderBy("domains.domain_name", "asc");
 		q.leftJoin(
 			"spaces",
 			[
 				"domains.space_id=spaces.id",
 			]
 		);
-		
-		return q;
-	}
-	
-	
-	/**
-	 * Action search
-	 */
-	@ApiMethod
-	async void actionSearch()
-	{
-		await parent::actionSearch();
 	}
 	
 	
@@ -124,7 +111,7 @@ class DomainApi extends CrudApi
 	@ApiMethod
 	async void actionItem()
 	{
-		await parent::actionItem();
+		await parent();
 	}
 	
 	
@@ -134,7 +121,7 @@ class DomainApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		await parent();
 	}
 	
 	
@@ -144,6 +131,6 @@ class DomainApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		await parent();
 	}
 }

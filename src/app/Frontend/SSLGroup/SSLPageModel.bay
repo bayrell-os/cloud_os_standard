@@ -113,11 +113,11 @@ class SSLPageModel extends BasePageModel
 					}
 					if (action == "edit")
 					{
-						return "Show item " ~ item.get("name");
+						return "Show item '" ~ item.get("name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete item " ~ item.get("name");
+						return "Delete item '" ~ item.get("name") ~ "'";
 					}
 					return "";
 				},
@@ -131,6 +131,9 @@ class SSLPageModel extends BasePageModel
 						"api_name": "app.ssl_group::search",
 					}
 				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
 				
 				/* Form */
 				"add_form": this.form,

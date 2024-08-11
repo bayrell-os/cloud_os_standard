@@ -108,11 +108,11 @@ class StackPageModel extends BasePageModel
 					}
 					if (action == "edit")
 					{
-						return "Edit " ~ item.get("stack_name");
+						return "Edit docker stack '" ~ item.get("stack_name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete " ~ item.get("stack_name");
+						return "Delete docker stack '" ~ item.get("stack_name") ~ "'";
 					}
 					return "";
 				},

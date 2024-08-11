@@ -24,7 +24,6 @@ use Runtime.Web.BasePageModel;
 use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
-use Runtime.Widget.Dictionary;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
@@ -37,7 +36,7 @@ use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePage;
 class YamlFilePageModel extends BasePageModel
 {
 	string component = classof YamlFilePage;
-	Dictionary stack_name = null;
+	SelectModel stack_name = null;
 	FormModel form = null;
 	TableDialogModel table = null;
 	RowButtonsModel top_buttons = null;
@@ -143,11 +142,11 @@ class YamlFilePageModel extends BasePageModel
 					}
 					if (action == "edit")
 					{
-						return "Edit " ~ item.get("file_name");
+						return "Edit '" ~ item.get("file_name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete " ~ item.get("file_name");
+						return "Delete '" ~ item.get("file_name") ~ "'";
 					}
 					return "";
 				},
