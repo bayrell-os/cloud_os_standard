@@ -1,0 +1,152 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.Api;
+
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.SaveRelationApi;
+use Runtime.Widget.Crud.Rules.CrudRule;
+use Runtime.Widget.Crud.Rules.LowerCase;
+use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.ReadOnly;
+use Runtime.Widget.Crud.Rules.Required;
+use Runtime.Widget.Crud.Rules.Unique;
+use Bayrell.CloudOS.Lib.DockerService;
+
+
+class DockerYamlFileSave extends SaveRelationApi
+{
+	/**
+	 * Returns api name
+	 */
+	static string getApiName() => "app.docker.yaml::save";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	string getTableName() => "docker_yaml_files";
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+		new Purify{ "name": "stack_name" },
+		new LowerCase{ "name": "stack_name" },
+		new Required{ "name": "stack_name" },
+		new Required{ "name": "file_name" },
+	];
+	
+	
+	/**
+	 * Returns save fields
+	 */
+	Collection getSaveFields() =>
+	[
+		"stack_name",
+		"file_name",
+		"content",
+	];
+	
+	
+	/**
+	 * Action item
+	 */
+	@ApiMethod
+	async void actionItem()
+	{
+		/* Load data */
+		await this.loadItem();
+		await this.loadData();
+		
+		/* Build result */
+		await this.buildResult();
+		
+		/* Success */
+		this.success();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	@ApiMethod
+	async void actionSave()
+	{
+		/* Load data */
+		await this.loadItem();
+		await this.loadData();
+		
+		/* Save item */
+		await this.processData();
+		await this.saveItem();
+		
+		/* Build result */
+		await this.buildResult();
+		
+		/* Success */
+		this.success();
+	}
+	
+	
+	/**
+	 * Action delete
+	 */
+	@ApiMethod
+	async void actionDelete()
+	{
+		/* Remove item */
+		await this.loadItem();
+		await this.removeItem();
+		
+		/* Build result */
+		await this.buildResult();
+	}
+	
+	
+	/**
+	 * Action save
+	 */
+	async void actionCompose()
+	{
+		/* Remove item */
+		await this.loadItem();
+		await this.loadData();
+		
+		/* Save item */
+		await this.processData();
+		await this.saveItem();
+		
+		/* Build result */
+		await this.buildResult();
+		
+		/* Compose yaml file */
+		string message = await DockerService::composeYamlFile(this.item);
+		this.container.setErrorMessage(message);
+		
+		/* Success */
+		this.success();
+	}
+}

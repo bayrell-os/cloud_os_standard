@@ -37,6 +37,7 @@ class SSLPageModel extends BasePageModel
 	string component = classof SSLPage;
 	FormModel form = null;
 	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
 	
 	
 	/**
@@ -179,7 +180,6 @@ class SSLPageModel extends BasePageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		/* Set title */
 		this.layout.setPageTitle("List of SSL groups");
 	}
 	

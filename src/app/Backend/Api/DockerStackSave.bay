@@ -18,55 +18,39 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
-use Runtime.ORM.Query;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.SaveRelationApi;
 use Runtime.Widget.Crud.Rules.CrudRule;
 use Runtime.Widget.Crud.Rules.LowerCase;
 use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
 
 
-class StackApi extends CrudApi
+class DockerStackSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.stack::crud";
+	static string getApiName() => "app.docker.stack::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "stacks";
-	
-	
-	/**
-	 * Returns item fields
-	 */
-	Collection getItemFields() => [
-		"stack_name",
-		"gmtime_created",
-		"gmtime_updated",
-	];
-	
-	
-	/**
-	 * Returns save fields
-	 */
-	Collection getSaveFields() => [
-		"stack_name",
-	];
+	string getTableName() => "stacks";
 	
 	
 	/**
 	 * Returns rules
 	 */
-	Collection<CrudRule> getRules() =>
+	Vector<CrudRule> getRules() =>
 	[
 		new Purify{ "name": "stack_name" },
 		new LowerCase{ "name": "stack_name" },
@@ -76,22 +60,29 @@ class StackApi extends CrudApi
 	
 	
 	/**
-	 * Build search query
+	 * Returns save fields
 	 */
-	async Query buildSearchQuery(Query q)
-	{
-		q = q.orderBy("stack_name", "asc");
-		return q;
-	}
+	Collection getSaveFields() =>
+    [
+		"stack_name",
+	];
 	
 	
 	/**
-	 * Action search
+	 * Action item
 	 */
 	@ApiMethod
-	async void actionSearch()
+	async void actionItem()
 	{
-		await parent::actionSearch();
+		/* Load data */
+		await this.loadItem();
+		await this.loadData();
+		
+		/* Build result */
+		await this.buildResult();
+		
+		/* Success */
+		this.success();
 	}
 	
 	
@@ -101,7 +92,19 @@ class StackApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		/* Load data */
+		await this.loadItem();
+		await this.loadData();
+		
+		/* Save item */
+		await this.processData();
+		await this.saveItem();
+		
+		/* Build result */
+		await this.buildResult();
+		
+		/* Success */
+		this.success();
 	}
 	
 	
@@ -111,6 +114,11 @@ class StackApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		/* Remove item */
+		await this.loadItem();
+		await this.removeItem();
+		
+		/* Build result */
+		await this.buildResult();
 	}
 }

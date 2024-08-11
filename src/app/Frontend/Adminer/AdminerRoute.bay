@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Frontend.Adminer;
 
 use Runtime.Web.BaseRoute;
+use Runtime.Web.RenderContainer;
 use Runtime.Web.Response;
 use Runtime.Web.RouteInfo;
 
@@ -42,7 +43,7 @@ class AdminerRoute extends BaseRoute
 	/**
 	 * Action index
 	 */
-	async void actionIndex()
+	async void actionIndex(RenderContainer container)
 	{
 		string content = "";
 		
@@ -61,6 +62,6 @@ class AdminerRoute extends BaseRoute
 		/* Create response */
 		Response response = new Response();
 		response.content = content;
-		this.container.setResponse(response);
+		container.setResponse(response);
 	}
 }

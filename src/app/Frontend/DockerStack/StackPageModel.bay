@@ -18,14 +18,28 @@
 
 namespace Bayrell.CloudOS.Frontend.DockerStack;
 
-use Runtime.Web.PageModel;
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
-use Runtime.Widget.Crud.CrudPageModel;
-use Bayrell.CloudOS.Frontend.DockerStack.StackTableModel;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.DockerStack.StackPage;
 
 
-class StackPageModel extends CrudPageModel
+class StackPageModel extends BasePageModel
 {
+	string component = classof StackPage;
+	FormModel form = null;
+	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
+	
+	
 	/**
 	 * Init widget settings
 	 */
@@ -33,15 +47,125 @@ class StackPageModel extends CrudPageModel
 	{
 		parent(params);
 		
-		if (this.layout.route.name == "app:docker:stack:index")
-		{
-			/* Set action */
-			this.setAction("index");
-			
-			/* Create table widget */
-			StackTableModel table = this.addWidget(classof StackTableModel);
-			this.render_list.addItem(table);
-		}
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"buttons":
+				[
+					{
+						"content": "Add",
+						"widget_name": "add_button",
+						"styles": [
+							"success",
+						]
+					},
+				],
+				"events":
+				{
+					"click": new Callback(this, "onTopButtonsClick"),
+				},
+			}
+		);
+		
+		/* Add form */
+		this.form = this.addWidget(
+			classof FormModel,
+			{
+				"widget_name": "edit_form",
+				"primary_key": ["stack_name"],
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveStorage",
+					{
+						"api_name": "app.docker.stack::save",
+					}
+				),
+				"fields":
+				[
+					{
+						"name": "stack_name",
+						"label": "Stack name",
+						"component": "Runtime.Widget.Input",
+					}
+				],
+			}
+		);
+		
+		/* Add table */
+		this.table = this.addWidget(
+			classof TableDialogModel,
+			{
+				"widget_name": "table",
+				"get_title": void (Dict params)
+				{
+					string action = params.get("action");
+					Dict item = params.get("item");
+					if (action == "add")
+					{
+						return "Add docker stack";
+					}
+					if (action == "edit")
+					{
+						return "Edit " ~ item.get("stack_name");
+					}
+					if (action == "delete")
+					{
+						return "Delete " ~ item.get("stack_name");
+					}
+					return "";
+				},
+				"styles": ["border"],
+				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.docker.stack::search",
+					}
+				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
+				
+				/* Form */
+				"add_form": this.form,
+				"edit_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"primary_key": ["stack_name"],
+						"storage": new Factory(
+							classof FormDeleteStorage,
+							{
+								"api_name": "app.docker.stack::save"
+							}
+						),
+					}
+				),
+				
+				/* Table fields */
+				"fields":
+				[
+					{
+						"name": "row_number",
+					},
+					{
+						"name": "stack_name",
+						"label": "Stack name",
+					},
+					{
+						"name": "row_buttons",
+						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
+					},
+				],
+			}
+		);
 	}
 	
 	
@@ -50,10 +174,18 @@ class StackPageModel extends CrudPageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		/* Set title */
-		if (this.action == "index")
+		this.layout.setPageTitle("List of docker stacks");
+	}
+	
+	
+	/**
+	 * Top buttons click
+	 */
+	void onTopButtonsClick(ClickMessage message)
+	{
+		if (message.widget.widget_name == "add_button")
 		{
-			this.layout.setPageTitle("List of docker stacks");
+			this.table.save_dialog.showAdd();
 		}
 	}
 }
