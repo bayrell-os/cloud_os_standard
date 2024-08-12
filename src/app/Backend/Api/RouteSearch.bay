@@ -66,7 +66,7 @@ class RouteSearch extends SearchRelationApi
 	 */
 	async void buildSearchQuery(Query q)
 	{
-		int domain_id = (int)this.post_data["domain_id"];
+		int domain_id = (int)this.post_data["foreign_key", "domain_id"];
 		if (domain_id > 0)
 		{
 			q = q.where("routes.domain_id", "=", domain_id)

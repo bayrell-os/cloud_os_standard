@@ -1,0 +1,379 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Frontend.Routes;
+
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.RenderListModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.SelectModel;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Routes.RoutePage;
+
+
+class RouteTableModel extends RenderListModel
+{
+	SelectModel domain_id = null;
+	FormModel form = null;
+	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
+	
+	
+	/**
+	 * Init widget settings
+	 */
+	void initWidget(Dict params)
+	{
+		parent(params);
+		
+		/* Setup foreign key */
+		Dict foreign_key = null;
+		if (params and params.has("foreign_key")) foreign_key = params.get("foreign_key");
+		
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"buttons":
+				[
+					{
+						"content": "Add",
+						"widget_name": "add_button",
+						"styles": [
+							"success",
+						]
+					},
+				],
+                "styles": ["top_buttons"],
+				"events":
+				{
+					"click": new Callback(this, "onTopButtonsClick"),
+				},
+			}
+		);
+		
+		/* Domains */
+		this.domain_id = this.addWidget(
+			classof SelectModel,
+			{
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.domain::search",
+					}
+				),
+				"widget_name": "domain_id",
+				"transform": Map (Dict item) => {
+					"key": item.get("id"),
+					"value": item.get("domain_name"),
+				},
+			}
+		);
+		
+		/* Add form */
+		this.form = this.addWidget(
+			classof FormModel,
+			{
+				"widget_name": "edit_form",
+				"primary_key": ["id"],
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveStorage",
+					{
+						"api_name": "app.route::save",
+					}
+				),
+				"foreign_key": foreign_key,
+				"fields":
+				[
+					{
+						"name": "enable",
+						"label": "Enable",
+						"component": "Runtime.Widget.Select",
+						"default": "1",
+						"props": {
+							"options": [
+								{"key": "0", "value": "No"},
+								{"key": "1", "value": "Yes"},
+							],
+						},
+					},
+					{
+						"label": "Protocol",
+						"name": "protocol",
+						"component": "Runtime.Widget.Select",
+						"default": "http",
+						"props": {
+							"options": [
+								{"key": "http", "value": "HTTP"},
+							],
+						},
+					},
+					{
+						"name": "domain_id",
+						"label": "Domain name",
+						"model": this.domain_id,
+					},
+					{
+						"name": "source_port",
+						"label": "Source port",
+						"component": "Runtime.Widget.Input",
+						"default": "80",
+					},
+					{
+						"name": "route_prefix",
+						"label": "Route prefix",
+						"component": "Runtime.Widget.Input",
+						"default": "/",
+					},
+					{
+						"name": "docker_name",
+						"label": "Docker name",
+						"component": "Runtime.Widget.Input",
+					},
+					{
+						"name": "target_port",
+						"label": "Target port",
+						"component": "Runtime.Widget.Input",
+						"default": "80",
+					},
+					{
+						"name": "target_prefix",
+						"label": "Target prefix",
+						"component": "Runtime.Widget.Input",
+						"default": "/",
+					},
+					{
+						"name": "nginx_config",
+						"label": "Nginx config",
+						"component": "Runtime.Widget.CodeMirror.CodeMirror",
+						"props":
+						{
+							"height": "200px",
+						},
+					},
+				],
+			}
+		);
+		
+		/* Add table */
+		this.table = this.addWidget(
+			classof TableDialogModel,
+			{
+				"widget_name": "table",
+				"get_title": new Callback(this, "getTitle"),
+				"styles": ["border"],
+				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.route::search",
+					}
+				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
+				"foreign_key": foreign_key,
+				
+				/* Form */
+				"add_form": this.form,
+				"edit_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"primary_key": ["id"],
+						"foreign_key": foreign_key,
+						"storage": new Factory(
+							classof FormDeleteStorage,
+							{
+								"api_name": "app.route::save"
+							}
+						),
+					}
+				),
+				
+				/* Table fields */
+				"fields":
+				[
+					{
+						"name": "row_number",
+					},
+					{
+						"name": "enable",
+						"label": "Enable",
+						"component": "Runtime.Widget.SelectLabel",
+						"props": {
+							"options": [
+								{"key": "0", "value": "No"},
+								{"key": "1", "value": "Yes"},
+							],
+						},
+					},
+					{
+						"label": "Protocol",
+						"name": "protocol",
+						"component": "Runtime.Widget.SelectLabel",
+						"props": {
+							"options": [
+								{"key": "http", "value": "HTTP"},
+							],
+						},
+					},
+					{
+						"name": "source",
+						"label": "Source",
+						"calculate": string (Dict data)
+						{
+							return static::getSourceName(data.get("item"));
+						},
+					},
+					{
+						"name": "dest",
+						"label": "Dest",
+						"calculate": string (Dict data)
+						{
+							return static::getDestName(data.get("item"));
+						},
+					},
+					{
+						"name": "row_buttons",
+						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
+					},
+				],
+			}
+		);
+        
+        /* Add render list */
+        this.addItem(this.top_buttons);
+        this.addItem(this.table);
+	}
+	
+	
+	/**
+	 * Build title
+	 */
+	void buildTitle(RenderContainer container)
+	{
+		this.layout.setPageTitle("Routes");
+	}
+	
+	
+	/**
+	 * Top buttons click
+	 */
+	void onTopButtonsClick(ClickMessage message)
+	{
+		if (message.widget.widget_name == "add_button")
+		{
+			this.table.save_dialog.showAdd();
+		}
+	}
+	
+	
+	/**
+	 * Returns title
+	 */
+	void getTitle(Dict params)
+	{
+		string action = params.get("action");
+		Dict item = params.get("item");
+		if (action == "add")
+		{
+			return "Add route";
+		}
+		if (action == "edit")
+		{
+			return "Show route '" ~ static::getRouteName(item) ~ "'";
+		}
+		if (action == "delete")
+		{
+			return "Delete route '" ~ static::getRouteName(item) ~ "'";
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * Returns route name
+	 */
+	pure string getRouteName(Map item) =>
+		static::getSourceName(item) ~ " => " ~ static::getDestName(item)
+	;
+	
+	
+	/**
+	 * Returns source
+	 */
+	pure string getSourceName(Map item)
+	{
+		string res = "";
+		string domain_name = "";
+		
+		res ~= item["domain_name"];
+		
+		if (item["source_port"] != 80)
+		{
+			res ~= ":" ~ item["source_port"];
+		}
+		
+		if (item["route_prefix"] != "/")
+		{
+			res ~= item["route_prefix"];
+		}
+		
+		return res;
+	}
+	
+	
+	/**
+	 * Returns dest
+	 */
+	pure string getDestName(Map item)
+	{
+		string res = "";
+		
+		res ~= item["docker_name"];
+		
+		if (item["target_port"] != 80)
+		{
+			res ~= ":" ~ item["target_port"];
+		}
+		
+		if (item["target_prefix"] != "/")
+		{
+			res ~= item["target_prefix"];
+		}
+		
+		return res;
+	}
+}

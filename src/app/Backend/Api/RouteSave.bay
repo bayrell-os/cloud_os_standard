@@ -107,7 +107,7 @@ class RouteSave extends SaveRelationApi
 		await parent();
 		
 		/* Set domain_id */
-		int domain_id = (int)this.post_data["domain_id"];
+		int domain_id = (int)this.post_data["foreign_key", "domain_id"];
 		if (domain_id > 0)
 		{
 			this.item.set("domain_id", domain_id);

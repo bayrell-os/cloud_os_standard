@@ -28,17 +28,18 @@ use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
-use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitModel;
 use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
-use Bayrell.CloudOS.Frontend.Domains.DomainPage;
+use Bayrell.CloudOS.Frontend.Domains.DomainEditPage;
+use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
 
 
-class DomainPageModel extends BasePageModel
+class DomainEditPageModel extends BasePageModel
 {
-	string component = classof DomainPage;
+	string component = classof DomainEditPage;
 	SelectModel space_id = null;
-	FormModel form = null;
+	FormSubmitModel form = null;
 	TableDialogModel table = null;
 	RowButtonsModel top_buttons = null;
 	
@@ -49,28 +50,6 @@ class DomainPageModel extends BasePageModel
 	void initWidget(Dict params)
 	{
 		parent(params);
-		
-		/* Add top buttons */
-		this.top_buttons = this.addWidget(
-			classof RowButtonsModel,
-			{
-				"widget_name": "top_buttons",
-				"buttons":
-				[
-					{
-						"content": "Add",
-						"widget_name": "add_button",
-						"styles": [
-							"success",
-						]
-					},
-				],
-				"events":
-				{
-					"click": new Callback(this, "onTopButtonsClick"),
-				},
-			}
-		);
 		
 		/* Spaces */
 		this.space_id = this.addWidget(
@@ -93,7 +72,7 @@ class DomainPageModel extends BasePageModel
 		
 		/* Add form */
 		this.form = this.addWidget(
-			classof FormModel,
+			classof FormSubmitModel,
 			{
 				"widget_name": "edit_form",
 				"primary_key": ["id"],
@@ -104,12 +83,25 @@ class DomainPageModel extends BasePageModel
 						"api_name": "app.domain::save",
 					}
 				),
+				"pk":
+				{
+					"id": this.layout.route.matches.get("id"),
+				},
+				"submit_button":
+				{
+					"text": "Save",
+					"styles": ["primary", "large"],
+				},
 				"fields":
 				[
 					{
 						"name": "domain_name",
 						"label": "Domain name",
 						"component": "Runtime.Widget.Input",
+						"props":
+						{
+							"readonly": "true",
+						},
 					},
 					{
 						"name": "space_id",
@@ -120,92 +112,19 @@ class DomainPageModel extends BasePageModel
 			}
 		);
 		
-		/* Add table */
-		this.table = this.addWidget(
-			classof TableDialogModel,
+		/* Add routes */
+		this.routes = this.addWidget(
+			classof RouteTableModel,
 			{
-				"widget_name": "table",
-				"get_title": void (Dict params)
+				"foreign_key":
 				{
-					string action = params.get("action");
-					Dict item = params.get("item");
-					if (action == "add")
-					{
-						return "Add domain";
-					}
-					if (action == "edit")
-					{
-						return "Edit domain '" ~ item.get("domain_name") ~ "'";
-					}
-					if (action == "delete")
-					{
-						return "Delete domain '" ~ item.get("domain_name") ~ "'";
-					}
-					return "";
+					"domain_id": this.layout.route.matches.get("id"),
 				},
-				"styles": ["border"],
-				
-				/* Table storage */
-				"storage": new Factory
-				(
-					"Runtime.Widget.Table.TableStorage",
-					{
-						"api_name": "app.domain::search",
-					}
-				),
-				
-				/* Set page */
-				"page": this.layout.request_query.get("page", 1) - 1,
-				
-				/* Form */
-				"add_form": this.form,
-				
-				/* Delete form */
-				"delete_form": new ModelFactory(
-					classof FormModel,
-					{
-						"widget_name": "delete_form",
-						"primary_key": ["id"],
-						"storage": new Factory(
-							classof FormDeleteStorage,
-							{
-								"api_name": "app.domain::save"
-							}
-						),
-					}
-				),
-				
-				/* Table fields */
-				"fields":
-				[
-					{
-						"name": "row_number",
-					},
-					{
-						"name": "domain_name",
-						"label": "Domain name",
-					},
-					{
-						"name": "space_name",
-						"label": "Space name",
-					},
-					{
-						"name": "row_buttons",
-						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
-					},
-				],
 			}
 		);
 		
-		/* Edit button */
-		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
-		ButtonModel edit_button = row_buttons.getWidget("edit_button");
-		edit_button.clearListener("click");
-		edit_button.href = string (Dict data)
-		{
-			Dict item = data.get("item");
-			return this.layout.url("app:domains:edit", {"id": item.get("id")});
-		};
+		/* Remove domain id */
+		this.routes.form.removeField("domain_id");
 	}
 	
 	
@@ -214,7 +133,12 @@ class DomainPageModel extends BasePageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		this.layout.setPageTitle("List of domains");
+		string title = "Edit domain";
+		if (this.form.item != null)
+		{
+			title = "Edit domain '" ~ this.form.item.get("domain_name") ~ "'";
+		}
+		this.layout.setPageTitle(title);
 	}
 	
 	

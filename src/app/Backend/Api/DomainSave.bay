@@ -54,8 +54,8 @@ class DomainSave extends SaveRelationApi
 	[
 		new Purify{ "name": "domain_name" },
 		new LowerCase{ "name": "domain_name" },
-		new Required{ "name": "domain_name", "check_update": false },
 		new ReadOnly{ "name": "domain_name", "can_create": true },
+		new Required{ "name": "domain_name", "check_update": false },
 		new Unique{"keys": ["domain_name"]},
 	];
 	

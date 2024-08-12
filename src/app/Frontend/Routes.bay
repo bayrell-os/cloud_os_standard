@@ -120,7 +120,7 @@ class Routes extends BaseRoute
 			{
 				"uri": "/domains/{id}/edit/",
 				"name": "app:domains:edit",
-				"model": "Bayrell.CloudOS.Frontend.Domains.DomainPageModel",
+				"model": "Bayrell.CloudOS.Frontend.Domains.DomainEditPageModel",
 			},
 			new RouteInfo
 			{
