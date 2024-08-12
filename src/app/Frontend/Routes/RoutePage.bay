@@ -20,7 +20,7 @@
 
 <template>
 	<div class="routes_page">
-		%render this.renderWidget(this.model.table);
+		%render this.renderWidget(this.model.routes);
 	</div>
 </template>
 

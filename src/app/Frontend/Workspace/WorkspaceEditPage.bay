@@ -24,7 +24,7 @@
 <template>
 	<div class="domain_page">
 		<RowButtons styles={{ ["top_buttons"] }}>
-			<Button href={{ this.layout.url("app:domains:index") }}>Back</Button>
+			<Button href={{ this.layout.url("app:workspace:index") }}>Back</Button>
 		</RowButtons>
 		%if (this.model.form.load.isSuccess())
 		{
