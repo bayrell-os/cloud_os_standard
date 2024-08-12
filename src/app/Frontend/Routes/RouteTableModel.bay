@@ -68,7 +68,7 @@ class RouteTableModel extends RenderListModel
 						]
 					},
 				],
-                "styles": ["top_buttons"],
+				"styles": ["top_buttons"],
 				"events":
 				{
 					"click": new Callback(this, "onTopButtonsClick"),
@@ -272,10 +272,10 @@ class RouteTableModel extends RenderListModel
 				],
 			}
 		);
-        
-        /* Add render list */
-        this.addItem(this.top_buttons);
-        this.addItem(this.table);
+		
+		/* Add render list */
+		this.addItem(this.top_buttons);
+		this.addItem(this.table);
 	}
 	
 	

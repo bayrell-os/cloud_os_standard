@@ -26,12 +26,12 @@ use Runtime.Web.Annotations.ApiMethod;
 use Runtime.Widget.Crud.SearchRelationApi;
 
 
-class DomainSearch extends SearchRelationApi
+class WorkspaceDomainSearch extends SearchRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.domain::search";
+	pure string getApiName() => "app.workspace.domain::search";
 	
 	
 	/**
@@ -59,20 +59,9 @@ class DomainSearch extends SearchRelationApi
 	 */
 	async void buildSearchQuery(Query q)
 	{
-		int space_id = (int)this.post_data["foreign_key", "space_id"];
-		if (space_id > 0)
-		{
-			q.where("domains.space_id", "=", space_id);
-		}
-		
-		q.addField("spaces.name as space_name");
+		q.calcFoundRows(false);
+		q.where("domains.space_id", "=", null);
 		q.orderBy("domains.domain_name", "asc");
-		q.leftJoin(
-			"spaces",
-			[
-				"domains.space_id=spaces.id",
-			]
-		);
 	}
 	
 	

@@ -18,15 +18,9 @@
 
 <class name="Bayrell.CloudOS.Frontend.DockerStack.StackPage">
 
-<style>
-.stack_page .top_buttons{
-	margin-bottom: 10px;
-}
-</style>
-
 <template>
 	<div class="stack_page">
-		%render this.renderWidget(this.model.top_buttons, {"class": "top_buttons"});
+		%render this.renderWidget(this.model.top_buttons);
 		%render this.renderWidget(this.model.table);
 	</div>
 </template>

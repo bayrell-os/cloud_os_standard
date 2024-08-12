@@ -21,22 +21,16 @@
 <use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.RowButtons" component="true" />
 
-
-<style>
-.domain_page .top_buttons{
-	margin-bottom: 10px;
-}
-</style>
-
-
 <template>
 	<div class="domain_page">
 		<RowButtons styles={{ ["top_buttons"] }}>
 			<Button href={{ this.layout.url("app:domains:index") }}>Back</Button>
 		</RowButtons>
-		%render this.renderWidget(this.model.form);
-		%render this.renderWidget(this.model.top_buttons, {"class": "top_buttons"});
-		%render this.renderWidget(this.model.routes);
+		%if (this.model.form.load.isSuccess())
+		{
+			%render this.renderWidget(this.model.form);
+			%render this.renderWidget(this.model.routes);
+		}
 	</div>
 </template>
 

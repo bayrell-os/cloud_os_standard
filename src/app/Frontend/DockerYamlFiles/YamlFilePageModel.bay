@@ -83,6 +83,7 @@ class YamlFilePageModel extends BasePageModel
 						]
 					},
 				],
+				"styles": ["top_buttons"],
 				"events":
 				{
 					"click": new Callback(this, "onTopButtonsClick"),

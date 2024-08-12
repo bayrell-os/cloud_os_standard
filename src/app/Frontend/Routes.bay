@@ -150,7 +150,7 @@ class Routes extends BaseRoute
 			{
 				"uri": "/workspace/{id}/edit/",
 				"name": "app:workspace:edit",
-				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspacePageModel",
+				"model": "Bayrell.CloudOS.Frontend.Workspace.WorkspaceEditPageModel",
 			},
 			
 			/* Other */

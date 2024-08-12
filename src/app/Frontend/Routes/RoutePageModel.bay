@@ -37,7 +37,7 @@ use Bayrell.CloudOS.Frontend.Routes.RouteTableModel;
 class RoutePageModel extends BasePageModel
 {
 	string component = classof RoutePage;
-	RouteTableModel table = null;
+	RouteTableModel routes = null;
 	
 	
 	/**
@@ -47,11 +47,11 @@ class RoutePageModel extends BasePageModel
 	{
 		parent(params);
 		
-		/* Add table */
-		this.table = this.addWidget(
+		/* Add routes */
+		this.routes = this.addWidget(
 			classof RouteTableModel,
 			{
-				"widget_name": "table",
+				"widget_name": "routes",
 			}
 		);
 	}

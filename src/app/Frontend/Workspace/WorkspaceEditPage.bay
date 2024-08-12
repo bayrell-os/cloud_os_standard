@@ -16,12 +16,21 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Frontend.SSLGroup.SSLPage">
+<class name="Bayrell.CloudOS.Frontend.Workspace.WorkspaceEditPage">
+
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.RowButtons" component="true" />
 
 <template>
-	<div class="ssl_group_page">
-		%render this.renderWidget(this.model.top_buttons);
-		%render this.renderWidget(this.model.table);
+	<div class="domain_page">
+		<RowButtons styles={{ ["top_buttons"] }}>
+			<Button href={{ this.layout.url("app:domains:index") }}>Back</Button>
+		</RowButtons>
+		%if (this.model.form.load.isSuccess())
+		{
+			%render this.renderWidget(this.model.form);
+			%render this.renderWidget(this.model.domains);
+		}
 	</div>
 </template>
 

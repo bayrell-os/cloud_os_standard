@@ -71,6 +71,8 @@ static class ModuleDescription
 		new Api("Bayrell.CloudOS.Backend.Api.RouteSearch"),
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupSave"),
 		new Api("Bayrell.CloudOS.Backend.Api.SSLGroupSearch"),
+		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceDomainSave"),
+		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceDomainSearch"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceSave"),
 		new Api("Bayrell.CloudOS.Backend.Api.WorkspaceSearch"),
 		/*

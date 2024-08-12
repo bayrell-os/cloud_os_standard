@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Bayrell.CloudOS.Frontend.Workspace;
+namespace Bayrell.CloudOS.Frontend.Domains;
 
 use Runtime.Callback;
 use Runtime.Entity.Factory;
@@ -25,17 +25,18 @@ use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
-use Bayrell.CloudOS.Frontend.Workspace.WorkspacePage;
 
 
-class WorkspacePageModel extends BasePageModel
+class DomainTableModel extends RenderListModel
 {
-	string component = classof WorkspacePage;
+	SelectModel space_id = null;
 	FormModel form = null;
 	TableDialogModel table = null;
 	RowButtonsModel top_buttons = null;
@@ -47,6 +48,12 @@ class WorkspacePageModel extends BasePageModel
 	void initWidget(Dict params)
 	{
 		parent(params);
+		
+		/* Setup foreign key */
+		Dict foreign_key = null;
+		string form_api_name = "app.domain::save";
+		if (params and params.has("foreign_key")) foreign_key = params.get("foreign_key");
+		if (params and params.has("form_api_name")) form_api_name = params.get("form_api_name");
 		
 		/* Add top buttons */
 		this.top_buttons = this.addWidget(
@@ -63,9 +70,29 @@ class WorkspacePageModel extends BasePageModel
 						]
 					},
 				],
+				"styles": ["top_buttons"],
 				"events":
 				{
 					"click": new Callback(this, "onTopButtonsClick"),
+				},
+			}
+		);
+		
+		/* Spaces */
+		this.space_id = this.addWidget(
+			classof SelectModel,
+			{
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.workspace::search",
+					}
+				),
+				"widget_name": "space_id",
+				"transform": Map (Dict item) => {
+					"key": item.get("id"),
+					"value": item.get("name"),
 				},
 			}
 		);
@@ -80,21 +107,22 @@ class WorkspacePageModel extends BasePageModel
 				(
 					"Runtime.Widget.Form.FormSaveStorage",
 					{
-						"api_name": "app.workspace::save",
+						"api_name": form_api_name,
 					}
 				),
+				"foreign_key": foreign_key,
 				"fields":
 				[
 					{
-						"name": "name",
-						"label": "Name",
+						"name": "domain_name",
+						"label": "Domain name",
 						"component": "Runtime.Widget.Input",
 					},
 					{
-						"name": "uid",
-						"label": "UID",
-						"component": "Runtime.Widget.Input",
-					},
+						"name": "space_id",
+						"label": "Space name",
+						"model": this.space_id,
+					}
 				],
 			}
 		);
@@ -110,15 +138,15 @@ class WorkspacePageModel extends BasePageModel
 					Dict item = params.get("item");
 					if (action == "add")
 					{
-						return "Add workspace";
+						return "Add domain";
 					}
 					if (action == "edit")
 					{
-						return "Show workspace '" ~ item.get("name") ~ "'";
+						return "Edit domain '" ~ item.get("domain_name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete workspace '" ~ item.get("name") ~ "'";
+						return "Delete domain '" ~ item.get("domain_name") ~ "'";
 					}
 					return "";
 				},
@@ -129,12 +157,13 @@ class WorkspacePageModel extends BasePageModel
 				(
 					"Runtime.Widget.Table.TableStorage",
 					{
-						"api_name": "app.workspace::search",
+						"api_name": "app.domain::search",
 					}
 				),
 				
 				/* Set page */
 				"page": this.layout.request_query.get("page", 1) - 1,
+				"foreign_key": foreign_key,
 				
 				/* Form */
 				"add_form": this.form,
@@ -145,10 +174,11 @@ class WorkspacePageModel extends BasePageModel
 					{
 						"widget_name": "delete_form",
 						"primary_key": ["id"],
+						"foreign_key": foreign_key,
 						"storage": new Factory(
 							classof FormDeleteStorage,
 							{
-								"api_name": "app.workspace::save"
+								"api_name": form_api_name,
 							}
 						),
 					}
@@ -161,12 +191,12 @@ class WorkspacePageModel extends BasePageModel
 						"name": "row_number",
 					},
 					{
-						"name": "name",
-						"label": "Name",
+						"name": "domain_name",
+						"label": "Domain name",
 					},
 					{
-						"name": "uid",
-						"label": "UID",
+						"name": "space_name",
+						"label": "Space name",
 					},
 					{
 						"name": "row_buttons",
@@ -176,24 +206,9 @@ class WorkspacePageModel extends BasePageModel
 			}
 		);
 		
-		/* Edit button */
-		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
-		ButtonModel edit_button = row_buttons.getWidget("edit_button");
-		edit_button.clearListener("click");
-		edit_button.href = string (Dict data)
-		{
-			Dict item = data.get("item");
-			return this.layout.url("app:workspace:edit", {"id": item.get("id")});
-		};
-	}
-	
-	
-	/**
-	 * Build title
-	 */
-	void buildTitle(RenderContainer container)
-	{
-		this.layout.setPageTitle("List of workspaces");
+		/* Add render list */
+		this.addItem(this.top_buttons);
+		this.addItem(this.table);
 	}
 	
 	

@@ -18,42 +18,57 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.DateTime;
 use Runtime.Exceptions.ApiError;
 use Runtime.Exceptions.ItemNotFound;
 use Runtime.Exceptions.RuntimeException;
 use Runtime.ORM.Connection;
-use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.SaveRelationApi;
 use Runtime.Widget.Crud.Rules.CrudRule;
 use Runtime.Widget.Crud.Rules.LowerCase;
 use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
 
 
-class WorkspaceDomainApi extends CrudApi
+class WorkspaceDomainSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.workspace.domain::crud";
+	static string getApiName() => "app.workspace.domain::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "domains";
+	string getTableName() => "domains";
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+		new Purify{ "name": "domain_name" },
+		new LowerCase{ "name": "domain_name" },
+		new Required{ "name": "domain_name" },
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"id",
 		"domain_name",
+		"space_id",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -62,87 +77,67 @@ class WorkspaceDomainApi extends CrudApi
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
-		"domain_id",
-	];
-	
-	
-	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
+	Collection getSaveFields() =>
 	[
-		new Purify{ "name": "domain_id" },
-		new LowerCase{ "name": "domain_id" },
-		new Required{ "name": "domain_id" },
+		"domain_name",
+		"space_id",
 	];
 	
 	
 	/**
 	 * Build search query
 	 */
-	async Query buildSearchQuery(Query q)
+	async void buildSearchQuery(Query q)
 	{
-		int space_id = (int)this.post_data.get("space_id");
-		
-		q.where("space_id", "=", space_id);
-		q.orderBy("domains.domain_name", "asc");
-		
-		return q;
 	}
 	
 	
 	/**
-	 * Update item
+	 * Save
 	 */
-	async void updateItem(Map update_data)
+	async void save()
 	{
 		if (not this.item.isNew())
 		{
 			throw new ApiError(new RuntimeException("Edit item are not allowed"));
 		}
 		
-		int space_id = update_data["space_id"];
-		int domain_id = update_data["domain_id"];
+		Connection connection = this.getConnection();
+		int space_id = this.data.get("space_id");
+		int domain_id = this.data.get("domain_name");
 		
-		Relation space = this.connection.findRelationById("spaces", space_id);
+		/* Find space */
+		Relation space = connection.findRelationById("spaces", space_id);
 		if (!space)
 		{
 			throw new ApiError(new ItemNotFound("Space"));
 		}
 		
-		Relation domain = this.connection.findRelationById("domains", domain_id);
+		/* Find domain */
+		Relation domain = connection.findRelationById("domains", domain_id);
 		if (!domain)
 		{
 			throw new ApiError(new ItemNotFound("Domain"));
 		}
 		if (domain.get("space_id") != 0)
 		{
-			throw new ApiError(new ItemNotFound("Domain"));
+			throw new ApiError(new RuntimeException("Domain allready exists"));
 		}
 		
+		/* Save domain */
 		domain.set("space_id", space_id);
-		domain.save(this.connection);
+		domain.save(connection);
 	}
 	
 	
 	/**
-	 * Delete item
+	 * Delete
 	 */
-	async void deleteItem()
+	async void delete()
 	{
+		Connection connection = this.getConnection();
 		this.item.set("space_id", null);
 		this.item.save(this.connection);
-	}
-	
-	
-	/**
-	 * Action search
-	 */
-	@ApiMethod
-	async void actionSearch()
-	{
-		await parent::actionSearch();
 	}
 	
 	
@@ -152,7 +147,7 @@ class WorkspaceDomainApi extends CrudApi
 	@ApiMethod
 	async void actionItem()
 	{
-		await parent::actionItem();
+		await parent();
 	}
 	
 	
@@ -162,7 +157,7 @@ class WorkspaceDomainApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		await parent();
 	}
 	
 	
@@ -172,6 +167,6 @@ class WorkspaceDomainApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		await parent();
 	}
 }

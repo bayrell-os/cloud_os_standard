@@ -88,5 +88,4 @@ static class ModuleDescription
 		new Route("Bayrell.CloudOS.Frontend.Routes"),
 		#endif
 	];
-	
 }

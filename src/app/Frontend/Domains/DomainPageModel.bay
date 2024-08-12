@@ -30,17 +30,15 @@ use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.FormSubmitStorage;
-use Runtime.Widget.Table.TableDialogModel;
+use Runtime.Widget.Table.RouteTableModel;
 use Bayrell.CloudOS.Frontend.Domains.DomainPage;
+use Bayrell.CloudOS.Frontend.Domains.DomainTableModel;
 
 
 class DomainPageModel extends BasePageModel
 {
 	string component = classof DomainPage;
-	SelectModel space_id = null;
-	FormModel form = null;
-	TableDialogModel table = null;
-	RowButtonsModel top_buttons = null;
+	RouteTableModel domains = null;
 	
 	
 	/**
@@ -50,155 +48,16 @@ class DomainPageModel extends BasePageModel
 	{
 		parent(params);
 		
-		/* Add top buttons */
-		this.top_buttons = this.addWidget(
-			classof RowButtonsModel,
+		/* Add domains */
+		this.domains = this.addWidget(
+			classof DomainTableModel,
 			{
-				"widget_name": "top_buttons",
-				"buttons":
-				[
-					{
-						"content": "Add",
-						"widget_name": "add_button",
-						"styles": [
-							"success",
-						]
-					},
-				],
-				"events":
-				{
-					"click": new Callback(this, "onTopButtonsClick"),
-				},
-			}
-		);
-		
-		/* Spaces */
-		this.space_id = this.addWidget(
-			classof SelectModel,
-			{
-				"storage": new Factory
-				(
-					"Runtime.Widget.Table.TableStorage",
-					{
-						"api_name": "app.workspace::search",
-					}
-				),
-				"widget_name": "space_id",
-				"transform": Map (Dict item) => {
-					"key": item.get("id"),
-					"value": item.get("name"),
-				},
-			}
-		);
-		
-		/* Add form */
-		this.form = this.addWidget(
-			classof FormModel,
-			{
-				"widget_name": "edit_form",
-				"primary_key": ["id"],
-				"storage": new Factory
-				(
-					"Runtime.Widget.Form.FormSaveStorage",
-					{
-						"api_name": "app.domain::save",
-					}
-				),
-				"fields":
-				[
-					{
-						"name": "domain_name",
-						"label": "Domain name",
-						"component": "Runtime.Widget.Input",
-					},
-					{
-						"name": "space_id",
-						"label": "Space name",
-						"model": this.space_id,
-					}
-				],
-			}
-		);
-		
-		/* Add table */
-		this.table = this.addWidget(
-			classof TableDialogModel,
-			{
-				"widget_name": "table",
-				"get_title": void (Dict params)
-				{
-					string action = params.get("action");
-					Dict item = params.get("item");
-					if (action == "add")
-					{
-						return "Add domain";
-					}
-					if (action == "edit")
-					{
-						return "Edit domain '" ~ item.get("domain_name") ~ "'";
-					}
-					if (action == "delete")
-					{
-						return "Delete domain '" ~ item.get("domain_name") ~ "'";
-					}
-					return "";
-				},
-				"styles": ["border"],
-				
-				/* Table storage */
-				"storage": new Factory
-				(
-					"Runtime.Widget.Table.TableStorage",
-					{
-						"api_name": "app.domain::search",
-					}
-				),
-				
-				/* Set page */
-				"page": this.layout.request_query.get("page", 1) - 1,
-				
-				/* Form */
-				"add_form": this.form,
-				
-				/* Delete form */
-				"delete_form": new ModelFactory(
-					classof FormModel,
-					{
-						"widget_name": "delete_form",
-						"primary_key": ["id"],
-						"storage": new Factory(
-							classof FormDeleteStorage,
-							{
-								"api_name": "app.domain::save"
-							}
-						),
-					}
-				),
-				
-				/* Table fields */
-				"fields":
-				[
-					{
-						"name": "row_number",
-					},
-					{
-						"name": "domain_name",
-						"label": "Domain name",
-					},
-					{
-						"name": "space_name",
-						"label": "Space name",
-					},
-					{
-						"name": "row_buttons",
-						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
-					},
-				],
+				"widget_name": "domains",
 			}
 		);
 		
 		/* Edit button */
-		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
+		RowButtonsModel row_buttons = this.domains.table.getWidget("row_buttons");
 		ButtonModel edit_button = row_buttons.getWidget("edit_button");
 		edit_button.clearListener("click");
 		edit_button.href = string (Dict data)
@@ -215,17 +74,5 @@ class DomainPageModel extends BasePageModel
 	void buildTitle(RenderContainer container)
 	{
 		this.layout.setPageTitle("List of domains");
-	}
-	
-	
-	/**
-	 * Top buttons click
-	 */
-	void onTopButtonsClick(ClickMessage message)
-	{
-		if (message.widget.widget_name == "add_button")
-		{
-			this.table.save_dialog.showAdd();
-		}
 	}
 }
