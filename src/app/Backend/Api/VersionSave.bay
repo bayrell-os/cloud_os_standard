@@ -18,12 +18,15 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
-use Runtime.ORM.Query;
+use Runtime.Exceptions.ApiError;
+use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.SaveRelationApi;
 use Runtime.Widget.Crud.Rules.CrudRule;
 use Runtime.Widget.Crud.Rules.LowerCase;
 use Runtime.Widget.Crud.Rules.Purify;
@@ -32,28 +35,38 @@ use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
 
 
-class NginxFileApi extends CrudApi
+class VersionSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.nginx_files::crud";
+	static string getApiName() => "app.template.version::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "nginx_files";
+	string getTableName() => "templates_versions";
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+		new Required{ "name": "content" },
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"id",
-		"name",
 		"content",
-		"enable",
+		"template_id",
+		"version",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -62,44 +75,28 @@ class NginxFileApi extends CrudApi
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
-		"name",
-		"content",
-		"enable",
-	];
-	
-	
-	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
+	Collection getSaveFields() =>
 	[
-		new Purify{ "name": "name" },
-		new LowerCase{ "name": "name" },
-		new Required{ "name": "name", "check_update": false },
-		new ReadOnly{ "name": "name", "can_create": true },
-		new Required{ "name": "enable" },
-		new Unique{"keys": ["name"]},
+		"content",
 	];
 	
 	
 	/**
-	 * Build search query
+	 * Create new relation
 	 */
-	async Query buildSearchQuery(Query q)
+	async Relation newItem()
 	{
-		q = q.orderBy("name", "asc");
-		return q;
+		throw new ApiError(new RuntimeException("Create items are not allowed"));
 	}
 	
 	
 	/**
-	 * Action search
+	 * Action item
 	 */
 	@ApiMethod
-	async void actionSearch()
+	async void actionItem()
 	{
-		await parent::actionSearch();
+		await parent();
 	}
 	
 	
@@ -109,7 +106,7 @@ class NginxFileApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		await parent();
 	}
 	
 	
@@ -119,6 +116,6 @@ class NginxFileApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		await parent();
 	}
 }

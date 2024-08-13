@@ -18,52 +18,57 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.DateTime;
-use Runtime.Exceptions.ApiException;
-use Runtime.ORM.Connection;
-use Runtime.ORM.Query;
-use Runtime.ORM.Relation;
 use Runtime.Exceptions.ApiError;
 use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Web.BaseApi;
-use Runtime.Widget.Crud.CrudApi;
-use Runtime.Widget.Crud.CrudRule;
-use Runtime.Widget.Crud.LowerCase;
-use Runtime.Widget.Crud.Purify;
-use Runtime.Widget.Crud.Required;
-use Runtime.Widget.Crud.Unique;
-use Runtime.XML.XML;
+use Runtime.Widget.Crud.SaveRelationApi;
+use Runtime.Widget.Crud.Rules.CrudRule;
+use Runtime.Widget.Crud.Rules.LowerCase;
+use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.ReadOnly;
+use Runtime.Widget.Crud.Rules.Required;
+use Runtime.Widget.Crud.Rules.Unique;
 
 
-class VersionApi extends CrudApi
+class ModificatorSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.template.version::crud";
+	static string getApiName() => "app.modificators::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "templates_versions";
+	string getTableName() => "modificators";
 	
 	
 	/**
-	 * Returns default limit
+	 * Returns rules
 	 */
-	int getDefaultLimit() => -1;
+	Vector<CrudRule> getRules() =>
+	[
+		new Required{ "name": "content" },
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"id",
-		"content",
-		"template_id",
+		"uid",
 		"version",
+		"name",
+		"content",
+		"priority",
 		"gmtime_created",
 		"gmtime_updated",
 	];
@@ -72,47 +77,20 @@ class VersionApi extends CrudApi
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
+	Collection getSaveFields() =>
+	[
 		"content",
 	];
 	
-	
-	/**
-	 * Build search query
-	 */
-	async Query buildSearchQuery(Query q)
-	{
-		int template_id = this.post_data["template_id"];
-		
-		if (template_id > 0)
-		{
-			q.where("template_id", "=", template_id);
-		}
-		
-		q.orderBy("version", "asc");
-		
-		return q;
-	}
-	
-	
-	/**
+    
+    /**
 	 * Create new relation
 	 */
-	async Relation newRelation()
+	async Relation newItem()
 	{
-		throw new ApiError( new RuntimeException("Create items are not allowed") );
+		throw new ApiError(new RuntimeException("Create items are not allowed"));
 	}
-	
-	
-	/**
-	 * Action search
-	 */
-	@ApiMethod
-	async void actionSearch()
-	{
-		await parent::actionSearch();
-	}
-	
+    
 	
 	/**
 	 * Action item
@@ -120,7 +98,7 @@ class VersionApi extends CrudApi
 	@ApiMethod
 	async void actionItem()
 	{
-		await parent::actionItem();
+		await parent();
 	}
 	
 	
@@ -130,7 +108,7 @@ class VersionApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		await parent();
 	}
 	
 	
@@ -140,6 +118,6 @@ class VersionApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		await parent();
 	}
 }

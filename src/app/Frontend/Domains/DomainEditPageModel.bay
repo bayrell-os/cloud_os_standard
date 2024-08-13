@@ -143,16 +143,4 @@ class DomainEditPageModel extends BasePageModel
 		}
 		this.layout.setPageTitle(title);
 	}
-	
-	
-	/**
-	 * Top buttons click
-	 */
-	void onTopButtonsClick(ClickMessage message)
-	{
-		if (message.widget.widget_name == "add_button")
-		{
-			this.table.save_dialog.showAdd();
-		}
-	}
 }

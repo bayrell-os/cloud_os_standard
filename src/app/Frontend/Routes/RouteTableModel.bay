@@ -31,7 +31,6 @@ use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
-use Bayrell.CloudOS.Frontend.Routes.RoutePage;
 
 
 class RouteTableModel extends RenderListModel
@@ -52,29 +51,6 @@ class RouteTableModel extends RenderListModel
 		/* Setup foreign key */
 		Dict foreign_key = null;
 		if (params and params.has("foreign_key")) foreign_key = params.get("foreign_key");
-		
-		/* Add top buttons */
-		this.top_buttons = this.addWidget(
-			classof RowButtonsModel,
-			{
-				"widget_name": "top_buttons",
-				"buttons":
-				[
-					{
-						"content": "Add",
-						"widget_name": "add_button",
-						"styles": [
-							"success",
-						]
-					},
-				],
-				"styles": ["top_buttons"],
-				"events":
-				{
-					"click": new Callback(this, "onTopButtonsClick"),
-				},
-			}
-		);
 		
 		/* Domains */
 		this.domain_id = this.addWidget(
@@ -273,6 +249,25 @@ class RouteTableModel extends RenderListModel
 			}
 		);
 		
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"styles": ["top_buttons"],
+				"buttons":
+				[
+					new ModelFactory
+					(
+						"Runtime.Widget.Table.AddButtonModel",
+						{
+							"table": this.table,
+						}
+					)
+				],
+			}
+		);
+		
 		/* Add render list */
 		this.addItem(this.top_buttons);
 		this.addItem(this.table);
@@ -285,18 +280,6 @@ class RouteTableModel extends RenderListModel
 	void buildTitle(RenderContainer container)
 	{
 		this.layout.setPageTitle("Routes");
-	}
-	
-	
-	/**
-	 * Top buttons click
-	 */
-	void onTopButtonsClick(ClickMessage message)
-	{
-		if (message.widget.widget_name == "add_button")
-		{
-			this.table.save_dialog.showAdd();
-		}
 	}
 	
 	

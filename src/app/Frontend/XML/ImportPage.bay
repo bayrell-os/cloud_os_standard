@@ -40,7 +40,7 @@
 	<div class="import_xml_page">
 		<div class="import_xml_page_code_mirror">
 			<CodeMirror value={{ this.model.content }}
-				@event:onValueChanged={{ this.onValueChanged }}
+				@event:valueChange={{ this.onValueChange }}
 				height="500px"
 			/>
 		</div>
@@ -67,9 +67,9 @@ async void onImportClick()
 /**
  * Change value
  */
-void onValueChanged(string value)
+void onValueChange(var message)
 {
-	this.model.content = value;
+	this.model.content = message.value;
 }
 
 </script>

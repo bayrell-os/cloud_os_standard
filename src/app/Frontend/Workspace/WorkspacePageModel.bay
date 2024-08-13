@@ -48,28 +48,6 @@ class WorkspacePageModel extends BasePageModel
 	{
 		parent(params);
 		
-		/* Add top buttons */
-		this.top_buttons = this.addWidget(
-			classof RowButtonsModel,
-			{
-				"widget_name": "top_buttons",
-				"buttons":
-				[
-					{
-						"content": "Add",
-						"widget_name": "add_button",
-						"styles": [
-							"success",
-						]
-					},
-				],
-				"events":
-				{
-					"click": new Callback(this, "onTopButtonsClick"),
-				},
-			}
-		);
-		
 		/* Add form */
 		this.form = this.addWidget(
 			classof FormModel,
@@ -176,6 +154,25 @@ class WorkspacePageModel extends BasePageModel
 			}
 		);
 		
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"styles": ["top_buttons"],
+				"buttons":
+				[
+					new ModelFactory
+					(
+						"Runtime.Widget.Table.AddButtonModel",
+						{
+							"table": this.table,
+						}
+					)
+				],
+			}
+		);
+		
 		/* Edit button */
 		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
 		ButtonModel edit_button = row_buttons.getWidget("edit_button");
@@ -194,17 +191,5 @@ class WorkspacePageModel extends BasePageModel
 	void buildTitle(RenderContainer container)
 	{
 		this.layout.setPageTitle("List of workspaces");
-	}
-	
-	
-	/**
-	 * Top buttons click
-	 */
-	void onTopButtonsClick(ClickMessage message)
-	{
-		if (message.widget.widget_name == "add_button")
-		{
-			this.table.save_dialog.showAdd();
-		}
 	}
 }

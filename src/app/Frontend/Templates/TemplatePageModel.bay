@@ -18,16 +18,29 @@
 
 namespace Bayrell.CloudOS.Frontend.Templates;
 
-use Runtime.Web.PageModel;
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
-use Runtime.Widget.Crud.CrudPageModel;
-use Bayrell.CloudOS.Frontend.Templates.TemplateFormModel;
-use Bayrell.CloudOS.Frontend.Templates.TemplateTableModel;
-use Bayrell.CloudOS.Frontend.Templates.VersionTableModel;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Templates.TemplatePage;
 
 
-class TemplatePageModel extends CrudPageModel
+class TemplatePageModel extends BasePageModel
 {
+	string component = classof TemplatePage;
+	FormModel form = null;
+	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
+	
+	
 	/**
 	 * Init widget settings
 	 */
@@ -35,47 +48,109 @@ class TemplatePageModel extends CrudPageModel
 	{
 		parent(params);
 		
-		if (this.layout.route.name == "app:templates:index")
-		{
-			/* Set action */
-			this.setAction("index");
-			
-			/* Create table widget */
-			TemplateTableModel table = this.addWidget(classof TemplateTableModel);
-			this.render_list.addItem(table);
-		}
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"buttons":
+				[
+					{
+						"content": "Add",
+						"widget_name": "add_button",
+						"href": string () => this.layout.url("app:templates:import"),
+						"styles": [
+							"success",
+						]
+					},
+				],
+				"styles": ["top_buttons"],
+			}
+		);
 		
-		else if (this.layout.route.name == "app:templates:edit")
+		/* Add table */
+		this.table = this.addWidget(
+			classof TableDialogModel,
+			{
+				"widget_name": "table",
+				"get_title": void (Dict params)
+				{
+					string action = params.get("action");
+					Dict item = params.get("item");
+					if (action == "add")
+					{
+						return "Add template";
+					}
+					if (action == "edit")
+					{
+						return "Edit template '" ~ item.get("name") ~ "'";
+					}
+					if (action == "delete")
+					{
+						return "Delete template '" ~ item.get("name") ~ "'";
+					}
+					return "";
+				},
+				"styles": ["border"],
+				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.template::search",
+					}
+				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"primary_key": ["id"],
+						"storage": new Factory(
+							classof FormDeleteStorage,
+							{
+								"api_name": "app.template::save"
+							}
+						),
+					}
+				),
+				
+				/* Table fields */
+				"fields":
+				[
+					{
+						"name": "row_number",
+					},
+					{
+						"name": "name",
+						"label": "Name",
+					},
+					{
+						"name": "uid",
+						"label": "UID",
+					},
+					{
+						"name": "row_buttons",
+						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
+					},
+				],
+			}
+		);
+		
+		/* Edit button */
+		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
+		ButtonModel edit_button = row_buttons.getWidget("edit_button");
+		edit_button.clearListener("click");
+		edit_button.href = string (Dict data)
 		{
-			/* Set action */
-			this.setAction("edit");
-			
-			/* Create table widget */
-			TemplateFormModel form = this.addWidget(
-				classof TemplateFormModel,
-				{
-					"action": "edit",
-					"primary_key": {
-						"id": this.layout.route.matches.get("id"),
-					},
-				}
-			);
-			this.render_list.addItem(form);
-			
-			/* Create versions table widget */
-			VersionTableModel version_table = this.addWidget(
-				classof VersionTableModel,
-				{
-					"widget_name": "version_table",
-					"foreign_key": {
-						"template_id": this.layout.route.matches.get("id"),
-					},
-				}
-			);
-			
-			/* Add table to render list */
-			this.render_list.addItem(version_table);
-		}
+			Dict item = data.get("item");
+			return this.layout.url("app:templates:edit", {"id": item.get("id")});
+		};
 	}
 	
 	
@@ -84,15 +159,6 @@ class TemplatePageModel extends CrudPageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		/* Set title */
-		if (this.action == "index")
-		{
-			this.layout.setPageTitle("List of templates");
-		}
-		else if (this.action == "edit")
-		{
-			TemplateFormModel form = this.getWidget("form");
-			this.layout.setPageTitle(form.getPageTitle("edit"));
-		}
+		this.layout.setPageTitle("List of templates");
 	}
 }
