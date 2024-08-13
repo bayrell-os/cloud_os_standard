@@ -59,6 +59,8 @@ static class ModuleDescription
 	 */
 	pure Collection<Dict> entities() =>
 	[
+		new Api("Bayrell.CloudOS.Backend.Api.DockerServiceSave"),
+		new Api("Bayrell.CloudOS.Backend.Api.DockerServiceSearch"),
 		new Api("Bayrell.CloudOS.Backend.Api.DockerStackSave"),
 		new Api("Bayrell.CloudOS.Backend.Api.DockerStackSearch"),
 		new Api("Bayrell.CloudOS.Backend.Api.DockerYamlFileSave"),

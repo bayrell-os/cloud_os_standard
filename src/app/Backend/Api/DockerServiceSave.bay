@@ -18,42 +18,49 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
 use Runtime.ORM.Connection;
-use Runtime.ORM.Query;
 use Runtime.ORM.Relation;
-use Runtime.Exceptions.ApiError;
-use Runtime.Exceptions.ItemNotFound;
-use Runtime.Exceptions.RuntimeException;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
-use Runtime.Widget.Crud.CrudRule;
-use Runtime.Widget.Crud.LowerCase;
-use Runtime.Widget.Crud.Purify;
-use Runtime.Widget.Crud.Required;
-use Runtime.Widget.Crud.Unique;
+use Runtime.Widget.Crud.SaveRelationApi;
+use Runtime.Widget.Crud.Rules.CrudRule;
+use Runtime.Widget.Crud.Rules.LowerCase;
+use Runtime.Widget.Crud.Rules.Purify;
+use Runtime.Widget.Crud.Rules.ReadOnly;
+use Runtime.Widget.Crud.Rules.Required;
+use Runtime.Widget.Crud.Rules.Unique;
 use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
-class ServiceApi extends CrudApi
+class DockerServiceSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.docker.services::crud";
+	static string getApiName() => "app.docker.services::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "docker_services";
+	string getTableName() => "docker_services";
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"service_id",
 		"stack_name",
 		"service_name",
@@ -69,56 +76,20 @@ class ServiceApi extends CrudApi
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
-	];
-	
-	
-	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
+	Collection getSaveFields() =>
 	[
 	];
 	
-	
-	/**
-	 * Build search query
-	 */
-	async Query buildSearchQuery(Query q)
-	{
-        q.where("is_deleted", "=", 0);
-        q.where("enable", "=", 1);
-		q.orderBy("stack_name", "asc");
-		return q;
-	}
-	
-	
-	/**
-	 * Action search
-	 */
-	@ApiMethod
-	async void actionSearch()
-	{
-		await parent::actionSearch();
-	}
-	
-	
-	/**
+    
+    /**
 	 * Action stop
 	 */
 	@ApiMethod
 	async void actionStop()
 	{
-		Dict pk = this.post_data["pk"];
-		Connection conn = this.getConnection();
-		
-		/* Find item */
-		await this.findItem(pk);
-		if (this.item == null)
-		{
-			throw new ApiError(new ItemNotFound());
-		}
-		
+        /* Load data */
+		await this.loadItem();
+        
 		/* Stop service */
 		string service_name = this.item.get("stack_name") ~ "_" ~ this.item.get("service_name");
 		string message = DockerService::stopService(service_name);
@@ -127,7 +98,7 @@ class ServiceApi extends CrudApi
 		/* Set is delete */
 		this.item.set("enable", 0);
 		this.item.set("is_deleted", 1);
-		this.item.save(conn);
+		this.item.save(this.getConnection());
 		
 		/* Set api result */
 		this.result.success({

@@ -18,14 +18,34 @@
 
 namespace Bayrell.CloudOS.Frontend.DockerServices;
 
-use Runtime.Web.PageModel;
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.ApiResult;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
-use Runtime.Widget.Crud.CrudPageModel;
-use Bayrell.CloudOS.Frontend.DockerServices.ServiceTableModel;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Web.Messages.Message;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Dialog.ConfirmDialogModel;
+use Runtime.Widget.Dialog.DialogModelException;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Table.RefreshButtonModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.DockerServices.ServicePage;
 
 
-class ServicePageModel extends CrudPageModel
+class ServicePageModel extends BasePageModel
 {
+	string component = classof ServicePage;
+	FormModel form = null;
+	TableDialogModel table = null;
+	RowButtonsModel top_buttons = null;
+	
+	
 	/**
 	 * Init widget settings
 	 */
@@ -33,15 +53,127 @@ class ServicePageModel extends CrudPageModel
 	{
 		parent(params);
 		
-		if (this.layout.route.name == "app:docker:services:index")
-		{
-			/* Set action */
-			this.setAction("index");
-			
-			/* Create table widget */
-			ServiceTableModel table = this.addWidget(classof ServiceTableModel);
-			this.render_list.addItem(table);
-		}
+		/* Add table */
+		this.table = this.addWidget(
+			classof TableDialogModel,
+			{
+				"widget_name": "table",
+				"get_title": void (Dict params)
+				{
+					return "";
+				},
+				"styles": ["border"],
+				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.docker.services::search",
+					}
+				),
+				
+				/* Set page */
+				"page": this.layout.request_query.get("page", 1) - 1,
+				
+				/* Table fields */
+				"fields":
+				[
+					{
+						"name": "row_number",
+					},
+					{
+						"name": "docker_name",
+						"label": "Docker name",
+						"calculate": var (Dict data)
+						{
+							Dict item = data.get("item");
+							string service_name = item.get("service_name");
+							string stack_name = item.get("stack_name");
+							return stack_name ~ "_" ~ service_name;
+						}
+					},
+					{
+						"name": "docker_image",
+						"label": "Docker image",
+					},
+					{
+						"name": "replicas",
+						"label": "Replicas",
+						"calculate": var (Dict data)
+						{
+							Dict item = data.get("item");
+							string count_total = item.get("count_total");
+							string count_work = item.get("count_work");
+							return count_work ~ "/" ~ count_total;
+						}
+					},
+					{
+						"name": "row_buttons",
+						"model": new ModelFactory(
+							"Runtime.Widget.Table.TableRowButtonsModel",
+							{
+								"edit": false,
+								"delete": false,
+								"buttons":
+								[
+									{
+										"widget_name": "stop_button",
+										"content": "Stop",
+										"styles": ["danger", "small"],
+										"events":
+										{
+											"click": new Callback(this, "onStopClick"),
+										},
+									}
+								],
+							}
+						),
+					},
+				],
+				"events":
+				{
+					"row_click": new Callback(this, "onRowClick"),
+				},
+			}
+		);
+		
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"buttons":
+				[
+					new ModelFactory(
+						classof RefreshButtonModel,
+						{
+							"table": this.table,
+						}
+					),
+				],
+				"styles": ["top_buttons"],
+				"events":
+				{
+				},
+			}
+		);
+		
+		/* Add stop dialog */
+		this.stop_dialog = this.addWidget(
+			classof ConfirmDialogModel,
+			{
+				"events":
+				{
+					"confirm": new Callback(this, "onStopConfirmClick"),
+				},
+			}
+		);
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.stop_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Stop";
+		confirm_button.styles = ["danger"];
 	}
 	
 	
@@ -50,10 +182,60 @@ class ServicePageModel extends CrudPageModel
 	 */
 	void buildTitle(RenderContainer container)
 	{
-		/* Set title */
-		if (this.action == "index")
+		this.layout.setPageTitle("List of services");
+	}
+	
+	
+	/**
+	 * Row click
+	 */
+	void onRowClick(Message message)
+	{
+		this.table.row_selected = message.data.get("row_number");
+	}
+	
+	
+	/**
+	 * Stop button click
+	 */
+	void onStopClick(ClickMessage message)
+	{
+		Dict item = message.data.get("item");
+		string service_name = item.get("service_name");
+		string stack_name = item.get("stack_name");
+		this.stop_dialog.data.set("service_id", item.get("service_id"));
+		this.stop_dialog.data.set("docker_name", stack_name ~ "_" ~ service_name);
+		this.stop_dialog.title = "Stop service " ~ stack_name ~ "_" ~ service_name ~ "?";
+		this.stop_dialog.show();
+	}
+	
+	
+	/**
+	 * Stop confirm click
+	 */
+	async void onStopConfirmClick(ClickMessage message)
+	{
+		int service_id = this.stop_dialog.data.get("service_id");
+		
+		/* Stop service */
+		this.stop_dialog.result.setWaitMessage();
+		ApiResult res = await this.layout.callApi({
+			"api_name": "app.docker.services::save",
+			"method_name": "actionStop",
+			"data": {
+				"pk": {
+					"service_id": service_id,
+				},
+			}
+		});
+		
+		/* Error message */
+		if (not res.isSuccess())
 		{
-			this.layout.setPageTitle("List of services");
+			throw new DialogModelException(res.message);
 		}
+		
+		/* Reload table */
+		await this.table.reload();
 	}
 }

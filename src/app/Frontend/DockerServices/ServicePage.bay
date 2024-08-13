@@ -16,27 +16,27 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Frontend.DockerServices.ServiceTable"
-	extends="Runtime.Widget.Table.Table">
+<class name="Bayrell.CloudOS.Frontend.DockerServices.ServicePage">
 
 <use name="Runtime.DateTime" />
+<use name="Runtime.Widget.Table.Table" component="true" />
 
 
 <style>
+.stack_page %(Table)widget_table__tr{
+	cursor: pointer;
+}
 .service_table{
 	display: flex;
 	align-items: flex-start;
 }
-.service_table .wiget_table__table{
+.service_table %(Table)widget_table{
 	position: relative;
 	width: calc(100% - 450px);
 }
 .service_table .service_info{
 	width: 450px;
 	padding-left: 10px;
-}
-.widget_table .widget_table__tr{
-	cursor: pointer;
 }
 .service_info__row{
 	padding-top: 10px;
@@ -57,44 +57,48 @@
 
 
 <template name="renderServiceInfo">
-	%set Dict item = this.getSelectedItem();
-	%if (item != null)
-	{
-		%set Collection docker_tasks = item.get("docker_tasks");
-		%set docker_tasks = this.updateDockerTasks(docker_tasks);
-		%for (int i=0; i<docker_tasks.count(); i++)
+	<div class="service_info">
+		%set Dict item = this.model.table.getSelectedItem();
+		%if (item != null)
 		{
-			%set Dict task = docker_tasks.get(i);
-			<div class="service_info__row">
-				<div class="service_info__item">
-					{{ "ID: " ~ task["ID"] }}
-				</div>
-				<div class="service_info__item">
-					{{ "State: " ~ task["Status", "State"] }}
-				</div>
-				<div class="service_info__item">
-					{{ "DesiredState: " ~ task["DesiredState"] }}
-				</div>
-				<div class="service_info__item">
-					{{ "Updated: " ~ task["UpdatedAt"].shiftOffset(0).getDateTimeString() ~ " UTC" }}
-				</div>
-				%set string error = task["Status", "Err"];
-				%if (error)
-				{
+			%set Collection docker_tasks = item.get("docker_tasks");
+			%set docker_tasks = this.updateDockerTasks(docker_tasks);
+			%for (int i=0; i<docker_tasks.count(); i++)
+			{
+				%set Dict task = docker_tasks.get(i);
+				<div class="service_info__row">
 					<div class="service_info__item">
-						{{ "Error: " ~ task["Status", "Err"] }}
+						{{ "ID: " ~ task["ID"] }}
 					</div>
-				}
-			</div>
+					<div class="service_info__item">
+						{{ "State: " ~ task["Status", "State"] }}
+					</div>
+					<div class="service_info__item">
+						{{ "DesiredState: " ~ task["DesiredState"] }}
+					</div>
+					<div class="service_info__item">
+						{{ "Updated: " ~ task["UpdatedAt"].shiftOffset(0).getDateTimeString() ~ " UTC" }}
+					</div>
+					%set string error = task["Status", "Err"];
+					%if (error)
+					{
+						<div class="service_info__item">
+							{{ "Error: " ~ task["Status", "Err"] }}
+						</div>
+					}
+				</div>
+			}
 		}
-	}
+	</div>
 </template>
 
 
-<template name="renderTable">
-	<div class="service_table">
-		%render parent();
-		<div class="service_info">
+<template>
+	<div class="stack_page">
+		%render this.renderWidget(this.model.top_buttons);
+		%render this.renderWidget(this.model.stop_dialog);
+		<div class="service_table">
+			%render this.renderWidget(this.model.table);
 			%render this.renderServiceInfo();
 		</div>
 	</div>
@@ -102,15 +106,6 @@
 
 
 <script>
-
-/**
- * OnRowClick
- */
-void onRowClick(int row_number)
-{
-	this.row_selected = row_number;
-}
-
 
 /**
  * Update docker tasks
@@ -148,6 +143,5 @@ Vector updateDockerTasks(Vector docker_tasks)
 }
 
 </script>
-
 
 </class>
