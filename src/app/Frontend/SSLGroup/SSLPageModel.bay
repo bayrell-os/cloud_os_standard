@@ -51,7 +51,7 @@ class SSLPageModel extends BasePageModel
 		this.form = this.addWidget(
 			classof FormModel,
 			{
-				"widget_name": "edit_form",
+				"widget_name": "form",
 				"primary_key": ["id"],
 				"storage": new Factory
 				(

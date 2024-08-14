@@ -20,69 +20,24 @@
 
 <use name="Runtime.Widget.Button" component="true" />
 
-
-<template name="render">
-	%if (this.condition())
+<template>
+	%set Dict data = this.data;
+	%set Dict item = data.get("item");
+	%set bool is_admin = item.get("is_admin");
+	%set int status = item.get("status");
+	%if (status == 1 and is_admin)
 	{
-		<Button href={{ this.getUrl() }} styles=["small"]>Admin</Button>
+		%set string stack_name = item.get("stack_name");
+		%set string app_name = item.get("name");
+		<Button
+			styles=["small"]
+			href={{ "/applications/admin/" ~ stack_name ~ "_" ~ app_name ~ "/" }}
+		>Admin</Button>
 	}
 	%else
 	{
-		{{ "No" }}
+		<div></div>
 	}
 </template>
-
-
-<script>
-
-props var value = null;
-
-
-/**
- * Returns item
- */
-Dict getItem()
-{
-	int row_number = (this.data != null and this.data.has("row_number"))
-		? this.data.get("row_number")
-		: -1
-	;
-	
-	Dict item = this.model.getItemByRowNumber(row_number);
-	return item;
-}
-
-
-/**
- * Returns button url
- */
-string getUrl()
-{
-	Dict item = this.getItem();
-	string stack_name = item.get("stack_name");
-	string app_name = item.get("name");
-	return "/applications/admin/" ~ stack_name ~ "_" ~ app_name ~ "/";
-}
-
-
-/**
- * Condition show button
- */
-bool condition()
-{
-	Dict item = this.getItem();
-	if (item == null) return false;
-	
-	int status = item.get("status");
-	if (status == 0) return false;
-	
-	int is_admin = item.get("is_admin");
-	if (is_admin != 1) return false;
-	
-	return true;
-}
-
-</script>
-
 
 </class>

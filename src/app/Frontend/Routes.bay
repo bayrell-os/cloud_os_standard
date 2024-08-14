@@ -54,13 +54,13 @@ class Routes extends BaseRoute
 			{
 				"uri": "/applications/",
 				"name": "app:applications:index",
-				"model": "Bayrell.CloudOS.Frontend.Applications.AppPageModel",
+				"model": "Bayrell.CloudOS.Frontend.Applications.ApplicationsPageModel",
 			},
 			new RouteInfo
 			{
 				"uri": "/applications/{id}/",
 				"name": "app:applications:edit",
-				"model": "Bayrell.CloudOS.Frontend.Applications.AppPageModel",
+				"model": "Bayrell.CloudOS.Frontend.Applications.ApplicationsPageModel",
 			},
 			
 			/* Template */

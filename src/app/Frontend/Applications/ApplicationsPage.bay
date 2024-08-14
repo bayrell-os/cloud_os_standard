@@ -16,51 +16,59 @@
  *  limitations under the License.
 -->
 
-<class name="Bayrell.CloudOS.Frontend.DockerServices.ServicePage">
+<class name="Bayrell.CloudOS.Frontend.Applications.ApplicationsPage">
 
 <use name="Runtime.DateTime" />
 <use name="Runtime.Widget.Table.Table" component="true" />
 
 
 <style>
-.stack_page %(Table)widget_table__tr{
+.application_page %(Table)widget_table__tr{
 	cursor: pointer;
 }
-.service_table{
+.application_table{
 	display: flex;
 	align-items: flex-start;
 }
-.service_table %(Table)widget_table{
+.application_table %(Table)widget_table{
 	position: relative;
-	width: calc(100% - 450px);
+	width: calc(100% - 400px);
 }
-.service_table .service_info{
-	width: 450px;
+.application_table .application_info{
+	width: 400px;
 	padding-left: 10px;
 }
-.service_info__row{
+.application_info{
+	padding-left: 10px;
+}
+.application_info__name{
+	font-weight: bold;
+	text-align: center;
+}
+.application_info__row{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	border-bottom: 1px #ccc solid;
 }
-.service_info__row:first-child{
+.application_info__row:first-child{
 	padding-top: 0px;
 }
-.service_info__row:last-child{
+.application_info__row:last-child{
 	padding-bottom: 0px;
 	border-bottom: 0px;
 }
-.service_info__item{
+.application_info__item{
 	padding-bottom: 5px;
 }
 </style>
 
 
-<template name="renderServiceInfo">
-	<div class="service_info">
-		%set Dict item = this.model.table.getSelectedItem();
+<template name="renderAppInfo">
+	<div class="application_info">
+		%set Dict item = this.model.table.getItemByRowNumber(this.model.info_row_number);
 		%if (item != null)
 		{
+			<div class="application_info__name">{{ item["stack_name"] ~ "_" ~ item["name"] }}</div>
 			%set Collection docker_tasks = item.get("docker_tasks");
 			%if (docker_tasks)
 			{
@@ -68,24 +76,24 @@
 				%for (int i=0; i<docker_tasks.count(); i++)
 				{
 					%set Dict task = docker_tasks.get(i);
-					<div class="service_info__row">
-						<div class="service_info__item">
+					<div class="application_info__row">
+						<div class="application_info__item">
 							{{ "ID: " ~ task["ID"] }}
 						</div>
-						<div class="service_info__item">
+						<div class="application_info__item">
 							{{ "State: " ~ task["Status", "State"] }}
 						</div>
-						<div class="service_info__item">
+						<div class="application_info__item">
 							{{ "DesiredState: " ~ task["DesiredState"] }}
 						</div>
-						<div class="service_info__item">
+						<div class="application_info__item">
 							{{ "Updated: " ~
 								task["UpdatedAt"].shiftOffset(0).getDateTimeString() ~ " UTC" }}
 						</div>
 						%set string error = task["Status", "Err"];
 						%if (error)
 						{
-							<div class="service_info__item">
+							<div class="application_info__item">
 								{{ "Error: " ~ task["Status", "Err"] }}
 							</div>
 						}
@@ -98,12 +106,11 @@
 
 
 <template>
-	<div class="stack_page">
+	<div class="application_page">
 		%render this.renderWidget(this.model.top_buttons);
-		%render this.renderWidget(this.model.stop_dialog);
-		<div class="service_table">
+		<div class="application_table">
 			%render this.renderWidget(this.model.table);
-			%render this.renderServiceInfo();
+			%render this.renderAppInfo();
 		</div>
 	</div>
 </template>

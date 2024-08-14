@@ -3,6 +3,9 @@
 	"assets":
 	[
 		"Frontend/Hooks/AppHook.bay",
+		"Frontend/Applications/ApplicationsPage.bay",
+		"Frontend/Applications/ApplicationsPageModel.bay",
+		"Frontend/Applications/TableFieldAdmin.bay",
 		"Frontend/DockerServices/ServicePage.bay",
 		"Frontend/DockerServices/ServicePageModel.bay",
 		"Frontend/DockerStack/StackPage.bay",

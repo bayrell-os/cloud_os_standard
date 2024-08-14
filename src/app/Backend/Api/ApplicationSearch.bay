@@ -1,0 +1,177 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.Api;
+
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryField;
+use Runtime.ORM.QueryResult;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.SearchRelationApi;
+use Runtime.XML.XML;
+
+
+class ApplicationSearch extends SearchRelationApi
+{
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app:applications::search";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	string getTableName() => "applications";
+	
+	
+	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() =>
+	[
+		"id",
+		"content",
+		"custom_patch",
+		"environments",
+		"name",
+		"stack_name",
+		"status",
+		"template_id",
+		"template_uid",
+		"template_name",
+		"template_version",
+		"template_version_id",
+		"variables",
+		"volumes",
+		"yaml",
+		"yaml_file_id",
+		"count_work",
+		"count_total",
+		"docker_tasks",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+    
+    /**
+	 * Returns query field
+	 */
+	QueryField getQueryField(string table_name, string field_name)
+	{
+		if (field_name == "template_version")
+			return new QueryField("templates_versions", "version", field_name);
+		
+		if (field_name == "template_name")
+			return new QueryField("templates", "name", field_name);
+		
+		if (field_name == "template_id")
+			return new QueryField("templates", "id", field_name);
+		
+		if (field_name == "template_uid")
+			return new QueryField("templates", "uid", field_name);
+		
+		if (field_name == "count_work")
+			return new QueryField("docker_services", "count_work", field_name);
+		
+		if (field_name == "count_total")
+			return new QueryField("docker_services", "count_total", field_name);
+		
+		if (field_name == "docker_tasks")
+			return new QueryField("docker_services", "docker_tasks", field_name);
+		
+		return parent(table_name, field_name);
+	}
+    
+	
+	/**
+	 * Build search query
+	 */
+	async void buildSearchQuery(Query q)
+	{
+		string status = this.post_data["status"];
+		
+		if (status == "run") q.where("applications.status", "=", 1);
+		else if (status == "stop") q.where("applications.status", "!=", 1);
+		
+		q = q
+            .orderBy("applications.stack_name", "asc")
+			.orderBy("applications.name", "asc")
+			
+			.leftJoin(
+				"templates_versions",
+				[
+					"applications.template_version_id=templates_versions.id"
+				]
+			)
+			
+			.leftJoin(
+				"templates",
+				[
+					"templates_versions.template_id=templates.id"
+				]
+			)
+			
+			.leftJoin(
+				"docker_services",
+				[
+					"applications.stack_name=docker_services.stack_name",
+					"applications.name=docker_services.service_name",
+					"docker_services.enable=1",
+					"docker_services.is_deleted=0",
+				]
+			)
+		;
+	}
+	
+    
+    /**
+	 * Convert item
+	 */
+	Map convertItem(Collection fields, Relation item)
+	{
+		item = parent::convertItem(fields, item);
+		
+		bool is_admin = false;
+		XML xml = XML::loadXml(item.get("content"));
+		if (xml and xml.exists())
+		{
+			XML xml_admin = xml.get("admin").get(0);
+			if (xml_admin)
+			{
+				is_admin = true;
+			}
+		}
+		
+		item.set("is_admin", is_admin);
+		
+		return item;
+	}
+    
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent();
+	}
+}

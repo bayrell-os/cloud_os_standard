@@ -76,6 +76,12 @@ class ServicePageModel extends BasePageModel
 				/* Set page */
 				"page": this.layout.request_query.get("page", 1) - 1,
 				
+				/* Events */
+				"events":
+				{
+					"row_click": new Callback(this, "onRowClick"),
+				},
+				
 				/* Table fields */
 				"fields":
 				[
@@ -131,10 +137,6 @@ class ServicePageModel extends BasePageModel
 						),
 					},
 				],
-				"events":
-				{
-					"row_click": new Callback(this, "onRowClick"),
-				},
 			}
 		);
 		
