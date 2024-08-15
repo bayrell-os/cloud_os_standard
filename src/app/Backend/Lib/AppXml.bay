@@ -69,7 +69,7 @@ class AppXml
 		await this.loadModificators();
 		
 		/* Patch template */
-		if (action == "create" or action == "save")
+		if (action == "create" or action == "edit")
 		{
 			this.patchTemplate();
 			this.buildVariables();
