@@ -1,0 +1,131 @@
+<!--
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+-->
+
+<class name="Bayrell.CloudOS.Frontend.Applications.ApplicationsPageEdit">
+
+<use name="Runtime.Widget.Tab.Tabs" component="true" />
+<use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.RowButtons" component="true" />
+<use name="Runtime.Widget.WidgetResult" component="true" />
+<use name="Runtime.Widget.CodeMirror.CodeMirror" component="true" />
+
+<style>
+.application_page__buttons{
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+	%(WidgetResult)widget_result{
+		margin-left: 10px;
+	}
+}
+.application_page__title{
+	font-size: 20px;
+	font-weight: bold;
+	margin: 15px 0px;
+}
+.application_page__row{
+	display: flex;
+}
+.application_page__row_item{
+	width: 50%
+}
+</style>
+
+
+<template name="renderVariables">
+</template>
+
+
+<template name="renderModificators">
+	
+	<div class="application_page__title">Modificators</div>
+	<div class="application_page__row">
+		<div class="application_page__row_item">
+			%render this.renderVariables();
+		</div>
+		<div class="application_page__row_item">
+			%render this.renderWidget(this.model.modificators);
+		</div>
+	</div>
+	<div class="application_page__row">
+		<div class="application_page__row_item">
+			<div class="application_page__title">Environments</div>
+			%render this.renderWidget(this.model.environments);
+		</div>
+		<div class="application_page__row_item">
+			<div class="application_page__title">Volumes</div>
+			%render this.renderWidget(this.model.volumes);
+		</div>
+	</div>
+	
+</template>
+
+
+<template name="renderPatches">
+	<div class="application_patches">
+	</div>
+</template>
+
+
+<template>
+    <div class="application_page">
+		<div class="application_page__buttons">
+			%render this.renderWidget(this.model.top_buttons);
+			%render this.renderWidget(this.model.form.result);
+		</div>
+		%if (this.model.form.load.isSuccess())
+		{
+			<Tabs model={{ this.model.tabs }}>
+				<slot name="info">
+					%render this.renderWidget(this.model.form);
+					%render this.renderModificators();
+				</slot>
+				<slot name="custom_patch">
+					<CodeMirror
+						@event:onValueChange={{
+							void (var message)
+							{
+								this.model.form.item.set("custom_patch", message.value);
+							}
+						}}
+						value={{ this.model.form.item.get("custom_patch") }}
+						height="500px"
+						timeout="100"
+					/>
+				</slot>
+				<slot name="total_patches">
+					%render this.renderPatches();
+				</slot>
+				<slot name="result">
+					<CodeMirror
+						value={{ this.model.form.item.get("content") }}
+						readonly="true" height="500px"
+					/>
+				</slot>
+				<slot name="yaml">
+					<CodeMirror
+						value={{ this.model.form.item.get("yaml") }}
+						readonly="true" height="500px"
+					/>
+				</slot>
+			</Tabs>
+		}
+	</div>
+</template>
+
+</class>

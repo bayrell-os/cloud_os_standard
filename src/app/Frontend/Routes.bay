@@ -60,7 +60,7 @@ class Routes extends BaseRoute
 			{
 				"uri": "/applications/{id}/",
 				"name": "app:applications:edit",
-				"model": "Bayrell.CloudOS.Frontend.Applications.ApplicationsPageModel",
+				"model": "Bayrell.CloudOS.Frontend.Applications.ApplicationsPageEditModel",
 			},
 			
 			/* Template */

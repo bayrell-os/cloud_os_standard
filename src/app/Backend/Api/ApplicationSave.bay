@@ -21,6 +21,7 @@ namespace Bayrell.CloudOS.Backend.Api;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
 use Runtime.ORM.Query;
+use Runtime.ORM.QueryField;
 use Runtime.ORM.QueryFilter;
 use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
@@ -31,6 +32,7 @@ use Runtime.Widget.Crud.Rules.Purify;
 use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
+use Bayrell.CloudOS.Backend.Lib.AppXml;
 
 
 class ApplicationSave extends SaveRelationApi
@@ -45,6 +47,19 @@ class ApplicationSave extends SaveRelationApi
 	 * Returns table name
 	 */
 	string getTableName() => "applications";
+	
+	
+	/**
+	 * Constructor
+	 */
+	void constructor()
+	{
+		parent();
+		
+		/* Create xml */
+		this.xml = new AppXml();
+		this.xml.connection = this.getConnection();
+	}
 	
 	
 	/**
@@ -101,8 +116,133 @@ class ApplicationSave extends SaveRelationApi
 	 */
 	Collection getSaveFields() =>
 	[
+		"custom_patch",
+		"name",
 		"stack_name",
+		"template_version_id",
 	];
+	
+	
+	/**
+	 * Returns query field
+	 */
+	QueryField getQueryField(string table_name, string field_name)
+	{
+		if (field_name == "template_version")
+			return new QueryField("templates_versions", "version", field_name);
+		
+		if (field_name == "template_name")
+			return new QueryField("templates", "name", field_name);
+		
+		if (field_name == "template_id")
+			return new QueryField("templates", "id", field_name);
+		
+		if (field_name == "template_uid")
+			return new QueryField("templates", "uid", field_name);
+		
+		if (field_name == "count_work")
+			return new QueryField("docker_services", "count_work", field_name);
+		
+		if (field_name == "count_total")
+			return new QueryField("docker_services", "count_total", field_name);
+		
+		if (field_name == "docker_tasks")
+			return new QueryField("docker_services", "docker_tasks", field_name);
+		
+		return parent(table_name, field_name);
+	}
+	
+	
+	/**
+	 * Build search query
+	 */
+	async void buildSearchQuery(Query q)
+	{
+		q = q
+            .orderBy("applications.stack_name", "asc")
+			.orderBy("applications.name", "asc")
+			
+			.leftJoin(
+				"templates_versions",
+				[
+					"applications.template_version_id=templates_versions.id"
+				]
+			)
+			
+			.leftJoin(
+				"templates",
+				[
+					"templates_versions.template_id=templates.id"
+				]
+			)
+			
+			.leftJoin(
+				"docker_services",
+				[
+					"applications.stack_name=docker_services.stack_name",
+					"applications.name=docker_services.service_name",
+					"docker_services.enable=1",
+					"docker_services.is_deleted=0",
+				]
+			)
+		;
+	}
+	
+	
+	/**
+	 * After save
+	 */
+	async void onSaveAfter()
+	{
+		await parent();
+		
+		/* Build xml and yaml */
+		this.xml.setItem(this.item);
+		await this.xml.buildContent(this.pk == null ? "create" : "edit");
+		
+		/* Save item */
+		this.item.set("content", this.xml.xml_content);
+		this.item.set("yaml", this.xml.yaml_content);
+		this.item.save(this.getConnection());
+	}
+	
+	
+	/**
+	 * Build variables
+	 */
+	async void buildVariables()
+	{
+		if (this.xml.item == null)
+		{
+			this.xml.setItem(this.item);
+			await this.xml.buildContent("load");
+		}
+		
+		Map data_item = this.result.data.get("item");
+		
+		/* Set patches */
+		Collection patches = this.xml.getPatches();
+		data_item.set("patches", patches);
+		
+		/* Set variables */
+		data_item.set("variables", this.xml.variables);
+		if (data_item.get("variables") == null)
+		{
+			data_item.set("variables", []);
+		}
+		
+		/* Set environments if null */
+		if (data_item.get("environments") == null)
+		{
+			data_item.set("environments", []);
+		}
+		
+		/* Set volumes if null */
+		if (data_item.get("volumes") == null)
+		{
+			data_item.set("volumes", []);
+		}
+	}
 	
 	
 	/**
@@ -112,6 +252,7 @@ class ApplicationSave extends SaveRelationApi
 	async void actionItem()
 	{
 		await parent();
+		await this.buildVariables();
 	}
 	
 	
@@ -122,6 +263,7 @@ class ApplicationSave extends SaveRelationApi
 	async void actionSave()
 	{
 		await parent();
+		await this.buildVariables();
 	}
 	
 	

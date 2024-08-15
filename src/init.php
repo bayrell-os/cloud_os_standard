@@ -1,6 +1,8 @@
 <?php
 return function($loader)
 {
+	include __DIR__ . "/vendor/autoload.php";
+	
 	/* Runtime */
 	$loader->add("Runtime",  __DIR__ . "/lib/Runtime/php");
 	$loader->add("Runtime.Console",  __DIR__ . "/lib/Runtime.Console/php");

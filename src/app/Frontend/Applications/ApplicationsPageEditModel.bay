@@ -1,0 +1,302 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Frontend.Applications;
+
+use Runtime.Callback;
+use Runtime.Entity.Factory;
+use Runtime.Web.BasePageModel;
+use Runtime.Web.ModelFactory;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.SelectModel;
+use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormModel;
+use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Tab.TabsModel;
+use Runtime.Widget.Table.TableDialogModel;
+use Bayrell.CloudOS.Frontend.Applications.ApplicationsPageEdit;
+use Bayrell.CloudOS.Frontend.Applications.EnvironmentsTable;
+use Bayrell.CloudOS.Frontend.Applications.ModificatorsTable;
+use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
+use Bayrell.CloudOS.Frontend.Applications.VolumesTable;
+
+
+class ApplicationsPageEditModel extends BasePageModel
+{
+	string component = classof ApplicationsPageEdit;
+	FormModel form = null;
+	RowButtonsModel top_buttons = null;
+	TabsModel tabs = null;
+	TableDialogModel table = null;
+	EnvironmentsTable environments = null;
+	ModificatorsTable modificators = null;
+	VolumesTable volumes = null;
+	SelectModel stack_name = null;
+	SelectModel templates = null;
+	SelectModel versions = null;
+	int info_row_number = -1;
+	
+	
+	/**
+	 * Init widget settings
+	 */
+	void initWidget(Dict params)
+	{
+		parent(params);
+		
+		/* Stacks */
+		this.stack_name = this.addWidget(
+			classof SelectModel,
+			{
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.docker.stack::search",
+					}
+				),
+				"widget_name": "stack_name",
+				"transform": Map (Dict item) => {
+					"key": item.get("stack_name"),
+					"value": item.get("stack_name"),
+				},
+			}
+		);
+		
+		/* Templates */
+		this.templates = this.addWidget(
+			classof SelectModel,
+			{
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.template::search",
+					}
+				),
+				"widget_name": "templates",
+				"transform": Map (Dict item) => {
+					"key": item.get("id"),
+					"value": item.get("name") ~ " <" ~ item.get("uid") ~ ">",
+				},
+			}
+		);
+		
+		/* Versions */
+		this.versions = this.addWidget(
+			classof SelectModel,
+			{
+				"widget_name": "versions",
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.template.version::search",
+					}
+				),
+				"filter": bool (Dict item)
+				{
+					int template_id = this.form.item.get("template_id");
+					return item.get("template_id") == template_id;
+				},
+				"transform": Map (Dict item) => {
+					"key": item.get("id"),
+					"value": item.get("version"),
+					"template_id": item.get("template_id"),
+				},
+			}
+		);
+		
+		/* Add form */
+		this.form = this.addWidget(
+			classof FormModel,
+			{
+				"widget_name": "form",
+				"primary_key": ["id"],
+				"show_result": false,
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveStorage",
+					{
+						"api_name": "app:applications::save",
+					}
+				),
+				"pk":
+				{
+					"id": this.layout.route.matches.get("id"),
+				},
+				"fields":
+				[
+					{
+						"name": "stack_name",
+						"label": "Stack name",
+						"model": this.stack_name,
+					},
+					{
+						"name": "name",
+						"label": "App name",
+						"component": "Runtime.Widget.Input",
+					},
+					{
+						"name": "template_id",
+						"label": "Template",
+						"model": this.templates,
+					},
+					{
+						"name": "template_version_id",
+						"label": "Version",
+						"model": this.versions,
+					},
+				],
+			}
+		);
+		
+		/* Add modificators */
+		this.modificators = this.addWidget(
+			classof ModificatorsTable,
+			{
+				"widget_name": "modificators",
+			}
+		);
+		
+		/* Add environments */
+		this.environments = this.addWidget(
+			classof EnvironmentsTable,
+			{
+				"widget_name": "environments",
+			}
+		);
+		
+		/* Add volumes */
+		this.volumes = this.addWidget(
+			classof VolumesTable,
+			{
+				"widget_name": "volumes",
+			}
+		);
+		
+		/* Add tabs */
+		this.tabs = this.addWidget(
+			classof TabsModel,
+			{
+				"active": "info",
+				"items":
+				[
+					{
+						"key": "info",
+						"label": "Info",
+					},
+					{
+						"key": "custom_patch",
+						"label": "Custom patch",
+					},
+					{
+						"key": "total_patches",
+						"label": "Total patches",
+					},
+					{
+						"key": "result",
+						"label": "Result",
+					},
+					{
+						"key": "yaml",
+						"label": "Yaml",
+					},
+				]
+			}
+		);
+		
+		/* Add top buttons */
+		this.top_buttons = this.addWidget(
+			classof RowButtonsModel,
+			{
+				"widget_name": "top_buttons",
+				"styles": ["no-gap"],
+				"buttons":
+				[
+					new ModelFactory
+					(
+						"Runtime.Widget.ButtonModel",
+						{
+							"href": this.layout.url("app:applications:index"),
+							"content": "Back",
+						}
+					),
+					new ModelFactory
+					(
+						"Runtime.Widget.ButtonModel",
+						{
+							"content": "Compose",
+						}
+					),
+					new ModelFactory
+					(
+						"Runtime.Widget.ButtonModel",
+						{
+							"content": "Stop",
+						}
+					),
+					new ModelFactory
+					(
+						"Runtime.Widget.ButtonModel",
+						{
+							"content": "Save",
+							"events":
+							{
+								"click": new Callback(this, "onSaveClick"),
+							},
+						}
+					),
+				],
+			}
+		);
+	}
+	
+	
+	/**
+	 * Build title
+	 */
+	void buildTitle(RenderContainer container)
+	{
+		string title = "Item not found";
+		if (this.form.load.isSuccess())
+		{
+            Dict item = this.form.item;
+            string app_name = item.get("name");
+		    string stack_name = item.get("stack_name");
+			title = "Edit '" ~ stack_name ~ "_" ~ app_name ~ "'";
+		}
+		else
+		{
+			container.response.http_code = 404;
+		}
+		this.layout.setPageTitle(title);
+	}
+	
+	
+	/**
+	 * Save click
+	 */
+	void onSaveClick()
+	{
+		this.form.submit();
+	}
+}

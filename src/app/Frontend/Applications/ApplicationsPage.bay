@@ -19,6 +19,7 @@
 <class name="Bayrell.CloudOS.Frontend.Applications.ApplicationsPage">
 
 <use name="Runtime.DateTime" />
+<use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Table.Table" component="true" />
 
 
@@ -30,7 +31,7 @@
 	display: flex;
 	align-items: flex-start;
 }
-.application_table %(Table)widget_table{
+.application_table %(Tabs)tabs{
 	position: relative;
 	width: calc(100% - 400px);
 }
@@ -109,7 +110,11 @@
 	<div class="application_page">
 		%render this.renderWidget(this.model.top_buttons);
 		<div class="application_table">
-			%render this.renderWidget(this.model.table);
+			<Tabs @model={{ this.model.tabs }}>
+				<slot name="default">
+					%render this.renderWidget(this.model.table);
+				</slot>
+			</Tabs>
 			%render this.renderAppInfo();
 		</div>
 	</div>

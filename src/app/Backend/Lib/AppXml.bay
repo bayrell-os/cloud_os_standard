@@ -31,7 +31,7 @@ use Runtime.XML.YamlConverter;
 class AppXml
 {
 	Connection connection = null;
-	Relation app = null;
+	Relation item = null;
 	XML template = null;
 	XML template_orig = null;
 	string xml_content_orig = "";
@@ -43,15 +43,24 @@ class AppXml
 	
 	
 	/**
+	 * Set item
+	 */
+	void setItem(Relation item)
+	{
+		this.item = item;
+	}
+	
+	
+	/**
 	 * Build content
 	 */
-	async void buildContent(bool init_template = false)
+	async void buildContent(string action)
 	{
 		/* Load template */
 		await this.loadTemplateFromDatabase();
 		
 		/* Add default modificators */
-		if (init_template)
+		if (action == "create")
 		{
 			await this.addDefaultModificators();
 		}
@@ -60,8 +69,15 @@ class AppXml
 		await this.loadModificators();
 		
 		/* Patch template */
-		this.patchTemplate();
-		this.buildVariables();
+		if (action == "create" or action == "save")
+		{
+			this.patchTemplate();
+			this.buildVariables();
+		}
+		else
+		{
+			this.template = XML::loadXml(this.item.get("content"));
+		}
 		
 		/* Get yaml result */
 		this.buildYamlContent();
@@ -75,7 +91,7 @@ class AppXml
 	{
 		if (this.template_orig and this.template_orig.exists()) return;
 		
-		int template_version_id = (int)this.app.get("template_version_id");
+		int template_version_id = (int)this.item.get("template_version_id");
 		Relation template_version = await this.connection.findRelationById(
 			"templates_versions", template_version_id
 		)
@@ -131,7 +147,7 @@ class AppXml
 		
 		if (xml_variables == null) return;
 		
-		Dict item_variables_values = this.app.get("variables");
+		Dict item_variables_values = this.item.get("variables");
 		if (item_variables_values == null) item_variables_values = {};
 		
 		for (int i=0; i<xml_variables.count(); i++)
@@ -170,11 +186,11 @@ class AppXml
 		/* Set app name */
 		this.variables.push({
 			"name": "_var_app_name_",
-			"value": this.app.get("name"),
+			"value": this.item.get("name"),
 		});
 		this.variables.push({
 			"name": "_var_service_name_",
-			"value": this.app.get("stack_name") ~ "_" ~ this.app.get("name"),
+			"value": this.item.get("stack_name") ~ "_" ~ this.item.get("name"),
 		});
 	}
 	
@@ -216,7 +232,7 @@ class AppXml
 		
 		patches.push({
 			"name": "Custom patch",
-			"content": this.app.get("custom_patch"),
+			"content": this.item.get("custom_patch"),
 		});
 		
 		return patches.toCollection();
@@ -229,13 +245,16 @@ class AppXml
 	Dict getVariables()
 	{
 		Map variables = new Map();
-		for (int i=0; i<this.variables.count(); i++)
+		if (this.variables)
 		{
-			Dict variable = this.variables.get(i);
-			variables.set(
-				variable.get("name"),
-				variable.get("value"),
-			)
+			for (int i=0; i<this.variables.count(); i++)
+			{
+				Dict variable = this.variables.get(i);
+				variables.set(
+					variable.get("name"),
+					variable.get("value"),
+				)
+			}
 		}
 		
 		return variables.toDict();
@@ -290,7 +309,7 @@ class AppXml
 		XML modificators = this.template_orig.get("modificators").get(0);
 		if (not modificators) return;
 		
-		int app_id = this.app.get("id");
+		int app_id = this.item.get("id");
 		
 		Collection<XML> items = modificators.get("li");
 		for (int i=0; i<items.count(); i++)
@@ -299,7 +318,8 @@ class AppXml
 			
 			/* Get modificator by uid */
 			Query q = (new Query)
-				.select("modificators")
+				.select(["modificators.*"])
+				.from("modificators")
 				.where("uid", "=", modificator_uid)
 			;
 			
@@ -331,11 +351,9 @@ class AppXml
 		this.operations = new Vector();
 		
 		Query q = new Query()
-			.select("app_modificators")
-			.fields([
-				"modificators.*"
-			])
-			.where("app_id", "=", this.app.get("id"))
+			.select(["modificators.*"])
+			.from("app_modificators")
+			.where("app_id", "=", this.item.get("id"))
 			.innerJoin(
 				"modificators",
 				[
@@ -439,7 +457,7 @@ class AppXml
 		content.push('  <priority>200</priority>');
 		content.push('  <operations>');
 		
-		Collection environments = this.app.get("environments");
+		Collection environments = this.item.get("environments");
 		if (environments != null)
 		{
 			for (int i=0; i<environments.count(); i++)
@@ -486,7 +504,7 @@ class AppXml
 		content.push('  <priority>200</priority>');
 		content.push('  <operations>');
 		
-		Collection volumes = this.app.get("volumes");
+		Collection volumes = this.item.get("volumes");
 		if (volumes != null)
 		{
 			for (int i=0; i<volumes.count(); i++)
@@ -557,7 +575,7 @@ class AppXml
 	 */
 	XML getCustomPatchModificator()
 	{
-		string xml_content = this.app.get("custom_patch");
+		string xml_content = this.item.get("custom_patch");
 		return XML::loadXml(xml_content);
 	}
 }

@@ -30,6 +30,7 @@ use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.FormSubmitStorage;
+use Runtime.Widget.Tab.TabsModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.ApplicationsPage;
 use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
@@ -40,7 +41,11 @@ class ApplicationsPageModel extends BasePageModel
 	string component = classof ApplicationsPage;
 	FormModel form = null;
 	TableDialogModel table = null;
+	TabsModel tabs = null;
 	RowButtonsModel top_buttons = null;
+	SelectModel stack_name = null;
+	SelectModel templates = null;
+	SelectModel versions = null;
 	int info_row_number = -1;
 	
 	
@@ -50,6 +55,9 @@ class ApplicationsPageModel extends BasePageModel
 	void initWidget(Dict params)
 	{
 		parent(params);
+		
+		/* Get query */
+		string status = this.layout.request_query.get("status", "run");
 		
 		/* Stacks */
 		this.stack_name = this.addWidget(
@@ -190,6 +198,12 @@ class ApplicationsPageModel extends BasePageModel
 				/* Set page */
 				"page": this.layout.request_query.get("page", 1) - 1,
 				
+				/* Post data */
+				"post_data":
+				{
+					"status": status,
+				},
+				
 				/* Form */
 				"add_form": this.form,
 				"edit_form": this.form,
@@ -286,6 +300,27 @@ class ApplicationsPageModel extends BasePageModel
 						),
 					},
 				],
+			}
+		);
+		
+		/* Add tabs */
+		this.tabs = this.addWidget(
+			classof TabsModel,
+			{
+				"active": status,
+				"items":
+				[
+					{
+						"key": "run",
+						"label": "Run",
+						"href": this.layout.url("app:applications:index", {"status": "run"}),
+					},
+					{
+						"key": "stop",
+						"label": "Stopped",
+						"href": this.layout.url("app:applications:index", {"status": "stop"}),
+					},
+				]
 			}
 		);
 		

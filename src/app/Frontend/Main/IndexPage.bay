@@ -18,24 +18,10 @@
 
 <class name="Bayrell.CloudOS.Frontend.Main.IndexPage">
 
-
-<style>
-
-</style>
-
+<use name="Bayrell.CloudOS.Frontend.ModuleDescription" />
 
 <template>
-	<div @render="title">
-		Cloud OS Version 0.5.0
-	</div>
+	<div>Cloud OS Version {{ ModuleDescription::getModuleVersion() }}</div>
 </template>
-
-
-<script>
-
-var title;
-
-</script>
-
 
 </class>

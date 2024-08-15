@@ -4,8 +4,13 @@
 	[
 		"Frontend/Hooks/AppHook.bay",
 		"Frontend/Applications/ApplicationsPage.bay",
+		"Frontend/Applications/ApplicationsPageEdit.bay",
+		"Frontend/Applications/ApplicationsPageEditModel.bay",
 		"Frontend/Applications/ApplicationsPageModel.bay",
+		"Frontend/Applications/EnvironmentsTable.bay",
+		"Frontend/Applications/ModificatorsTable.bay",
 		"Frontend/Applications/TableFieldAdmin.bay",
+		"Frontend/Applications/VolumesTable.bay",
 		"Frontend/DockerServices/ServicePage.bay",
 		"Frontend/DockerServices/ServicePageModel.bay",
 		"Frontend/DockerStack/StackPage.bay",
