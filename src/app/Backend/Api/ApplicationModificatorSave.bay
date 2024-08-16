@@ -18,108 +18,104 @@
 
 namespace Bayrell.CloudOS.Backend.Api;
 
-use Runtime.re;
-use Runtime.DateTime;
-use Runtime.ORM.Query;
-use Runtime.ORM.QueryFilter;
+use Runtime.Exception.ApiError;
+use Runtime.Exception.RuntimeException;
+use Runtime.ORM.Connection;
 use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryField;
+use Runtime.ORM.QueryFilter;
+use Runtime.ORM.QueryResult;
 use Runtime.Web.Annotations.ApiMethod;
-use Runtime.Widget.Crud.CrudApi;
+use Runtime.Widget.Crud.SaveRelationApi;
 use Runtime.Widget.Crud.Rules.CrudRule;
-use Runtime.Widget.Crud.Rules.Filter;
 use Runtime.Widget.Crud.Rules.LowerCase;
 use Runtime.Widget.Crud.Rules.Purify;
 use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
+use Bayrell.CloudOS.Backend.Lib.AppXml;
 
 
-class AppModApi extends CrudApi
+class ApplicationModificatorSave extends SaveRelationApi
 {
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app.application.modificator::crud";
+	static string getApiName() => "app.applications.modificators::save";
 	
 	
 	/**
 	 * Returns table name
 	 */
-	pure string getTableName() => "app_modificators";
+	string getTableName() => "app_modificators";
+	
+	
+	/**
+	 * Constructor
+	 */
+	void constructor()
+	{
+		parent();
+		
+		/* Create xml */
+		this.xml = new AppXml();
+		this.xml.connection = this.getConnection();
+	}
+	
+	
+	/**
+	 * Returns rules
+	 */
+	Vector<CrudRule> getRules() =>
+	[
+		new Required{ "name": "app_id" },
+		new Required{ "name": "modificator_id" },
+		
+		/* Unique */
+		new Unique{"keys": ["app_id", "modificator_id"]},
+	];
 	
 	
 	/**
 	 * Returns item fields
 	 */
-	Collection getItemFields() => [
+	Collection getItemFields() =>
+	[
 		"app_id",
 		"modificator_id",
-		"modificator_name",
-		"modificator_priority",
-		"modificator_uid",
-		"modificator_version",
-		"priority",
 	];
 	
 	
 	/**
 	 * Returns save fields
 	 */
-	Collection getSaveFields() => [
+	Collection getSaveFields() =>
+	[
 		"app_id",
 		"modificator_id",
 	];
 	
 	
 	/**
-	 * Returns rules
-	 */
-	Collection<CrudRule> getRules() =>
-	[
-		new Purify{ "name": "modificator_id" },
-		new LowerCase{ "name": "modificator_id" },
-		new Required{ "name": "modificator_id" },
-	];
-	
-	
-	/**
 	 * Build search query
 	 */
-	async Query buildSearchQuery(Query q)
+	async void buildSearchQuery(Query q)
 	{
-		int app_id = (int)this.post_data["app_id"];
-		q.where("app_modificators.app_id", "=", app_id);
-		
-		q = q
-			.innerJoin(
-				"modificators",
-				[
-					"modificators.id=app_modificators.modificator_id"
-				]
-			)
-			
-			.orderBy("modificators.priority", "asc")
-			.orderBy("modificators.name", "asc")
-			
-			.addFields([
-				"modificators.name as modificator_name",
-				"modificators.priority as modificator_priority",
-				"modificators.uid as modificator_uid",
-				"modificators.version as modificator_version",
-			])
-		;
-		
-		return q;
 	}
 	
 	
 	/**
-	 * Action search
+	 * After before
 	 */
-	@ApiMethod
-	async void actionSearch()
+	async void onSaveBefore()
 	{
-		await parent::actionSearch();
+		if (not this.item.isNew())
+		{
+			throw new ApiError(new RuntimeException("Edit item are not allowed"));
+		}
+		
+		await parent();
 	}
 	
 	
@@ -129,7 +125,7 @@ class AppModApi extends CrudApi
 	@ApiMethod
 	async void actionItem()
 	{
-		await parent::actionItem();
+		await parent();
 	}
 	
 	
@@ -139,7 +135,7 @@ class AppModApi extends CrudApi
 	@ApiMethod
 	async void actionSave()
 	{
-		await parent::actionSave();
+		await parent();
 	}
 	
 	
@@ -149,6 +145,6 @@ class AppModApi extends CrudApi
 	@ApiMethod
 	async void actionDelete()
 	{
-		await parent::actionDelete();
+		await parent();
 	}
 }

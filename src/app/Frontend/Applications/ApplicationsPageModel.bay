@@ -132,7 +132,7 @@ class ApplicationsPageModel extends BasePageModel
 				(
 					"Runtime.Widget.Form.FormSaveStorage",
 					{
-						"api_name": "app:applications::save",
+						"api_name": "app.applications::save",
 					}
 				),
 				"fields":
@@ -191,7 +191,7 @@ class ApplicationsPageModel extends BasePageModel
 				(
 					"Runtime.Widget.Table.TableStorage",
 					{
-						"api_name": "app:applications::search",
+						"api_name": "app.applications::search",
 					}
 				),
 				
@@ -217,7 +217,7 @@ class ApplicationsPageModel extends BasePageModel
 						"storage": new Factory(
 							classof FormDeleteStorage,
 							{
-								"api_name": "app:applications::save"
+								"api_name": "app.applications::save"
 							}
 						),
 					}
@@ -313,12 +313,12 @@ class ApplicationsPageModel extends BasePageModel
 					{
 						"key": "run",
 						"label": "Run",
-						"href": this.layout.url("app:applications:index", {"status": "run"}),
+						"href": this.layout.url("app.applications:index", {"status": "run"}),
 					},
 					{
 						"key": "stop",
 						"label": "Stopped",
-						"href": this.layout.url("app:applications:index", {"status": "stop"}),
+						"href": this.layout.url("app.applications:index", {"status": "stop"}),
 					},
 				]
 			}
@@ -350,7 +350,7 @@ class ApplicationsPageModel extends BasePageModel
 		edit_button.href = string (Dict data)
 		{
 			Dict item = data.get("item");
-			return this.layout.url("app:applications:edit", {"id": item.get("id")});
+			return this.layout.url("app.applications:edit", {"id": item.get("id")});
 		};
 	}
 	

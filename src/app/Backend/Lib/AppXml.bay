@@ -72,7 +72,6 @@ class AppXml
 		if (action == "create" or action == "edit")
 		{
 			this.patchTemplate();
-			this.buildVariables();
 		}
 		else
 		{
@@ -80,6 +79,7 @@ class AppXml
 		}
 		
 		/* Get yaml result */
+		this.buildVariables();
 		this.buildYamlContent();
 	}
 	

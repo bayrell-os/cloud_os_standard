@@ -33,7 +33,7 @@ class ApplicationSearch extends SearchRelationApi
 	/**
 	 * Returns api name
 	 */
-	pure string getApiName() => "app:applications::search";
+	pure string getApiName() => "app.applications::search";
 	
 	
 	/**
@@ -70,8 +70,8 @@ class ApplicationSearch extends SearchRelationApi
 		"gmtime_updated",
 	];
 	
-    
-    /**
+	
+	/**
 	 * Returns query field
 	 */
 	QueryField getQueryField(string table_name, string field_name)
@@ -99,7 +99,7 @@ class ApplicationSearch extends SearchRelationApi
 		
 		return parent(table_name, field_name);
 	}
-    
+	
 	
 	/**
 	 * Build search query
@@ -111,7 +111,7 @@ class ApplicationSearch extends SearchRelationApi
 		else if (status == "stop") q.where("applications.status", "!=", 1);
 		
 		q = q
-            .orderBy("applications.stack_name", "asc")
+			.orderBy("applications.stack_name", "asc")
 			.orderBy("applications.name", "asc")
 			
 			.leftJoin(
@@ -140,8 +140,8 @@ class ApplicationSearch extends SearchRelationApi
 		;
 	}
 	
-    
-    /**
+	
+	/**
 	 * Convert item
 	 */
 	Map convertItem(Collection fields, Relation item)
@@ -163,7 +163,7 @@ class ApplicationSearch extends SearchRelationApi
 		
 		return item;
 	}
-    
+	
 	
 	/**
 	 * Action search

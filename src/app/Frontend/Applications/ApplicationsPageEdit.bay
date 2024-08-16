@@ -18,8 +18,10 @@
 
 <class name="Bayrell.CloudOS.Frontend.Applications.ApplicationsPageEdit">
 
+<use name="Runtime.Widget.Form.FormRow" component="true" />
 <use name="Runtime.Widget.Tab.Tabs" component="true" />
 <use name="Runtime.Widget.Button" component="true" />
+<use name="Runtime.Widget.Input" component="true" />
 <use name="Runtime.Widget.RowButtons" component="true" />
 <use name="Runtime.Widget.WidgetResult" component="true" />
 <use name="Runtime.Widget.CodeMirror.CodeMirror" component="true" />
@@ -44,10 +46,52 @@
 .application_page__row_item{
 	width: 50%
 }
+.app_variables{
+	margin-right: 20px;
+}
+.app_variables_row{
+	margin-bottom: 10px;
+}
+.app_variables_row_label{
+	margin-bottom: 5px;
+}
 </style>
 
 
 <template name="renderVariables">
+	%set Vector variables = this.model.form.item.get("variables");
+	%if (variables != null)
+	{
+		%for (int i=0; i<variables.count(); i++)
+		{
+			%set Map variable = variables.get(i);
+			%set Map variable_name = variable.get("name");
+			%set Map variable_label = variable.get("label");
+			%set Map variable_value = variable.get("value");
+			%if (
+				variable_name != "_var_app_name_" and
+				variable_name != "_var_service_name_"
+			)
+			{
+				<div class="app_variables_row">
+					<div class="app_variables_row_label">{{ variable_label }}</div>
+					<div class="app_variables_row_content">
+						<Input name={{ variable_name }}
+							value={{ variable_value }}
+							@event:valueChange={{
+								void (var message) use (i, variable_name)
+								{
+									Vector variables = this.model.form.item.get('variables');
+									Map variable = variables.get(i);
+									variable.set("value", message.value);
+								}
+							}}
+						/>
+					</div>
+				</div>
+			}
+		}
+	}
 </template>
 
 
@@ -55,7 +99,7 @@
 	
 	<div class="application_page__title">Modificators</div>
 	<div class="application_page__row">
-		<div class="application_page__row_item">
+		<div class="application_page__row_item app_variables">
 			%render this.renderVariables();
 		</div>
 		<div class="application_page__row_item">

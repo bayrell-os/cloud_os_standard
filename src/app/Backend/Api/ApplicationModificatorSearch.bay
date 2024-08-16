@@ -1,0 +1,115 @@
+/*!
+ *  Bayrell Cloud OS
+ *
+ *  (c) Copyright 2020-2024 "Ildar Bikmamatov" <support@bayrell.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+namespace Bayrell.CloudOS.Backend.Api;
+
+use Runtime.ORM.Connection;
+use Runtime.ORM.Relation;
+use Runtime.ORM.Query;
+use Runtime.ORM.QueryField;
+use Runtime.ORM.QueryResult;
+use Runtime.Web.Annotations.ApiMethod;
+use Runtime.Widget.Crud.SearchRelationApi;
+use Runtime.XML.XML;
+
+
+class ApplicationModificatorSearch extends SearchRelationApi
+{
+	/**
+	 * Returns api name
+	 */
+	pure string getApiName() => "app.applications.modificators::search";
+	
+	
+	/**
+	 * Returns table name
+	 */
+	string getTableName() => "app_modificators";
+	
+	
+	/**
+	 * Returns item fields
+	 */
+	Collection getItemFields() =>
+	[
+		"app_id",
+		"modificator_id",
+		"uid",
+		"version",
+		"name",
+		"content",
+		"priority",
+		"gmtime_created",
+		"gmtime_updated",
+	];
+	
+	
+	/**
+	 * Returns query field
+	 */
+	QueryField getQueryField(string table_name, string field_name)
+	{
+		if (field_name == "name")
+			return new QueryField("modificators", "name", field_name);
+		
+		if (field_name == "priority")
+			return new QueryField("modificators", "priority", field_name);
+		
+		if (field_name == "uid")
+			return new QueryField("modificators", "uid", field_name);
+		
+		if (field_name == "version")
+			return new QueryField("modificators", "version", field_name);
+		
+		return parent(table_name, field_name);
+	}
+	
+	
+	/**
+	 * Build search query
+	 */
+	async void buildSearchQuery(Query q)
+	{
+		int app_id = (int)this.post_data["foreign_key", "app_id"];
+		if (app_id > 0)
+		{
+			q.where("app_id", "=", app_id);
+		}
+		
+		q = q
+			.innerJoin(
+				"modificators",
+				[
+					"modificators.id=app_modificators.modificator_id"
+				]
+			)
+			.orderBy("modificators.priority", "asc")
+			.orderBy("modificators.name", "asc")
+		;
+	}
+	
+	
+	/**
+	 * Action search
+	 */
+	@ApiMethod
+	async void actionSearch()
+	{
+		await parent();
+	}
+}

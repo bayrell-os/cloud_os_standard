@@ -29,6 +29,7 @@ use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
 use Runtime.Widget.Form.FormDeleteStorage;
+use Runtime.Widget.Form.FormMessage;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Tab.TabsModel;
@@ -37,10 +38,23 @@ use Runtime.Widget.Table.TableDialogModel;
 
 class ModificatorsTable extends RenderListModel
 {
+	int app_id = 0;
 	FormModel form = null;
 	TableDialogModel table = null;
 	RowButtonsModel top_buttons = null;
 	SelectModel modificators = null;
+	
+	
+	/**
+	 * Init widget params
+	 */
+	void initParams(Dict params)
+	{
+		parent(params);
+		
+		if (params == null) return;
+		if (params.has("app_id")) this.app_id = params.get("app_id");
+	}
 	
 	
 	/**
@@ -49,6 +63,11 @@ class ModificatorsTable extends RenderListModel
 	void initWidget(Dict params)
 	{
 		parent(params);
+		
+		Dict foreign_key =
+		{
+			"app_id": this.app_id,
+		};
 		
 		/* Add modificators */
 		this.modificators = this.addWidget(
@@ -74,14 +93,27 @@ class ModificatorsTable extends RenderListModel
 			classof FormModel,
 			{
 				"widget_name": "form",
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveStorage",
+					{
+						"api_name": "app.applications.modificators::save",
+					}
+				),
+				"primary_key": ["app_id", "modificator_id"],
+				"foreign_key": foreign_key,
 				"fields":
 				[
 					{
-						"name": "name",
+						"name": "modificator_id",
 						"label": "Name",
 						"model": this.modificators,
 					},
 				],
+				"events":
+				{
+					"submit": new Callback(this, "onFormSubmit"),
+				}
 			}
 		);
 		
@@ -96,24 +128,54 @@ class ModificatorsTable extends RenderListModel
 					Dict item = params.get("item");
 					if (action == "add")
 					{
-						return "Add volume";
+						return "Add modificator";
 					}
 					if (action == "edit")
 					{
-						return "Edit volume '" ~ item.get("key") ~ "'";
+						return "Edit modificator '" ~ item.get("name") ~ "'";
 					}
 					if (action == "delete")
 					{
-						return "Delete volume '" ~ item.get("key") ~ "'";
+						return "Delete modificator '" ~ item.get("name") ~ "'";
 					}
 					return "";
 				},
 				"styles": ["border"],
 				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableStorage",
+					{
+						"api_name": "app.applications.modificators::search",
+					}
+				),
+				
+				/* Foreign key */
+				"foreign_key": foreign_key,
+				
 				/* Form */
 				"add_form": this.form,
 				"edit_form": this.form,
-				"delete_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"primary_key": ["app_id", "modificator_id"],
+						"storage": new Factory(
+							classof FormDeleteStorage,
+							{
+								"api_name": "app.applications.modificators::save"
+							}
+						),
+						"events":
+						{
+							"submit": new Callback(this, "onFormSubmit"),
+						}
+					}
+				),
 				
 				/* Table fields */
 				"fields":
@@ -131,7 +193,12 @@ class ModificatorsTable extends RenderListModel
 					},
 					{
 						"name": "row_buttons",
-						"model": new ModelFactory("Runtime.Widget.Table.TableRowButtonsModel"),
+						"model": new ModelFactory(
+							"Runtime.Widget.Table.TableRowButtonsModel",
+							{
+								"edit": false,
+							}
+						),
 					},
 				]
 			}
@@ -159,5 +226,16 @@ class ModificatorsTable extends RenderListModel
 		/* Add render list */
 		this.addItem(this.top_buttons);
 		this.addItem(this.table);
+	}
+	
+	
+	/**
+	 * Form submit
+	 */
+	async void onFormSubmit(FormMessage message)
+	{
+		if (not message.result.isSuccess()) return;
+		await this.parent_widget.form.submit();
+		await this.parent_widget.form.loadForm();
 	}
 }

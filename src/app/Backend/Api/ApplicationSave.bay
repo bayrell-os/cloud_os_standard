@@ -40,7 +40,7 @@ class ApplicationSave extends SaveRelationApi
 	/**
 	 * Returns api name
 	 */
-	static string getApiName() => "app:applications::save";
+	static string getApiName() => "app.applications::save";
 	
 	
 	/**
@@ -159,7 +159,7 @@ class ApplicationSave extends SaveRelationApi
 	async void buildSearchQuery(Query q)
 	{
 		q = q
-            .orderBy("applications.stack_name", "asc")
+			.orderBy("applications.stack_name", "asc")
 			.orderBy("applications.name", "asc")
 			
 			.leftJoin(
