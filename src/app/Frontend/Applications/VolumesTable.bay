@@ -54,6 +54,14 @@ class VolumesTable extends RenderListModel
 			classof FormModel,
 			{
 				"widget_name": "form",
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveProxyStorage",
+					{
+						"container": this.parent_widget.form,
+						"path": ["item", "volumes"],
+					}
+				),
 				"fields":
 				[
 					{
@@ -107,10 +115,34 @@ class VolumesTable extends RenderListModel
 				},
 				"styles": ["border"],
 				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableProxyStorage",
+					{
+						"container": this.parent_widget.form,
+						"path": ["item", "volumes"],
+					}
+				),
+				
 				/* Form */
 				"add_form": this.form,
 				"edit_form": this.form,
-				"delete_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"storage": new Factory(
+							"Runtime.Widget.Form.FormDeleteProxyStorage",
+							{
+								"container": this.parent_widget.form,
+								"path": ["item", "volumes"],
+							}
+						)
+					}
+				),
 				
 				/* Table fields */
 				"fields":

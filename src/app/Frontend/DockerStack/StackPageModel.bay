@@ -25,9 +25,7 @@ use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.RowButtonsModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.DockerStack.StackPage;
 
@@ -119,7 +117,7 @@ class StackPageModel extends BasePageModel
 						"widget_name": "delete_form",
 						"primary_key": ["stack_name"],
 						"storage": new Factory(
-							classof FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.docker.stack::save"
 							}

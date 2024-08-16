@@ -117,9 +117,11 @@ class ApplicationSave extends SaveRelationApi
 	Collection getSaveFields() =>
 	[
 		"custom_patch",
+		"environments",
 		"name",
 		"stack_name",
 		"template_version_id",
+		"volumes",
 	];
 	
 	
@@ -195,6 +197,30 @@ class ApplicationSave extends SaveRelationApi
 	async void onSaveAfter()
 	{
 		await parent();
+		
+		Map item_variables = {};
+		
+		/* Save variables */
+		Collection variables = this.post_data["item", "variables"];
+		if (variables)
+		{
+			for (int i=0; i<variables.count(); i++)
+			{
+				Dict variable = variables.get(i);
+				string variable_name = variable.get("name");
+				
+				if (variable_name == "_var_app_name_") continue;
+				if (variable_name == "_var_service_name_") continue;
+				
+				item_variables.set(
+					variable.get("name"),
+					variable.get("value")
+				);
+			}
+		}
+		
+		/* Set variables */
+		this.item.set("variables", item_variables);
 		
 		/* Build xml and yaml */
 		this.xml.setItem(this.item);

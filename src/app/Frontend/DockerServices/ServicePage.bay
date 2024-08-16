@@ -38,6 +38,9 @@
 	width: 450px;
 	padding-left: 10px;
 }
+.service_info{
+	overflow-wrap: anywhere;
+}
 .service_info__row{
 	padding-top: 10px;
 	padding-bottom: 10px;

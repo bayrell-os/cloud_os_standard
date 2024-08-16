@@ -26,9 +26,7 @@ use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Templates.TemplatePage;
 
@@ -112,7 +110,7 @@ class TemplatePageModel extends BasePageModel
 						"widget_name": "delete_form",
 						"primary_key": ["id"],
 						"storage": new Factory(
-							classof FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.template::save"
 							}

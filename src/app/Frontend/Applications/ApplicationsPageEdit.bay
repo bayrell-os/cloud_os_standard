@@ -55,6 +55,24 @@
 .app_variables_row_label{
 	margin-bottom: 5px;
 }
+.application_patches{
+	display: flex;
+	&__items{
+		width: 200px;
+		padding-right: 20px;
+	}
+	&__item{
+		padding: 5px 10px;
+		cursor: pointer;
+	}
+	&__item--active{
+		background-color: var(--widget-color-selected);
+		color: var(--widget-color-selected-text);
+	}
+	&__content{
+		width: calc(100% - 200px);
+	}
+}
 </style>
 
 
@@ -96,7 +114,6 @@
 
 
 <template name="renderModificators">
-	
 	<div class="application_page__title">Modificators</div>
 	<div class="application_page__row">
 		<div class="application_page__row_item app_variables">
@@ -116,18 +133,47 @@
 			%render this.renderWidget(this.model.volumes);
 		</div>
 	</div>
-	
 </template>
 
 
 <template name="renderPatches">
+	%set Vector patches = this.model.form.item.get("patches");
 	<div class="application_patches">
+		<div class="application_patches__items">
+		%if (patches != null)
+		{
+			%for (int i=0; i<patches.count(); i++)
+			{
+				%set Dict item = patches.get(i);
+				<div class="application_patches__item" @key={{ i }} data-index={{ i }}
+					class={{ this.patch_selected == i ? "application_patches__item--active" : "" }}
+					@event:onClick={{
+						void (var e) use (i)
+						{
+							this.patch_selected = i;
+						}
+					}}
+				>
+					{{ item.get("name") }}
+				</div>
+			}
+		}
+		</div>
+		<div class="application_patches__content">
+		%if (this.patch_selected >= 0 and this.patch_selected < patches.count())
+		{
+			%set Dict item = patches.get(this.patch_selected);
+			<CodeMirror @ref="code_mirror_total_patches"
+				value={{ item.get("content") }} readonly="true" height="500px"
+			/>
+		}
+		</div>
 	</div>
 </template>
 
 
 <template>
-    <div class="application_page">
+	<div class="application_page">
 		<div class="application_page__buttons">
 			%render this.renderWidget(this.model.top_buttons);
 			%render this.renderWidget(this.model.form.result);
@@ -171,5 +217,12 @@
 		}
 	</div>
 </template>
+
+
+<script>
+
+int patch_selected = -1;
+
+</script>
 
 </class>

@@ -26,9 +26,7 @@ use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.DockerYamlFiles.YamlFilePage;
 
@@ -153,7 +151,7 @@ class YamlFilePageModel extends BasePageModel
 						"widget_name": "delete_form",
 						"primary_key": ["id"],
 						"storage": new Factory(
-							classof FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.docker.yaml::save"
 							}

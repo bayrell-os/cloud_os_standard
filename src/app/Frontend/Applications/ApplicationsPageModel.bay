@@ -27,9 +27,7 @@ use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Tab.TabsModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.ApplicationsPage;
@@ -215,7 +213,7 @@ class ApplicationsPageModel extends BasePageModel
 						"widget_name": "delete_form",
 						"primary_key": ["id"],
 						"storage": new Factory(
-							classof FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.applications::save"
 							}
@@ -313,12 +311,12 @@ class ApplicationsPageModel extends BasePageModel
 					{
 						"key": "run",
 						"label": "Run",
-						"href": this.layout.url("app.applications:index", {"status": "run"}),
+						"href": this.layout.url("app:applications:index", {"status": "run"}),
 					},
 					{
 						"key": "stop",
 						"label": "Stopped",
-						"href": this.layout.url("app.applications:index", {"status": "stop"}),
+						"href": this.layout.url("app:applications:index", {"status": "stop"}),
 					},
 				]
 			}
@@ -350,7 +348,7 @@ class ApplicationsPageModel extends BasePageModel
 		edit_button.href = string (Dict data)
 		{
 			Dict item = data.get("item");
-			return this.layout.url("app.applications:edit", {"id": item.get("id")});
+			return this.layout.url("app:applications:edit", {"id": item.get("id")});
 		};
 	}
 	

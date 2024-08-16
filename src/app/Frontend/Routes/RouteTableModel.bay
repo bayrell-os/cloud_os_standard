@@ -27,9 +27,7 @@ use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Table.TableDialogModel;
 
 
@@ -190,7 +188,7 @@ class RouteTableModel extends RenderListModel
 						"primary_key": ["id"],
 						"foreign_key": foreign_key,
 						"storage": new Factory(
-							classof FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.route::save"
 							}

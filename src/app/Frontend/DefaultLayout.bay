@@ -23,7 +23,8 @@
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.LayoutModel" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
-<use name="Bayrell.CloudOS.Frontend.CSS" component="true" />
+<use name="Runtime.Widget.RowButtons" component="true" />
+<use name="Runtime.Widget.Table.Table" component="true" />
 <use name="Bayrell.CloudOS.ModuleDescription" />
 
 

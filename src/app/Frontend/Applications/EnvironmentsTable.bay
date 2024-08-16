@@ -28,9 +28,7 @@ use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RenderListModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
-use Runtime.Widget.Form.FormDeleteStorage;
 use Runtime.Widget.Form.FormModel;
-use Runtime.Widget.Form.FormSubmitStorage;
 use Runtime.Widget.Tab.TabsModel;
 use Runtime.Widget.Table.TableDialogModel;
 
@@ -54,6 +52,14 @@ class EnvironmentsTable extends RenderListModel
 			classof FormModel,
 			{
 				"widget_name": "form",
+				"storage": new Factory
+				(
+					"Runtime.Widget.Form.FormSaveProxyStorage",
+					{
+						"container": this.parent_widget.form,
+						"path": ["item", "environments"],
+					}
+				),
 				"fields":
 				[
 					{
@@ -107,10 +113,34 @@ class EnvironmentsTable extends RenderListModel
 				},
 				"styles": ["border"],
 				
+				/* Table storage */
+				"storage": new Factory
+				(
+					"Runtime.Widget.Table.TableProxyStorage",
+					{
+						"container": this.parent_widget.form,
+						"path": ["item", "environments"],
+					}
+				),
+				
 				/* Form */
 				"add_form": this.form,
 				"edit_form": this.form,
-				"delete_form": this.form,
+				
+				/* Delete form */
+				"delete_form": new ModelFactory(
+					classof FormModel,
+					{
+						"widget_name": "delete_form",
+						"storage": new Factory(
+							"Runtime.Widget.Form.FormDeleteProxyStorage",
+							{
+								"container": this.parent_widget.form,
+								"path": ["item", "environments"],
+							}
+						)
+					}
+				),
 				
 				/* Table fields */
 				"fields":

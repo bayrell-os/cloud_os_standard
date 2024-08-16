@@ -41,6 +41,7 @@
 }
 .application_info{
 	padding-left: 10px;
+	overflow-wrap: anywhere;
 }
 .application_info__name{
 	font-weight: bold;
