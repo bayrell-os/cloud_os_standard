@@ -178,6 +178,7 @@
 			%render this.renderWidget(this.model.top_buttons);
 			%render this.renderWidget(this.model.form.result);
 		</div>
+		%render this.renderWidget(this.model.compose_dialog);
 		%if (this.model.form.load.isSuccess())
 		{
 			<Tabs model={{ this.model.tabs }}>

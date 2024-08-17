@@ -54,8 +54,7 @@ class NginxFileSave extends SaveRelationApi
 	[
 		new Purify{ "name": "name" },
 		new LowerCase{ "name": "name" },
-		new Required{ "name": "name", "check_update": false },
-		new ReadOnly{ "name": "name", "can_create": true },
+		new Required{ "name": "name" },
 		new Required{ "name": "enable" },
 		new Unique{"keys": ["name"]},
 	];

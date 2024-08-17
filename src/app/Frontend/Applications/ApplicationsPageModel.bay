@@ -18,6 +18,7 @@
 
 namespace Bayrell.CloudOS.Frontend.Applications;
 
+use Runtime.ApiResult;
 use Runtime.Callback;
 use Runtime.Entity.Factory;
 use Runtime.Web.BasePageModel;
@@ -27,8 +28,12 @@ use Runtime.Web.Messages.ClickMessage;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
+use Runtime.Widget.Dialog.ConfirmDialogModel;
+use Runtime.Widget.Dialog.DialogMessage;
+use Runtime.Widget.Dialog.DialogModelException;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Tab.TabsModel;
+use Runtime.Widget.Table.RefreshButtonModel;
 use Runtime.Widget.Table.TableDialogModel;
 use Bayrell.CloudOS.Frontend.Applications.ApplicationsPage;
 use Bayrell.CloudOS.Frontend.Applications.TableFieldAdmin;
@@ -269,35 +274,89 @@ class ApplicationsPageModel extends BasePageModel
 					{
 						"name": "row_buttons",
 						"model": new ModelFactory(
-							"Runtime.Widget.Table.TableRowButtonsModel",
+							"Runtime.Widget.RowButtonsModel",
 							{
-								"delete": false,
-								"buttons":
-								[
-									{
-										"content": "Stop",
-										"widget_name": "stop_button",
-										"styles": ["danger", "small"],
-									},
-									{
-										"content": "Restart",
-										"widget_name": "restart_button",
-										"styles": ["default", "small"],
-									},
-									{
-										"content": "Info",
-										"widget_name": "info_button",
-										"styles": ["default", "small"],
-										"events":
-										{
-											"click": new Callback(this, "onButtonInfoClick"),
-										},
-									},
-								],
+								"widget_name": "row_buttons",
 							}
 						),
 					},
 				],
+			}
+		);
+		
+		/* Add buttons */
+		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
+		
+		/* Edit button */
+		row_buttons.addButton({
+			"content": "Edit",
+			"widget_name": "edit_button",
+			"styles": ["default", "small"],
+			"href": string (Dict data)
+			{
+				Dict item = data.get("item");
+				return this.layout.url("app:applications:edit", {"id": item.get("id")});
+			},
+		});
+		
+		if (status == "run")
+		{
+			/* Stop button */
+			row_buttons.addButton({
+				"content": "Stop",
+				"widget_name": "stop_button",
+				"styles": ["danger", "small"],
+				"events":
+				{
+					"click": new Callback(this, "onStopClick"),
+				},
+			});
+			
+			/* Restart button */
+			row_buttons.addButton({
+				"content": "Restart",
+				"widget_name": "restart_button",
+				"styles": ["default", "small"],
+				"events":
+				{
+					"click": new Callback(this, "onRestartClick"),
+				},
+			});
+		}
+		else if (status == "stop")
+		{
+			/* Start button */
+			row_buttons.addButton({
+				"content": "Start",
+				"widget_name": "start_button",
+				"styles": ["primary", "small"],
+				"events":
+				{
+					"click": new Callback(this, "onStartClick"),
+				},
+			});
+		}
+		
+		/* Info button */
+		row_buttons.addButton({
+			"content": "Info",
+			"widget_name": "info_button",
+			"styles": ["default", "small"],
+			"events":
+			{
+				"click": new Callback(this, "onButtonInfoClick"),
+			},
+		});
+		
+		/* Compose dialog */
+		this.compose_dialog = this.addWidget(
+			classof ConfirmDialogModel,
+			{
+				"widget_name": "compose_dialog",
+				"events":
+				{
+					"confirm": new Callback(this, "onConfirmComposeClick"),
+				},
 			}
 		);
 		
@@ -336,20 +395,130 @@ class ApplicationsPageModel extends BasePageModel
 						{
 							"table": this.table,
 						}
-					)
+					),
+					new ModelFactory(
+						classof RefreshButtonModel,
+						{
+							"table": this.table,
+						}
+					),
 				],
 			}
 		);
+	}
+	
+	
+	/**
+	 * Confirm compose button click
+	 */
+	async void onConfirmComposeClick(DialogMessage message)
+	{
+		string action = this.compose_dialog.data.get("action");
+		string app_id = this.compose_dialog.data.get("app_id");
 		
-		/* Edit button */
-		RowButtonsModel row_buttons = this.table.getWidget("row_buttons");
-		ButtonModel edit_button = row_buttons.getWidget("edit_button");
-		edit_button.clearListener("click");
-		edit_button.href = string (Dict data)
+		/* Compose service */
+		this.compose_dialog.result.setWaitMessage();
+		ApiResult res = await this.layout.callApi({
+			"api_name": "app.applications::save",
+			"method_name": "actionCompose",
+			"data": {
+				"action": action,
+				"pk": {
+					"id": app_id,
+				},
+			}
+		});
+		
+		/* Error message */
+		if (not res.isSuccess())
 		{
-			Dict item = data.get("item");
-			return this.layout.url("app:applications:edit", {"id": item.get("id")});
-		};
+			throw new DialogModelException(res.message);
+		}
+		
+		/* Reload table */
+		this.table.reload();
+		
+		/* Stop hide */
+		this.compose_dialog.result.setApiResult(res);
+		message.hide = false;
+	}
+	
+	
+	/**
+	 * Stop button click
+	 */
+	async void onStopClick(ClickMessage message)
+	{
+		Dict item = message.data.get("item");
+		string service_name = item.get("name");
+		string stack_name = item.get("stack_name");
+		string app_name = stack_name ~ "_" ~ service_name;
+		
+		/* Setup content */
+		this.compose_dialog.data.set("action", "stop");
+		this.compose_dialog.data.set("app_id", item.get("id"));
+		this.compose_dialog.data.set("app_name", app_name);
+		this.compose_dialog.title = "Stop service " ~ app_name ~ "?";
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.compose_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Stop";
+		confirm_button.styles = ["danger"];
+		
+		/* Show dialog */
+		this.compose_dialog.show();
+	}
+	
+	
+	/**
+	 * Start button click
+	 */
+	async void onStartClick(ClickMessage message)
+	{
+		Dict item = message.data.get("item");
+		string service_name = item.get("name");
+		string stack_name = item.get("stack_name");
+		string app_name = stack_name ~ "_" ~ service_name;
+		
+		/* Setup content */
+		this.compose_dialog.data.set("action", "start");
+		this.compose_dialog.data.set("app_id", item.get("id"));
+		this.compose_dialog.data.set("app_name", app_name);
+		this.compose_dialog.title = "Start service " ~ app_name ~ "?";
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.compose_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Start";
+		confirm_button.styles = ["primary"];
+		
+		/* Show dialog */
+		this.compose_dialog.show();
+	}
+	
+	
+	/**
+	 * Restart button click
+	 */
+	async void onRestartClick(ClickMessage message)
+	{
+		Dict item = message.data.get("item");
+		string service_name = item.get("name");
+		string stack_name = item.get("stack_name");
+		string app_name = stack_name ~ "_" ~ service_name;
+		
+		/* Setup content */
+		this.compose_dialog.data.set("action", "restart");
+		this.compose_dialog.data.set("app_id", item.get("id"));
+		this.compose_dialog.data.set("app_name", app_name);
+		this.compose_dialog.title = "Restart service " ~ app_name ~ "?";
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.compose_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Restart";
+		confirm_button.styles = ["danger"];
+		
+		/* Show dialog */
+		this.compose_dialog.show();
 	}
 	
 	

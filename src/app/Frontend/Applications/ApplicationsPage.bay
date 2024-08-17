@@ -110,6 +110,7 @@
 <template>
 	<div class="application_page">
 		%render this.renderWidget(this.model.top_buttons);
+		%render this.renderWidget(this.model.compose_dialog);
 		<div class="application_table">
 			<Tabs @model={{ this.model.tabs }}>
 				<slot name="default">

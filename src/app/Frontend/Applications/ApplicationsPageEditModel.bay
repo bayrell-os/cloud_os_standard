@@ -24,9 +24,13 @@ use Runtime.Web.BasePageModel;
 use Runtime.Web.ModelFactory;
 use Runtime.Web.RenderContainer;
 use Runtime.Web.Messages.ClickMessage;
+use Runtime.Widget.ApiResult;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.SelectModel;
+use Runtime.Widget.Dialog.ConfirmDialogModel;
+use Runtime.Widget.Dialog.DialogMessage;
+use Runtime.Widget.Dialog.DialogModelException;
 use Runtime.Widget.Form.FormModel;
 use Runtime.Widget.Tab.TabsModel;
 use Runtime.Widget.Table.TableDialogModel;
@@ -223,6 +227,18 @@ class ApplicationsPageEditModel extends BasePageModel
 			}
 		);
 		
+		/* Compose dialog */
+		this.compose_dialog = this.addWidget(
+			classof ConfirmDialogModel,
+			{
+				"widget_name": "compose_dialog",
+				"events":
+				{
+					"confirm": new Callback(this, "onConfirmComposeClick"),
+				},
+			}
+		);
+		
 		/* Add top buttons */
 		this.top_buttons = this.addWidget(
 			classof RowButtonsModel,
@@ -244,6 +260,10 @@ class ApplicationsPageEditModel extends BasePageModel
 						"Runtime.Widget.ButtonModel",
 						{
 							"content": "Compose",
+							"events":
+							{
+								"click": new Callback(this, "onComposeClick"),
+							},
 						}
 					),
 					new ModelFactory
@@ -251,6 +271,10 @@ class ApplicationsPageEditModel extends BasePageModel
 						"Runtime.Widget.ButtonModel",
 						{
 							"content": "Stop",
+							"events":
+							{
+								"click": new Callback(this, "onStopClick"),
+							},
 						}
 					),
 					new ModelFactory
@@ -297,5 +321,90 @@ class ApplicationsPageEditModel extends BasePageModel
 	void onSaveClick()
 	{
 		this.form.submit();
+	}
+	
+	
+	/**
+	 * Confirm compose button click
+	 */
+	async void onConfirmComposeClick(DialogMessage message)
+	{
+		string action = this.compose_dialog.data.get("action");
+		string app_id = this.compose_dialog.data.get("app_id");
+		
+		/* Compose service */
+		this.compose_dialog.result.setWaitMessage();
+		ApiResult res = await this.layout.callApi({
+			"api_name": "app.applications::save",
+			"method_name": "actionCompose",
+			"data": {
+				"action": action,
+				"pk": {
+					"id": app_id,
+				},
+			}
+		});
+		
+		/* Error message */
+		if (not res.isSuccess())
+		{
+			throw new DialogModelException(res.message);
+		}
+		
+		/* Stop hide */
+		this.compose_dialog.result.setApiResult(res);
+		message.hide = false;
+	}
+	
+	
+	/**
+	 * Stop button click
+	 */
+	async void onStopClick(ClickMessage message)
+	{
+		Dict item = this.form.item;
+		string service_name = item.get("name");
+		string stack_name = item.get("stack_name");
+		string app_name = stack_name ~ "_" ~ service_name;
+		
+		/* Setup content */
+		this.compose_dialog.data.set("action", "stop");
+		this.compose_dialog.data.set("app_id", item.get("id"));
+		this.compose_dialog.data.set("app_name", app_name);
+		this.compose_dialog.title = "Stop service " ~ app_name ~ "?";
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.compose_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Stop";
+		confirm_button.styles = ["danger"];
+		
+		/* Show dialog */
+		this.compose_dialog.show();
+	}
+	
+	
+	/**
+	 * Compose button click
+	 */
+	async void onComposeClick(ClickMessage message)
+	{
+		Dict item = this.form.item;
+		string service_name = item.get("name");
+		string stack_name = item.get("stack_name");
+		string app_name = stack_name ~ "_" ~ service_name;
+		
+		/* Setup content */
+		this.compose_dialog.data.set("action", "compose");
+		this.compose_dialog.data.set("app_id", item.get("id"));
+		this.compose_dialog.data.set("app_name", app_name);
+		this.compose_dialog.title = "Compose service " ~ app_name ~ "?";
+		
+		/* Change confirm button */
+		ButtonModel confirm_button = this.compose_dialog.buttons.getWidget("confirm_button");
+		confirm_button.content = "Compose";
+		confirm_button.styles = ["danger"];
+		
+		/* Show dialog */
+		this.compose_dialog.show();
 	}
 }

@@ -33,6 +33,7 @@ use Runtime.Widget.Crud.Rules.ReadOnly;
 use Runtime.Widget.Crud.Rules.Required;
 use Runtime.Widget.Crud.Rules.Unique;
 use Bayrell.CloudOS.Backend.Lib.AppXml;
+use Bayrell.CloudOS.Backend.Lib.DockerService;
 
 
 class ApplicationSave extends SaveRelationApi
@@ -300,5 +301,42 @@ class ApplicationSave extends SaveRelationApi
 	async void actionDelete()
 	{
 		await parent();
+	}
+	
+	
+	/**
+	 * Action compose
+	 */
+	@ApiMethod
+	async void actionCompose()
+	{
+		string message = "";
+		
+		/* Load data */
+		await this.loadItem();
+		
+		string action = this.post_data["action"];
+		if (action == "start" or action == "compose")
+		{
+			message = await DockerService::composeApp(this.item);
+		}
+		else if (action == "stop")
+		{
+			message = await DockerService::stopApp(this.item);
+		}
+		else if (action == "restart")
+		{
+			message = await DockerService::stopApp(this.item);
+			message = await DockerService::composeApp(this.item);
+		}
+		
+		/* Set api result */
+		this.result.success({
+			"message": message,
+			"data":
+			{
+				"pk": this.pk,
+			}
+		});
 	}
 }

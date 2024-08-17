@@ -163,9 +163,10 @@ class ServicePageModel extends BasePageModel
 		this.stop_dialog = this.addWidget(
 			classof ConfirmDialogModel,
 			{
+				"widget_name": "stop_dialog",
 				"events":
 				{
-					"confirm": new Callback(this, "onStopConfirmClick"),
+					"confirm": new Callback(this, "onStopDialogClick"),
 				},
 			}
 		);
@@ -211,9 +212,9 @@ class ServicePageModel extends BasePageModel
 	
 	
 	/**
-	 * Stop confirm click
+	 * Stop dialog click
 	 */
-	async void onStopConfirmClick(ClickMessage message)
+	async void onStopDialogClick(ClickMessage message)
 	{
 		int service_id = this.stop_dialog.data.get("service_id");
 		

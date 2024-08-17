@@ -92,7 +92,7 @@ class DockerServiceSave extends SaveRelationApi
         
 		/* Stop service */
 		string service_name = this.item.get("stack_name") ~ "_" ~ this.item.get("service_name");
-		string message = DockerService::stopService(service_name);
+		string message = await DockerService::stopService(service_name);
 		Dict item_pk = this.item.getPrimaryKey();
 		
 		/* Set is delete */
