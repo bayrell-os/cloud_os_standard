@@ -2,8 +2,8 @@ version: "3.3"
 
 services:
     
-    standard_0.5.1:
-        image: bayrell/cloud_os_standard:0.5.1-20240810_164332
+    standard:
+        image: bayrell/cloud_os_standard:0.5.1-20240818_164301
         hostname: "cloud_os_standard.local"
         volumes:
             - "standard_data:/data"
@@ -11,7 +11,7 @@ services:
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
             - "/etc/hostname:/etc/hostname_orig:ro"
         ports:
-            - "8081:80"
+            - "8080:80"
         env_file:
             - ./env.conf
         environment:

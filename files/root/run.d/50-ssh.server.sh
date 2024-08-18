@@ -28,7 +28,7 @@ if [ ! -z $SSH_USER ] && [ ! -z $SSH_PASSWORD ]; then
 	
 	fi
 	
-	echo "$SSH_USER:$SSH_PASSWORD_HASH" >> /etc/nginx/inc/htpasswd.inc
+	echo "$SSH_USER:$SSH_PASSWORD_HASH" > /etc/nginx/inc/htpasswd.inc
 	
 else
 	echo "Disable ssh server"

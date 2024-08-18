@@ -19,6 +19,7 @@
 namespace Bayrell.CloudOS.Backend.Lib;
 
 use Runtime.re;
+use Runtime.DateTime;
 use Runtime.ORM.Connection;
 use Runtime.ORM.Query;
 use Runtime.ORM.QueryResult;
@@ -100,12 +101,13 @@ class DockerApi
 		;
 		
 		Collection tasks = rtl::json_decode( static::dockerApi(url_api) );
-		
 		tasks.sort(
 			bool (Dict a, Dict b)
 			{
 				string time_a = a["Status", "Timestamp"];
 				string time_b = a["Status", "Timestamp"];
+				time_a = DateTime::fromString(rs::substr(time_a, 0, 19)).timestamp();
+				time_b = DateTime::fromString(rs::substr(time_b, 0, 19)).timestamp();
 				return time_b - time_a;
 			}
 		);

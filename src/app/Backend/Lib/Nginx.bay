@@ -70,8 +70,8 @@ class Nginx
 		
 		/* Get services */
 		Query q = (new Query())
-			.select("docker_services")
-			.addField("docker_services.*")
+			.select(["docker_services.*"])
+			.from("docker_services")
 			.where("enable", "=", "1")
 			.where("is_deleted", "=", "0")
 			.where("docker_name", "!=", "")
@@ -82,8 +82,8 @@ class Nginx
 		
 		/* Get routes */
 		Query q = (new Query())
-			.select("routes")
-			.addField("routes.*")
+			.select(["routes.*"])
+			.from("routes")
 			.where("enable", "=", "1")
 			.where("protocol", "=", "http")
 			.orderBy("route_prefix", "desc")
@@ -144,8 +144,8 @@ class Nginx
 		
 		/* Get services */
 		Query q = (new Query())
-			.select("domains")
-			.addField("domains.*")
+			.select(["domains.*"])
+			.from("domains")
 			.addField("spaces.uid as space_uid")
 			.leftJoin(
 				"spaces",
@@ -165,8 +165,8 @@ class Nginx
 			string domain_name = domain["domain_name"];
 			
 			Query q = (new Query())
-				.select("routes")
-				.addField("routes.*")
+				.select(["routes.*"])
+				.from("routes")
 				.where("routes.enable", "=", "1")
 				.where("routes.protocol", "=", "http")
 				.where("routes.domain_id", "=", domain_id)
@@ -325,7 +325,8 @@ class Nginx
 		
 		/* Get services */
 		Query q = (new Query())
-			.select("docker_services")
+			.select()
+			.from("docker_services")
 			.fields([
 				"applications.name",
 				"applications.stack_name",
@@ -372,8 +373,8 @@ class Nginx
 			if (not xml_port.exists()) continue;
 			
 			AppXml xml = new AppXml();
-			xml.app = service;
 			xml.conn = conn;
+			xml.item = service;
 			xml.template = xml_content;
 			xml.buildVariables();
 			

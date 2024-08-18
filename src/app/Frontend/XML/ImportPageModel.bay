@@ -29,7 +29,24 @@ class ImportPageModel extends BasePageModel
 {
 	string content = "";
 	string component = classof ImportPage;
-	WidgetResultModel result = new WidgetResultModel;
+	WidgetResultModel result = null;
+	
+	
+	/**
+	 * Init widget settings
+	 */
+	void initWidget(Dict params)
+	{
+		parent(params);
+		
+		/* Add result */
+		this.result = this.addWidget(
+			classof WidgetResultModel,
+			{
+				"styles": ["margin_top"],
+			}
+		);
+	}
 	
 	
 	/**

@@ -1,26 +1,22 @@
 <?php
 
+error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 ini_set('html_errors', 'on');
 set_time_limit(30);
 
-/* Init context */
-$init = require_once dirname(__DIR__) . "/init.php";
+/* Get loader */
+define('BASE_PATH', dirname(__DIR__));
+require_once BASE_PATH . "/lib/Runtime/bay/Loader.php";
+
+/* Create loader */
+$loader = new Loader();
+$loader->setBasePath(BASE_PATH);
+$loader->include(BASE_PATH . "/init.php");
 
 /* Add modules */
-$init["modules"][] = "Bayrell.CloudOS.Bus";
+$loader->modules[] = "Bayrell.CloudOS.Bus";
 
 /* Run web app */
-\Runtime\rtl::runApp(
-	
-	/* Entry point */
-	'Bayrell.CloudOS.Frontend.WebApp',
-	
-	/* Modules */
-	$init["modules"],
-	
-	/* Params */
-	\Runtime\Map::from([
-		"environments" => \Runtime\Map::from($init["environments"]),
-	])
-);
+$loader->entry_point = "Runtime.Web.BaseApp";
+$loader->runApp();

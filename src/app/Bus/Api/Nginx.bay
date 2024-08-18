@@ -24,6 +24,7 @@ use Runtime.ORM.QueryResult;
 use Runtime.Web.ApiResult;
 use Runtime.Web.BaseRoute;
 use Runtime.Web.JsonResponse;
+use Runtime.Web.RenderContainer;
 use Runtime.Web.RouteInfo;
 
 
@@ -61,14 +62,14 @@ class Nginx extends BaseRoute
 	/**
 	 * Nginx changes
 	 */
-	async void actionNginxChanges()
+	async void actionNginxChanges(RenderContainer container)
 	{
 		Connection conn = Connection::getConnection();
-		int timestamp = (int)this.post_data["data", "timestamp"];
+		int timestamp = (int)container.request.payload["data", "timestamp"];
 		
 		Query q = (new Query)
-			.select("nginx_files")
-			.addField("nginx_files.*")
+			.select(["nginx_files.*"])
+			.from("nginx_files")
 			.where("nginx_files.timestamp", ">=", timestamp)
 		;
 		QueryResult items = await conn.fetchAll(q);
@@ -102,17 +103,17 @@ class Nginx extends BaseRoute
 		api_result.success({
 			"data": items.toCollection(),
 		});
-		this.container.setResponse(new JsonResponse(api_result.getContent()));
+		container.setResponse(new JsonResponse(api_result.getContent()));
 	}
 	
 	
 	/**
 	 * SSL changes
 	 */
-	async void actionSSLChanges()
+	async void actionSSLChanges(RenderContainer container)
 	{
 		ApiResult api_result = new ApiResult;
 		api_result = api_result.success();
-		this.container.setResponse(api_result);
+		container.setResponse(api_result);
 	}
 }

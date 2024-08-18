@@ -1,28 +1,27 @@
 #!/usr/bin/php
 <?php
 
+error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 ini_set('html_errors', 'on');
 set_time_limit(-1);
 
-/* Init context */
-$init = require_once __DIR__ . "/init.php";
+/* Get loader */
+define('BASE_PATH', __DIR__);
+require_once BASE_PATH . "/lib/Runtime/bay/Loader.php";
+
+/* Create loader */
+$loader = new Loader();
+$loader->setBasePath(BASE_PATH);
+$loader->include(BASE_PATH . "/init.php");
 
 /* Add modules */
-$init["modules"][] = "Bayrell.CloudOS.Console";
+$loader->modules[] = "Bayrell.CloudOS.Console";
 
-/* Run console app */
-$exit_code = \Runtime\rtl::runApp(
-    
-    /* Entry point */
-    'Bayrell.CloudOS.Console.ConsoleApp',
-    
-    /* Modules */
-    $init["modules"],
-    
-    /* Context parameters */
-    \Runtime\Map::from([
-        'cli_args' => \Runtime\Collection::from($argv),
-    ])
-);
+/* Console arguments */
+$loader->params["cli_args"] = \Runtime\Collection::from($argv);
+
+/* Run web app */
+$loader->entry_point = "Runtime.Console.App";
+$exit_code = $loader->runApp();
 exit($exit_code);

@@ -57,7 +57,6 @@ class TemplateSave extends SaveRelationApi
 		new Purify{ "name": "uid" },
 		new LowerCase{ "name": "uid" },
 		new Required{ "name": "uid" },
-		new Purify{ "name": "name" },
 		new Required{ "name": "name" },
 		new Unique{"keys": ["uid"]},
 	];

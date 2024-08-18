@@ -322,6 +322,17 @@ class ApplicationsPageModel extends BasePageModel
 					"click": new Callback(this, "onRestartClick"),
 				},
 			});
+			
+			/* Info button */
+			row_buttons.addButton({
+				"content": "Info",
+				"widget_name": "info_button",
+				"styles": ["default", "small"],
+				"events":
+				{
+					"click": new Callback(this, "onButtonInfoClick"),
+				},
+			});
 		}
 		else if (status == "stop")
 		{
@@ -335,18 +346,18 @@ class ApplicationsPageModel extends BasePageModel
 					"click": new Callback(this, "onStartClick"),
 				},
 			});
+			
+			/* Delete button */
+			row_buttons.addButton({
+				"content": "Delete",
+				"widget_name": "delete_button",
+				"styles": ["danger", "small"],
+				"events":
+				{
+					"click": new Callback(this, "onDeleteClick"),
+				},
+			});
 		}
-		
-		/* Info button */
-		row_buttons.addButton({
-			"content": "Info",
-			"widget_name": "info_button",
-			"styles": ["default", "small"],
-			"events":
-			{
-				"click": new Callback(this, "onButtonInfoClick"),
-			},
-		});
 		
 		/* Compose dialog */
 		this.compose_dialog = this.addWidget(
@@ -435,12 +446,14 @@ class ApplicationsPageModel extends BasePageModel
 			throw new DialogModelException(res.message);
 		}
 		
+		/* Stop hide */
+		if (action != "stop") message.hide = false;
+		
 		/* Reload table */
 		this.table.reload();
 		
-		/* Stop hide */
+		/* Set result */
 		this.compose_dialog.result.setApiResult(res);
-		message.hide = false;
 	}
 	
 	
@@ -519,6 +532,16 @@ class ApplicationsPageModel extends BasePageModel
 		
 		/* Show dialog */
 		this.compose_dialog.show();
+	}
+	
+	
+	/**
+	 * Button delete click
+	 */
+	void onDeleteClick(ClickMessage message)
+	{
+		Dict data = message.data;
+		this.table.showDelete(data);
 	}
 	
 	
