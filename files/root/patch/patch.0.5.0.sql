@@ -113,7 +113,7 @@ SET `version`='1.6', `content`='<?xml version="1.1" encoding="UTF-8" ?>
 	<uid>org.bayrell.modificator.cloud_os</uid>
 	<name>Cloud OS</name>
 	<date>2022-08-09T17:15:00+06:00</date>
-	<version>1.6</version>
+	<version>1.7</version>
 	<priority>-1000</priority>
 	<operations>
     
@@ -172,13 +172,6 @@ SET `version`='1.6', `content`='<?xml version="1.1" encoding="UTF-8" ?>
 						<window>120s</window>
 					</restart_policy>
 				</deploy>
-			</value>
-		</operation>
-		
-		<operation type="add">
-			<path>/template/yaml/services/*[not(dns)]</path>
-			<value>
-				<dns array="true">172.18.0.1</dns>
 			</value>
 		</operation>
 		
