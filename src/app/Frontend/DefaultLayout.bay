@@ -53,6 +53,14 @@ body, html {
 		padding: 10px;
 	}
 }
+%(RowButtons)widget_row_buttons--align-end{
+	display: block;
+	text-align: right;
+	.widget_button{
+		margin-left: calc(0.5 * var(--widget-space));
+		margin-right: calc(0.5 * var(--widget-space));
+	}
+}
 %(Select)widget_select{
 	max-width: 100%;
 }

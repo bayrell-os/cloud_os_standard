@@ -82,7 +82,7 @@ case "$1" in
 		
 		version=$2
 		ssh_host=$3
-		bwlimit=172
+		bwlimit=""
 		
 		if [ ! -z "$4" ]; then
 			bwlimit=$4
@@ -100,9 +100,19 @@ case "$1" in
 		ssh $ssh_host "mkdir -p ~/images"
 		ssh $ssh_host "yes | rm -f ~/images/cloud_os_standard-$version.tar.gz"
 		
-		time rsync -aSsuh --info=progress2 --bwlimit=$bwlimit ./images/cloud_os_standard-$version.tar.gz \
-			$ssh_host:images/cloud_os_standard-$version.tar.gz
-
+		if [ ! -z "$bwlimit" ]; then
+			time rsync -aSsuh \
+				--info=progress2 \
+				--bwlimit=$bwlimit \
+				./images/cloud_os_standard-$version.tar.gz \
+				$ssh_host:images/cloud_os_standard-$version.tar.gz
+		else
+			time rsync -aSsuh \
+				--info=progress2 \
+				./images/cloud_os_standard-$version.tar.gz \
+				$ssh_host:images/cloud_os_standard-$version.tar.gz
+		fi
+		
 		echo "Load image"
 		ssh $ssh_host "docker load -i ~/images/cloud_os_standard-$version.tar.gz"
 	;;

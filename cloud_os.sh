@@ -5,18 +5,13 @@ SCRIPT=$(readlink -f $0)
 SCRIPT_PATH=`dirname $SCRIPT`
 
 RETVAL=0
-VERSION=0.5.0
+VERSION=0.5.1-amd64
 TAG=`date '+%Y%m%d_%H%M%S'`
-
-# RS256
-JWT_KEY_LENGTH=2048
 ENV_CONFIG_PATH=$SCRIPT_PATH/example/env.conf
 
-
-function read_env_config {
-	
+function read_env_config()
+{
 	if [ -f "$ENV_CONFIG_PATH" ]; then
-	
 		while IFS= read -r line; do
 			IFS="=" read -r left right <<< $line
 			
@@ -25,14 +20,11 @@ function read_env_config {
 				eval "$CMD"
 			fi
 		done < $ENV_CONFIG_PATH
-	
 	fi
-	
 }
 
-
-function generate {
-	
+function generate_env_config()
+{
 	if [ ! -f "$ENV_CONFIG_PATH" ]; then
 		cat $SCRIPT_PATH/example/env.example > $ENV_CONFIG_PATH
 	fi
@@ -54,103 +46,89 @@ function generate {
 		read SSH_USER
 		echo "SSH_USER=${SSH_USER}" >> $ENV_CONFIG_PATH
 	fi
-	
-	if [ -z "$JWT_PRIVATE_KEY" ]; then
-		
-		# Generate JWT key
-		openssl genrsa -out $SCRIPT_PATH/example/jwt_private.key $JWT_KEY_LENGTH
-		
-		# Save JWT private key
-		JWT_PRIVATE_KEY=""
-		while IFS= read -r line; do
-			if [ "$JWT_PRIVATE_KEY" = "" ]; then
-				JWT_PRIVATE_KEY="$line"
-			else
-				JWT_PRIVATE_KEY="${JWT_PRIVATE_KEY}\n$line"
-			fi
-		done < $SCRIPT_PATH/example/jwt_private.key
-		echo "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" >> $ENV_CONFIG_PATH
-		
-		yes | rm -f $SCRIPT_PATH/example/jwt_private.key
-	fi
-	
-	if [ -z "$JWT_PUBLIC_KEY" ]; then
-		
-		if [ ! -f $SCRIPT_PATH/example/jwt_private.key ]; then
-			echo -e "$JWT_PRIVATE_KEY" > $SCRIPT_PATH/example/jwt_private.key
-		fi
-		
-		openssl rsa -in $SCRIPT_PATH/example/jwt_private.key -outform PEM \
-			-pubout -out $SCRIPT_PATH/example/jwt_public.key
-		
-		# Save JWT public key
-		JWT_PUBLIC_KEY=""
-		while IFS= read -r line; do
-			if [ "$JWT_PUBLIC_KEY" = "" ]; then
-				JWT_PUBLIC_KEY="$line"
-			else
-				JWT_PUBLIC_KEY="${JWT_PUBLIC_KEY}\n$line"
-			fi
-		done < $SCRIPT_PATH/example/jwt_public.key
-		echo "JWT_PUBLIC_KEY=$JWT_PUBLIC_KEY" >> $ENV_CONFIG_PATH
-		
-		yes | rm -f $SCRIPT_PATH/example/jwt_public.key
-		yes | rm -f $SCRIPT_PATH/example/jwt_private.key
-	fi
-	
 }
 
-function output {
-		
+function print_env_config()
+{
 	if [ -f "$ENV_CONFIG_PATH" ]; then
 		read_env_config
 		echo "SSH_USER=${SSH_USER}"
 		echo "SSH_PASSWORD=${SSH_PASSWORD}"
-		echo "JWT Public key:"
-		echo -e $JWT_PUBLIC_KEY
-		#echo -e $JWT_PRIVATE_KEY
 	else
 		echo "Setup cloud os first"
 	fi
 }
 
-function download {
+function download_container()
+{
+	res=`docker images | grep cloud_os_standard | grep $VERSION`
+	if [ ! -z "$res" ]; then
+		return 1
+	fi
+	
+	echo "Download cloud os v$VERSION"
 	docker pull bayrell/cloud_os_standard:$VERSION
+	
+	if [ $? -ne 0 ]; then
+		echo "Failed to download cloud os"
+		exit 1
+	fi
 }
 
-function create_network {
-	docker network create --subnet 172.21.0.0/16 --driver=overlay \
-		--attachable cloud_network -o "com.docker.network.bridge.name"="cloud_network"
+function create_network()
+{
+	res=`docker network ls | grep cloud_network`
+	if [ -z "$res" ]; then
+		echo "Create docker cloud network"
+		docker network create --subnet 172.21.0.0/16 --driver=overlay \
+			--attachable cloud_network -o "com.docker.network.bridge.name"="cloud_network"
+	fi
 }
 
-function compose {
-	docker-compose -f example/cloud_os.yaml -p "cloud_os" up -d
-}
-
-function compose_test {
-	docker-compose -f example/test.yaml -p "cloud_os" up -d
+function compose()
+{
+	echo "Compose cloud os"
+	res=`docker ps -a |grep cloud_os_standard`
+	if [ ! -z "$res" ]; then
+		docker stop cloud_os_standard > /dev/null
+		docker rm cloud_os_standard > /dev/null
+	fi
+	docker run -d \
+		-p 8022:22 \
+		-p 8080:80 \
+		-v cloud_os_standard:/data \
+		-v /home/ubuntu/bayrell/cloud_os_standard_0.5.1/src:/srv \
+		-v /var/run/docker.sock:/var/run/docker.sock:ro \
+		-v /etc/hostname:/etc/hostname_orig:ro \
+		-e WWW_UID=1000 \
+		-e WWW_GID=1000 \
+		--name cloud_os_standard \
+		--hostname cloud_os_standard.local \
+		--env-file $SCRIPT_PATH/example/env.conf \
+		--restart unless-stopped \
+		--network cloud_network \
+		bayrell/cloud_os_standard:$VERSION
 }
 
 case "$1" in
 	
 	download)
-		download
+		download_container
 	;;
 	
 	create_network)
 		create_network
-		
 		sleep 2
-		
 		docker network ls
 	;;
 	
 	generate)
-		generate
-		output
+		generate_env_config
+		print_env_config
 	;;
 	
 	compose)
+		generate_env_config
 		compose
 	;;
 	
@@ -158,16 +136,16 @@ case "$1" in
 		compose_test
 	;;
 	
-	output)
-		output
+	print)
+		print_env_config
 	;;
 	
 	setup)
-		download
+		download_container
 		create_network
-		generate
+		generate_env_config
 		compose
-		output
+		print_env_config
 	;;
 	
 	*)

@@ -24,9 +24,6 @@
 
 
 <style>
-.application_page %(Table)widget_table__tr{
-	cursor: pointer;
-}
 .application_table{
 	display: flex;
 	align-items: flex-start;
