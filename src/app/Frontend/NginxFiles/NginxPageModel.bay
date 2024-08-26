@@ -136,7 +136,7 @@ class NginxPageModel extends BasePageModel
 						"widget_name": "delete_form",
 						"primary_key": ["id"],
 						"storage": new Factory(
-							"Runtime.Widget.Form.FormDeleteStorage,
+							"Runtime.Widget.Form.FormDeleteStorage",
 							{
 								"api_name": "app.nginx_files::save"
 							}
