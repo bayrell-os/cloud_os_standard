@@ -4,18 +4,18 @@
 FROM node:18-slim AS builder
 
 RUN apt-get update && \
-    apt-get install -y patch && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+	apt-get install -y patch && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g bay-lang@0.12.6
 
 COPY src /srv
 
 RUN cd /srv && \
-    patch --ignore-whitespace /srv/lib/Runtime/bay/rtl.bay \
+	patch --ignore-whitespace /srv/lib/Runtime/bay/rtl.bay \
 		/srv/rtl.diff && \
-    bay-lang-nodejs make_all
+	bay-lang-nodejs make_all
 
 # ============================================================
 # Stage 2: Runtime stage — final lightweight image
