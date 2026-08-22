@@ -1,5 +1,3 @@
-ARG ARCH=
-
 # ============================================================
 # Stage 1: Build stage — npm install + baylang compilation
 # ============================================================
@@ -22,7 +20,7 @@ RUN cd /srv && \
 # ============================================================
 # Stage 2: Runtime stage — final lightweight image
 # ============================================================
-FROM bayrell/ubuntu_php_fpm:7.4-3${ARCH}
+FROM bayrell/ubuntu_php_fpm:7.4-3
 
 RUN cd ~; \
 	export DEBIAN_FRONTEND='noninteractive'; \
