@@ -1,0 +1,9 @@
+1038,1042c1038,1039
+<               var res = parseInt(val);
+<               var s_res = new String(res);
+<               var s_val = new String(val);
+<               if (s_res.localeCompare(s_val) == 0)
+<                       return res;
+---
+>               var val = Number(val);
+>               if (!isNaN(val)) return val; else return 0;

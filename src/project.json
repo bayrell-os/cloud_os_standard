@@ -4,11 +4,11 @@
 	"modules":
 	[
 		{
-			"src": "src/app",
+			"src": "app",
 			"type": "module"
 		},
         {
-			"src": "src/lib",
+			"src": "lib",
 			"type": "folder"
 		}
 	],
@@ -16,7 +16,7 @@
 	[
 		{
 			"type": "js",
-			"dest": "src/public/assets/app.js",
+			"dest": "public/assets/app.js",
 			"modules":
 			[
 				"@app"
@@ -24,7 +24,7 @@
 		},
 		{
 			"type": "js",
-			"dest": "src/public/assets/runtime.js",
+			"dest": "public/assets/runtime.js",
 			"modules":
 			[
 				"@runtime",
